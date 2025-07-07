@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en"> 
+ <head> 
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <title>About Us | Run Me An Errand</title> 
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> 
+  <style>
+        :root {
+            --maroon: #7B1E3A;
+            --gold: #FFD700;
+            --light-bg: #FDFBFA; /* Softer, warmer background */
+            --text-dark: #333333; /* Softer dark text */
+            --text-light-gray: #6B7280; /* For secondary text */
+        }
+        body {
+            font-family: 'Inter', sans-serif; /* A clean, modern font for readability */
+            color: var(--text-dark);
+            background-color: var(--light-bg);
+        }
+        .bg-maroon { background-color: var(--maroon); }
+        .text-maroon { color: var(--maroon); }
+        .bg-gold { background-color: var(--gold); }
+        .text-gold { color: var(--gold); }
+        .hover\:text-gold:hover { color: var(--gold); }
+        .hover\:bg-yellow-400:hover { background-color: #FACC15; }
+
+        /* Header Styling */
+        .header-style {
+            background-color: var(--maroon);
+            padding-top: 0.8rem;
+            padding-bottom: 0.8rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Softer shadow */
+        }
+        .header-title {
+            font-size: 2.25rem; /* Balanced title size */
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+        .nav-link {
+            font-weight: 500; /* Medium weight for elegance */
+            position: relative;
+            transition: all 0.3s ease-in-out; /* Smooth transition for all link effects */
+        }
+        .nav-link:hover {
+            color: var(--gold);
+            transform: translateY(-3px) scale(1.02); /* More pronounced hover lift and scale */
+        }
+        .nav-link::after { /* Underline animation */
+            content: '';
+            position: absolute;
+            width: 0%;
+            height: 3px; /* Thinner underline */
+            background-color: var(--gold);
+            bottom: -5px; /* Position below text */
+            left: 50%;
+            transform: translateX(-50%);
+            transition: width 0.3s ease-in-out;
+        }
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 100%; /* Expand underline on hover and for active link */
+        }
+        .nav-link.active { /* Active link style */
+            color: var(--gold);
+            font-weight: 700;
+            transform: scale(1.05);
+            border-bottom: none; /* Remove previous border, now handled by ::after */
+        }
+
+
+        /* Hero Section */
+        .hero-section {
+            background: url('https://i.postimg.cc/8cybYytY/cd5d400c39e3891914066593b96d610c.jpg') no-repeat center center/cover; /* More general, appealing images */
+            position: relative;
+            padding: 7rem 1.5rem;
+            text-align: center;
+            color: white;
+            overflow: hidden;
+            margin-bottom: 4rem; /* Space before first content block */
+        }
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.55); /* Lighter overlay */
+            z-index: 1;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 4xl;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .hero-heading {
+            font-size: 3.75rem; /* Appealing size */
+            line-height: 1.15;
+            font-weight: 800;
+            letter-spacing: -0.06em;
+            animation: fadeInSlideUp 1.2s ease-out forwards;
+            display: block;
+        }
+        .hero-heading span {
+            position: relative;
+            display: inline-block;
+            color: var(--gold);
+        }
+        .hero-heading span::after {
+            content: '';
+            position: absolute;
+            width: 0%;
+            height: 6px; /* Slightly thinner underline */
+            background-color: var(--gold);
+            bottom: -8px;
+            left: 0;
+            border-radius: 3px;
+            transform: scaleX(0);
+            transform-origin: bottom left;
+            animation: underlineExpand 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.6s forwards;
+        }
+
+        /* Content Section Styling */
+        .section-container {
+            max-width: 6xl; /* Wider content area */
+            margin-left: auto;
+            margin-right: auto;
+            padding: 3rem 1.5rem; /* Reduced vertical padding */
+        }
+        .content-card {
+            background-color: white;
+            border-radius: 1rem; /* Slightly less rounded */
+            padding: 2rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06); /* Softer shadow */
+            transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+            border-left: 4px solid var(--maroon); /* Subtle left accent */
+        }
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+        }
+        .section-title-main {
+            font-size: 3.25rem; /* Main section titles */
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--maroon);
+            opacity: 0; /* Initially hidden for animation */
+            transform: translateY(20px); /* Start slightly below */
+            animation: fadeInUp 1s ease-out forwards;
+        }
+        .card-title {
+            font-size: 2.25rem; /* Card specific titles */
+            font-weight: 700;
+            color: var(--maroon);
+        }
+        .card-icon {
+            color: var(--gold); /* Icons in gold for accent */
+            animation: popIn 0.8s ease-out forwards;
+        }
+        .list-item-style {
+            font-weight: 500;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        .list-bullet-icon {
+            color: var(--gold);
+            font-size: 1.25rem;
+            margin-right: 0.75rem;
+        }
+
+        /* Image specific styling for "Who We Are" section */
+        .who-we-are-image {
+            width: 100%; /* Full width on mobile */
+            max-width: 300px; /* Max width on desktop */
+            height: auto;
+            border-radius: 0.75rem; /* Slightly rounded corners for the image */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* Soft shadow */
+            object-fit: cover; /* Ensures image covers area without distortion */
+            opacity: 0; /* For animation */
+            transform: scale(0.9); /* For animation */
+            animation: popIn 0.8s ease-out forwards;
+        }
+        @media (min-width: 768px) { /* On medium screens and up */
+            .who-we-are-image {
+                float: left; /* Float image to the left */
+                margin-right: 2rem; /* Space between image and text */
+                margin-bottom: 0.5rem; /* Small margin bottom if text wraps around on longer blocks */
+            }
+        }
+
+
+        /* Call to Action */
+        .cta-section {
+            background: linear-gradient(to right, var(--maroon), #A03C5D); /* Subtle gradient for CTA */
+            padding: 4rem 1.5rem;
+            border-radius: 1.5rem;
+            text-align: center;
+            color: white;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+        .cta-heading {
+            font-size: 2.75rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 2.5rem;
+        }
+        .cta-button {
+            padding: 0.9rem 2.75rem;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 1.3rem;
+            letter-spacing: 0.03em;
+            transition: all 0.3s ease-out;
+        }
+        .cta-button:hover {
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Animations */
+        @keyframes fadeInSlideUp {
+            from { opacity: 0; transform: translateY(25px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes underlineExpand {
+            from { transform: scaleX(0); }
+            to { transform: scaleX(1); }
+        }
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.7); }
+            80% { opacity: 1; transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        @keyframes fadeInUp { /* General fade in and up for elements */
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animated-item {
+            opacity: 0; /* Default state for items to be animated */
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        /* Staggered animation delays */
+        .animated-item:nth-child(1) { animation-delay: 0.2s; }
+        .animated-item:nth-child(2) { animation-delay: 0.4s; }
+        .animated-item:nth-child(3) { animation-delay: 0.6s; }
+        .animated-item:nth-child(4) { animation-delay: 0.8s; }
+        .animated-item:nth-child(5) { animation-delay: 1.0s; }
+        .animated-item:nth-child(6) { animation-delay: 1.2s; }
+        .animated-item.section-title-main { /* Specific delay for main titles */
+            animation-delay: 0.2s;
+        }
+        .animated-item.content-card { /* Stagger for cards */
+            animation-delay: var(--card-delay, 0s);
+        }
+
+
+        /* Mobile Adjustments */
+        @media (max-width: 767px) {
+            .header-title {
+                font-size: 1.8rem;
+            }
+            .header nav {
+                flex-direction: column;
+                gap: 0.4rem;
+                margin-top: 0.6rem;
+            }
+            .nav-link {
+                font-size: 0.9rem;
+            }
+            .hero-section {
+                padding: 4rem 1rem;
+                margin-bottom: 2.5rem;
+            }
+            .hero-heading {
+                font-size: 2.25rem;
+                letter-spacing: -0.03em;
+            }
+            .hero-heading span::after {
+                height: 4px;
+                bottom: -5px;
+            }
+            .hero-content p {
+                font-size: 0.95rem;
+                margin-top: 1rem;
+            }
+            .section-container {
+                padding: 2rem 1rem;
+            }
+            .section-title-main {
+                font-size: 2.25rem;
+                margin-bottom: 2rem;
+            }
+            .content-card {
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+                border-radius: 0.75rem;
+            }
+            .card-title {
+                font-size: 1.75rem;
+                margin-bottom: 0.75rem;
+            }
+            .card-icon {
+                width: 2.5rem;
+                height: 2.5rem;
+                margin-right: 0.75rem;
+            }
+            .content-card p, .content-card ul {
+                font-size: 0.9rem;
+            }
+            .cta-section {
+                padding: 2.5rem 1rem;
+                border-radius: 1rem;
+            }
+            .cta-heading {
+                font-size: 1.8rem;
+                margin-bottom: 1.5rem;
+            }
+            .cta-button {
+                font-size: 1.05rem;
+                padding: 0.7rem 2rem;
+            }
+            .who-we-are-image {
+                margin-right: 0; /* Reset mobile float margin */
+                margin-bottom: 1rem; /* Add margin below image on mobile */
+                float: none; /* Ensure image doesn't float on mobile */
+                max-width: 100%; /* Make image responsive on mobile */
+            }
+        }
+    </style> 
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"> 
+ </head> 
+ <body class="bg-light-bg"> 
+  <header class="header-style text-white sticky top-0 z-50"> 
+   <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center px-4"> 
+    <h1 class="header-title mb-3 md:mb-0">Run Me An Errand</h1> 
+    <nav class="space-x-4 md:space-x-6 text-lg"> <a href="index.html" class="nav-link" aria-current="page">Home</a> <a href="services.html" class="nav-link">Services</a> <a href="about.html" class="nav-link active">About</a> <a href="contact.html" class="nav-link">Contact</a> 
+    </nav> 
+   </div> 
+  </header> 
+  <main> 
+   <section class="hero-section"> 
+    <div class="hero-overlay"></div> 
+    <div class="hero-content"> 
+     <h2 class="hero-heading"> Discover Our <span class="text-gold">Story</span>, Our Drive </h2> 
+     <p class="text-lg md:text-xl mt-4 max-w-2xl mx-auto font-light opacity-0 animate-fadeInUp" style="animation-delay: 1.2s;"> We're passionate about making life easier for you in Kenya, one reliable errand at a time. </p> 
+    </div> 
+   </section> 
+   <section class="section-container"> 
+    <h2 class="section-title-main animated-item">Who We Are</h2> 
+    <div class="content-card animated-item" style="--card-delay: 0.4s;"> 
+     <div class="flex flex-col md:flex-row items-center md:items-start text-center md:text-left"> 
+      <div class="flex-shrink-0 mb-6 md:mb-0 md:mr-8"> 
+       <img src="https://i.postimg.cc/W1t4VJs0/Run-ME-AN-Errand-20250706-152540-0000.png" alt="A friendly delivery driver in Kenya on a scooter, representing Run Me An Errand." class="who-we-are-image animated-item" style="animation-delay: 0.3s;"> 
+      </div> 
+      <div> 
+       <h3 class="card-title mb-3">Your Dedicated Errand Partner</h3> 
+       <p class="text-lg text-gray-700 leading-relaxed"> <strong class="text-maroon">Run Me An Errand</strong> is a dynamic, modern platform created with the vibrant spirit of Kenya in mind. We thoughtfully connect you with our network of <strong class="text-maroon">trusted, professional runners</strong>. Our commitment is to ensure every task is completed swiftly, securely, and with genuine dedication, giving you back precious time to focus on what truly matters. </p> 
+      </div> 
+     </div> 
+    </div> 
+   </section> 
+   <section class="section-container"> 
+    <h2 class="section-title-main animated-item">What We Do</h2> 
+    <div class="grid md:grid-cols-2 gap-8"> 
+     <div class="content-card animated-item" style="--card-delay: 0.2s;"> 
+      <div class="flex items-center mb-3"> 
+       <svg class="w-10 h-10 card-icon animated-item" fill="currentColor" viewbox="0 0 20 20" style="animation-delay: 0.4s;"> <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path> <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h.01a1 1 0 100-2H10zm3 0a1 1 0 000 2h.01a1 1 0 100-2H13zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H10z" clip-rule="evenodd"></path> 
+       </svg> 
+       <h3 class="text-xl font-bold text-maroon ml-4">Every Errand Covered</h3> 
+      </div> 
+      <p class="text-md text-gray-700 leading-relaxed"> From <strong class="text-maroon">lightning-fast deliveries</strong> and secure parcel pickups to efficient queueing, timely bill payments, crucial pharmacy runs, and even personalized shopping—we handle it all with care. </p> 
+     </div> 
+     <div class="content-card animated-item" style="--card-delay: 0.6s;"> 
+      <div class="flex items-center mb-3"> 
+       <svg class="w-10 h-10 card-icon animated-item" fill="currentColor" viewbox="0 0 20 20" style="animation-delay: 0.8s;"> <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path> 
+       </svg> 
+       <h3 class="text-xl font-bold text-maroon ml-4">Nationwide Reliability</h3> 
+      </div> 
+      <p class="text-md text-gray-700 leading-relaxed"> Whether you're in the bustling energy of <strong class="text-maroon">Nairobi</strong>, the serene beauty of <strong class="text-maroon">Kisumu</strong>, or the vibrant pulse of <strong class="text-maroon">Mombasa</strong>, we're your reliable partner. Our extensive network covers <strong class="text-maroon">multiple key towns across Kenya</strong>. </p> 
+     </div> 
+    </div> 
+   </section> 
+   <section class="section-container pb-0"> 
+    <h2 class="section-title-main animated-item">Why Choose Us</h2> 
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"> 
+     <div class="content-card animated-item" style="--card-delay: 0.2s;"> 
+      <h3 class="card-title text-maroon mb-2 flex items-center"> <span class="list-bullet-icon">●</span> Verified &amp; Clear </h3> 
+      <p class="text-md text-gray-700 list-item-style"> Our runners are <strong class="text-maroon">fully verified</strong>, and our pricing is always <strong class="text-maroon">transparent</strong>—no surprises. </p> 
+     </div> 
+     <div class="content-card animated-item" style="--card-delay: 0.4s;"> 
+      <h3 class="card-title text-maroon mb-2 flex items-center"> <span class="list-bullet-icon">●</span> Simple &amp; Swift </h3> 
+      <p class="text-md text-gray-700 list-item-style"> <strong class="text-maroon">No app needed</strong>; just direct, honest, and remarkably swift service. </p> 
+     </div> 
+     <div class="content-card animated-item" style="--card-delay: 0.6s;"> 
+      <h3 class="card-title text-maroon mb-2 flex items-center"> <span class="list-bullet-icon">●</span> Reliable &amp; Secure </h3> 
+      <p class="text-md text-gray-700 list-item-style"> Consistently <strong class="text-maroon">professional, secure, and always on-time</strong> deliveries. </p> 
+     </div> 
+     <div class="content-card animated-item" style="--card-delay: 0.8s;"> 
+      <h3 class="card-title text-maroon mb-2 flex items-center"> <span class="list-bullet-icon">●</span> You're In Charge </h3> 
+      <p class="text-md text-gray-700 list-item-style"> Pick your preferred runner, or we'll assign the best fit. <strong class="text-maroon">You're in control</strong>. </p> 
+     </div> 
+     <div class="content-card animated-item" style="--card-delay: 1.0s;"> 
+      <h3 class="card-title text-maroon mb-2 flex items-center"> <span class="list-bullet-icon">●</span> Expansive Reach </h3> 
+      <p class="text-md text-gray-700 list-item-style"> Extensive service coverage across <strong class="text-maroon">multiple key towns in Kenya</strong>. </p> 
+     </div> 
+    </div> 
+   </section> 
+   <section class="section-container text-center pt-12 pb-16"> 
+    <div class="cta-section animated-item" style="animation-delay: 0.6s;"> 
+     <p class="cta-heading text-white"> Ready to <span class="text-gold">Reclaim Your Day?</span> </p> <a href="services.html" class="cta-button bg-gold text-maroon hover:bg-yellow-400"> GET STARTED NOW! </a> 
+    </div> 
+   </section> 
+  </main> 
+  <footer class="bg-maroon text-gray-200 text-center py-8 mt-12 shadow-inner"> 
+   <p class="text-sm font-light">© 2025 Run Me An Errand. All rights reserved. Empowering lives, one errand at a time.</p> 
+  </footer> 
+ 
+</body></html>
