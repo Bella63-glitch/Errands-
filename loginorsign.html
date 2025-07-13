@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login / Sign Up - Run Me An Errand</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+        /* Custom CSS for colors */
+        :root {
+            --maroon: #7B1E3A;
+            --gold: #FFD700;
+            --light-gold: #FFEB80; /* A lighter shade for backgrounds */
+        }
+        .bg-maroon { background-color: var(--maroon); }
+        .text-gold { color: var(--gold); }
+        .bg-gold { background-color: var(--gold); }
+        .border-gold { border-color: var(--gold); }
+        .bg-light-gold { background-color: var(--light-gold); }
+
+        /* Mobile Menu Styles (inherited from previous pages for consistency) */
+        .mobile-menu {
+            transition: max-height 0.3s ease-in-out;
+            overflow: hidden;
+            max-height: 0;
+        }
+        .mobile-menu.active {
+            max-height: 500px; /* Sufficiently large to show all content */
+        }
+    </style>
+ </head>
+ <body class="bg-gray-50 text-gray-800 font-sans">
+  <header class="bg-maroon shadow-md sticky top-0 z-50">
+   <div class="max-w-7xl mx-auto flex justify-between items-center py-5 px-6"> <a href="index.html" class="flex items-center space-x-2"> <img src="https://img.icons8.com/fluent/48/ffffff/running.png" alt="Errand Logo">
+     <h1 class="text-2xl font-bold text-white transition-colors duration-300 hover:text-gold">Run Me An Errand</h1>
+    </a>
+    <nav class="hidden md:flex space-x-6 text-lg"> <a href="index.html" class="text-gray-300 hover:text-gold transition-colors duration-300">Home</a> <a href="index.html#how-it-works" class="text-gray-300 hover:text-gold transition-colors duration-300">How It Works</a> <a href="index.html#why-choose-us" class="text-gray-300 hover:text-gold transition-colors duration-300">Why Choose Us</a> <a href="detailed_runners.html" class="text-gray-300 hover:text-gold transition-colors duration-300">Find a Runner</a> <a href="index.html#testimonials" class="text-gray-300 hover:text-gold transition-colors duration-300">Reviews</a> <a href="index.html#contact" class="text-gray-300 hover:text-gold transition-colors duration-300">Contact</a> <a href="runner_registration.html" class="text-gray-300 hover:text-gold transition-colors duration-300">Become a Runner</a>
+    </nav>
+    <div class="hidden md:flex space-x-4"> <a href="#" class="bg-gold text-maroon px-4 py-2 rounded-full hover:bg-white hover:text-maroon transition duration-300">Login</a> <a href="#" class="bg-white text-maroon px-4 py-2 rounded-full hover:bg-gold hover:text-maroon transition duration-300">Sign Up</a>
+    </div>
+    <div class="md:hidden"> <button id="mobile-menu-button" class="text-gray-300 hover:text-gold focus:outline-none focus:ring-2 focus:ring-gold">
+      <svg class="h-6 w-6 fill-current" viewbox="0 0 24 24">
+       <path fill-rule="evenodd" clip-rule="evenodd" d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h16v2H4v-2z"></path>
+      </svg></button>
+    </div>
+   </div>
+   <nav id="mobile-menu" class="mobile-menu md:hidden bg-maroon pb-4"> <a href="index.html" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Home</a> <a href="index.html#how-it-works" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">How It Works</a> <a href="index.html#why-choose-us" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Why Choose Us</a> <a href="detailed_runners.html" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Find a Runner</a> <a href="index.html#testimonials" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Reviews</a> <a href="index.html#contact" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Contact</a> <a href="runner_registration.html" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Become a Runner</a>
+    <div class="px-6 pt-4 flex flex-col space-y-3"> <a href="#" class="bg-gold text-maroon px-4 py-2 rounded-full text-center hover:bg-white hover:text-maroon transition duration-300">Login</a> <a href="#" class="bg-white text-maroon px-4 py-2 rounded-full text-center hover:bg-gold hover:text-maroon transition duration-300">Sign Up</a>
+    </div>
+   </nav>
+  </header>
+  <main class="flex items-center justify-center min-h-screen bg-gray-50 px-4">
+   <div class="w-full max-w-md bg-white p-8 rounded-lg shadow-xl border border-gray-200">
+    <div class="text-center mb-8">
+     <img src="https://img.icons8.com/fluent/96/7B1E3A/running.png" alt="Errand Logo" class="mx-auto mb-4">
+     <h2 id="form-title" class="text-3xl font-extrabold text-maroon">Login to Your Account</h2>
+     <p class="text-gray-600 mt-2">Welcome back! Please enter your details to manage your errands.</p>
+    </div>
+
+    <form id="auth-form" class="space-y-6">
+     <div id="name-field" class="hidden">
+      <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+      <input type="text" id="name" name="name" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-gold focus:border-gold sm:text-sm" placeholder="John Doe">
+     </div>
+     <div>
+      <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+      <input type="email" id="email" name="email" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-gold focus:border-gold sm:text-sm" placeholder="you@example.com">
+     </div>
+     <div>
+      <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+      <input type="password" id="password" name="password" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-gold focus:border-gold sm:text-sm" placeholder="••••••••">
+     </div>
+     <div id="confirm-password-field" class="hidden">
+      <label for="confirm-password" class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+      <input type="password" id="confirm-password" name="confirm-password" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-gold focus:border-gold sm:text-sm" placeholder="••••••••">
+     </div>
+
+     <div class="flex items-center justify-between" id="forgot-password-link">
+      <div class="flex items-center">
+       <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-maroon focus:ring-gold border-gray-300 rounded">
+       <label for="remember-me" class="ml-2 block text-sm text-gray-900"> Remember me </label>
+      </div>
+      <div class="text-sm"> <a href="#" class="font-medium text-maroon hover:text-gold"> Forgot your password? </a>
+      </div>
+     </div>
+
+     <div>
+      <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-semibold text-white bg-maroon hover:bg-gold hover:text-maroon focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold transition duration-300"> Sign In </button>
+     </div>
+    </form>
+
+    <div class="mt-6 text-center">
+     <p class="text-sm text-gray-600"> Don't have an account? <button id="toggle-form-button" class="font-medium text-maroon hover:text-gold focus:outline-none"> Sign Up </button> </p>
+    </div>
+   </div>
+  </main>
+  <footer class="bg-gray-800 text-gray-300 py-12">
+   <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div>
+     <h4 class="text-lg font-bold text-gold mb-4">Run Me An Errand</h4>
+     <p class="text-sm mb-2">Your reliable partner for errand services across Kenya.</p>
+     <p class="text-sm">© 2025 Run Me An Errand. All rights reserved.</p>
+    </div>
+    <div>
+     <h4 class="text-lg font-bold text-gold mb-4">Quick Links</h4>
+     <ul class="space-y-2 text-sm">
+      <li><a href="index.html" class="hover:text-gold transition-colors duration-200">Home</a></li>
+      <li><a href="#" class="hover:text-gold transition-colors duration-200">Services</a></li>
+      <li><a href="index.html#how-it-works" class="hover:text-gold transition-colors duration-200">How It Works</a></li>
+      <li><a href="index.html#why-choose-us" class="hover:text-gold transition-colors duration-200">Why Choose Us</a></li>
+      <li><a href="detailed_runners.html" class="hover:text-gold transition-colors duration-200">Find a Runner</a></li>
+      <li><a href="index.html#testimonials" class="hover:text-gold transition-colors duration-200">Reviews</a></li>
+      <li><a href="index.html#contact" class="hover:text-gold transition-colors duration-200">Contact Us</a></li>
+      <li><a href="runner_registration.html" class="hover:text-gold transition-colors duration-200">Become a Runner</a></li>
+      <li><a href="#" class="hover:text-gold transition-colors duration-200">FAQ</a></li>
+      <li><a href="#" class="hover:text-gold transition-colors duration-200">Privacy Policy</a></li>
+      <li><a href="#" class="hover:text-gold transition-colors duration-200">Terms of Service</a></li>
+     </ul>
+    </div>
+    <div>
+     <h4 class="text-lg font-bold text-gold mb-4">Contact Info</h4>
+     <p class="text-sm mb-2">Email: <a href="mailto:support@runerrand.co.ke" class="hover:text-gold">support@runerrand.co.ke</a></p>
+     <p class="text-sm mb-2">Phone: <a href="tel:+254712345678" class="hover:text-gold">+254 712 345 678</a></p>
+     <div class="flex space-x-4 mt-4"> <a href="#" class="text-gray-300 hover:text-gold" aria-label="Twitter">
+       <svg class="h-5 w-5 fill-current" viewbox="0 0 24 24">
+        <path fill="currentColor" d="M22.46 6c-.77.67-1.72 1.13-2.77 1.33a4.76 4.76 0 002.07-2.62c-.82.48-1.75.83-2.79 1.02a4.78 4.78 0 00-8.13 4.3A13.54 13.54 0 013.57 4.3c.83 1.42 2.08 2.4 3.57 3.07a4.78 4.78 0 00-2.22-.61c.3-.08.59-.12.88-.12a4.78 4.78 0 004.46 3.31 9.5 9.5 0 01-5.78 1.98c-.34-.1-.68-.16-1.02-.18a4.75 4.75 0 004.88 3.3 9.5 9.5 0 01-7.64 3.27c-.36-.02-.72-.03-1.08-.03a13.57 13.57 0 006.94 2.16c4.16 0 7.67-3.46 7.67-7.67 0-.12 0-.23-.34-.69a4.66 4.66 0 001.53-1.3"></path>
+       </svg></a> <a href="#" class="text-gray-300 hover:text-gold" aria-label="Facebook">
+       <svg class="h-5 w-5 fill-current" viewbox="0 0 24 24">
+        <path fill="currentColor" d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.88V15H8v-3h2V9.5c0-2.17 1.34-3.34 3.27-3.34 1.83 0 2.93 1.5 2.93 3.34V12h2v3h-2v6.88c4.56-1.01 8-5.04 8-9.88z"></path>
+       </svg></a> <a href="#" class="text-gray-300 hover:text-gold" aria-label="Instagram">
+       <svg class="h-5 w-5 fill-current" viewbox="0 0 24 24">
+        <path fill="currentColor" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.148 3.252-1.691-4.771-4.919-4.919.058-1.265-.069-1.644-.069-4.849 0-3.205.012-3.584.069-4.849.148-3.252 1.691-4.771 4.919-4.919 1.265-.058 1.644-.07 4.849-.07zM12 6.893c-2.857 0-5.146 2.289-5.146 5.146 0 2.857 2.289 5.146 5.146 5.146 2.857 0 5.146-2.289 5.146-5.146 0-2.857-2.289-5.146-5.146-5.146zm0 8.469c-1.827 0-3.333-1.506-3.333-3.333 0-1.827 1.506-3.333 3.333-3.333 1.827 0 3.333 1.506 3.333 3.333 0 1.827-1.506 3.333-3.333 3.333z"></path>
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M12 3.998c-4.414 0-8 3.586-8 8 0 4.414 3.586 8 8 8 4.414 0 8-3.586 8-8 0-4.414-3.586-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-3.31 2.69-6 6-6 3.31 0 6 2.69 6 6 0 3.31-2.69 6-6 6z"></path>
+       </svg></a>
+     </div>
+    </div>
+   </div>
+  </footer>
+  <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu toggle
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('active');
+            });
+
+            // Toggle between Login and Sign Up forms
+            const toggleFormButton = document.getElementById('toggle-form-button');
+            const formTitle = document.getElementById('form-title');
+            const formSubtitle = document.querySelector('.text-gray-600.mt-2'); // Select the subtitle
+            const submitButton = document.querySelector('#auth-form button[type="submit"]');
+            const nameField = document.getElementById('name-field');
+            const confirmPasswordField = document.getElementById('confirm-password-field');
+            const forgotPasswordLink = document.getElementById('forgot-password-link');
+
+            let isLoginForm = true; // State to track current form (true for login, false for signup)
+
+            toggleFormButton.addEventListener('click', function() {
+                isLoginForm = !isLoginForm; // Toggle state
+
+                if (isLoginForm) {
+                    formTitle.textContent = 'Login to Your Account';
+                    formSubtitle.textContent = 'Welcome back! Please enter your details to manage your errands.';
+                    submitButton.textContent = 'Sign In';
+                    toggleFormButton.textContent = 'Sign Up';
+                    nameField.classList.add('hidden');
+                    confirmPasswordField.classList.add('hidden');
+                    forgotPasswordLink.classList.remove('hidden');
+                } else {
+                    formTitle.textContent = 'Create Your Client Account'; // Specific for clients
+                    formSubtitle.textContent = 'Join us and start getting your errands run effortlessly!'; // Specific for clients
+                    submitButton.textContent = 'Sign Up';
+                    toggleFormButton.textContent = 'Login';
+                    nameField.classList.remove('hidden');
+                    confirmPasswordField.classList.remove('hidden');
+                    forgotPasswordLink.classList.add('hidden'); // Hide for signup
+                }
+            });
+
+            // Basic form submission (for demonstration, replace with actual backend logic)
+            const authForm = document.getElementById('auth-form');
+            authForm.addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent default form submission
+
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                let message = '';
+
+                if (isLoginForm) {
+                    // Simulate login
+                    if (email === 'client@example.com' && password === 'password123') { // Updated demo credentials
+                        message = 'Login successful! Redirecting to your errands dashboard...';
+                        // In a real app, you'd redirect to the user's dashboard or profile
+                        window.location.href = 'user_profile.html'; // Example redirect to client profile
+                    } else {
+                        message = 'Invalid email or password. Please try again.';
+                    }
+                } else {
+                    const name = document.getElementById('name').value;
+                    const confirmPassword = document.getElementById('confirm-password').value;
+
+                    if (password === confirmPassword) {
+                        message = `Welcome, ${name}! Your client account has been created. Please log in.`;
+                        // In a real app, you'd send data to a registration API
+                        // After successful signup, you might switch back to login form or auto-login
+                        isLoginForm = true; // Switch to login view after successful signup
+                        formTitle.textContent = 'Login to Your Account';
+                        formSubtitle.textContent = 'Welcome back! Please enter your details to manage your errands.';
+                        submitButton.textContent = 'Sign In';
+                        toggleFormButton.textContent = 'Sign Up';
+                        nameField.classList.add('hidden');
+                        confirmPasswordField.classList.add('hidden');
+                        forgotPasswordLink.classList.remove('hidden');
+                    } else {
+                        message = 'Passwords do not match. Please try again.';
+                    }
+                }
+                alert(message); // Simple alert for demonstration
+            });
+        });
+    </script>
+ 
+</body></html>
+    
