@@ -15,245 +15,277 @@
         .bg-maroon { background-color: var(--maroon); }
         .text-gold { color: var(--gold); }
         .bg-gold { background-color: var(--gold); }
+        .border-maroon { border-color: var(--maroon); }
 
-        /* --- Global Animations --- */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-            animation: fadeIn 0.5s ease-out forwards;
-        }
+    /* --- Global Animations --- */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+        animation: fadeIn 0.5s ease-out forwards;
+    }
 
-        @keyframes fadeDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-down {
-            animation: fadeDown 0.5s ease-out forwards;
-        }
+    @keyframes fadeDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-down {
+        animation: fadeDown 0.5s ease-out forwards;
+    }
 
-        @keyframes slideInLeft {
-            from { opacity: 0; transform: translateX(-50px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-        .animate-slide-in-left {
-            animation: slideInLeft 0.7s ease-out forwards;
-        }
+    @keyframes slideInLeft {
+        from { opacity: 0; transform: translateX(-50px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    .animate-slide-in-left {
+        animation: slideInLeft 0.7s ease-out forwards;
+    }
 
-        @keyframes slideInRight {
-            from { opacity: 0; transform: translateX(50px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-        .animate-slide-in-right {
-            animation: slideInRight 0.7s ease-out forwards;
-        }
+    @keyframes slideInRight {
+        from { opacity: 0; transform: translateX(50px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    .animate-slide-in-right {
+        animation: slideInRight 0.7s ease-out forwards;
+    }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.03); }
-        }
-        .animate-pulse-subtle {
-            animation: pulse 2s infinite ease-in-out;
-        }
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.03); }
+    }
+    .animate-pulse-subtle {
+        animation: pulse 2s infinite ease-in-out;
+    }
 
-        @keyframes backgroundPan {
-            0% { background-position: 0% 0%; }
-            50% { background-position: 10% 10%; }
-            100% { background-position: 0% 0%; }
-        }
-        .animate-bg-pan {
-            animation: backgroundPan 30s infinite alternate ease-in-out;
-        }
+    @keyframes backgroundPan {
+        0% { background-position: 0% 0%; }
+        50% { background-position: 10% 10%; }
+        100% { background-position: 0% 0%; }
+    }
+    .animate-bg-pan {
+        animation: backgroundPan 30s infinite alternate ease-in-out;
+    }
 
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-8px); }
-            100% { transform: translateY(0px); }
-        }
-        .animate-float {
-            animation: float 3s ease-in-out infinite;
-        }
+    @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-8px); }
+        100% { transform: translateY(0px); }
+    }
+    .animate-float {
+        animation: float 3s ease-in-out infinite;
+    }
 
-        /* --- "Why Choose Us" Specific Animations --- */
-        @keyframes rotateIn {
-            from { opacity: 0; transform: rotate(-90deg) scale(0.5); }
-            to { opacity: 1; transform: rotate(0deg) scale(1); }
-        }
-        .animate-rotate-in {
-            animation: rotateIn 0.8s ease-out forwards;
-        }
+    /* --- "Why Choose Us" Specific Animations --- */
+    @keyframes rotateIn {
+        from { opacity: 0; transform: rotate(-90deg) scale(0.5); }
+        to { opacity: 1; transform: rotate(0deg) scale(1); }
+    }
+    .animate-rotate-in {
+        animation: rotateIn 0.8s ease-out forwards;
+    }
 
-        @keyframes flipInX {
-            from { transform: perspective(400px) rotateX(90deg); opacity: 0; }
-            40% { transform: perspective(400px) rotateX(-10deg); }
-            70% { transform: perspective(400px) rotateX(10deg); }
-            to { transform: perspective(400px) rotateX(0deg); opacity: 1; }
-        }
-        .animate-flip-in-x {
-            animation: flipInX 0.8s ease-out forwards;
-        }
+    @keyframes flipInX {
+        from { transform: perspective(400px) rotateX(90deg); opacity: 0; }
+        40% { transform: perspective(400px) rotateX(-10deg); }
+        70% { transform: perspective(400px) rotateX(10deg); }
+        to { transform: perspective(400px) rotateX(0deg); opacity: 1; }
+    }
+    .animate-flip-in-x {
+        animation: flipInX 0.8s ease-out forwards;
+    }
 
-        @keyframes zoomIn {
-            from { opacity: 0; transform: scale(0.5); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        .animate-zoom-in {
-            animation: zoomIn 0.6s ease-out forwards;
-        }
+    @keyframes zoomIn {
+        from { opacity: 0; transform: scale(0.5); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    .animate-zoom-in {
+        animation: zoomIn 0.6s ease-out forwards;
+    }
 
-        /* --- Scroll-Triggered Animations --- */
-        .animated-item {
-            opacity: 0; /* Hidden by default */
-            transform: translateY(20px); /* Initial position for slide-up */
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-        }
-        .animated-item.is-visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    /* --- Scroll-Triggered Animations --- */
+    .animated-item {
+        opacity: 0; /* Hidden by default */
+        transform: translateY(20px); /* Initial position for slide-up */
+        transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .animated-item.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
 
-        /* Specific effects for "Why Choose Us" */
-        .animated-item.rotate-effect.is-visible {
-            animation: rotateIn 0.8s ease-out forwards;
-            opacity: 1;
-            transform: none;
-        }
+    /* Specific effects for "Why Choose Us" */
+    .animated-item.rotate-effect.is-visible {
+        animation: rotateIn 0.8s ease-out forwards;
+        opacity: 1;
+        transform: none;
+    }
 
-        .animated-item.flip-effect.is-visible {
-            animation: flipInX 0.8s ease-out forwards;
-            opacity: 1;
-            transform: none;
-        }
+    .animated-item.flip-effect.is-visible {
+        animation: flipInX 0.8s ease-out forwards;
+        opacity: 1;
+        transform: none;
+    }
 
-        .animated-item.zoom-effect.is-visible {
-            animation: zoomIn 0.6s ease-out forwards;
-            opacity: 1;
-            transform: none;
-        }
+    .animated-item.zoom-effect.is-visible {
+        animation: zoomIn 0.6s ease-out forwards;
+        opacity: 1;
+        transform: none;
+    }
 
-        /* --- Hero Section Specific Styles --- */
+    /* --- Hero Section Specific Styles --- */
+    .hero-background-image {
+        background-image: url('https://i.postimg.cc/Xv93p8J1/file-00000000c624622fb8df816c050f7dea.png');
+        background-size: cover; /* Use cover for all screen sizes */
+        background-position: center;
+        background-repeat: no-repeat;
+        position: relative;
+        z-index: 1;
+        overflow: hidden;
+        
+        min-height: 400px; /* Base min-height for desktop and larger screens */
+        height: auto; /* Allow height to adjust based on content and min-height */
+
+        display: flex;
+        align-items: center;
+        justify-content: center; /* Center content horizontally as well */
+        text-align: center; /* Ensure text is centered within the hero */
+    }
+    .hero-background-image::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.4); /* Dark overlay */
+        z-index: 0;
+    }
+
+    /* Mobile-specific styles for the hero image */
+    @media (max-width: 767px) { /* Tailwind's 'md' breakpoint is 768px, so this targets smaller */
         .hero-background-image {
-            background-image: url('https://i.postimg.cc/FsSWY69N/1d03e5daf4591eb4188b7ee22fc7b7b9.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            position: relative;
-            z-index: 1;
-            overflow: hidden;
+            min-height: 300px; /* Adjusted min-height for mobile */
         }
-        .hero-background-image::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.4); /* Dark overlay */
-            z-index: 0;
+        /* Adjust padding on the content itself for mobile */
+        .hero-background-image .max-w-6xl {
+            padding-top: 3rem; /* Adjusted padding for mobile content */
+            padding-bottom: 3rem; /* Adjusted padding for mobile content */
         }
+    }
 
-        /* --- Mobile Menu Styles --- */
-        .mobile-menu {
-            transition: max-height 0.3s ease-in-out;
-            overflow: hidden;
-            max-height: 0;
-        }
-        .mobile-menu.active {
-            max-height: 500px;
-        }
+    /* --- Mobile Menu Styles --- */
+    .mobile-menu {
+        transition: max-height 0.3s ease-in-out;
+        overflow: hidden;
+        max-height: 0;
+    }
+    .mobile-menu.active {
+        max-height: 500px;
+    }
 
-        /* --- Service Tabs Specific Styles & Animations --- */
+    /* --- Service Tabs Specific Styles & Animations --- */
+    .tab-button {
+        padding: 0.75rem 1.25rem;
+        border: 2px solid var(--maroon);
+        border-radius: 9999px; /* Tailwind's rounded-full */
+        color: var(--maroon);
+        font-weight: 600;
+        transition: all 0.3s ease;
+        white-space: nowrap; /* Prevent wrapping */
+        flex-shrink: 0; /* Prevent shrinking in flex container */
+    }
+    .tab-button.active {
+        background-color: var(--maroon);
+        color: white;
+        border-color: var(--maroon); /* Ensure border stays for consistency */
+    }
+    .tab-button:hover:not(.active) {
+        background-color: var(--gold);
+        color: var(--maroon);
+        border-color: var(--gold);
+    }
+
+    .tab-content {
+        display: none;
+        animation: fadeIn 0.5s ease-out forwards;
+    }
+    .tab-content.active {
+        display: block;
+    }
+
+    /* Overflow for horizontal scrolling tabs on small screens */
+    .tabs-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
+        scrollbar-width: none; /* Firefox */
+        padding-bottom: 0.5rem; /* Add some padding for scroll hint */
+    }
+    .tabs-container::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera */
+    }
+
+    /* Mobile adjustments for tab buttons */
+    @media (max-width: 767px) {
+        .tabs-container {
+            /* For mobile, make tabs take full width and stack if not enough space */
+            justify-content: flex-start; /* Align to start for scrolling */
+            flex-wrap: nowrap; /* Ensure they don't wrap and enable scrolling */
+            padding-left: 1rem; /* Add some padding on sides for smaller screens */
+            padding-right: 1rem;
+        }
         .tab-button {
-            @apply px-6 py-3 text-lg font-semibold rounded-t-lg transition-all duration-300;
-            background-color: white;
-            color: black;
-            border-bottom: 3px solid transparent;
-            opacity: 0; /* Hidden by default for animation */
-            transform: translateY(20px);
+            padding: 0.5rem 1rem; /* Smaller padding for mobile buttons */
+            font-size: 0.875rem; /* Smaller font size */
+            margin-right: 0.5rem; /* Spacing between buttons */
+            height: auto; /* Ensure height adjusts to content */
+            display: inline-flex; /* Use inline-flex to shrink to content but still allow flex behaviors */
+            align-items: center;
+            justify-content: center;
         }
+    }
 
-        .tab-button.active {
-            @apply bg-black text-white;
-            border-bottom-color: var(--gold);
-        }
+    /* Animation for individual service list items within tabs */
+    .service-list-item {
+        opacity: 0;
+        transform: translateY(10px);
+        animation: fadeInListItem 0.4s ease-out forwards;
+    }
+    @keyframes fadeInListItem {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
 
-        .tab-content {
-            display: none;
-            opacity: 0;
-            transform: scale(0.95); /* Zoom out slightly */
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-            transform-origin: center top; /* For more dramatic zoom */
-        }
-        .tab-content.active {
-            display: block;
-            opacity: 1;
-            transform: scale(1);
-        }
 
-        /* Animation for individual service cards */
-        .service-card {
-            opacity: 0;
-            transform: scale(0.8);
-            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-        }
-        .service-card.is-visible {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        /* --- "How It Works" & "Become a Runner" specific animations --- */
-        .step-icon {
-            opacity: 0;
-            transform: scale(0.5);
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-        }
-        .step-icon.is-visible {
-            opacity: 1;
-            transform: scale(1);
-            animation: bounceIn 0.8s ease-out forwards; /* Add a bounce */
-        }
-        @keyframes bounceIn {
-            0% { transform: scale(0.3); opacity: 0; }
-            50% { transform: scale(1.1); opacity: 1; }
-            70% { transform: scale(0.95); }
-            100% { transform: scale(1); }
-        }
-
-        .runner-image {
-            opacity: 0;
-            transform: translateX(100px);
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-        }
-        .runner-image.is-visible {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        /* Testimonial Cards Animation */
-        .testimonial-card {
-            opacity: 0;
-            transform: rotateX(-30deg) translateY(50px);
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-            transform-origin: center bottom;
-        }
-        .testimonial-card.is-visible {
-            opacity: 1;
-            transform: rotateX(0deg) translateY(0);
-        }
-
-    </style> 
+    /* --- "How It Works" & "Become a Runner" specific animations --- */
+    .step-icon {
+        opacity: 0;
+        transform: scale(0.5);
+        transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .step-icon.is-visible {
+        opacity: 1;
+        transform: scale(1);
+        animation: bounceIn 0.8s ease-out forwards; /* Add a bounce */
+    }
+    @keyframes bounceIn {
+        0% { transform: scale(0.3); opacity: 0; }
+        50% { transform: scale(1.1); opacity: 1; }
+        70% { transform: scale(0.95); }
+        100% { transform: scale(1); }
+    }
+</style> 
  </head> 
  <body class="bg-gray-100 text-gray-800 font-sans"> 
   <header class="bg-maroon shadow-md sticky top-0 z-50 transition-shadow duration-300"> 
-   <div class="max-w-7xl mx-auto flex justify-between items-center py-5 px-6"> <a href="/" class="flex items-center space-x-2 animate-fade-in"> <img src="https://img.icons8.com/fluent/48/ffffff/running.png" alt="Errand Logo"> <h1 class="text-2xl font-bold text-white transition-colors duration-300 hover:text-gold">Run Me An Errand</h1> </a> 
+   <div class="max-w-7xl mx-auto flex justify-between items-center py-5 px-6"> <a href="/" class="flex items-center space-x-2 animate-fade-in"> <img src="https://i.postimg.cc/d1z9KLkL/ei-1752053865516-removebg-preview.png" alt="Errand Logo" class="h-16 w-auto"> <h1 class="text-2xl font-bold text-white transition-colors duration-300 hover:text-gold">Run Me An Errand</h1> </a> 
     <nav class="hidden md:flex space-x-6 text-lg"> <a href="#" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.1s;">Home</a> 
      <div class="relative group animate-fade-in" style="animation-delay: 0.2s;"> <button class="text-gray-300 hover:text-gold transition-colors duration-300 flex items-center"> Services 
        <svg class="fill-current h-4 w-4 ml-1" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 20 20"> <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"></path> 
        </svg></button> 
-      <div class="absolute z-10 bg-white shadow rounded-md overflow-hidden mt-2 w-48 opacity-0 group-hover:opacity-100 transition-opacity duration-300"> <a href="runners.html?task=grocery" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Grocery Delivery</a> <a href="runners.html?task=parcel" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Parcel Pickup</a> <a href="runners.html?task=queue" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Queueing Services</a> <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">View All Services</a> 
+      <div class="absolute z-10 bg-white shadow rounded-md overflow-hidden mt-2 w-48 opacity-0 group-hover:opacity-100 transition-opacity duration-300"> <a href="#tab-shopping" class="block px-4 py-2 text-gray-800 hover:bg-gray-100 service-link">Shopping Errands</a> <a href="#tab-delivery" class="block px-4 py-2 text-gray-800 hover:bg-gray-100 service-link">Delivery &amp; Pick-Up Errands</a> <a href="#tab-queuing" class="block px-4 py-2 text-gray-800 hover:bg-gray-100 service-link">Queuing &amp; Waiting Services</a> <a href="#tab-personal" class="block px-4 py-2 text-gray-800 hover:bg-gray-100 service-link">Personal Errands</a> <a href="#tab-office" class="block px-4 py-2 text-gray-800 hover:bg-gray-100 service-link">Office Errands</a> <a href="#tab-custom" class="block px-4 py-2 text-gray-800 hover:bg-gray-100 service-link">Custom Errands</a> 
       </div> 
-     </div> <a href="#how-it-works" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.3s;">How It Works</a> <a href="#why-choose-us" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.4s;">Why Choose Us</a> <a href="#testimonials" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.5s;">Reviews</a> <a href="#contact" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.6s;">Contact</a> <a href="#" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.7s;">Become a Runner</a> 
+     </div> <a href="#how-it-works" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.3s;">How It Works</a> <a href="#why-choose-us" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.4s;">Why Choose Us</a> <a href="#contact" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.6s;">Contact</a> <a href="#" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.7s;">Become a Runner</a> 
     </nav> 
     <div class="hidden md:flex space-x-4"> <a href="#" class="bg-gold text-maroon px-4 py-2 rounded-full hover:bg-white hover:text-maroon transition duration-300 animate-zoom-in" style="animation-delay: 0.8s;">Login</a> <a href="#" class="bg-white text-maroon px-4 py-2 rounded-full hover:bg-gold hover:text-maroon transition duration-300 animate-zoom-in" style="animation-delay: 0.9s;">Sign Up</a> 
     </div> 
@@ -266,14 +298,14 @@
     <div class="relative group"> <button class="w-full text-left px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300 flex items-center justify-between"> Services 
       <svg class="fill-current h-4 w-4 ml-1" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 20 20"> <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"></path> 
       </svg></button> 
-     <div class="bg-maroon-light shadow-inner overflow-hidden max-h-0 group-focus-within:max-h-screen transition-all duration-300"> <a href="runners.html?task=grocery" class="block px-8 py-2 text-gray-200 hover:bg-maroon-dark hover:text-gold">Grocery Delivery</a> <a href="runners.html?task=parcel" class="block px-8 py-2 text-gray-200 hover:bg-maroon-dark hover:text-gold">Parcel Pickup</a> <a href="runners.html?task=queue" class="block px-8 py-2 text-gray-200 hover:bg-maroon-dark hover:text-gold">Queueing Services</a> <a href="#" class="block px-8 py-2 text-gray-200 hover:bg-maroon-dark hover:text-gold">View All Services</a> 
+     <div class="bg-maroon-light shadow-inner overflow-hidden max-h-0 group-focus-within:max-h-screen transition-all duration-300"> <a href="#tab-shopping" class="block px-8 py-2 text-gray-200 hover:bg-maroon-dark hover:text-gold service-link">Shopping Errands</a> <a href="#tab-delivery" class="block px-8 py-2 text-gray-200 hover:bg-maroon-dark hover:text-gold service-link">Delivery &amp; Pick-Up Errands</a> <a href="#tab-queuing" class="block px-8 py-2 text-gray-200 hover:bg-maroon-dark hover:text-gold service-link">Queuing &amp; Waiting Services</a> <a href="#tab-personal" class="block px-8 py-2 text-gray-200 hover:bg-maroon-dark hover:text-gold service-link">Personal Errands</a> <a href="#tab-office" class="block px-8 py-2 text-gray-200 hover:bg-maroon-dark hover:text-gold service-link">Office Errands</a> <a href="#tab-custom" class="block px-8 py-2 text-gray-200 hover:bg-maroon-dark hover:text-gold service-link">Custom Errands</a> 
      </div> 
-    </div> <a href="#how-it-works" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">How It Works</a> <a href="#why-choose-us" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Why Choose Us</a> <a href="#testimonials" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Reviews</a> <a href="#contact" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Contact</a> <a href="#" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Become a Runner</a> 
+    </div> <a href="#how-it-works" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">How It Works</a> <a href="#why-choose-us" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Why Choose Us</a> <a href="#contact" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Contact</a> <a href="#" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Become a Runner</a> 
     <div class="px-6 pt-4 flex flex-col space-y-3"> <a href="#" class="bg-gold text-maroon px-4 py-2 rounded-full text-center hover:bg-white hover:text-maroon transition duration-300">Login</a> <a href="#" class="bg-white text-maroon px-4 py-2 rounded-full text-center hover:bg-gold hover:text-maroon transition duration-300">Sign Up</a> 
     </div> 
    </nav> 
   </header> 
-  <section class="hero-background-image py-24 animate-bg-pan"> 
+  <section class="hero-background-image animate-bg-pan"> 
    <div class="max-w-6xl mx-auto px-6 text-center relative z-10"> 
     <h2 class="text-4xl lg:text-5xl font-extrabold text-white mb-6 animate-slide-in-left" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.6);">Your Trusted Partner for Fast &amp; Reliable Errands in Kenya</h2> 
     <p class="text-lg lg:text-xl text-white mb-8 animate-slide-in-right" style="animation-delay: 0.2s;">Get your tasks done quickly and efficiently by our network of trusted runners.</p> 
@@ -281,86 +313,65 @@
      <input type="text" id="errand-search" placeholder="E.g., Pick up dry cleaning, Deliver documents..." class="w-full md:w-2/3 lg:w-1/2 px-6 py-3 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-gold text-gray-800 animated-item" style="animation-delay: 0.4s;"> <button class="bg-gold text-maroon px-8 py-3 font-semibold rounded-full shadow-md hover:bg-maroon hover:text-white transition duration-300 animate-pulse-subtle">Request Errand</button> 
     </div> 
    </div> 
-  </section>
-<section class="text-center bg-white py-12">
-  <h2 class="text-2xl font-semibold text-maroon mb-6">How would you like to get help?</h2>
-  <div class="flex flex-col md:flex-row justify-center gap-6">
-    <a href="assign-runner.html" class="bg-gold text-maroon font-semibold px-6 py-3 rounded-full hover:bg-yellow-400 transition duration-300">Assign Me a Runner</a>
-    <a href="runners.html" class="bg-white border-2 border-gold text-maroon font-semibold px-6 py-3 rounded-full hover:bg-gold hover:text-white transition duration-300">Pick a Runner Myself</a>
-  </div>
-</section>
- 
-  <section class="max-w-7xl mx-auto py-16 px-6"> 
-   <h2 class="text-3xl font-bold text-center text-maroon mb-12 animate-fade-down animated-item">Explore Our Services</h2> 
-   <div class="flex justify-center flex-wrap gap-4 mb-8"> <button class="tab-button active animated-item" data-tab="everyday" style="animation-delay: 0.1s;"></button> <button class="tab-button animated-item" data-tab="delivery" style="animation-delay: 0.2s;"></button> <button class="tab-button animated-item" data-tab="home" style="animation-delay: 0.3s;"></button> <button class="tab-button animated-item" data-tab="financial" style="animation-delay: 0.4s;"></button> 
+  </section> 
+  <section class="text-center bg-white py-12"> 
+   <h2 class="text-2xl font-semibold text-maroon mb-6">How would you like to get help?</h2> 
+   <div class="flex flex-col md:flex-row justify-center gap-6"> <a href="assign-runner.html" class="bg-gold text-maroon font-semibold px-6 py-3 rounded-full hover:bg-yellow-400 transition duration-300">Assign Me a Runner</a> <a href="runners.html" class="bg-white border-2 border-gold text-maroon font-semibold px-6 py-3 rounded-full hover:bg-gold hover:text-white transition duration-300">Pick a Runner Myself</a> 
    </div> 
-   <div id="everyday" class="tab-content active bg-white rounded-xl shadow-md p-8"> 
-    <h3 class="text-2xl font-bold text-maroon mb-6 text-center animated-item">Everyday Errands</h3> 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"> 
-     <div class="p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow service-card" style="animation-delay: 0.1s;"> 
-      <h4 class="text-lg font-semibold text-maroon">Grocery Delivery</h4> 
-      <p class="text-gray-700 text-sm mt-1">Fresh groceries delivered to your doorstep from your preferred store.</p> 
-     </div> 
-     <div class="p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow service-card" style="animation-delay: 0.2s;"> 
-      <h4 class="text-lg font-semibold text-maroon">Pharmacy Pickup</h4> 
-      <p class="text-gray-700 text-sm mt-1">Get your prescriptions and over-the-counter medicines without the hassle.</p> 
-     </div> 
-     <div class="p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow service-card" style="animation-delay: 0.3s;"> 
-      <h4 class="text-lg font-semibold text-maroon">Laundry Pickup &amp; Delivery</h4> 
-      <p class="text-gray-700 text-sm mt-1">Have your laundry picked up, cleaned, and delivered back to you.</p> 
-     </div> 
-     <div class="p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow service-card" style="animation-delay: 0.4s;"> 
-      <h4 class="text-lg font-semibold text-maroon">Queueing Services</h4> 
-      <p class="text-gray-700 text-sm mt-1">Skip the lines at banks, government offices, or events – we'll handle the wait.</p> 
-     </div> 
-    </div> 
+  </section> --- 
+  <section id="services-section" class="max-w-7xl mx-auto py-16 px-6 bg-white rounded-xl shadow-md"> 
+   <h2 class="text-3xl font-bold text-center text-maroon mb-12 animate-fade-down animated-item">Types of Errands We Handle</h2> 
+   <div class="tabs-container mb-8 flex space-x-4 justify-center md:justify-start"> <button class="tab-button active" data-tab="tab-shopping">Shopping Errands</button> <button class="tab-button" data-tab="tab-delivery">Delivery &amp; Pick-Up</button> <button class="tab-button" data-tab="tab-queuing">Queuing &amp; Waiting</button> <button class="tab-button" data-tab="tab-personal">Personal Errands</button> <button class="tab-button" data-tab="tab-office">Office Errands</button> <button class="tab-button" data-tab="tab-custom">Custom Errands</button> 
    </div> 
-   <div id="delivery" class="tab-content bg-white rounded-xl shadow-md p-8"> 
-    <h3 class="text-2xl font-bold text-maroon mb-6 text-center animated-item">Delivery Services</h3> 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"> 
-     <div class="p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow service-card" style="animation-delay: 0.1s;"> 
-      <h4 class="text-lg font-semibold text-maroon">Parcel Pickup &amp; Delivery</h4> 
-      <p class="text-gray-700 text-sm mt-1">Send and receive packages and documents quickly and securely.</p> 
-     </div> 
-     <div class="p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow service-card" style="animation-delay: 0.2s;"> 
-      <h4 class="text-lg font-semibold text-maroon">Document Drop-Off</h4> 
-      <p class="text-gray-700 text-sm mt-1">Reliable and fast delivery of important documents to any specified location.</p> 
-     </div> 
-     <div class="p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow service-card" style="animation-delay: 0.3s;"> 
-      <h4 class="text-lg font-semibold text-maroon">Water Delivery</h4> 
-      <p class="text-gray-700 text-sm mt-1">Get clean drinking water delivered to your home or office.</p> 
-     </div> 
-    </div> 
+   <div id="tab-shopping" class="tab-content active bg-gray-50 p-6 rounded-lg shadow-inner"> 
+    <h3 class="text-2xl font-bold text-maroon mb-4">Shopping Errands</h3> 
+    <ul class="list-disc list-inside text-gray-700 space-y-2"> 
+     <li class="service-list-item" style="animation-delay: 0.0s;">Grocery shopping</li> 
+     <li class="service-list-item" style="animation-delay: 0.05s;">Market runs (fruits, vegetables, household supplies)</li> 
+     <li class="service-list-item" style="animation-delay: 0.10s;">Supermarket purchases</li> 
+     <li class="service-list-item" style="animation-delay: 0.15s;">Boutique/clothing pick-ups</li> 
+     <li class="service-list-item" style="animation-delay: 0.20s;">Electronics and accessories shopping</li> 
+    </ul> 
    </div> 
-   <div id="home" class="tab-content bg-white rounded-xl shadow-md p-8"> 
-    <h3 class="text-2xl font-bold text-maroon mb-6 text-center animated-item">Home Services</h3> 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"> 
-     <div class="p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow service-card" style="animation-delay: 0.1s;"> 
-      <h4 class="text-lg font-semibold text-maroon">Electrician Services</h4> 
-      <p class="text-gray-700 text-sm mt-1">Connect with qualified electricians for your electrical repairs and installations.</p> 
-     </div> 
-     <div class="p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow service-card" style="animation-delay: 0.2s;"> 
-      <h4 class="text-lg font-semibold text-maroon">Plumbing Services</h4> 
-      <p class="text-gray-700 text-sm mt-1">Find reliable plumbers for all your home plumbing needs.</p> 
-     </div> 
-     <div class="p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow service-card" style="animation-delay: 0.3s;"> 
-      <h4 class="text-lg font-semibold text-maroon">Car Wash Services</h4> 
-      <p class="text-gray-700 text-sm mt-1">Get your car professionally cleaned at your home or a convenient location.</p> 
-     </div> 
-    </div> 
+   <div id="tab-delivery" class="tab-content bg-gray-50 p-6 rounded-lg shadow-inner"> 
+    <h3 class="text-2xl font-bold text-maroon mb-4">Delivery &amp; Pick-Up Errands</h3> 
+    <ul class="list-disc list-inside text-gray-700 space-y-2"> 
+     <li class="service-list-item" style="animation-delay: 0.0s;">Parcel delivery</li> 
+     <li class="service-list-item" style="animation-delay: 0.05s;">Document pick-up and drop-off</li> 
+     <li class="service-list-item" style="animation-delay: 0.10s;">Gift delivery</li> 
+     <li class="service-list-item" style="animation-delay: 0.15s;">Food/meal pick-up and delivery</li> 
+     <li class="service-list-item" style="animation-delay: 0.20s;">Pharmacy/medication delivery</li> 
+    </ul> 
    </div> 
-   <div id="financial" class="tab-content bg-white rounded-xl shadow-md p-8"> 
-    <h3 class="text-2xl font-bold text-maroon mb-6 text-center animated-item">Financial &amp; Administrative</h3> 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"> 
-     <div class="p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow service-card" style="animation-delay: 0.1s;"> 
-      <h4 class="text-lg font-semibold text-maroon">Pay Bills</h4> 
-      <p class="text-gray-700 text-sm mt-1">Conveniently pay your utility bills, rent, or other payments online or in person.</p> 
-     </div> 
-     <div class="p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow service-card" style="animation-delay: 0.2s;"> 
-      <h4 class="text-lg font-semibold text-maroon">Mobile Money Transfers</h4> 
-      <p class="text-gray-700 text-sm mt-1">Send and receive money securely via M-Pesa, Airtel Money, or other mobile platforms.</p> 
-     </div> 
-    </div> 
+   <div id="tab-queuing" class="tab-content bg-gray-50 p-6 rounded-lg shadow-inner"> 
+    <h3 class="text-2xl font-bold text-maroon mb-4">Queuing &amp; Waiting Services</h3> 
+    <ul class="list-disc list-inside text-gray-700 space-y-2"> 
+     <li class="service-list-item" style="animation-delay: 0.0s;">Queuing for services (banks, clinics, government offices)</li> 
+     <li class="service-list-item" style="animation-delay: 0.05s;">Holding a spot in line</li> 
+     <li class="service-list-item" style="animation-delay: 0.10s;">Waiting for deliveries or service providers at home or office</li> 
+    </ul> 
+   </div> 
+   <div id="tab-personal" class="tab-content bg-gray-50 p-6 rounded-lg shadow-inner"> 
+    <h3 class="text-2xl font-bold text-maroon mb-4">Personal Errands</h3> 
+    <ul class="list-disc list-inside text-gray-700 space-y-2"> 
+     <li class="service-list-item" style="animation-delay: 0.0s;">Dry cleaning drop-off &amp; pick-up</li> 
+     <li class="service-list-item" style="animation-delay: 0.05s;">Shoe or clothing repair runs</li> 
+     <li class="service-list-item" style="animation-delay: 0.10s;">Paying school fees</li> 
+     <li class="service-list-item" style="animation-delay: 0.15s;">Buying event tickets or booking appointments</li> 
+    </ul> 
+   </div> 
+   <div id="tab-office" class="tab-content bg-gray-50 p-6 rounded-lg shadow-inner"> 
+    <h3 class="text-2xl font-bold text-maroon mb-4">Office Errands</h3> 
+    <ul class="list-disc list-inside text-gray-700 space-y-2"> 
+     <li class="service-list-item" style="animation-delay: 0.0s;">Mail and document runs</li> 
+     <li class="service-list-item" style="animation-delay: 0.05s;">Lunch runs for teams</li> 
+     <li class="service-list-item" style="animation-delay: 0.10s;">Office supplies purchase</li> 
+     <li class="service-list-item" style="animation-delay: 0.15s;">Bank or post office visits</li> 
+    </ul> 
+   </div> 
+   <div id="tab-custom" class="tab-content bg-gray-50 p-6 rounded-lg shadow-inner"> 
+    <h3 class="text-2xl font-bold text-maroon mb-4">Custom Errands</h3> 
+    <p class="text-gray-700 mt-1">Didn’t see your errand listed? No problem! Just tell us what you need — if it’s legal and doable, we’ll handle it.</p> 
    </div> 
   </section> --- 
   <section id="how-it-works" class="bg-white py-16 px-6"> 
@@ -396,57 +407,33 @@
     <h2 class="text-3xl font-bold text-maroon mb-12 animate-fade-down animated-item">Why Choose Run Me An Errand?</h2> 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"> 
      <div class="bg-white rounded-xl shadow-md p-6 animated-item rotate-effect"> 
-      <img src="https://img.icons8.com/external-flaticons-flat-flat-icons/64/external-trust-feedback-flaticons-flat-flat-icons-2.png" alt="Trusted Runners" class="mx-auto mb-4"> 
+      <img src="https://img.icons8.com/plasticine/100/null/good-quality--v1.png" alt="Verified &amp; Trusted" class="mx-auto mb-4 h-16 w-16"> 
       <h3 class="text-xl font-semibold text-maroon mb-3">Verified &amp; Trusted</h3> 
       <p class="text-gray-700">Our runners undergo thorough vetting for your peace of mind.</p> 
      </div> 
-     <div class="bg-white rounded-xl shadow-md p-6 animated-item flip-effect" style="animation-delay: 0.1s;"> 
-      <img src="https://img.icons8.com/external-flat-icons-maxicons/64/external-price-price-tag-flat-flat-icons-maxicons.png" alt="Transparent Pricing" class="mx-auto mb-4"> 
-      <h3 class="text-xl font-semibold text-maroon mb-3">Clear Pricing</h3> 
-      <p class="text-gray-700">No hidden fees. Know the cost upfront.</p> 
-     </div> 
      <div class="bg-white rounded-xl shadow-md p-6 animated-item zoom-effect" style="animation-delay: 0.2s;"> 
-      <img src="https://img.icons8.com/external-others-cactuserus/64/external-24-hours-customer-service-others-cactuserus-3.png" alt="24/7 Support" class="mx-auto mb-4"> 
+      <img src="https://img.icons8.com/plasticine/100/null/customer-support--v1.png" alt="24/7 Support" class="mx-auto mb-4 h-16 w-16"> 
       <h3 class="text-xl font-semibold text-maroon mb-3">24/7 Support</h3> 
       <p class="text-gray-700">Dedicated team always ready to assist you.</p> 
      </div> 
      <div class="bg-white rounded-xl shadow-md p-6 animated-item rotate-effect" style="animation-delay: 0.3s;"> 
-      <img src="https://img.icons8.com/external-flat-icons-vectorslab/64/external-Speed-marketing-seo-and-marketing-flat-icons-vectorslab.png" alt="Speed &amp; Efficiency" class="mx-auto mb-4"> 
+      <img src="https://img.icons8.com/plasticine/100/null/speed.png" alt="Speed &amp; Efficiency" class="mx-auto mb-4 h-16 w-16"> 
       <h3 class="text-xl font-semibold text-maroon mb-3">Speed &amp; Efficiency</h3> 
       <p class="text-gray-700">Your errands, completed swiftly and accurately.</p> 
      </div> 
      <div class="bg-white rounded-xl shadow-md p-6 animated-item flip-effect" style="animation-delay: 0.4s;"> 
-      <img src="https://img.icons8.com/external-others-cactuserus/64/external-flexibility-working-others-cactuserus-3.png" alt="Flexible Services" class="mx-auto mb-4"> 
+      <img src="https://img.icons8.com/plasticine/100/null/agreement.png" alt="Flexible Services" class="mx-auto mb-4 h-16 w-16"> 
       <h3 class="text-xl font-semibold text-maroon mb-3">Flexible Services</h3> 
       <p class="text-gray-700">Tailored solutions for your unique needs.</p> 
      </div> 
-     <div class="bg-white rounded-xl shadow-md p-6 animated-item zoom-effect" style="animation-delay: 0.5s;"> 
-      <img src="https://img.icons8.com/external-sbts2018-flat-sbts2018/64/external-convenience-shopping-and-commerce-sbts2018-flat-sbts2018.png" alt="Convenience" class="mx-auto mb-4"> 
-      <h3 class="text-xl font-semibold text-maroon mb-3">Total Convenience</h3> 
-      <p class="text-gray-700">Save time and energy, focus on what matters.</p> 
+     <div class="bg-white rounded-xl shadow-md p-6 animated-item flip-effect" style="animation-delay: 0.6s;"> 
+      <img src="https://img.icons8.com/plasticine/100/null/money-box--v1.png" alt="Affordable Pricing" class="mx-auto mb-4 h-16 w-16"> 
+      <h3 class="text-xl font-semibold text-maroon mb-3">Affordable Pricing</h3> 
+      <p class="text-gray-700">Competitive rates for all your errand needs.</p> 
      </div> 
     </div> 
    </div> 
-  </section> --- 
-  <section id="testimonials" class="py-16 bg-maroon text-white px-6"> 
-   <div class="max-w-6xl mx-auto text-center"> 
-    <h2 class="text-3xl font-bold text-gold mb-12 animate-fade-down animated-item">What Our Customers Say</h2> 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"> 
-     <div class="bg-white text-gray-800 rounded-xl shadow-md p-6 testimonial-card" style="animation-delay: 0.1s;"> 
-      <p class="italic mb-4">"Run Me An Errand has been a lifesaver! Groceries delivered right to my door, always on time and with a smile. Highly recommend!"</p> 
-      <p class="font-semibold">- Jane Wanjiku, Nairobi</p> 
-     </div> 
-     <div class="bg-white text-gray-800 rounded-xl shadow-md p-6 testimonial-card" style="animation-delay: 0.2s;"> 
-      <p class="italic mb-4">"I used them for a parcel pickup and was thoroughly impressed by the speed and professionalism. Fantastic service!"</p> 
-      <p class="font-semibold">- David Kipchoge, Mombasa</p> 
-     </div> 
-     <div class="bg-white text-gray-800 rounded-xl shadow-md p-6 testimonial-card" style="animation-delay: 0.3s;"> 
-      <p class="italic mb-4">"No more endless queues! Their queueing service saved me hours. The runner was communicative and efficient."</p> 
-      <p class="font-semibold">- Sarah Akinyi, Kisumu</p> 
-     </div> 
-    </div> 
-   </div> 
-  </section> --- 
+  </section> 
   <section class="py-16 bg-maroon text-white overflow-hidden relative"> 
    <div class="absolute bottom-0 left-0 w-1/2 md:w-1/3 opacity-60"> 
     <img src="https://img.icons8.com/bubbles/500/ffffff/scooter.png" alt="Scooter" class="transform scale-x-[-1]"> 
@@ -455,9 +442,6 @@
     <div class="animated-item" style="animation-delay: 0.1s;"> 
      <h3 class="text-3xl font-bold text-gold mb-6 animate-fade-right">Become a Runner and Earn</h3> 
      <p class="text-lg mb-8 animate-fade-right delay-200">Join our growing network of runners in Kenya and start earning by helping people with their errands. Flexible hours and great earning potential!</p> <a href="#" class="bg-gold text-maroon px-6 py-3 rounded-full font-semibold hover:bg-white hover:text-maroon transition duration-300 animate-pulse-subtle">Sign Up as a Runner Today!</a> 
-    </div> 
-    <div class="hidden md:block animated-item runner-image" style="animation-delay: 0.4s;"> 
-     <img src="https://img.icons8.com/plasticine/400/ffffff/man-running.png" alt="Become a Runner" class="rounded-lg shadow-md animate-float"> 
     </div> 
    </div> 
   </section> 
@@ -475,7 +459,6 @@
       <li><a href="#" class="hover:text-gold transition-colors duration-200">Services</a></li> 
       <li><a href="#how-it-works" class="hover:text-gold transition-colors duration-200">How It Works</a></li> 
       <li><a href="#why-choose-us" class="hover:text-gold transition-colors duration-200">Why Choose Us</a></li> 
-      <li><a href="#testimonials" class="hover:text-gold transition-colors duration-200">Reviews</a></li> 
       <li><a href="#contact" class="hover:text-gold transition-colors duration-200">Contact Us</a></li> 
       <li><a href="#" class="hover:text-gold transition-colors duration-200">Become a Runner</a></li> 
       <li><a href="#" class="hover:text-gold transition-colors duration-200">FAQ</a></li> 
@@ -507,121 +490,123 @@
                 root: null, // viewport
                 rootMargin: '0px',
                 threshold: 0.2 // Trigger when 20% of the item is visible
-            };
-
-            const observer = new IntersectionObserver((entries, obs) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add(className);
-                        // Apply animation delay if specified
-                        if (entry.target.style.animationDelay) {
-                            entry.target.style.animation = `${entry.target.style.animation.split(' ')[0]} ${parseFloat(entry.target.style.animationDelay.replace('s', '')) + 0.05}s ease-out forwards`; // Adjust animation duration if needed
+            };  const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add(className);
+                    // Apply animation delay if specified. Only set animation once.
+                    if (entry.target.style.animationDelay && !entry.target.dataset.animated) {
+                        const animationName = getComputedStyle(entry.target).animationName || 'none';
+                        if (animationName !== 'none') {
+                            entry.target.style.animation = `${animationName} ${parseFloat(entry.target.style.animationDelay.replace('s', '')) + 0.05}s ease-out forwards`;
                         }
-                        obs.unobserve(entry.target); // Stop observing after animation
+                        entry.target.dataset.animated = 'true'; // Mark as animated
                     }
-                });
-            }, observerOptions);
-
-            elements.forEach((el, index) => {
-                if (!el.classList.contains('active') && !el.classList.contains('animate-pulse-subtle') && !el.classList.contains('animate-float')) { // Exclude elements with initial animations
-                    el.style.animationDelay = `${index * delayIncrement}s`;
-                }
-                observer.observe(el);
-            });
-        };
-
-        // Apply animations to various sections
-        animateOnScroll('.animated-item', 'is-visible');
-        animateOnScroll('#why-choose-us .animated-item', 'is-visible'); // Specific animated items
-        animateOnScroll('.service-card', 'is-visible', 0.1); // Delay for service cards
-        animateOnScroll('.step-icon', 'is-visible', 0.15); // Delay for how-it-works icons
-        animateOnScroll('.testimonial-card', 'is-visible', 0.15); // Delay for testimonial cards
-        animateOnScroll('.runner-image', 'is-visible');
-
-
-        // --- Mobile Menu Toggle ---
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
-
-        if (mobileMenuButton && mobileMenu) {
-            mobileMenuButton.addEventListener('click', () => {
-                mobileMenu.classList.toggle('active');
-            });
-
-            // Close mobile menu when a link is clicked
-            mobileMenu.querySelectorAll('a').forEach(link => {
-                link.addEventListener('click', () => {
-                    mobileMenu.classList.remove('active');
-                });
-            });
-        }
-
-        // --- Dynamic Placeholder for Search Input ---
-        const searchInput = document.getElementById('errand-search');
-        const placeholders = [
-            "Pick up dry cleaning...",
-            "Deliver documents to CBD...",
-            "Buy groceries from Naivas...",
-            "Queue at the bank...",
-            "Get medicine from the pharmacy...",
-            "Pay my electricity bill..."
-        ];
-        let currentPlaceholderIndex = 0;
-
-        function updatePlaceholder() {
-            searchInput.placeholder = placeholders[currentPlaceholderIndex];
-            currentPlaceholderIndex = (currentPlaceholderIndex + 1) % placeholders.length;
-        }
-
-        setInterval(updatePlaceholder, 3000);
-        updatePlaceholder(); // Set initial placeholder
-
-        // --- Service Tabs Logic with Animations ---
-        const tabButtons = document.querySelectorAll('.tab-button');
-        const tabContents = document.querySelectorAll('.tab-content');
-
-        tabButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                // Deactivate all buttons
-                tabButtons.forEach(btn => btn.classList.remove('active', 'bg-black', 'text-white'));
-                // Hide all content with transition
-                tabContents.forEach(content => {
-                    content.classList.remove('active');
-                    // Reset service card visibility for next tab animation
-                    content.querySelectorAll('.service-card').forEach(card => {
-                        card.classList.remove('is-visible');
-                        card.style.opacity = '0'; // Ensure it's hidden before new tab shows
-                        card.style.transform = 'scale(0.8)';
-                    });
-                });
-
-                // Activate clicked button
-                button.classList.add('active', 'bg-black', 'text-white');
-
-                // Show corresponding content with animation
-                const targetTab = button.dataset.tab;
-                const contentToShow = document.getElementById(targetTab);
-                if (contentToShow) {
-                    contentToShow.classList.add('active');
-                    // Trigger animation for service cards within the active tab
-                    const serviceCardsInActiveTab = contentToShow.querySelectorAll('.service-card');
-                    serviceCardsInActiveTab.forEach((card, index) => {
-                        card.style.transitionDelay = `${index * 0.1}s`; // Stagger animation
-                        requestAnimationFrame(() => { // Ensure reflow before adding class
-                            card.classList.add('is-visible');
-                        });
-                    });
+                    obs.unobserve(entry.target); // Stop observing after animation
                 }
             });
+        }, observerOptions);
+
+        elements.forEach((el, index) => {
+            // Apply a default animation delay if not already set, for staggered effect
+            if (!el.style.animationDelay) {
+                el.style.animationDelay = `${index * delayIncrement}s`;
+            }
+            observer.observe(el);
+        });
+    };
+
+    // Apply animations to various sections
+    animateOnScroll('.animated-item', 'is-visible');
+    animateOnScroll('.step-icon', 'is-visible', 0.15); // Stagger for how-it-works icons
+
+    // --- Mobile Menu Toggle ---
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    if (mobileMenuButton && mobileMenu) {
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
         });
 
-        // Initialize first tab content to be visible and animated
-        if (tabButtons.length > 0) {
-            tabButtons[0].click(); // Simulate click on the first button to trigger initial animation
-            // Remove the initial 'animated-item' class from buttons if they should animate only on scroll after first load
-            tabButtons.forEach(button => button.classList.remove('animated-item'));
-        }
+        // Close mobile menu when a link is clicked
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+            });
+        });
+    }
+
+    // --- Dynamic Placeholder for Search Input ---
+    const searchInput = document.getElementById('errand-search');
+    const placeholders = [
+        "Pick up dry cleaning...",
+        "Deliver documents to CBD...",
+        "Buy groceries from Naivas...",
+        "Queue at the bank...",
+        "Get medicine from the pharmacy...",
+        "Pay my electricity bill..."
+    ];
+    let currentPlaceholderIndex = 0;
+
+    function updatePlaceholder() {
+        searchInput.placeholder = placeholders[currentPlaceholderIndex];
+        currentPlaceholderIndex = (currentPlaceholderIndex + 1) % placeholders.length;
+    }
+
+    setInterval(updatePlaceholder, 3000);
+    updatePlaceholder(); // Set initial placeholder
+
+    // --- Service Tabs Logic ---
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // Deactivate all buttons and hide all content
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+
+            // Activate the clicked button
+            button.classList.add('active');
+
+            // Show the corresponding content
+            const targetId = button.dataset.tab;
+            document.getElementById(targetId).classList.add('active');
+        });
     });
+
+    // Handle navigation links in header to open specific tabs
+    const serviceLinks = document.querySelectorAll('.service-link');
+    serviceLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault(); // Prevent default anchor jump
+
+            const targetTabId = this.getAttribute('href').substring(1); // Get tab ID from href
+            const targetButton = document.querySelector(`.tab-button[data-tab="${targetTabId}"]`);
+
+            if (targetButton) {
+                // Scroll to the services section first
+                document.getElementById('services-section').scrollIntoView({ behavior: 'smooth' });
+
+                // Use a timeout to allow smooth scroll to finish before activating tab
+                setTimeout(() => {
+                    // Trigger click on the corresponding tab button
+                    targetButton.click();
+                    
+                    // Scroll the active tab into view if it's not fully visible (for horizontal scrolling)
+                    targetButton.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+
+                }, 700); // Adjust delay as needed
+            }
+
+            // Close mobile menu if open
+            if (mobileMenu.classList.contains('active')) {
+                mobileMenu.classList.remove('active');
+            }
+        });
+    });
+});
 </script> 
- 
-</body></html>
+ </body>
+     </html>
