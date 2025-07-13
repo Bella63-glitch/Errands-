@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en"> 
+ <head> 
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <title>Request an Errand | Run Me An Errand</title> 
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 520px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #222;
+    }
+    label {
+      margin-top: 15px;
+      display: block;
+      font-weight: 600;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+    }
+    button {
+      margin-top: 25px;
+      background-color: #25D366;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 1.1em;
+      cursor: pointer;
+      width: 100%;
+    }
+    button:hover {
+      background-color: #1da851;
+    }
+  </style> 
+ </head> 
+ <body> 
+  <div class="container"> 
+   <h2>Request an Errand</h2> 
+   <form action="https://formsubmit.co/your@email.com" method="POST"> 
+    <input type="hidden" name="_subject" value="New Errand Request"> 
+    <input type="hidden" name="_captcha" value="false"> <label for="name">Your Full Name</label> 
+    <input type="text" id="name" name="Full Name" required> <label for="phone">Phone Number</label> 
+    <input type="tel" id="phone" name="Phone Number" required> <label for="errand">What would you like us to do?</label> <textarea id="errand" name="Errand Description" rows="4" placeholder="e.g. Pick up a parcel from Sarit Center and drop at Kileleshwa, Block A." required></textarea> <label for="pickup">Pickup Location (exact)</label> <textarea id="pickup" name="Pickup Location" rows="2" placeholder="e.g. Quickmart, Lavington Mall parking, main gate" required></textarea> <label for="dropoff">Drop-off Location (exact)</label> <textarea id="dropoff" name="Drop-off Location" rows="2" placeholder="e.g. Gate 3, Mirema Court, Room 7C" required></textarea> <label for="time">Preferred Date &amp; Time</label> 
+    <input type="text" id="time" nam e="Preferred Time" placeholder="e.g. Today at 3PM or Tomorrow morning" required> <label for="notes">Other Instructions (optional)</label> <textarea id="notes" name="Additional Notes" rows="3"></textarea> <button type="submit">Submit Request</button> 
+   </form> 
+  </div> 
+ 
+</body></html>
