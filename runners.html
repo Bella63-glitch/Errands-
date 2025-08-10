@@ -157,11 +157,11 @@
      </div> 
      <div> <label for="service-filter" class="block text-sm font-medium text-gray-700 mb-2">Service Type:</label> <select id="service-filter" class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-maroon focus:border-maroon"> <option value="all">All Services</option> <option value="Grocery">Grocery Delivery</option> <option value="Parcel">Parcel Delivery</option> <option value="Pharmacy">Pharmacy Run</option> <option value="Document">Document Delivery</option> <option value="Bill Payments">Bill Payments</option> <option value="Laundry">Laundry Service</option> <option value="Queueing">Queueing Service</option> <option value="Mobile Money Transfer">Mobile Money</option> <option value="Home Services">Home Services (Plumbing/Electrician)</option> <option value="Personal Shopper">Personal Shopper</option> </select> 
      </div> 
-     <div> <label for="availability-filter" class="block text-sm font-medium text-gray-700 mb-2">Availability:</label> <select id="availability-filter" class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-maroon focus:border-maroon"> <option value="all">All</option> <option value="available">Available Now</option> </select> 
+     <div> <label for="availability-filter" class="block text-sm font-medium text-gray-700 mb-2">Availability:</label> <select id="availability-filter" class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-maroon focus:border-maroon"> <option value="all">All</option> <option value="Available">Available Now</option> </select> 
      </div> 
      <div> <label for="sort-by" class="block text-sm font-medium text-gray-700 mb-2">Sort By:</label> <select id="sort-by" class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-maroon focus:border-maroon"> <option value="distance">Distance (Closest First)</option> <option value="rating">Rating (Highest First)</option> <option value="tasksCompleted">Tasks Completed (Most First)</option> </select> 
      </div> 
-     <div class="md:col-span-2 lg:col-span-4 text-center"> <button id="apply-filters" class="w-full md:w-auto bg-maroon text-white px-8 py-3 rounded-md hover:bg-gold hover:text-maroon transition duration-300 font-semibold shadow-lg">Apply Filters &amp; Find Runners</button> 
+     <div class="md:col-span-2 lg:col-span-4 text-center"> <button id="apply-filters" class="w-full md:w-auto bg-maroon text-white px-8 py-3 rounded-md hover:bg-gold hover:text-maroon transition duration-300 font-semibold shadow-lg">Apply Filters & Find Runners</button> 
      </div> 
     </div> 
     <div id="status-container" class="mb-8 min-h-[80px] flex items-center justify-center"> 
@@ -178,7 +178,11 @@
      <div id="no-runners-found" class="text-center p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded-lg hidden"> 
       <p class="text-lg font-semibold mb-2">No runners match your criteria near this location.</p> 
       <p class="text-md">Try adjusting your filters or selecting a different location. Displaying all runners as fallback.</p> 
-     </div> 
+     </div>
+     <div id="fetch-error" class="text-center p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded-lg hidden">
+         <p class="text-lg font-semibold mb-2">Failed to load runners data.</p>
+         <p class="text-md">There was a problem connecting to the server. Please try again later.</p>
+     </div>
     </div> 
     <div id="runners-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"> 
      <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-200"> 
@@ -306,12 +310,18 @@
    </svg> </button> 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // --- Backendless Credentials ---
+        const APP_ID = "9223CBD1-9AFC-4C74-B56B-12F11D319DF9";
+        const API_KEY = "0C3700EB-013B-4BFE-85ED-CE0F6F7EC013";
+        let runnersData = [];
+
         // --- DOM Elements ---
         const statusContainer = document.getElementById('status-container');
         const locationStatusDiv = document.getElementById('location-status');
         const runnersListDiv = document.getElementById('runners-list');
         const locationErrorDiv = document.getElementById('location-error');
         const noRunnersFoundDiv = document.getElementById('no-runners-found');
+        const fetchErrorDiv = document.getElementById('fetch-error'); // New fetch error element
         const retryLocationButton = document.getElementById('retry-location');
         const locationSelect = document.getElementById('location-select');
         const serviceFilter = document.getElementById('service-filter');
@@ -327,7 +337,7 @@
         const closeModalButton = document.querySelector('.close-button');
         const modalRunnerPhoto = document.getElementById('modal-runner-photo');
         const modalRunnerName = document.getElementById('modal-runner-name');
-        const modalAboutRunnerName = document.getElementById('modal-about-runner-name'); // Added for dynamic "About [Name]"
+        const modalAboutRunnerName = document.getElementById('modal-about-runner-name');
         const modalRunnerRatingStars = document.getElementById('modal-runner-rating-stars');
         const modalRunnerRatingValue = document.getElementById('modal-runner-rating-value');
         const modalRunnerTasks = document.getElementById('modal-runner-tasks');
@@ -341,204 +351,10 @@
         const modalRunnerResponseTime = document.getElementById('modal-runner-response-time');
         const modalRunnerLanguages = document.getElementById('modal-runner-languages');
         const modalRunnerReviews = document.getElementById('modal-runner-reviews');
-        const modalBookNowBtn = document.getElementById('modal-book-now-btn'); // Added for booking action
+        const modalBookNowBtn = document.getElementById('modal-book-now-btn');
 
         // --- Global State ---
-        let currentUserLocation = null; // { latitude, longitude, name }
-
-        // --- Simulated Runner Data ---
-        const allRunners = [
-            {
-                id: 1,
-                name: "Mercy Wambui",
-                photo: "https://randomuser.me/api/portraits/women/68.jpg",
-                rating: 4.8,
-                tasksCompleted: 125,
-                bio: "Highly experienced and reliable, specializing in efficient grocery runs, secure parcel deliveries, and quick pharmacy errands. I prioritize clear communication and timely service to ensure your complete satisfaction.",
-                location: { latitude: -1.286389, longitude: 36.817223, area: "Nairobi CBD" }, // Approx Nairobi CBD
-                services: ["Grocery", "Parcel", "Pharmacy", "Bill Payments"],
-                availability: "Available",
-                hourlyRate: "Ksh 500",
-                vehicle: "Motorbike",
-                responseTime: "15-30 min",
-                languages: ["English", "Swahili"],
-                reviews: [
-                    { reviewer: "Aisha K.", text: "Mercy is fantastic! Always on time and very professional.", stars: 5 },
-                    { reviewer: "Ben O.", text: "Great service, helped me with a last-minute grocery run.", stars: 4 }
-                ]
-            },
-            {
-                id: 2,
-                name: "Kevin Otieno",
-                photo: "https://randomuser.me/api/portraits/men/32.jpg",
-                rating: 4.9,
-                tasksCompleted: 98,
-                bio: "I'm known for being fast and efficient. Always ready to help with urgent document deliveries, small package transport, and I'm a pro at queueing for you!",
-                location: { latitude: -1.292066, longitude: 36.821946, area: "Kilimani, Nairobi" }, // Approx Kilimani, Nairobi
-                services: ["Parcel", "Document", "Queueing"],
-                availability: "Busy",
-                hourlyRate: "Ksh 450",
-                vehicle: "Bicycle",
-                responseTime: "30-45 min",
-                languages: ["English", "Swahili", "Luo"],
-                reviews: [
-                    { reviewer: "Carol D.", text: "Kevin saved my day with a quick document delivery.", stars: 5 },
-                    { reviewer: "Peter M.", text: "Reliable for queueing, definitely recommend.", stars: 5 }
-                ]
-            },
-            {
-                id: 3,
-                name: "Grace Mumbi",
-                photo: "https://randomuser.me/api/portraits/women/70.jpg",
-                rating: 4.7,
-                tasksCompleted: 150,
-                bio: "Your friendly neighborhood errand runner in Westlands. From dry cleaning pickups to handling bill payments, I'm here to assist with a smile and efficiency.",
-                location: { latitude: -1.267600, longitude: 36.790400, area: "Westlands, Nairobi" }, // Approx Westlands, Nairobi
-                services: ["Laundry", "Bill Payments", "Grocery", "Personal Shopper"],
-                availability: "Available",
-                hourlyRate: "Ksh 550",
-                vehicle: "Motorbike",
-                responseTime: "20-40 min",
-                languages: ["English", "Swahili", "Kikuyu"],
-                reviews: [
-                    { reviewer: "Mwangi N.", text: "Grace is incredibly helpful and reliable. My go-to for errands.", stars: 5 },
-                    { reviewer: "Susan W.", text: "Excellent communication and service.", stars: 4 }
-                ]
-            },
-            {
-                id: 4,
-                name: "David Kimani",
-                photo: "https://randomuser.me/api/portraits/men/44.jpg",
-                rating: 4.6,
-                tasksCompleted: 80,
-                bio: "A reliable and punctual runner, primarily covering the eastern side of Nairobi. No task is too big or too small, just let me know what you need!",
-                location: { latitude: -1.309000, longitude: 36.888700, area: "Embakasi, Nairobi" }, // Approx Embakasi, Nairobi
-                services: ["Parcel", "Grocery", "Mobile Money Transfer"],
-                availability: "Available",
-                hourlyRate: "Ksh 480",
-                vehicle: "Motorbike",
-                responseTime: "25-50 min",
-                languages: ["English", "Swahili"],
-                reviews: [
-                    { reviewer: "James K.", text: "David is very efficient and trustworthy.", stars: 4 },
-                    { reviewer: "Fatuma A.", text: "Always on time, great for package deliveries.", stars: 5 }
-                ]
-            },
-            {
-                id: 5,
-                name: "Faith Adhiambo",
-                photo: "https://randomuser.me/api/portraits/women/55.jpg",
-                rating: 5.0,
-                tasksCompleted: 200,
-                bio: "A top-rated runner dedicated to providing excellent customer service. Let me handle your entire to-do list with professionalism and attention to detail. Your peace of mind is my priority.",
-                location: { latitude: -1.283300, longitude: 36.750000, area: "Lavington, Nairobi" }, // Approx Lavington, Nairobi
-                services: ["All Everyday Errands", "Delivery Services", "Home Services"],
-                availability: "Available",
-                hourlyRate: "Ksh 600",
-                vehicle: "Car",
-                responseTime: "10-25 min",
-                languages: ["English", "Swahili"],
-                reviews: [
-                    { reviewer: "Dr. Evans", text: "Faith is exceptionally professional and efficient. Highly recommend her for any task.", stars: 5 },
-                    { reviewer: "Cynthia G.", text: "Absolutely fantastic service, she goes above and beyond.", stars: 5 }
-                ]
-            },
-            {
-                id: 6,
-                name: "Mercy Achieng",
-                photo: "https://randomuser.me/api/portraits/women/10.jpg",
-                rating: 4.5,
-                tasksCompleted: 70,
-                bio: "A friendly and efficient runner covering the lakeside region with a smile. Your tasks are safe with me; I ensure prompt and reliable delivery every time.",
-                location: { latitude: -0.0917, longitude: 34.7679, area: "Kisumu CBD" }, // Kisumu CBD
-                services: ["Grocery", "Parcel", "Pharmacy"],
-                availability: "Available",
-                hourlyRate: "Ksh 400",
-                vehicle: "Motorbike",
-                responseTime: "20-40 min",
-                languages: ["English", "Swahili", "Luo"],
-                reviews: [
-                    { reviewer: "Juma A.", text: "Mercy is quick and reliable for all my Kisumu errands.", stars: 4 },
-                    { reviewer: "Rose N.", text: "Very pleasant to work with.", stars: 5 }
-                ]
-            },
-            {
-                id: 7,
-                name: "John Kamau",
-                photo: "https://randomuser.me/api/portraits/men/21.jpg",
-                rating: 4.6,
-                tasksCompleted: 90,
-                bio: "Experienced in basic home services and reliable deliveries in Eldoret. I aim to connect you with skilled help and ensure your items reach safely.",
-                location: { latitude: 0.5218, longitude: 35.2690, area: "Eldoret Town" }, // Eldoret
-                services: ["Home Services", "Parcel", "Minor Repairs"],
-                availability: "Busy",
-                hourlyRate: "Ksh 500",
-                vehicle: "Bicycle",
-                responseTime: "45-60 min",
-                languages: ["English", "Swahili", "Kalenjin"],
-                reviews: [
-                    { reviewer: "Chebet K.", text: "John fixed my tap quickly. Professional.", stars: 4 },
-                    { reviewer: "David L.", text: "Good for small errands and quick fixes.", stars: 4 }
-                ]
-            },
-            {
-                id: 8,
-                name: "Sarah Mwangi",
-                photo: "https://randomuser.me/api/portraits/women/8.jpg",
-                rating: 4.9,
-                tasksCompleted: 180,
-                bio: "Your go-to runner for anything in the coastal city. Fast, trustworthy, and always ready for a task, whether it's groceries or important documents.",
-                location: { latitude: -4.0357, longitude: 39.6682, area: "Mombasa Island" }, // Mombasa Island
-                services: ["Grocery", "Laundry", "Pharmacy", "Document"],
-                availability: "Available",
-                hourlyRate: "Ksh 520",
-                vehicle: "Motorbike",
-                responseTime: "15-35 min",
-                languages: ["English", "Swahili"],
-                reviews: [
-                    { reviewer: "Omar H.", text: "Sarah is incredibly efficient, perfect for all Mombasa errands.", stars: 5 },
-                    { reviewer: "Zainab R.", text: "Trustworthy and quick service. Always my first choice.", stars: 5 }
-                ]
-            },
-            {
-                id: 9,
-                name: "Mark Omondi",
-                photo: "https://randomuser.me/api/portraits/men/50.jpg",
-                rating: 4.7,
-                tasksCompleted: 110,
-                bio: "Efficient and reliable, available for a wide range of errands within the greater Nairobi area. I pride myself on timely and accurate task completion.",
-                location: { latitude: -1.3039, longitude: 36.7865, area: "Ngong Road, Nairobi" }, // Near Ngong Road, Nairobi
-                services: ["Grocery", "Parcel", "Queueing", "Bill Payments"],
-                availability: "Available",
-                hourlyRate: "Ksh 470",
-                vehicle: "Motorbike",
-                responseTime: "20-40 min",
-                languages: ["English", "Swahili"],
-                reviews: [
-                    { reviewer: "David M.", text: "Mark handled my bill payments quickly. Very reliable.", stars: 4 },
-                    { reviewer: "Sophie J.", text: "Responsive and gets the job done!", stars: 5 }
-                ]
-            },
-            {
-                id: 10,
-                name: "Emily Chebet",
-                photo: "https://randomuser.me/api/portraits/women/40.jpg",
-                rating: 4.8,
-                tasksCompleted: 130,
-                bio: "Your dedicated runner for convenience and peace of mind in Nakuru. I ensure your errands are completed smoothly and professionally.",
-                location: { latitude: -0.2831, longitude: 36.0772, area: "Nakuru Town" }, // Nakuru
-                services: ["Grocery", "Parcel", "Pharmacy", "Personal Shopper"],
-                availability: "Available",
-                hourlyRate: "Ksh 460",
-                vehicle: "Bicycle",
-                responseTime: "25-45 min",
-                languages: ["English", "Swahili"],
-                reviews: [
-                    { reviewer: "Jane K.", text: "Emily is my go-to in Nakuru. Very reliable.", stars: 5 },
-                    { reviewer: "Paul S.", text: "Quick and efficient pharmacy delivery.", stars: 4 }
-                ]
-            }
-        ];
+        let currentUserLocation = null;
 
         // --- Simulated User Locations for Manual Override ---
         const simulatedLocations = {
@@ -551,12 +367,12 @@
             "eldoret": { latitude: 0.5218, longitude: 35.2690, name: "Eldoret Town" },
             "mombasa": { latitude: -4.0357, longitude: 39.6682, name: "Mombasa Island" },
             "nakuru": { latitude: -0.2831, longitude: 36.0772, name: "Nakuru Town" },
-            "remote": { latitude: -1.0, longitude: 40.0, name: "a remote area" } // Far from all runners
+            "remote": { latitude: -1.0, longitude: 40.0, name: "a remote area" }
         };
 
         // --- Haversine Formula for Distance Calculation ---
         function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
-            const R = 6371; // Radius of Earth in kilometers
+            const R = 6371;
             const dLat = deg2rad(lat2 - lat1);
             const dLon = deg2rad(lon2 - lon1);
             const a =
@@ -564,7 +380,7 @@
                 Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
                 Math.sin(dLon / 2) * Math.sin(dLon / 2);
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            const d = R * c; // Distance in km
+            const d = R * c;
             return d;
         }
 
@@ -576,149 +392,156 @@
         function generateStarRating(rating) {
             let starsHtml = '';
             const fullStars = Math.floor(rating);
-            const halfStar = rating % 1 >= 0.5;
+            const hasHalfStar = rating % 1 >= 0.5;
 
             for (let i = 0; i < fullStars; i++) {
                 starsHtml += '<svg class="w-5 h-5 text-gold fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>';
             }
-            if (halfStar) {
-                // A simplified half-star representation or just another full star for visual fullness
-                starsHtml += '<svg class="w-5 h-5 text-gold fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>'; // Or use a custom half star SVG
+            if (hasHalfStar) {
+                starsHtml += '<svg class="w-5 h-5 text-gold fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>';
             }
             return starsHtml;
         }
 
         // --- Display Runners Function ---
         function displayRunners(runnersToDisplay) {
-            runnersListDiv.innerHTML = ''; // Clear previous runners
-            runnersListDiv.classList.remove('hidden'); // Ensure it's visible
+            runnersListDiv.innerHTML = '';
+            runnersListDiv.classList.remove('hidden');
 
             if (runnersToDisplay.length === 0) {
                 setStatusMessage('no_runners');
-                runnersListDiv.classList.add('hidden'); // Hide list if no runners
+                runnersListDiv.classList.add('hidden');
                 return;
             } else {
-                statusContainer.innerHTML = ''; // Clear any existing status messages
+                statusContainer.innerHTML = '';
             }
 
             runnersToDisplay.forEach((runner, index) => {
                 const runnerCard = document.createElement('div');
                 runnerCard.className = `bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-200 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 cursor-pointer animate-fade-in-slide-up`;
-                runnerCard.style.animationDelay = `${index * 0.1}s`; // Stagger animation
-                runnerCard.dataset.runnerId = runner.id; // Store runner ID for modal
+                runnerCard.style.animationDelay = `${index * 0.1}s`;
+                runnerCard.dataset.runnerId = runner.objectId;
 
                 let distanceInfo = '';
-                if (currentUserLocation && currentUserLocation.latitude && runner.location.latitude) {
+                if (currentUserLocation && currentUserLocation.latitude && runner.location && runner.location.latitude) {
                     const distance = getDistanceFromLatLonInKm(
                         currentUserLocation.latitude, currentUserLocation.longitude,
                         runner.location.latitude, runner.location.longitude
                     );
                     distanceInfo = `<p class="text-sm text-gray-500 mt-2">~${distance.toFixed(1)} km from you</p>`;
-                } else if (runner.location.area) {
+                } else if (runner.location && runner.location.area) {
                      distanceInfo = `<p class="text-sm text-gray-500 mt-2">Based in ${runner.location.area}</p>`;
+                } else {
+                    distanceInfo = `<p class="text-sm text-gray-500 mt-2">Location not specified</p>`;
                 }
 
                 const availabilityClass = runner.availability === 'Available' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
 
+                const photoPath = runner.photoFilename ? `profiles/${runner.photoFilename}` : 'https://via.placeholder.com/96';
+
                 runnerCard.innerHTML = `
-                    <img src="${runner.photo}" alt="${runner.name}" class="w-24 h-24 rounded-full object-cover mb-4 border-2 border-gold shadow-md">
+                    <img src="${photoPath}" alt="${runner.name}" class="w-24 h-24 rounded-full object-cover mb-4 border-2 border-gold shadow-md">
                     <h3 class="text-xl font-bold text-maroon mb-1">${runner.name}</h3>
                     <div class="flex items-center justify-center mb-2">
-                        ${generateStarRating(runner.rating)}
-                        <span class="text-gray-700 font-medium ml-1">${runner.rating.toFixed(1)}</span>
-                        <span class="text-gray-500 text-sm ml-2">(${runner.tasksCompleted} tasks)</span>
+                        ${generateStarRating(runner.rating || 0)}
+                        <span class="text-gray-700 font-medium ml-1">${(runner.rating || 0).toFixed(1)}</span>
+                        <span class="text-gray-500 text-sm ml-2">(${runner.tasksCompleted || 0} tasks)</span>
                     </div>
                     ${distanceInfo}
-                    <p class="text-xs font-semibold ${availabilityClass} px-3 py-1 rounded-full mt-2">${runner.availability}</p>
-                    <p class="text-sm text-gray-600 italic mt-3 mb-4 line-clamp-3">${runner.bio}</p>
+                    <p class="text-xs font-semibold ${availabilityClass} px-3 py-1 rounded-full mt-2">${runner.availability || 'Unknown'}</p>
+                    <p class="text-sm text-gray-600 italic mt-3 mb-4 line-clamp-3">${runner.bio || 'This runner has not provided a bio yet.'}</p>
                     <div class="flex flex-wrap justify-center gap-2 mb-4">
-                        ${runner.services.slice(0, 3).map(service => `<span class="bg-gray-200 text-gray-700 text-xs px-3 py-1 rounded-full">${service}</span>`).join('')}
-                        ${runner.services.length > 3 ? `<span class="bg-gray-200 text-gray-700 text-xs px-3 py-1 rounded-full">+${runner.services.length - 3} more</span>` : ''}
+                        ${(runner.services || []).slice(0, 3).map(service => `<span class="bg-gray-200 text-gray-700 text-xs px-3 py-1 rounded-full">${service}</span>`).join('')}
+                        ${(runner.services || []).length > 3 ? `<span class="bg-gray-200 text-gray-700 text-xs px-3 py-1 rounded-full">+${runner.services.length - 3} more</span>` : ''}
                     </div>
-                    <button class="bg-gold text-maroon px-5 py-2 rounded-full font-semibold hover:bg-maroon hover:text-white transition duration-300 shadow mt-auto w-full view-profile-btn" data-runner-id="${runner.id}">View Profile</button>
+                    <button class="bg-gold text-maroon px-5 py-2 rounded-full font-semibold hover:bg-maroon hover:text-white transition duration-300 shadow mt-auto w-full view-profile-btn" data-runner-id="${runner.objectId}">View Profile</button>
                 `;
                 runnersListDiv.appendChild(runnerCard);
             });
 
-            // Add event listeners for "View Profile" buttons after they are rendered
-            document.querySelectorAll('.view-profile-btn').forEach(button => {
-                button.addEventListener('click', (event) => {
-                    event.stopPropagation(); // Prevent card click event from firing twice
-                    const runnerId = parseInt(button.dataset.runnerId);
-                    openRunnerModal(runnerId);
-                });
-            });
-
-             // Add event listener for general card clicks to open modal
-            document.querySelectorAll('.animate-fade-in-slide-up').forEach(card => {
-                card.addEventListener('click', (event) => {
-                    const runnerId = parseInt(card.dataset.runnerId);
+            document.querySelectorAll('.view-profile-btn, .animate-fade-in-slide-up').forEach(element => {
+                element.addEventListener('click', (event) => {
+                    const runnerId = event.currentTarget.dataset.runnerId;
                     openRunnerModal(runnerId);
                 });
             });
         }
+        
+        // --- Backendless API Call ---
+        async function fetchRunnersData() {
+            setStatusMessage('loading', 'Fetching runners from the server...');
+            try {
+                const url = `https://api.backendless.com/${APP_ID}/${API_KEY}/data/users?where=role%3D'runner'`;
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                runnersData = data;
+                
+                // Now that we have data, initialize location and apply filters
+                initializeLocationAndRunners();
+            } catch (error) {
+                console.error("Failed to fetch runners:", error);
+                setStatusMessage('fetch_error');
+            }
+        }
+
 
         // --- Filter and Sort Logic ---
         function applyFiltersAndSort() {
-            setStatusMessage('loading', 'Applying filters and finding runners...');
-
-            let filteredRunners = [...allRunners];
+            let filteredRunners = [...runnersData];
 
             // 1. Filter by Service Type
             const selectedService = serviceFilter.value;
             if (selectedService !== 'all') {
-                filteredRunners = filteredRunners.filter(runner => runner.services.includes(selectedService));
+                filteredRunners = filteredRunners.filter(runner => runner.services && runner.services.includes(selectedService));
             }
 
             // 2. Filter by Availability
             const selectedAvailability = availabilityFilter.value;
-            if (selectedAvailability === 'available') {
+            if (selectedAvailability === 'Available') {
                 filteredRunners = filteredRunners.filter(runner => runner.availability === 'Available');
             }
 
             // 3. Filter by Location (proximity)
-            const maxDistanceKm = 50; // Runners within 50 km are considered "nearby"
+            const maxDistanceKm = 50;
             let runnersByLocation = [];
 
             if (currentUserLocation && currentUserLocation.latitude) {
                 runnersByLocation = filteredRunners.filter(runner => {
-                    if (runner.location.latitude && runner.location.longitude) {
+                    if (runner.location && runner.location.latitude && runner.location.longitude) {
                         const distance = getDistanceFromLatLonInKm(
                             currentUserLocation.latitude, currentUserLocation.longitude,
                             runner.location.latitude, runner.location.longitude
                         );
-                        // Store distance on runner object for sorting
                         runner.distance = distance;
                         return distance <= maxDistanceKm;
                     }
-                    return false; // Exclude if no precise location data
+                    return false;
                 });
             } else {
-                // If no user location, all runners are potentially displayed
                 runnersByLocation = filteredRunners.map(runner => {
-                    runner.distance = Infinity; // Assign high distance if user location is unknown
+                    runner.distance = Infinity;
                     return runner;
                 });
             }
 
-            // Determine which set of runners to display
             let finalRunnersToDisplay = runnersByLocation;
             if (runnersByLocation.length === 0 && (selectedService !== 'all' || selectedAvailability !== 'all')) {
-                 // If no runners found with current filters + location, show all runners matching filters (ignoring distance)
                 setStatusMessage('no_runners');
                  finalRunnersToDisplay = filteredRunners.map(runner => {
-                    runner.distance = Infinity; // Still assign high distance
+                    runner.distance = Infinity;
                     return runner;
                 });
             } else if (runnersByLocation.length === 0) {
-                 // If no runners found even without specific service/availability filters
-                setStatusMessage('no_runners');
-                finalRunnersToDisplay = allRunners.map(runner => {
-                    runner.distance = Infinity; // Still assign high distance
+                 setStatusMessage('no_runners');
+                finalRunnersToDisplay = runnersData.map(runner => {
+                    runner.distance = Infinity;
                     return runner;
                 });
             } else {
-                setStatusMessage('success'); // Clear any previous error/no runners messages
+                setStatusMessage('success');
             }
 
             // 4. Sort
@@ -727,31 +550,30 @@
                 if (selectedSort === 'distance') {
                     return a.distance - b.distance;
                 } else if (selectedSort === 'rating') {
-                    return b.rating - a.rating; // Descending
+                    return (b.rating || 0) - (a.rating || 0);
                 } else if (selectedSort === 'tasksCompleted') {
-                    return b.tasksCompleted - a.tasksCompleted; // Descending
+                    return (b.tasksCompleted || 0) - (a.tasksCompleted || 0);
                 }
                 return 0;
             });
 
-            setTimeout(() => { // Simulate API call delay
+            setTimeout(() => {
                 displayRunners(finalRunnersToDisplay);
             }, 700);
         }
-
 
         // --- Location Handling Functions ---
         function setStatusMessage(type, message = null) {
             locationStatusDiv.classList.add('hidden');
             locationErrorDiv.classList.add('hidden');
             noRunnersFoundDiv.classList.add('hidden');
-            runnersListDiv.innerHTML = ''; // Clear runners list when showing status
-            runnersListDiv.classList.remove('hidden'); // Ensure list container is visible to show skeletons
+            fetchErrorDiv.classList.add('hidden');
+            runnersListDiv.innerHTML = '';
+            runnersListDiv.classList.remove('hidden');
 
             if (type === 'loading') {
                 locationStatusDiv.classList.remove('hidden');
                 locationStatusDiv.innerHTML = `<div class="flex items-center justify-center space-x-3"><div class="loader"></div><p class="text-lg font-semibold">${message || 'Detecting your location...'}</p></div>`;
-                 // Show skeleton loaders
                 runnersListDiv.innerHTML = `
                     <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-200"><div class="skeleton-circle mb-4 skeleton"></div><div class="skeleton-text long skeleton"></div><div class="skeleton-text short skeleton"></div><div class="skeleton-text skeleton w-full mt-3"></div><div class="skeleton-text skeleton w-1/2 mt-2"></div><div class="skeleton-text skeleton w-full h-8 mt-4"></div></div>
                     <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-200"><div class="skeleton-circle mb-4 skeleton"></div><div class="skeleton-text long skeleton"></div><div class="skeleton-text short skeleton"></div><div class="skeleton-text skeleton w-full mt-3"></div><div class="skeleton-text skeleton w-1/2 mt-2"></div><div class="skeleton-text skeleton w-full h-8 mt-4"></div></div>
@@ -761,17 +583,18 @@
             } else if (type === 'error') {
                 locationErrorDiv.classList.remove('hidden');
                 if (message) locationErrorDiv.querySelector('p:first-child').textContent = message;
-                // Keep list clear initially to force filter application
             } else if (type === 'no_runners') {
                 noRunnersFoundDiv.classList.remove('hidden');
+            } else if (type === 'fetch_error') {
+                fetchErrorDiv.classList.remove('hidden');
             } else if (type === 'success') {
-                statusContainer.innerHTML = ''; // Clear status messages
+                statusContainer.innerHTML = '';
             }
         }
 
         function getBrowserLocation() {
             setStatusMessage('loading', 'Detecting your precise location...');
-            locationSelect.value = 'auto'; // Reset dropdown
+            locationSelect.value = 'auto';
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
@@ -781,7 +604,7 @@
                             name: "Your current location"
                         };
                         localStorage.setItem('simulatedLocation', 'auto');
-                        setStatusMessage('success'); // Clear loading after getting location
+                        setStatusMessage('success');
                         applyFiltersAndSort();
                     },
                     (error) => {
@@ -795,73 +618,71 @@
                             errorMessage = "Location detection timed out. Please try again or select manually.";
                         }
                         setStatusMessage('error', errorMessage);
-                        currentUserLocation = null; // Clear location on error
-                        localStorage.setItem('simulatedLocation', 'auto'); // Reset
-                        applyFiltersAndSort(); // Apply filters without location
+                        currentUserLocation = null;
+                        localStorage.setItem('simulatedLocation', 'auto');
+                        applyFiltersAndSort();
                     },
                     {
                         enableHighAccuracy: true,
-                        timeout: 15000, // 15 seconds timeout
+                        timeout: 15000,
                         maximumAge: 0
                     }
                 );
             } else {
                 setStatusMessage('error', "Geolocation is not supported by your browser. Please use a modern browser or select a location manually.");
-                currentUserLocation = null; // Clear location
-                localStorage.setItem('simulatedLocation', 'auto'); // Reset
-                applyFiltersAndSort(); // Apply filters without location
+                currentUserLocation = null;
+                localStorage.setItem('simulatedLocation', 'auto');
+                applyFiltersAndSort();
             }
         }
 
-        // --- Initialize or Re-detect Location ---
         function initializeLocationAndRunners() {
             const storedLocationKey = localStorage.getItem('simulatedLocation');
-            if (storedLocationKey && storedLocationKey !== 'auto') {
+            if (storedLocationKey && storedLocationKey !== 'auto' && simulatedLocations[storedLocationKey]) {
                 locationSelect.value = storedLocationKey;
-                const simulatedLoc = simulatedLocations[storedLocationKey];
-                if (simulatedLoc) {
-                    currentUserLocation = simulatedLoc;
-                    setStatusMessage('success');
-                    applyFiltersAndSort();
-                } else {
-                    // Fallback if stored key is invalid
-                    getBrowserLocation();
-                }
+                currentUserLocation = simulatedLocations[storedLocationKey];
+                setStatusMessage('success');
+                applyFiltersAndSort();
             } else {
-                getBrowserLocation(); // Default to auto-detect
+                getBrowserLocation();
             }
         }
 
         // --- Modal Functions ---
         function openRunnerModal(runnerId) {
-            const runner = allRunners.find(r => r.id === runnerId);
+            const runner = runnersData.find(r => r.objectId === runnerId);
             if (!runner) return;
 
-            // Populate Modal
-            modalRunnerPhoto.src = runner.photo;
+            const photoPath = runner.photoFilename ? `profiles/${runner.photoFilename}` : 'https://via.placeholder.com/128';
+
+            modalRunnerPhoto.src = photoPath;
             modalRunnerName.textContent = runner.name;
-            modalAboutRunnerName.textContent = runner.name; // For "About [Name]" heading
+            modalAboutRunnerName.textContent = runner.name;
 
-            modalRunnerRatingStars.innerHTML = generateStarRating(runner.rating);
-            modalRunnerRatingValue.textContent = runner.rating.toFixed(1);
-            modalRunnerTasks.textContent = `(${runner.tasksCompleted} tasks completed)`;
+            modalRunnerRatingStars.innerHTML = generateStarRating(runner.rating || 0);
+            modalRunnerRatingValue.textContent = (runner.rating || 0).toFixed(1);
+            modalRunnerTasks.textContent = `(${runner.tasksCompleted || 0} tasks completed)`;
 
-            modalRunnerAvailability.textContent = runner.availability;
+            modalRunnerAvailability.textContent = runner.availability || 'Not Specified';
             const availabilityClass = runner.availability === 'Available' ? 'bg-green-50 text-green-700 border border-green-300' : 'bg-red-50 text-red-700 border border-red-300';
             modalRunnerAvailability.className = `text-md font-bold px-4 py-1 rounded-full inline-block mt-2 ${availabilityClass}`;
 
+            modalRunnerLocation.textContent = (runner.location && runner.location.area) || 'Not specified';
+            modalRunnerMapLink.href = (runner.location && runner.location.latitude && runner.location.longitude) ? 
+                `https://www.google.com/maps/search/?api=1&query=${runner.location.latitude},${runner.location.longitude}` : '#';
+            if (modalRunnerMapLink.href === '#') {
+                modalRunnerMapLink.classList.add('hidden');
+            } else {
+                modalRunnerMapLink.classList.remove('hidden');
+            }
 
-            modalRunnerLocation.textContent = runner.location.area || 'Not specified'; // Use area from data
-            modalRunnerMapLink.href = `http://maps.google.com/maps?q=${runner.location.latitude},${runner.location.longitude}`; // Corrected map link
-
-            modalRunnerBio.textContent = runner.bio;
-
-            modalRunnerServices.innerHTML = runner.services.map(service => `<span class="bg-light-gold text-maroon text-sm font-medium px-3 py-1 rounded-full shadow-sm">${service}</span>`).join('');
+            modalRunnerBio.textContent = runner.bio || 'This runner has not provided a bio yet.';
+            modalRunnerServices.innerHTML = (runner.services || []).map(service => `<span class="bg-light-gold text-maroon text-sm font-medium px-3 py-1 rounded-full shadow-sm">${service}</span>`).join('');
 
             modalRunnerRate.textContent = runner.hourlyRate || 'Varies by task';
             modalRunnerVehicle.textContent = runner.vehicle || 'Not specified';
             modalRunnerResponseTime.textContent = runner.responseTime || 'N/A';
-            modalRunnerLanguages.textContent = runner.languages.join(', ') || 'N/A';
+            modalRunnerLanguages.textContent = (runner.languages || []).join(', ') || 'N/A';
 
             modalRunnerReviews.innerHTML = '';
             if (runner.reviews && runner.reviews.length > 0) {
@@ -881,20 +702,18 @@
                 modalRunnerReviews.innerHTML = '<p class="text-gray-500 text-sm italic">No reviews yet. Be the first to review!</p>';
             }
 
-            // Add event listener for the "Book Now" button inside the modal
             modalBookNowBtn.onclick = () => {
                 alert(`You are about to book ${runner.name} for an errand! (This is a demo action)`);
-                closeRunnerModal(); // Close modal after action
+                closeRunnerModal();
             };
 
-            runnerModal.style.display = 'flex'; // Show modal
-            document.body.classList.add('overflow-hidden'); // Prevent scrolling body
+            runnerModal.style.display = 'flex';
+            document.body.classList.add('overflow-hidden');
         }
 
         function closeRunnerModal() {
-            runnerModal.style.display = 'none'; // Hide modal
-            document.body.classList.remove('overflow-hidden'); // Restore body scrolling
-            // Clear the onclick to prevent memory leaks if modal re-opened frequently
+            runnerModal.style.display = 'none';
+            document.body.classList.remove('overflow-hidden');
             modalBookNowBtn.onclick = null;
         }
 
@@ -903,7 +722,7 @@
         retryLocationButton.addEventListener('click', getBrowserLocation);
         applyFiltersButton.addEventListener('click', () => {
             const selectedValue = locationSelect.value;
-            localStorage.setItem('simulatedLocation', selectedValue); // Store preference
+            localStorage.setItem('simulatedLocation', selectedValue);
 
             if (selectedValue === 'auto') {
                 getBrowserLocation();
@@ -911,18 +730,25 @@
                 const simulatedLoc = simulatedLocations[selectedValue];
                 if (simulatedLoc) {
                     currentUserLocation = simulatedLoc;
-                    setStatusMessage('success'); // Clear any status messages
+                    setStatusMessage('success');
                     applyFiltersAndSort();
                 } else {
                     setStatusMessage('error', 'Invalid simulated location selected.');
                 }
             }
         });
+        
+        // Listeners for filter and sort dropdowns to automatically re-render
+        locationSelect.addEventListener('change', applyFiltersAndSort);
+        serviceFilter.addEventListener('change', applyFiltersAndSort);
+        availabilityFilter.addEventListener('change', applyFiltersAndSort);
+        sortBy.addEventListener('change', applyFiltersAndSort);
+
 
         // Modal close listeners
         closeModalButton.addEventListener('click', closeRunnerModal);
         runnerModal.addEventListener('click', (event) => {
-            if (event.target === runnerModal) { // Close only if clicking on backdrop
+            if (event.target === runnerModal) {
                 closeRunnerModal();
             }
         });
@@ -934,7 +760,7 @@
 
         // Back to Top button logic
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 300) { // Show button after scrolling 300px
+            if (window.scrollY > 300) {
                 backToTopButton.classList.remove('hidden');
             } else {
                 backToTopButton.classList.add('hidden');
@@ -949,8 +775,8 @@
         });
 
         // --- Initial Page Load ---
-        initializeLocationAndRunners();
+        fetchRunnersData();
     });
 </script> 
- 
-</body></html>
+</body>
+ </html>
