@@ -6,6 +6,7 @@
     <title>Run Me An Errand - Your Trusted Errand Partner in Kenya</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/forms"></script>
+    <script src="https://unpkg.com/backendless@latest/dist/backendless.min.js"></script>
     <style>
         /* Custom CSS for colors */
         :root {
@@ -220,17 +221,10 @@
                 <img src="https://i.postimg.cc/d1z9KLkL/ei-1752053865516-removebg-preview.png" alt="Errand Logo" class="h-20 md:h-24 w-auto">
                 <h1 class="text-xl md:text-3xl font-bold text-white transition-colors duration-300 hover:text-gold" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.4);">Run Me An Errand</h1>
             </a>
-            <nav class="hidden md:flex space-x-6 text-lg">
-                <a href="index.html" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.2s;">Home</a>
-                <a href="about-us.html" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.3s;">About Us</a>
-                <a href="runners.html" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.4s;">Browse Runners</a>
-                <a href="sign-up.html" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.5s;">Become a Runner</a>
-                <a href="#contact" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.6s;">Contact</a>
-            </nav>
-            <div class="hidden md:flex space-x-4">
-                <a href="login.html" class="bg-gold text-maroon px-4 py-2 rounded-full hover:bg-white hover:text-maroon transition duration-300 animate-zoom-in" style="animation-delay: 0.7s;">Login</a>
-                <a href="sign-up.html" class="bg-white text-maroon px-4 py-2 rounded-full hover:bg-gold hover:text-maroon transition duration-300 animate-zoom-in" style="animation-delay: 0.8s;">Sign Up</a>
-            </div>
+            <nav class="hidden md:flex space-x-6 text-lg" id="desktop-nav">
+                </nav>
+            <div class="hidden md:flex space-x-4" id="desktop-auth-buttons">
+                </div>
             <div class="md:hidden">
                 <button id="mobile-menu-button" class="text-gray-300 hover:text-gold focus:outline-none focus:ring-2 focus:ring-gold animate-fade-in hamburger" style="animation-delay: 0.9s;" aria-label="Toggle mobile menu">
                     <span></span>
@@ -240,16 +234,7 @@
             </div>
         </div>
         <nav id="mobile-menu" class="mobile-menu md:hidden bg-gradient-to-r from-maroon-dark to-maroon pb-4 shadow-inner">
-            <a href="index.html" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Home</a>
-            <a href="about-us.html" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">About Us</a>
-            <a href="runners.html" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Browse Runners</a>
-            <a href="sign-up.html" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Become a Runner</a>
-            <a href="#contact" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Contact</a>
-            <div class="px-6 pt-4 flex flex-col space-y-3">
-                <a href="login.html" class="bg-gold text-maroon px-4 py-2 rounded-full text-center hover:bg-white hover:text-maroon transition duration-300">Login</a>
-                <a href="sign-up.html" class="bg-white text-maroon px-4 py-2 rounded-full text-center hover:bg-gold hover:text-maroon transition duration-300">Sign Up</a>
-            </div>
-        </nav>
+             </nav>
     </header>
 
     <section class="hero-background-image animate-bg-pan">
@@ -257,7 +242,7 @@
             <h2 class="text-4xl lg:text-5xl font-extrabold text-white mb-6 animate-slide-in-left" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.6);">Your Errand, Our Runners.</h2>
             <p class="text-lg lg:text-xl text-white mb-8 animate-slide-in-right" style="animation-delay: 0.2s;">Access a network of reliable, verified runners across Kenya for all your to-do's. Get help with groceries, deliveries, and more - simply and affordably.</p>
             <div class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-4">
-                <a href="runners.html" class="bg-gold text-maroon px-8 py-3 font-semibold rounded-full shadow-md hover:bg-maroon hover:text-white transition duration-300 animate-pulse-subtle">Browse Runners</a>
+                <a href="login.html" id="hero-browse-btn" class="bg-gold text-maroon px-8 py-3 font-semibold rounded-full shadow-md hover:bg-maroon hover:text-white transition duration-300 animate-pulse-subtle">Browse Runners</a>
                 <a href="sign-up.html" class="bg-white text-maroon px-8 py-3 font-semibold rounded-full shadow-md hover:bg-gold hover:text-maroon transition duration-300 animate-pulse-subtle">Become a Runner</a>
             </div>
         </div>
@@ -293,11 +278,11 @@
         <p class="text-center text-gray-700 mb-8 animated-item">Our network of trusted, verified runners is ready to help you with your tasks.</p>
         
         <div id="runners-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <p class="text-center text-gray-500 col-span-3">Loading runners...</p>
+            <p class="text-center text-gray-500 col-span-3">Please <a href="login.html" class="text-maroon underline font-semibold">login</a> or <a href="sign-up.html" class="text-maroon underline font-semibold">sign up</a> to view our featured runners.</p>
         </div>
 
         <div class="text-center mt-10 animated-item">
-            <a href="runners.html" id="viewAllRunnersBtn" class="bg-gold text-maroon font-semibold px-6 py-3 rounded-full hover:bg-maroon hover:text-white transition duration-300">View All Runners</a>
+            <a href="login.html" id="viewAllRunnersBtn" class="bg-gold text-maroon font-semibold px-6 py-3 rounded-full hover:bg-maroon hover:text-white transition duration-300">View All Runners</a>
         </div>
     </section>
 
@@ -389,7 +374,7 @@
                 <ul class="space-y-2 text-sm">
                     <li><a href="index.html" class="hover:text-gold transition-colors duration-200">Home</a></li>
                     <li><a href="about-us.html" class="hover:text-gold transition-colors duration-200">About Us</a></li>
-                    <li><a href="runners.html" class="hover:text-gold transition-colors duration-200">Browse Runners</a></li>
+                    <li><a href="login.html" class="hover:text-gold transition-colors duration-200" id="footer-runners-link">Browse Runners</a></li>
                     <li><a href="sign-up.html" class="hover:text-gold transition-colors duration-200">Become a Runner</a></li>
                     <li><a href="#contact" class="hover:text-gold transition-colors duration-200">Contact Us</a></li>
                     <li><a href="#" class="hover:text-gold transition-colors duration-200">FAQ</a></li>
@@ -418,12 +403,117 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Backendless API keys from your admin panel code
+            // --- Backendless Initialization ---
             const APP_ID = "9223CBD1-9AFC-4C74-B56B-12F11D319DF9";
             const API_KEY = "0C3700EB-013B-4BFE-85ED-CE0F6F7EC013";
+            Backendless.initApp(APP_ID, API_KEY);
+
             const runnersContainer = document.getElementById('runners-container');
             const viewAllRunnersBtn = document.getElementById('viewAllRunnersBtn');
+            const heroBrowseBtn = document.getElementById('hero-browse-btn');
+            const desktopNav = document.getElementById('desktop-nav');
+            const desktopAuthButtons = document.getElementById('desktop-auth-buttons');
+            const mobileMenuNav = document.getElementById('mobile-menu');
 
+            // --- Function to check login status and update UI ---
+            async function checkLoginStatusAndUpdateUI() {
+                try {
+                    const user = await Backendless.UserService.getCurrentUser();
+                    if (user) {
+                        // User is logged in
+                        renderLoggedInUI(user);
+                        fetchRunners();
+                    } else {
+                        // User is NOT logged in
+                        renderLoggedOutUI();
+                    }
+                } catch (error) {
+                    // Assume user is not logged in if there's an error
+                    renderLoggedOutUI();
+                }
+            }
+
+            function renderLoggedInUI(user) {
+                // Update navigation links
+                desktopNav.innerHTML = `
+                    <a href="index.html" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.2s;">Home</a>
+                    <a href="about-us.html" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.3s;">About Us</a>
+                    <a href="runners.html" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.4s;">Browse Runners</a>
+                    <a href="sign-up.html" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.5s;">Become a Runner</a>
+                    <a href="#contact" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.6s;">Contact</a>
+                `;
+
+                mobileMenuNav.innerHTML = `
+                    <a href="index.html" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Home</a>
+                    <a href="about-us.html" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">About Us</a>
+                    <a href="runners.html" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Browse Runners</a>
+                    <a href="sign-up.html" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Become a Runner</a>
+                    <a href="#contact" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Contact</a>
+                    <div class="px-6 pt-4 flex flex-col space-y-3">
+                        <button id="logout-btn-mobile" class="bg-white text-maroon px-4 py-2 rounded-full text-center hover:bg-gold hover:text-maroon transition duration-300">Log Out</button>
+                    </div>
+                `;
+
+                desktopAuthButtons.innerHTML = `
+                    <span class="text-white text-sm flex items-center">Hi, ${user.name || user.email}!</span>
+                    <button id="logout-btn" class="bg-white text-maroon px-4 py-2 rounded-full hover:bg-gold hover:text-maroon transition duration-300">Log Out</button>
+                `;
+                
+                // Update hero and featured runner links
+                heroBrowseBtn.href = "runners.html";
+                viewAllRunnersBtn.href = "runners.html";
+                document.getElementById('footer-runners-link').href = "runners.html";
+
+                // Add logout event listeners
+                document.getElementById('logout-btn').addEventListener('click', logout);
+                document.getElementById('logout-btn-mobile').addEventListener('click', logout);
+            }
+
+            function renderLoggedOutUI() {
+                // Update navigation links
+                desktopNav.innerHTML = `
+                    <a href="index.html" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.2s;">Home</a>
+                    <a href="about-us.html" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.3s;">About Us</a>
+                    <a href="login.html" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.4s;">Browse Runners</a>
+                    <a href="sign-up.html" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.5s;">Become a Runner</a>
+                    <a href="#contact" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.6s;">Contact</a>
+                `;
+
+                mobileMenuNav.innerHTML = `
+                    <a href="index.html" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Home</a>
+                    <a href="about-us.html" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">About Us</a>
+                    <a href="login.html" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Browse Runners</a>
+                    <a href="sign-up.html" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Become a Runner</a>
+                    <a href="#contact" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Contact</a>
+                    <div class="px-6 pt-4 flex flex-col space-y-3">
+                        <a href="login.html" class="bg-gold text-maroon px-4 py-2 rounded-full text-center hover:bg-white hover:text-maroon transition duration-300">Login</a>
+                        <a href="sign-up.html" class="bg-white text-maroon px-4 py-2 rounded-full text-center hover:bg-gold hover:text-maroon transition duration-300">Sign Up</a>
+                    </div>
+                `;
+
+                desktopAuthButtons.innerHTML = `
+                    <a href="login.html" class="bg-gold text-maroon px-4 py-2 rounded-full hover:bg-white hover:text-maroon transition duration-300 animate-zoom-in" style="animation-delay: 0.7s;">Login</a>
+                    <a href="sign-up.html" class="bg-white text-maroon px-4 py-2 rounded-full hover:bg-gold hover:text-maroon transition duration-300 animate-zoom-in" style="animation-delay: 0.8s;">Sign Up</a>
+                `;
+                
+                // Update hero and featured runner links to redirect to login
+                heroBrowseBtn.href = "login.html";
+                viewAllRunnersBtn.href = "login.html";
+                document.getElementById('footer-runners-link').href = "login.html";
+
+                runnersContainer.innerHTML = `<p class="text-center text-gray-500 col-span-3">Please <a href="login.html" class="text-maroon underline font-semibold">login</a> or <a href="sign-up.html" class="text-maroon underline font-semibold">sign up</a> to view our featured runners.</p>`;
+            }
+
+            async function logout() {
+                try {
+                    await Backendless.UserService.logout();
+                    window.location.href = "index.html"; // Redirect to a logged out state or homepage
+                } catch (error) {
+                    console.error("Logout failed:", error);
+                    alert("Logout failed. Please try again.");
+                }
+            }
+            
             // Function to fetch runners from Backendless
             async function fetchRunners() {
                 try {
@@ -434,7 +524,6 @@
                     });
 
                     if (!response.ok) {
-                        // Attempt to parse the error message from Backendless
                         const errorData = await response.json().catch(() => ({ message: 'No message available.' }));
                         throw new Error(`Failed to fetch runners: ${response.status} ${response.statusText}. Backendless says: "${errorData.message}"`);
                     }
@@ -455,7 +544,6 @@
                 }
 
                 runners.forEach(runner => {
-                    // Display a placeholder image if `runner.profileImageUrl` is not available
                     const profileImage = runner.profileImageUrl || 'https://via.placeholder.com/150';
                     const runnerName = runner.name || 'Anonymous Runner';
                     const areasServed = runner.areasServed || 'N/A';
@@ -535,10 +623,10 @@
             animateOnScroll('.step-icon', 'is-visible', 0.15);
             animateOnScroll('.trust-icon', 'is-visible', 0.15);
 
-            // Fetch and display the runners when the page loads
-            fetchRunners();
+            // Initial check on page load
+            checkLoginStatusAndUpdateUI();
         });
     </script>
 </body>
-                                                                                                                                               </html>
-                     
+    </html>
+                        
