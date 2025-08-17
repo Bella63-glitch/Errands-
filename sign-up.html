@@ -14,45 +14,44 @@
     .bg-maroon { background-color: var(--maroon); }
     .text-gold { color: var(--gold); }
     .bg-gold { background-color: var(--gold); }
-    .bg-maroon-dark { background-color: #66182f; }
-    
-    body {
-        font-family: sans-serif;
-    }
-    .id-info {
-        font-size: 0.8em;
-        color: #666;
-        margin-top: 5px;
-        font-weight: normal;
-    }
-    .popup {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 15px;
-        border-radius: 5px;
-        display: none;
-        color: white;
-        font-weight: bold;
-        z-index: 1000;
-    }
-    .popup.success { background: green; }
-    .popup.error { background: red; }
-    .payment-notice {
-        background-color: #fffbeb; /* A soft, light yellow background */
-        border-left: 4px solid var(--gold);
-        color: #4a5568;
-        padding: 16px;
-        border-radius: 8px;
-    }
-    .payment-notice p {
-        margin: 0;
-    }
-    .payment-notice h4 {
-        font-weight: bold;
-        color: var(--maroon);
-        margin-bottom: 8px;
-    }
+    .bg-maroon-dark { background-color: #66182f; }  body {
+    font-family: sans-serif;
+}
+.id-info {
+    font-size: 0.8em;
+    color: #666;
+    margin-top: 5px;
+    font-weight: normal;
+}
+.popup {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px;
+    border-radius: 5px;
+    display: none;
+    color: white;
+    font-weight: bold;
+    z-index: 1000;
+}
+.popup.success { background: green; }
+.popup.error { background: red; }
+.payment-notice {
+    background-color: #fffbeb; /* A soft, light yellow background */
+    border-left: 4px solid var(--gold);
+    color: #4a5568;
+    padding: 16px;
+    border-radius: 8px;
+}
+.payment-notice p {
+    margin: 0;
+}
+.payment-notice h4 {
+    font-weight: bold;
+    color: var(--maroon);
+    margin-bottom: 8px;
+}
+
 </style> 
  </head> 
  <body class="bg-gray-100 text-gray-800 font-sans min-h-screen flex flex-col"> 
@@ -99,101 +98,103 @@
   <script>
 const APP_ID = "9223CBD1-9AFC-4C74-B56B-12F11D319DF9";
 const API_KEY = "0C3700EB-013B-4BFE-85ED-CE0F6F7EC013";
-
 const accountTypeSelect = document.getElementById("accountType");
 const runnerFields = document.getElementById("runnerFields");
 const paymentNotice = document.getElementById("paymentNotice");
 
 function updatePaymentNotice() {
-    const accountType = accountTypeSelect.value;
-    let feeAmount;
-    let message;
+const accountType = accountTypeSelect.value;
+let feeAmount;
+let message;
 
-    if (accountType === "runner") {
-        feeAmount = 50;
-        message = `
-            <h4>Subscription & Verification</h4>
-            <p>To join our community of trusted Runners, we ask for a small monthly subscription fee of **KES ${feeAmount}**. This fee gives you access to our platform and helps us cover administrative costs to ensure a safe and reliable service for all users.</p>
-        `;
-    } else { // accountType === "user"
-        feeAmount = 100;
-        message = `
-            <h4>Subscription & Verification</h4>
-            <p>To access our network of reliable runners, we ask for a monthly subscription fee of **KES ${feeAmount}**. This fee gives you full access to the platform to post errands and connect with our vetted runners.</p>
-        `;
-    }
-    
-    paymentNotice.innerHTML = `
-        ${message}
-        <p class="mt-2 font-bold">Here's how to complete your first payment:</p>
-        <ol class="list-decimal list-inside mt-2 text-sm space-y-1">
-            <li>Send **KES ${feeAmount}** to our Pochi la Biashara account: <b>011585194</b></li>
-            <li>Forward the M-Pesa confirmation message to: <b>0797046378</b></li>
-        </ol>
-        <p class="mt-2 text-sm italic">Once we verify your payment, your account will be activated. Thank you for helping us build a great community!</p>
+if (accountType === "runner") {
+    feeAmount = 50;
+    message = `
+        <h4>Subscription & Verification</h4>
+        <p>To join our community of trusted Runners, we ask for a small monthly subscription fee of **KES ${feeAmount}**. This fee gives you access to our platform and helps us cover administrative costs to ensure a safe and reliable service for all users.</p>
+    `;
+} else { // accountType === "user"
+    feeAmount = 100;
+    message = `
+        <h4>Subscription & Verification</h4>
+        <p>To access our network of reliable runners, we ask for a monthly subscription fee of **KES ${feeAmount}**. This fee gives you full access to the platform to post errands and connect with our vetted runners.</p>
     `;
 }
 
+paymentNotice.innerHTML = `
+    ${message}
+    <p class="mt-2 font-bold">Here's how to complete your first payment:</p>
+    <ol class="list-decimal list-inside mt-2 text-sm space-y-1">
+        <li>Send **KES ${feeAmount}** to our Pochi la Biashara account: <b>011585194</b></li>
+        <li>Forward the M-Pesa confirmation message to: <b>0797046378</b></li>
+    </ol>
+    <p class="mt-2 text-sm italic">Once we verify your payment, your account will be activated. Thank you for helping us build a great community!</p>
+`;
+
+}
+
 function updateFormVisibility() {
-    if (accountTypeSelect.value === "runner") {
-        runnerFields.style.display = "block";
-    } else {
-        runnerFields.style.display = "none";
-    }
+if (accountTypeSelect.value === "runner") {
+runnerFields.style.display = "block";
+} else {
+runnerFields.style.display = "none";
+}
 }
 
 accountTypeSelect.addEventListener("change", () => {
-    updateFormVisibility();
-    updatePaymentNotice();
+updateFormVisibility();
+updatePaymentNotice();
 });
 document.addEventListener("DOMContentLoaded", () => {
-    updateFormVisibility();
-    updatePaymentNotice();
+updateFormVisibility();
+updatePaymentNotice();
 });
 
 function showPopup(message, type, duration = 4000) {
-    const popup = document.getElementById("popup");
-    popup.textContent = message;
-    popup.className = "popup " + type;
-    popup.style.display = "block";
-    setTimeout(() => { popup.style.display = "none"; }, duration);
+const popup = document.getElementById("popup");
+popup.textContent = message;
+popup.className = "popup " + type;
+popup.style.display = "block";
+setTimeout(() => { popup.style.display = "none"; }, duration);
 }
 
 async function signUp() {
-    const accountType = document.getElementById("accountType").value;
-    const fullName = document.getElementById("fullName").value;
-    const email = document.getElementById("email").value;
-    const phone = document.getElementById("phone").value;
-    const password = document.getElementById("password").value;
-    const location = document.getElementById("location").value;
+const accountType = document.getElementById("accountType").value;
+const fullName = document.getElementById("fullName").value;
+const email = document.getElementById("email").value;
+const phone = document.getElementById("phone").value;
+const password = document.getElementById("password").value;
+const location = document.getElementById("location").value;
 
-    let about = "";
-    let profilePictureUrl = "";
-    let idNumber = "";
-    let idimage = "";
-    let experience = "";
-    let availability = "";
+let about = "";
+let imageUrl = "";
+let idNumber = "";
+let idPictureUrl = "";
+let experience = "";
+let availability = "";
 
-    // Basic validation for all users
-    if (!fullName || !email || !phone || !password || !location) {
-        showPopup("Please fill all required fields", "error");
+// Basic validation for all users
+if (!fullName || !email || !phone || !password || !location) {
+    showPopup("Please fill all required fields", "error");
+    return;
+}
+
+if (accountType === "runner") {
+    about = document.getElementById("about").value;
+    const profilePictureFile = document.getElementById("profilePicture").files[0];
+    idNumber = document.getElementById("idNumber").value;
+    const idPictureFile = document.getElementById("idPicture").files[0];
+    experience = document.getElementById("experience").value;
+    availability = document.getElementById("availability").value;
+
+
+    // Specific validation for runners
+    if (!about || !profilePictureFile || !idNumber || !idPictureFile || !experience || !availability) {
+        showPopup("Please provide all required Runner details", "error");
         return;
     }
 
-    if (accountType === "runner") {
-        about = document.getElementById("about").value;
-        const profilePictureFile = document.getElementById("profilePicture").files[0];
-        idNumber = document.getElementById("idNumber").value;
-        experience = document.getElementById("experience").value;
-        availability = document.getElementById("availability").value;
-        const idPictureFile = document.getElementById("idPicture").files[0];
-
-        // Specific validation for runners
-        if (!about || !profilePictureFile || !idNumber || !idPictureFile || !experience || !availability) {
-            showPopup("Please provide all required Runner details", "error");
-            return;
-        }
-
+    try {
         // Handle profile picture upload
         const profilePicFormData = new FormData();
         profilePicFormData.append("file", profilePictureFile);
@@ -201,67 +202,84 @@ async function signUp() {
             method: "POST",
             body: profilePicFormData
         });
-        profilePictureUrl = await profilePicUploadRes.text();
+
+        if (!profilePicUploadRes.ok) {
+            const error = await profilePicUploadRes.json();
+            throw new Error(error.message || "Failed to upload profile picture.");
+        }
+        const profilePicData = await profilePicUploadRes.json();
+        imageUrl = profilePicData.fileURL;
 
         // Handle ID picture upload
         const idPicFormData = new FormData();
         idPicFormData.append("file", idPictureFile);
-        const idPicUploadRes = await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/files/id-pictures/${idPictureFile.name}`, {
+        const idPicUploadRes = await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/files/ids/${idPictureFile.name}`, {
             method: "POST",
             body: idPicFormData
         });
-        idimage = await idPicUploadRes.text();
-    }
 
-    const userData = {
-        name: fullName,
-        email,
-        phone,
-        password,
-        location,
-        profiletype: accountType,
-        role: accountType,
-        about: about,
-        profilepicture: profilePictureUrl,
-        idNumber,
-        idimage,
-        experience,
-        availability,
-        isavailable: false,
-        subscriptionstatus: false
-    };
-
-    const res = await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/users/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userData)
-    });
-
-    if (res.ok) {
-        // New success message, without redirecting.
-        const successMessage = "Sign up successful! Your account is pending activation. We will verify your payment and send you an email shortly to confirm and tell you how to login.";
-        showPopup(successMessage, "success", 7000); // Popup lasts longer to allow reading
-        
-        // Clear form fields
-        document.querySelector("input#fullName").value = '';
-        document.querySelector("input#email").value = '';
-        document.querySelector("input#phone").value = '';
-        document.querySelector("input#password").value = '';
-        document.querySelector("input#location").value = '';
-        if (accountType === "runner") {
-          document.querySelector("input#profilePicture").value = '';
-          document.querySelector("textarea#about").value = '';
-          document.querySelector("input#idNumber").value = '';
-          document.querySelector("input#idPicture").value = '';
-          document.querySelector("textarea#experience").value = '';
-          document.querySelector("input#availability").value = '';
+        if (!idPicUploadRes.ok) {
+            const error = await idPicUploadRes.json();
+            throw new Error(error.message || "Failed to upload ID picture.");
         }
+        const idPicData = await idPicUploadRes.json();
+        idPictureUrl = idPicData.fileURL;
 
-    } else {
-        const error = await res.json();
-        showPopup(error.message || "Sign up failed", "error");
+    } catch (error) {
+        console.error("Image upload error:", error);
+        showPopup(error.message || "An error occurred during image upload. Please try again.", "error");
+        return;
     }
+}
+
+const userData = {
+    name: fullName,
+    email,
+    phone,
+    password,
+    location,
+    profiletype: accountType,
+    role: accountType,
+    about: about,
+    imageurl: imageUrl,
+    idNumber,
+    idimage: idPictureUrl,
+    experience,
+    availability,
+    isavailable: false,
+    subscriptionstatus: false
+};
+
+const res = await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/users/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(userData)
+});
+
+if (res.ok) {
+    const successMessage = "Sign up successful! Your account is pending activation. We will verify your payment and send you an email shortly to confirm and tell you how to login.";
+    showPopup(successMessage, "success", 7000);
+
+    document.querySelector("input#fullName").value = '';
+    document.querySelector("input#email").value = '';
+    document.querySelector("input#phone").value = '';
+    document.querySelector("input#password").value = '';
+    document.querySelector("input#location").value = '';
+    if (accountType === "runner") {
+      document.querySelector("input#profilePicture").value = '';
+      document.querySelector("textarea#about").value = '';
+      document.querySelector("input#idNumber").value = '';
+      document.querySelector("input#idPicture").value = '';
+      document.querySelector("textarea#experience").value = '';
+      document.querySelector("input#availability").value = '';
+    }
+
+} else {
+    const error = await res.json();
+    showPopup(error.message || "Sign up failed", "error");
+}
+
 }
 </script> 
  </body>
-</html/>
+                                                                                                                                                                                </html>
