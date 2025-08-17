@@ -5,131 +5,130 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
   <title>Run Me An Errand - Detailed Runners</title> 
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> 
-  <style>
-        /* Custom CSS for colors */
-        :root {
-            --maroon: #7B1E3A;
-            --gold: #FFD700;
-            --light-gold: #FFEB80; /* A lighter shade for backgrounds */
-        }
-        .bg-maroon { background-color: var(--maroon); }
-        .text-gold { color: var(--gold); }
-        .bg-gold { background-color: var(--gold); }
-        .border-gold { border-color: var(--gold); }
-        .bg-light-gold { background-color: var(--light-gold); }
+  <style>  
+        /* Custom CSS for colors */  
+        :root {  
+            --maroon: #7B1E3A;  
+            --gold: #FFD700;  
+            --light-gold: #FFEB80; /* A lighter shade for backgrounds */  
+        }  
+        .bg-maroon { background-color: var(--maroon); }  
+        .text-gold { color: var(--gold); }  
+        .bg-gold { background-color: var(--gold); }  
+        .border-gold { border-color: var(--gold); }  
+        .bg-light-gold { background-color: var(--light-gold); }  /* Animation for runner cards */  
+    @keyframes fadeInSlideUp {  
+        from { opacity: 0; transform: translateY(20px); }  
+        to { opacity: 1; transform: translateY(0); }  
+    }  
+    .animate-fade-in-slide-up {  
+        animation: fadeInSlideUp 0.6s ease-out forwards;  
+    }  
 
-        /* Animation for runner cards */
-        @keyframes fadeInSlideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in-slide-up {
-            animation: fadeInSlideUp 0.6s ease-out forwards;
-        }
+    /* Loading spinner */  
+    .loader {  
+        border: 4px solid #f3f3f3;  
+        border-top: 4px solid var(--maroon);  
+        border-radius: 50%;  
+        width: 40px;  
+        height: 40px;  
+        animation: spin 1s linear infinite;  
+    }  
+    @keyframes spin {  
+        0% { transform: rotate(0deg); }  
+        100% { transform: rotate(360deg); }  
+    }  
 
-        /* Loading spinner */
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid var(--maroon);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
 
-        /* Mobile Menu Styles */
-        .mobile-menu {
-            transition: max-height 0.3s ease-in-out;
-            overflow: hidden;
-            max-height: 0;
-        }
-        .mobile-menu.active {
-            max-height: 500px; /* Sufficiently large to show all content */
-        }
+    /* Mobile Menu Styles */  
+    .mobile-menu {  
+        transition: max-height 0.3s ease-in-out;  
+        overflow: hidden;  
+        max-height: 0;  
+    }  
+    .mobile-menu.active {  
+        max-height: 500px; /* Sufficiently large to show all content */  
+    }  
 
-        /* Modal specific styles */
-        .modal {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 1000; /* Sit on top */
-            left: 0;
-            top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: auto;
-            padding: 0; /* Changed from 30px to 0 for internal padding control */
-            border-radius: 12px;
-            width: 90%;
-            max-width: 800px;
-            position: relative;
-            animation: fadeInScale 0.3s ease-out forwards;
-            max-height: 90vh; /* Max height for modal content */
-            overflow-y: auto; /* Enable scrolling within modal */
-            -webkit-overflow-scrolling: touch; /* For smoother scrolling on iOS */
-        }
-        @keyframes fadeInScale {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        .close-button {
-            color: #aaa;
-            position: absolute;
-            top: 15px;
-            right: 25px;
-            font-size: 36px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: color 0.3s;
-            z-index: 1010; /* Ensure it's above modal header */
-        }
-        .close-button:hover,
-        .close-button:focus {
-            color: var(--maroon);
-            text-decoration: none;
-            cursor: pointer;
-        }
+    /* Modal specific styles */  
+    .modal {  
+        display: none; /* Hidden by default */  
+        position: fixed; /* Stay in place */  
+        z-index: 1000; /* Sit on top */  
+        left: 0;  
+        top: 0;  
+        width: 100%; /* Full width */  
+        height: 100%; /* Full height */  
+        overflow: auto; /* Enable scroll if needed */  
+        background-color: rgba(0,0,0,0.6); /* Black w/ opacity */  
+        justify-content: center;  
+        align-items: center;  
+    }  
+    .modal-content {  
+        background-color: #fefefe;  
+        margin: auto;  
+        padding: 0; /* Changed from 30px to 0 for internal padding control */  
+        border-radius: 12px;  
+        width: 90%;  
+        max-width: 800px;  
+        position: relative;  
+        animation: fadeInScale 0.3s ease-out forwards;  
+        max-height: 90vh; /* Max height for modal content */  
+        overflow-y: auto; /* Enable scrolling within modal */  
+        -webkit-overflow-scrolling: touch; /* For smoother scrolling on iOS */  
+    }  
+    @keyframes fadeInScale {  
+        from { opacity: 0; transform: scale(0.95); }  
+        to { opacity: 1; transform: scale(1); }  
+    }  
+    .close-button {  
+        color: #aaa;  
+        position: absolute;  
+        top: 15px;  
+        right: 25px;  
+        font-size: 36px;  
+        font-weight: bold;  
+        cursor: pointer;  
+        transition: color 0.3s;  
+        z-index: 1010; /* Ensure it's above modal header */  
+    }  
+    .close-button:hover,  
+    .close-button:focus {  
+        color: var(--maroon);  
+        text-decoration: none;  
+        cursor: pointer;  
+    }  
 
-        /* Skeleton loader for cards */
-        .skeleton {
-            background-color: #e2e8f0; /* bg-gray-200 */
-            border-radius: 8px;
-            animation: pulse 1.5s infinite ease-in-out;
-        }
+    /* Skeleton loader for cards */  
+    .skeleton {  
+        background-color: #e2e8f0; /* bg-gray-200 */  
+        border-radius: 8px;  
+        animation: pulse 1.5s infinite ease-in-out;  
+    }  
 
-        .skeleton-circle {
-            width: 96px; /* w-24 */
-            height: 96px; /* h-24 */
-            border-radius: 50%;
-        }
+    .skeleton-circle {  
+        width: 96px; /* w-24 */  
+        height: 96px; /* h-24 */  
+        border-radius: 50%;  
+    }  
 
-        .skeleton-text {
-            height: 1em;
-            width: 80%;
-            margin-bottom: 0.5em;
-        }
-        .skeleton-text.long {
-            width: 90%;
-        }
-        .skeleton-text.short {
-            width: 60%;
-        }
-        @keyframes pulse {
-            0% { opacity: 0.6; }
-            50% { opacity: 1; }
-            100% { opacity: 0.6; }
-        }
-    </style> 
+    .skeleton-text {  
+        height: 1em;  
+        width: 80%;  
+        margin-bottom: 0.5em;  
+    }  
+    .skeleton-text.long {  
+        width: 90%;  
+    }  
+    .skeleton-text.short {  
+        width: 60%;  
+    }  
+    @keyframes pulse {  
+        0% { opacity: 0.6; }  
+        50% { opacity: 1; }  
+        100% { opacity: 0.6; }  
+    }  
+</style> 
  </head> 
  <body class="bg-gray-50 text-gray-800 font-sans"> 
   <header class="bg-maroon shadow-md sticky top-0 z-50"> 
@@ -151,38 +150,26 @@
   <main class="py-12 px-6"> 
    <div class="max-w-7xl mx-auto"> 
     <h2 class="text-4xl font-extrabold text-maroon text-center mb-4">Discover Your Ideal Runner</h2> 
-    <p class="text-xl text-gray-700 text-center mb-10">Browse through our trusted runners, filter by your needs, and book with confidence.</p> 
-    <div class="bg-white p-6 rounded-lg shadow-md mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"> 
-     <div> <label for="location-select" class="block text-sm font-medium text-gray-700 mb-2">Your Location:</label> <select id="location-select" class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-maroon focus:border-maroon"> <option value="auto">Auto-detect my location</option> <option value="nairobi-cbd">Nairobi CBD</option> <option value="kilimani">Kilimani, Nairobi</option> <option value="westlands">Westlands, Nairobi</option> <option value="embakasi">Embakasi, Nairobi</option> <option value="lavington">Lavington, Nairobi</option> <option value="kisumu">Kisumu CBD</option> <option value="eldoret">Eldoret Town</option> <option value="mombasa">Mombasa Island</option> <option value="nakuru">Nakuru Town</option> <option value="remote">Remote Area</option> </select> 
-     </div> 
-     <div> <label for="service-filter" class="block text-sm font-medium text-gray-700 mb-2">Service Type:</label> <select id="service-filter" class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-maroon focus:border-maroon"> <option value="all">All Services</option> <option value="Grocery">Grocery Delivery</option> <option value="Parcel">Parcel Delivery</option> <option value="Pharmacy">Pharmacy Run</option> <option value="Document">Document Delivery</option> <option value="Bill Payments">Bill Payments</option> <option value="Laundry">Laundry Service</option> <option value="Queueing">Queueing Service</option> <option value="Mobile Money Transfer">Mobile Money</option> <option value="Home Services">Home Services (Plumbing/Electrician)</option> <option value="Personal Shopper">Personal Shopper</option> </select> 
+    <p class="text-xl text-gray-700 text-center mb-10">Browse through our trusted runners and call them to book with confidence.</p> 
+    <div class="bg-white p-6 rounded-lg shadow-md mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"> 
+     <div> <label for="location-filter" class="block text-sm font-medium text-gray-700 mb-2">Your Location:</label> <select id="location-filter" class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-maroon focus:border-maroon"> <option value="all">All Locations</option> <option value="Nairobi">Nairobi</option> <option value="Mombasa">Mombasa</option> <option value="Kisumu">Kisumu</option> <option value="Eldoret">Eldoret</option> <option value="Nakuru">Nakuru</option> </select> 
      </div> 
      <div> <label for="availability-filter" class="block text-sm font-medium text-gray-700 mb-2">Availability:</label> <select id="availability-filter" class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-maroon focus:border-maroon"> <option value="all">All</option> <option value="Available">Available Now</option> </select> 
      </div> 
-     <div> <label for="sort-by" class="block text-sm font-medium text-gray-700 mb-2">Sort By:</label> <select id="sort-by" class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-maroon focus:border-maroon"> <option value="distance">Distance (Closest First)</option> <option value="rating">Rating (Highest First)</option> <option value="tasksCompleted">Tasks Completed (Most First)</option> </select> 
+     <div> <label for="sort-by" class="block text-sm font-medium text-gray-700 mb-2">Sort By:</label> <select id="sort-by" class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-maroon focus:border-maroon"> <option value="rating">Rating (Highest First)</option> <option value="tasksCompleted">Tasks Completed (Most First)</option> <option value="distance">Closest to Me</option> </select> 
      </div> 
-     <div class="md:col-span-2 lg:col-span-4 text-center"> <button id="apply-filters" class="w-full md:w-auto bg-maroon text-white px-8 py-3 rounded-md hover:bg-gold hover:text-maroon transition duration-300 font-semibold shadow-lg">Apply Filters & Find Runners</button> 
+     <div class="md:col-span-2 lg:col-span-3 text-center"> <button id="apply-filters" class="w-full md:w-auto bg-maroon text-white px-8 py-3 rounded-md hover:bg-gold hover:text-maroon transition duration-300 font-semibold shadow-lg">Apply Filters &amp; Find Runners</button> 
      </div> 
     </div> 
     <div id="status-container" class="mb-8 min-h-[80px] flex items-center justify-center"> 
-     <div id="location-status" class="text-center p-4 bg-blue-100 border-l-4 border-blue-500 text-blue-700 rounded-lg hidden"> 
-      <div class="flex items-center justify-center space-x-3"> 
-       <div class="loader"></div> 
-       <p class="text-lg font-semibold">Detecting your location...</p> 
-      </div> 
-     </div> 
-     <div id="location-error" class="text-center p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded-lg hidden"> 
-      <p class="text-lg font-semibold mb-2">Location access denied or unavailable.</p> 
-      <p class="text-md">Please enable location services or select a manual location.</p> <button id="retry-location" class="mt-4 bg-maroon text-white px-6 py-2 rounded-full hover:bg-gold hover:text-maroon transition duration-300">Try Auto-Detect Again</button> 
-     </div> 
      <div id="no-runners-found" class="text-center p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded-lg hidden"> 
-      <p class="text-lg font-semibold mb-2">No runners match your criteria near this location.</p> 
-      <p class="text-md">Try adjusting your filters or selecting a different location. Displaying all runners as fallback.</p> 
-     </div>
-     <div id="fetch-error" class="text-center p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded-lg hidden">
-         <p class="text-lg font-semibold mb-2">Failed to load runners data.</p>
-         <p class="text-md">There was a problem connecting to the server. Please try again later.</p>
-     </div>
+      <p class="text-lg font-semibold mb-2">No runners match your criteria.</p> 
+      <p class="text-md">Try adjusting your filters.</p> 
+     </div> 
+     <div id="fetch-error" class="text-center p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded-lg hidden"> 
+      <p class="text-lg font-semibold mb-2">Failed to load runners data.</p> 
+      <p class="text-md">There was a problem connecting to the server. Please try again later.</p> 
+     </div> 
     </div> 
     <div id="runners-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"> 
      <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-200"> 
@@ -240,10 +227,6 @@
        <p id="modal-runner-bio" class="text-gray-700 leading-relaxed text-sm"></p> 
       </div> 
       <div> 
-       <h4 class="text-xl font-bold text-maroon mb-3 border-b pb-2 border-gray-200">Services Offered</h4> 
-       <div id="modal-runner-services" class="flex flex-wrap gap-2"></div> 
-      </div> 
-      <div> 
        <h4 class="text-xl font-bold text-maroon mb-3 border-b pb-2 border-gray-200">Key Details</h4> 
        <ul class="space-y-2 text-gray-700 text-sm"> 
         <li><strong class="text-maroon">Current Location:</strong> <span id="modal-runner-location"></span></li> 
@@ -251,9 +234,8 @@
         <li><strong class="text-maroon">Vehicle Type:</strong> <span id="modal-runner-vehicle"></span></li> 
         <li><strong class="text-maroon">Avg. Response Time:</strong> <span id="modal-runner-response-time"></span></li> 
         <li><strong class="text-maroon">Languages Spoken:</strong> <span id="modal-runner-languages"></span></li> 
-       </ul> <a id="modal-runner-map-link" href="#" target="_blank" class="text-blue-600 hover:underline text-sm mt-4 flex items-center"> 
-        <svg class="w-4 h-4 mr-1" fill="currentColor" viewbox="0 0 20 20">
-         <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+       </ul> <a id="modal-runner-map-link" href="#" target="_blank" class="text-blue-600 hover:underline text-sm mt-4 flex items-center hidden"> 
+        <svg class="w-4 h-4 mr-1" fill="currentColor" viewbox="0 0 20 20"> <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path> 
         </svg> View Runner's Base on Map </a> 
       </div> 
       <div> 
@@ -262,8 +244,8 @@
        </div> 
       </div> 
      </div> 
-     <div class="bg-gray-50 p-6 pt-4 text-center rounded-b-lg border-t border-gray-200"> <button id="modal-book-now-btn" class="bg-gold text-maroon px-8 py-3 rounded-full font-bold text-lg hover:bg-maroon hover:text-white transition duration-300 shadow-xl w-full md:w-2/3">Book This Runner Now</button> 
-      <p class="text-gray-600 text-xs mt-3">We'll connect you directly to discuss your errand.</p> 
+     <div class="bg-gray-50 p-6 pt-4 text-center rounded-b-lg border-t border-gray-200"> <button id="modal-call-now-btn" class="bg-gold text-maroon px-8 py-3 rounded-full font-bold text-lg hover:bg-maroon hover:text-white transition duration-300 shadow-xl w-full md:w-2/3">Call Now</button> 
+      <p class="text-gray-600 text-xs mt-3">We'll connect you directly to the runner to discuss your errand.</p> 
      </div> 
     </div> 
    </div> 
@@ -305,478 +287,321 @@
     </div> 
    </div> 
   </footer> <button id="back-to-top" class="fixed bottom-6 right-6 bg-maroon text-white p-3 rounded-full shadow-lg hover:bg-gold hover:text-maroon transition duration-300 hidden"> 
-   <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+   <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path> 
    </svg> </button> 
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // --- Backendless Credentials ---
-        const APP_ID = "9223CBD1-9AFC-4C74-B56B-12F11D319DF9";
-        const API_KEY = "0C3700EB-013B-4BFE-85ED-CE0F6F7EC013";
-        let runnersData = [];
+  <script>  
+    document.addEventListener('DOMContentLoaded', function() {  
+        // --- Backendless Credentials ---  
+        const APP_ID = "9223CBD1-9AFC-4C74-B56B-12F11D319DF9";  
+        const API_KEY = "0C3700EB-013B-4BFE-85ED-CE0F6F7EC013";  
+        let runnersData = [];  // --- DOM Elements ---  
+    const runnersListDiv = document.getElementById('runners-list');  
+    const noRunnersFoundDiv = document.getElementById('no-runners-found');  
+    const fetchErrorDiv = document.getElementById('fetch-error');  
+    const locationFilter = document.getElementById('location-filter');  
+    const availabilityFilter = document.getElementById('availability-filter');  
+    const sortBy = document.getElementById('sort-by');  
+    const applyFiltersButton = document.getElementById('apply-filters');  
+    const mobileMenuButton = document.getElementById('mobile-menu-button');  
+    const mobileMenu = document.getElementById('mobile-menu');  
+    const backToTopButton = document.getElementById('back-to-top');  
 
-        // --- DOM Elements ---
-        const statusContainer = document.getElementById('status-container');
-        const locationStatusDiv = document.getElementById('location-status');
-        const runnersListDiv = document.getElementById('runners-list');
-        const locationErrorDiv = document.getElementById('location-error');
-        const noRunnersFoundDiv = document.getElementById('no-runners-found');
-        const fetchErrorDiv = document.getElementById('fetch-error'); // New fetch error element
-        const retryLocationButton = document.getElementById('retry-location');
-        const locationSelect = document.getElementById('location-select');
-        const serviceFilter = document.getElementById('service-filter');
-        const availabilityFilter = document.getElementById('availability-filter');
-        const sortBy = document.getElementById('sort-by');
-        const applyFiltersButton = document.getElementById('apply-filters');
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const backToTopButton = document.getElementById('back-to-top');
+    // Modal Elements  
+    const runnerModal = document.getElementById('runner-modal');  
+    const closeModalButton = document.querySelector('.close-button');  
+    const modalRunnerPhoto = document.getElementById('modal-runner-photo');  
+    const modalRunnerName = document.getElementById('modal-runner-name');  
+    const modalAboutRunnerName = document.getElementById('modal-about-runner-name');  
+    const modalRunnerRatingStars = document.getElementById('modal-runner-rating-stars');  
+    const modalRunnerRatingValue = document.getElementById('modal-runner-rating-value');  
+    const modalRunnerTasks = document.getElementById('modal-runner-tasks');  
+    const modalRunnerAvailability = document.getElementById('modal-runner-availability');  
+    const modalRunnerLocation = document.getElementById('modal-runner-location');  
+    const modalRunnerMapLink = document.getElementById('modal-runner-map-link');  
+    const modalRunnerBio = document.getElementById('modal-runner-bio');  
+    const modalRunnerRate = document.getElementById('modal-runner-rate');  
+    const modalRunnerVehicle = document.getElementById('modal-runner-vehicle');  
+    const modalRunnerResponseTime = document.getElementById('modal-runner-response-time');  
+    const modalRunnerLanguages = document.getElementById('modal-runner-languages');  
+    const modalRunnerReviews = document.getElementById('modal-runner-reviews');  
+    const modalCallNowBtn = document.getElementById('modal-call-now-btn');  
 
-        // Modal Elements
-        const runnerModal = document.getElementById('runner-modal');
-        const closeModalButton = document.querySelector('.close-button');
-        const modalRunnerPhoto = document.getElementById('modal-runner-photo');
-        const modalRunnerName = document.getElementById('modal-runner-name');
-        const modalAboutRunnerName = document.getElementById('modal-about-runner-name');
-        const modalRunnerRatingStars = document.getElementById('modal-runner-rating-stars');
-        const modalRunnerRatingValue = document.getElementById('modal-runner-rating-value');
-        const modalRunnerTasks = document.getElementById('modal-runner-tasks');
-        const modalRunnerAvailability = document.getElementById('modal-runner-availability');
-        const modalRunnerLocation = document.getElementById('modal-runner-location');
-        const modalRunnerMapLink = document.getElementById('modal-runner-map-link');
-        const modalRunnerBio = document.getElementById('modal-runner-bio');
-        const modalRunnerServices = document.getElementById('modal-runner-services');
-        const modalRunnerRate = document.getElementById('modal-runner-rate');
-        const modalRunnerVehicle = document.getElementById('modal-runner-vehicle');
-        const modalRunnerResponseTime = document.getElementById('modal-runner-response-time');
-        const modalRunnerLanguages = document.getElementById('modal-runner-languages');
-        const modalRunnerReviews = document.getElementById('modal-runner-reviews');
-        const modalBookNowBtn = document.getElementById('modal-book-now-btn');
+    // --- Helper: Get Profile Image URL ---  
+    function getRunnerImageUrl(imageUrl) {  
+        return imageUrl || "https://via.placeholder.com/96/7B1E3A/FFD700?text=RM";  
+    }  
 
-        // --- Global State ---
-        let currentUserLocation = null;
+    // --- Helper: Generate Star HTML ---  
+    function generateStarRating(rating) {  
+        let starsHtml = '';  
+        const fullStars = Math.floor(rating);  
+        const hasHalfStar = rating % 1 >= 0.5;  
 
-        // --- Simulated User Locations for Manual Override ---
-        const simulatedLocations = {
-            "nairobi-cbd": { latitude: -1.286389, longitude: 36.817223, name: "Nairobi CBD" },
-            "kilimani": { latitude: -1.292066, longitude: 36.821946, name: "Kilimani, Nairobi" },
-            "westlands": { latitude: -1.267600, longitude: 36.790400, name: "Westlands, Nairobi" },
-            "embakasi": { latitude: -1.309000, longitude: 36.888700, name: "Embakasi, Nairobi" },
-            "lavington": { latitude: -1.283300, longitude: 36.750000, name: "Lavington, Nairobi" },
-            "kisumu": { latitude: -0.0917, longitude: 34.7679, name: "Kisumu CBD" },
-            "eldoret": { latitude: 0.5218, longitude: 35.2690, name: "Eldoret Town" },
-            "mombasa": { latitude: -4.0357, longitude: 39.6682, name: "Mombasa Island" },
-            "nakuru": { latitude: -0.2831, longitude: 36.0772, name: "Nakuru Town" },
-            "remote": { latitude: -1.0, longitude: 40.0, name: "a remote area" }
-        };
+        for (let i = 0; i < fullStars; i++) {  
+            starsHtml += '<svg class="w-5 h-5 text-gold fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>';  
+        }  
+        if (hasHalfStar) {  
+            starsHtml += '<svg class="w-5 h-5 text-gold fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>';  
+        }  
+        return starsHtml;  
+    }  
 
-        // --- Haversine Formula for Distance Calculation ---
-        function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
-            const R = 6371;
-            const dLat = deg2rad(lat2 - lat1);
-            const dLon = deg2rad(lon2 - lon1);
-            const a =
-                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-                Math.sin(dLon / 2) * Math.sin(dLon / 2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            const d = R * c;
-            return d;
-        }
+    // --- Display Runners Function ---  
+    function displayRunners(runnersToDisplay) {  
+        runnersListDiv.innerHTML = '';  
+        runnersListDiv.classList.remove('hidden');  
 
-        function deg2rad(deg) {
-            return deg * (Math.PI / 180);
-        }
+        if (runnersToDisplay.length === 0) {  
+            setStatusMessage('no_runners');  
+            runnersListDiv.classList.add('hidden');  
+            return;  
+        } else {  
+            setStatusMessage('success');  
+        }  
 
-        // --- Helper: Generate Star HTML ---
-        function generateStarRating(rating) {
-            let starsHtml = '';
-            const fullStars = Math.floor(rating);
-            const hasHalfStar = rating % 1 >= 0.5;
+        runnersToDisplay.forEach((runner, index) => {  
+            const runnerCard = document.createElement('div');  
+            runnerCard.className = `bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-200 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 cursor-pointer animate-fade-in-slide-up`;  
+            runnerCard.style.animationDelay = `${index * 0.1}s`;  
+            runnerCard.dataset.runnerId = runner.objectId;  
 
-            for (let i = 0; i < fullStars; i++) {
-                starsHtml += '<svg class="w-5 h-5 text-gold fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>';
-            }
-            if (hasHalfStar) {
-                starsHtml += '<svg class="w-5 h-5 text-gold fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>';
-            }
-            return starsHtml;
-        }
+            const availabilityClass = runner.isavailable ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';  
+            const photoUrl = getRunnerImageUrl(runner.imageurl);  
 
-        // --- Display Runners Function ---
-        function displayRunners(runnersToDisplay) {
-            runnersListDiv.innerHTML = '';
-            runnersListDiv.classList.remove('hidden');
+            runnerCard.innerHTML = `  
+                <img src="${photoUrl}" alt="${runner.name}" class="w-24 h-24 rounded-full object-cover mb-4 border-2 border-gold shadow-md">  
+                <h3 class="text-xl font-bold text-maroon mb-1">${runner.name}</h3>  
+                <div class="flex items-center justify-center mb-2">  
+                    ${generateStarRating(runner.rating || 0)}  
+                    <span class="text-gray-700 font-medium ml-1">${(runner.rating || 0).toFixed(1)}</span>  
+                    <span class="text-gray-500 text-sm ml-2">(${runner.tasksCompleted || 0} tasks)</span>  
+                </div>  
+                <p class="text-sm text-gray-500 mt-2">${runner.location ? `Based in ${runner.location}` : 'Location not specified'}</p>  
+                <p class="text-xs font-semibold ${availabilityClass} px-3 py-1 rounded-full mt-2">${runner.isavailable ? 'Available Now' : 'Currently Unavailable'}</p>  
+                <p class="text-sm text-gray-600 italic mt-3 mb-4 line-clamp-3">${runner.about || 'This runner has not provided a bio yet.'}</p>  
+                <button class="book-now-btn bg-maroon text-white px-5 py-2 rounded-full font-semibold hover:bg-gold hover:text-maroon transition duration-300 shadow mt-auto w-full" data-phone="${runner.phone || ''}" data-name="${runner.name}">Book Now</button>  
+            `;  
+            runnersListDiv.appendChild(runnerCard);  
+        });  
 
-            if (runnersToDisplay.length === 0) {
-                setStatusMessage('no_runners');
-                runnersListDiv.classList.add('hidden');
-                return;
-            } else {
-                statusContainer.innerHTML = '';
-            }
+        document.querySelectorAll('.animate-fade-in-slide-up').forEach(element => {  
+            element.addEventListener('click', (event) => {  
+                if (event.target.classList.contains('book-now-btn')) {  
+                    return;  
+                }  
+                const runnerId = event.currentTarget.dataset.runnerId;  
+                openRunnerModal(runnerId);  
+            });  
+        });  
 
-            runnersToDisplay.forEach((runner, index) => {
-                const runnerCard = document.createElement('div');
-                runnerCard.className = `bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-200 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 cursor-pointer animate-fade-in-slide-up`;
-                runnerCard.style.animationDelay = `${index * 0.1}s`;
-                runnerCard.dataset.runnerId = runner.objectId;
+        document.querySelectorAll('.book-now-btn').forEach(button => {  
+            button.addEventListener('click', (event) => {  
+                const phoneNumber = event.currentTarget.dataset.phone;  
+                const runnerName = event.currentTarget.dataset.name;  
+                if (phoneNumber) {  
+                    alert(`To book with ${runnerName}, please call or WhatsApp this number: ${phoneNumber}`);  
+                    window.location.href = `tel:${phoneNumber}`;  
+                } else {  
+                    alert(`We apologize, but ${runnerName} does not have a phone number listed. Please choose another runner.`);  
+                }  
+            });  
+        });  
+    }  
 
-                let distanceInfo = '';
-                if (currentUserLocation && currentUserLocation.latitude && runner.location && runner.location.latitude) {
-                    const distance = getDistanceFromLatLonInKm(
-                        currentUserLocation.latitude, currentUserLocation.longitude,
-                        runner.location.latitude, runner.location.longitude
-                    );
-                    distanceInfo = `<p class="text-sm text-gray-500 mt-2">~${distance.toFixed(1)} km from you</p>`;
-                } else if (runner.location && runner.location.area) {
-                     distanceInfo = `<p class="text-sm text-gray-500 mt-2">Based in ${runner.location.area}</p>`;
-                } else {
-                    distanceInfo = `<p class="text-sm text-gray-500 mt-2">Location not specified</p>`;
-                }
+    // --- Backendless API Call ---  
+    async function fetchRunnersData() {  
+        setStatusMessage('loading', 'Fetching runners from the server...');  
+        try {  
+            const url = `https://api.backendless.com/${APP_ID}/${API_KEY}/data/Users?where=role%3D'runner'`;  
+            const response = await fetch(url);  
 
-                const availabilityClass = runner.availability === 'Available' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
+            if (!response.ok) {  
+                throw new Error('Network response was not ok');  
+            }  
 
-                const photoPath = runner.photoFilename ? `profiles/${runner.photoFilename}` : 'https://via.placeholder.com/96';
+            const data = await response.json();  
 
-                runnerCard.innerHTML = `
-                    <img src="${photoPath}" alt="${runner.name}" class="w-24 h-24 rounded-full object-cover mb-4 border-2 border-gold shadow-md">
-                    <h3 class="text-xl font-bold text-maroon mb-1">${runner.name}</h3>
-                    <div class="flex items-center justify-center mb-2">
-                        ${generateStarRating(runner.rating || 0)}
-                        <span class="text-gray-700 font-medium ml-1">${(runner.rating || 0).toFixed(1)}</span>
-                        <span class="text-gray-500 text-sm ml-2">(${runner.tasksCompleted || 0} tasks)</span>
-                    </div>
-                    ${distanceInfo}
-                    <p class="text-xs font-semibold ${availabilityClass} px-3 py-1 rounded-full mt-2">${runner.availability || 'Unknown'}</p>
-                    <p class="text-sm text-gray-600 italic mt-3 mb-4 line-clamp-3">${runner.bio || 'This runner has not provided a bio yet.'}</p>
-                    <div class="flex flex-wrap justify-center gap-2 mb-4">
-                        ${(runner.services || []).slice(0, 3).map(service => `<span class="bg-gray-200 text-gray-700 text-xs px-3 py-1 rounded-full">${service}</span>`).join('')}
-                        ${(runner.services || []).length > 3 ? `<span class="bg-gray-200 text-gray-700 text-xs px-3 py-1 rounded-full">+${runner.services.length - 3} more</span>` : ''}
-                    </div>
-                    <button class="bg-gold text-maroon px-5 py-2 rounded-full font-semibold hover:bg-maroon hover:text-white transition duration-300 shadow mt-auto w-full view-profile-btn" data-runner-id="${runner.objectId}">View Profile</button>
-                `;
-                runnersListDiv.appendChild(runnerCard);
-            });
+            // Check if the returned data is an array  
+            if (Array.isArray(data)) {  
+                runnersData = data;  
+                applyFiltersAndSort();  
+            } else {  
+                console.error("API did not return an array:", data);  
+                setStatusMessage('fetch_error');  
+            }  
 
-            document.querySelectorAll('.view-profile-btn, .animate-fade-in-slide-up').forEach(element => {
-                element.addEventListener('click', (event) => {
-                    const runnerId = event.currentTarget.dataset.runnerId;
-                    openRunnerModal(runnerId);
-                });
-            });
-        }
-        
-        // --- Backendless API Call ---
-        async function fetchRunnersData() {
-            setStatusMessage('loading', 'Fetching runners from the server...');
-            try {
-                const url = `https://api.backendless.com/${APP_ID}/${API_KEY}/data/users?where=role%3D'runner'`;
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const data = await response.json();
-                runnersData = data;
-                
-                // Now that we have data, initialize location and apply filters
-                initializeLocationAndRunners();
-            } catch (error) {
-                console.error("Failed to fetch runners:", error);
-                setStatusMessage('fetch_error');
-            }
-        }
+        } catch (error) {  
+            console.error("Failed to fetch runners:", error);  
+            setStatusMessage('fetch_error');  
+        }  
+    }  
 
+    // --- Filter and Sort Logic (fixed) ---  
+    function applyFiltersAndSort() {  
+        let filteredRunners = [...runnersData];  
+          
+        // 1. Filter by Location (case-insensitive, partial match allowed)  
+        const selectedLocation = String(locationFilter.value || '').trim().toLowerCase();  
+        if (selectedLocation !== 'all' && selectedLocation !== '') {  
+            filteredRunners = filteredRunners.filter(runner => {  
+                if (!runner.location) return false;  
+                // normalize and allow partial matches (e.g., "nairobi" matches "Nairobi, Kenya")  
+                return String(runner.location).toLowerCase().includes(selectedLocation);  
+            });  
+        }  
 
-        // --- Filter and Sort Logic ---
-        function applyFiltersAndSort() {
-            let filteredRunners = [...runnersData];
+        // 2. Filter by Availability (handles boolean true and "true" string)  
+        const selectedAvailability = String(availabilityFilter.value || '').trim();  
+        if (selectedAvailability === 'Available') {  
+            filteredRunners = filteredRunners.filter(runner => {  
+                const val = runner.isavailable;  
+                // treat true boolean or "true" (case-insensitive) as available  
+                return val === true || String(val).toLowerCase() === 'true';  
+            });  
+        }  
 
-            // 1. Filter by Service Type
-            const selectedService = serviceFilter.value;
-            if (selectedService !== 'all') {
-                filteredRunners = filteredRunners.filter(runner => runner.services && runner.services.includes(selectedService));
-            }
+        // 3. Sort  
+        const selectedSort = sortBy.value;  
+        filteredRunners.sort((a, b) => {  
+            if (selectedSort === 'rating') {  
+                return (b.rating || 0) - (a.rating || 0);  
+            } else if (selectedSort === 'tasksCompleted') {  
+                return (b.tasksCompleted || 0) - (a.tasksCompleted || 0);  
+            }  
+            return 0;  
+        });  
 
-            // 2. Filter by Availability
-            const selectedAvailability = availabilityFilter.value;
-            if (selectedAvailability === 'Available') {
-                filteredRunners = filteredRunners.filter(runner => runner.availability === 'Available');
-            }
+        setTimeout(() => {  
+            displayRunners(filteredRunners);  
+        }, 700);  
+    }  
 
-            // 3. Filter by Location (proximity)
-            const maxDistanceKm = 50;
-            let runnersByLocation = [];
+    // --- Status Handling Functions ---  
+    function setStatusMessage(type, message = null) {  
+        noRunnersFoundDiv.classList.add('hidden');  
+        fetchErrorDiv.classList.add('hidden');  
+        runnersListDiv.innerHTML = '';  
+        runnersListDiv.classList.remove('hidden');  
 
-            if (currentUserLocation && currentUserLocation.latitude) {
-                runnersByLocation = filteredRunners.filter(runner => {
-                    if (runner.location && runner.location.latitude && runner.location.longitude) {
-                        const distance = getDistanceFromLatLonInKm(
-                            currentUserLocation.latitude, currentUserLocation.longitude,
-                            runner.location.latitude, runner.location.longitude
-                        );
-                        runner.distance = distance;
-                        return distance <= maxDistanceKm;
-                    }
-                    return false;
-                });
-            } else {
-                runnersByLocation = filteredRunners.map(runner => {
-                    runner.distance = Infinity;
-                    return runner;
-                });
-            }
+        if (type === 'loading') {  
+            runnersListDiv.innerHTML = `  
+                <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-200"><div class="skeleton-circle mb-4 skeleton"></div><div class="skeleton-text long skeleton"></div><div class="skeleton-text short skeleton"></div><div class="skeleton-text skeleton w-full mt-3"></div><div class="skeleton-text skeleton w-1/2 mt-2"></div><div class="skeleton-text skeleton w-full h-8 mt-4"></div></div>  
+                <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-200"><div class="skeleton-circle mb-4 skeleton"></div><div class="skeleton-text long skeleton"></div><div class="skeleton-text short skeleton"></div><div class="skeleton-text skeleton w-full mt-3"></div><div class="skeleton-text skeleton w-1/2 mt-2"></div><div class="skeleton-text skeleton w-full h-8 mt-4"></div></div>  
+                <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-200 hidden lg:flex"><div class="skeleton-circle mb-4 skeleton"></div><div class="skeleton-text long skeleton"></div><div class="skeleton-text short skeleton"></div><div class="skeleton-text skeleton w-full mt-3"></div><div class="skeleton-text skeleton w-1/2 mt-2"></div><div class="skeleton-text skeleton w-full h-8 mt-4"></div></div>  
+                <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-200 hidden xl:flex"><div class="skeleton-circle mb-4 skeleton"></div><div class="skeleton-text long skeleton"></div><div class="skeleton-text short skeleton"></div><div class="skeleton-text skeleton w-full mt-3"></div><div class="skeleton-text skeleton w-1/2 mt-2"></div><div class="skeleton-text skeleton w-full h-8 mt-4"></div></div>  
+            `;  
+        } else if (type === 'no_runners') {  
+            noRunnersFoundDiv.classList.remove('hidden');  
+        } else if (type === 'fetch_error') {  
+            fetchErrorDiv.classList.remove('hidden');  
+        }  
+    }  
 
-            let finalRunnersToDisplay = runnersByLocation;
-            if (runnersByLocation.length === 0 && (selectedService !== 'all' || selectedAvailability !== 'all')) {
-                setStatusMessage('no_runners');
-                 finalRunnersToDisplay = filteredRunners.map(runner => {
-                    runner.distance = Infinity;
-                    return runner;
-                });
-            } else if (runnersByLocation.length === 0) {
-                 setStatusMessage('no_runners');
-                finalRunnersToDisplay = runnersData.map(runner => {
-                    runner.distance = Infinity;
-                    return runner;
-                });
-            } else {
-                setStatusMessage('success');
-            }
+    // --- Modal Functions ---  
+    function openRunnerModal(runnerId) {  
+        const runner = runnersData.find(r => r.objectId === runnerId);  
+        if (!runner) return;  
 
-            // 4. Sort
-            const selectedSort = sortBy.value;
-            finalRunnersToDisplay.sort((a, b) => {
-                if (selectedSort === 'distance') {
-                    return a.distance - b.distance;
-                } else if (selectedSort === 'rating') {
-                    return (b.rating || 0) - (a.rating || 0);
-                } else if (selectedSort === 'tasksCompleted') {
-                    return (b.tasksCompleted || 0) - (a.tasksCompleted || 0);
-                }
-                return 0;
-            });
+        const photoUrl = getRunnerImageUrl(runner.imageurl);  
+        modalRunnerPhoto.src = photoUrl;  
+        modalRunnerName.textContent = runner.name;  
+        modalAboutRunnerName.textContent = runner.name;  
+        modalRunnerRatingStars.innerHTML = generateStarRating(runner.rating || 0);  
+        modalRunnerRatingValue.textContent = (runner.rating || 0).toFixed(1);  
+        modalRunnerTasks.textContent = `(${runner.tasksCompleted || 0} tasks completed)`;  
+        modalRunnerAvailability.textContent = runner.isavailable ? 'Available Now' : 'Currently Unavailable';  
 
-            setTimeout(() => {
-                displayRunners(finalRunnersToDisplay);
-            }, 700);
-        }
+        const availabilityClass = runner.isavailable ? 'bg-green-50 text-green-700 border border-green-300' : 'bg-red-50 text-red-700 border border-red-300';  
+        modalRunnerAvailability.className = `text-md font-bold px-4 py-1 rounded-full inline-block mt-2 ${availabilityClass}`;  
 
-        // --- Location Handling Functions ---
-        function setStatusMessage(type, message = null) {
-            locationStatusDiv.classList.add('hidden');
-            locationErrorDiv.classList.add('hidden');
-            noRunnersFoundDiv.classList.add('hidden');
-            fetchErrorDiv.classList.add('hidden');
-            runnersListDiv.innerHTML = '';
-            runnersListDiv.classList.remove('hidden');
+        modalRunnerLocation.textContent = runner.location || 'Not specified';  
+        modalRunnerMapLink.href = '#';  
+        modalRunnerMapLink.classList.add('hidden');  
 
-            if (type === 'loading') {
-                locationStatusDiv.classList.remove('hidden');
-                locationStatusDiv.innerHTML = `<div class="flex items-center justify-center space-x-3"><div class="loader"></div><p class="text-lg font-semibold">${message || 'Detecting your location...'}</p></div>`;
-                runnersListDiv.innerHTML = `
-                    <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-200"><div class="skeleton-circle mb-4 skeleton"></div><div class="skeleton-text long skeleton"></div><div class="skeleton-text short skeleton"></div><div class="skeleton-text skeleton w-full mt-3"></div><div class="skeleton-text skeleton w-1/2 mt-2"></div><div class="skeleton-text skeleton w-full h-8 mt-4"></div></div>
-                    <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-200"><div class="skeleton-circle mb-4 skeleton"></div><div class="skeleton-text long skeleton"></div><div class="skeleton-text short skeleton"></div><div class="skeleton-text skeleton w-full mt-3"></div><div class="skeleton-text skeleton w-1/2 mt-2"></div><div class="skeleton-text skeleton w-full h-8 mt-4"></div></div>
-                    <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-200 hidden lg:flex"><div class="skeleton-circle mb-4 skeleton"></div><div class="skeleton-text long skeleton"></div><div class="skeleton-text short skeleton"></div><div class="skeleton-text skeleton w-full mt-3"></div><div class="skeleton-text skeleton w-1/2 mt-2"></div><div class="skeleton-text skeleton w-full h-8 mt-4"></div></div>
-                    <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-200 hidden xl:flex"><div class="skeleton-circle mb-4 skeleton"></div><div class="skeleton-text long skeleton"></div><div class="skeleton-text short skeleton"></div><div class="skeleton-text skeleton w-full mt-3"></div><div class="skeleton-text skeleton w-1/2 mt-2"></div><div class="skeleton-text skeleton w-full h-8 mt-4"></div></div>
-                `;
-            } else if (type === 'error') {
-                locationErrorDiv.classList.remove('hidden');
-                if (message) locationErrorDiv.querySelector('p:first-child').textContent = message;
-            } else if (type === 'no_runners') {
-                noRunnersFoundDiv.classList.remove('hidden');
-            } else if (type === 'fetch_error') {
-                fetchErrorDiv.classList.remove('hidden');
-            } else if (type === 'success') {
-                statusContainer.innerHTML = '';
-            }
-        }
+        modalRunnerBio.textContent = runner.about || 'This runner has not provided a bio yet.';  
+          
+        modalRunnerRate.textContent = runner.hourlyRate || 'Varies by task';  
+        modalRunnerVehicle.textContent = runner.vehicle || 'Not specified';  
+        modalRunnerResponseTime.textContent = runner.responseTime || 'N/A';  
+        modalRunnerLanguages.textContent = (runner.languages || []).join(', ') || 'N/A';  
 
-        function getBrowserLocation() {
-            setStatusMessage('loading', 'Detecting your precise location...');
-            locationSelect.value = 'auto';
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        currentUserLocation = {
-                            latitude: position.coords.latitude,
-                            longitude: position.coords.longitude,
-                            name: "Your current location"
-                        };
-                        localStorage.setItem('simulatedLocation', 'auto');
-                        setStatusMessage('success');
-                        applyFiltersAndSort();
-                    },
-                    (error) => {
-                        console.error("Geolocation error:", error);
-                        let errorMessage = "Location access denied or unavailable.";
-                        if (error.code === error.PERMISSION_DENIED) {
-                            errorMessage = "You denied location access. Please enable it in browser settings or select a location manually.";
-                        } else if (error.code === error.POSITION_UNAVAILABLE) {
-                            errorMessage = "Your location could not be determined. Please try again or select manually.";
-                        } else if (error.code === error.TIMEOUT) {
-                            errorMessage = "Location detection timed out. Please try again or select manually.";
-                        }
-                        setStatusMessage('error', errorMessage);
-                        currentUserLocation = null;
-                        localStorage.setItem('simulatedLocation', 'auto');
-                        applyFiltersAndSort();
-                    },
-                    {
-                        enableHighAccuracy: true,
-                        timeout: 15000,
-                        maximumAge: 0
-                    }
-                );
-            } else {
-                setStatusMessage('error', "Geolocation is not supported by your browser. Please use a modern browser or select a location manually.");
-                currentUserLocation = null;
-                localStorage.setItem('simulatedLocation', 'auto');
-                applyFiltersAndSort();
-            }
-        }
+        modalRunnerReviews.innerHTML = '';  
+        if (runner.reviews && runner.reviews.length > 0) {  
+            runner.reviews.forEach(review => {  
+                const reviewDiv = document.createElement('div');  
+                reviewDiv.className = 'bg-gray-50 p-4 rounded-lg border border-gray-200';  
+                reviewDiv.innerHTML = `  
+                    <div class="flex items-center mb-2">  
+                        <div class="flex mr-2">${generateStarRating(review.stars)}</div>  
+                        <span class="font-semibold text-gray-800">${review.reviewer}</span>  
+                    </div>  
+                    <p class="text-sm text-gray-700 leading-relaxed">${review.text}</p>  
+                `;  
+                modalRunnerReviews.appendChild(reviewDiv);  
+            });  
+        } else {  
+            modalRunnerReviews.innerHTML = '<p class="text-gray-500 text-sm italic">No reviews yet. Be the first to review!</p>';  
+        }  
 
-        function initializeLocationAndRunners() {
-            const storedLocationKey = localStorage.getItem('simulatedLocation');
-            if (storedLocationKey && storedLocationKey !== 'auto' && simulatedLocations[storedLocationKey]) {
-                locationSelect.value = storedLocationKey;
-                currentUserLocation = simulatedLocations[storedLocationKey];
-                setStatusMessage('success');
-                applyFiltersAndSort();
-            } else {
-                getBrowserLocation();
-            }
-        }
+        modalCallNowBtn.onclick = () => {  
+            if (runner.phone) {  
+                alert(`To contact ${runner.name}, please call this number: ${runner.phone}`);  
+                window.location.href = `tel:${runner.phone}`;  
+            } else {  
+                alert(`${runner.name} does not have a phone number listed.`);  
+            }  
+            closeRunnerModal();  
+        };  
 
-        // --- Modal Functions ---
-        function openRunnerModal(runnerId) {
-            const runner = runnersData.find(r => r.objectId === runnerId);
-            if (!runner) return;
+        runnerModal.style.display = 'flex';  
+        document.body.classList.add('overflow-hidden');  
+    }  
 
-            const photoPath = runner.photoFilename ? `profiles/${runner.photoFilename}` : 'https://via.placeholder.com/128';
+    function closeRunnerModal() {  
+        runnerModal.style.display = 'none';  
+        document.body.classList.remove('overflow-hidden');  
+        modalCallNowBtn.onclick = null;  
+    }  
 
-            modalRunnerPhoto.src = photoPath;
-            modalRunnerName.textContent = runner.name;
-            modalAboutRunnerName.textContent = runner.name;
+    // --- Event Listeners ---  
+    applyFiltersButton.addEventListener('click', applyFiltersAndSort);  
+    locationFilter.addEventListener('change', applyFiltersAndSort);  
+    availabilityFilter.addEventListener('change', applyFiltersAndSort);  
+    sortBy.addEventListener('change', applyFiltersAndSort);  
 
-            modalRunnerRatingStars.innerHTML = generateStarRating(runner.rating || 0);
-            modalRunnerRatingValue.textContent = (runner.rating || 0).toFixed(1);
-            modalRunnerTasks.textContent = `(${runner.tasksCompleted || 0} tasks completed)`;
+    // Modal close listeners  
+    closeModalButton.addEventListener('click', closeRunnerModal);  
+    runnerModal.addEventListener('click', (event) => {  
+        if (event.target === runnerModal) {  
+            closeRunnerModal();  
+        }  
+    });  
 
-            modalRunnerAvailability.textContent = runner.availability || 'Not Specified';
-            const availabilityClass = runner.availability === 'Available' ? 'bg-green-50 text-green-700 border border-green-300' : 'bg-red-50 text-red-700 border border-red-300';
-            modalRunnerAvailability.className = `text-md font-bold px-4 py-1 rounded-full inline-block mt-2 ${availabilityClass}`;
+    // Mobile menu toggle  
+    mobileMenuButton.addEventListener('click', () => {  
+        mobileMenu.classList.toggle('active');  
+    });  
 
-            modalRunnerLocation.textContent = (runner.location && runner.location.area) || 'Not specified';
-            modalRunnerMapLink.href = (runner.location && runner.location.latitude && runner.location.longitude) ? 
-                `https://www.google.com/maps/search/?api=1&query=${runner.location.latitude},${runner.location.longitude}` : '#';
-            if (modalRunnerMapLink.href === '#') {
-                modalRunnerMapLink.classList.add('hidden');
-            } else {
-                modalRunnerMapLink.classList.remove('hidden');
-            }
+    // Back to Top button logic  
+    window.addEventListener('scroll', () => {  
+        if (window.scrollY > 300) {  
+            backToTopButton.classList.remove('hidden');  
+        } else {  
+            backToTopButton.classList.add('hidden');  
+        }  
+    });  
 
-            modalRunnerBio.textContent = runner.bio || 'This runner has not provided a bio yet.';
-            modalRunnerServices.innerHTML = (runner.services || []).map(service => `<span class="bg-light-gold text-maroon text-sm font-medium px-3 py-1 rounded-full shadow-sm">${service}</span>`).join('');
+    backToTopButton.addEventListener('click', () => {  
+        window.scrollTo({  
+            top: 0,  
+            behavior: 'smooth'  
+        });  
+    });  
 
-            modalRunnerRate.textContent = runner.hourlyRate || 'Varies by task';
-            modalRunnerVehicle.textContent = runner.vehicle || 'Not specified';
-            modalRunnerResponseTime.textContent = runner.responseTime || 'N/A';
-            modalRunnerLanguages.textContent = (runner.languages || []).join(', ') || 'N/A';
+    // --- Initial Page Load ---  
+    fetchRunnersData();  
+});
 
-            modalRunnerReviews.innerHTML = '';
-            if (runner.reviews && runner.reviews.length > 0) {
-                runner.reviews.forEach(review => {
-                    const reviewDiv = document.createElement('div');
-                    reviewDiv.className = 'bg-gray-50 p-4 rounded-lg border border-gray-200';
-                    reviewDiv.innerHTML = `
-                        <div class="flex items-center mb-2">
-                            <div class="flex mr-2">${generateStarRating(review.stars)}</div>
-                            <span class="font-semibold text-gray-800">${review.reviewer}</span>
-                        </div>
-                        <p class="text-sm text-gray-700 leading-relaxed">${review.text}</p>
-                    `;
-                    modalRunnerReviews.appendChild(reviewDiv);
-                });
-            } else {
-                modalRunnerReviews.innerHTML = '<p class="text-gray-500 text-sm italic">No reviews yet. Be the first to review!</p>';
-            }
-
-            modalBookNowBtn.onclick = () => {
-                alert(`You are about to book ${runner.name} for an errand! (This is a demo action)`);
-                closeRunnerModal();
-            };
-
-            runnerModal.style.display = 'flex';
-            document.body.classList.add('overflow-hidden');
-        }
-
-        function closeRunnerModal() {
-            runnerModal.style.display = 'none';
-            document.body.classList.remove('overflow-hidden');
-            modalBookNowBtn.onclick = null;
-        }
-
-
-        // --- Event Listeners ---
-        retryLocationButton.addEventListener('click', getBrowserLocation);
-        applyFiltersButton.addEventListener('click', () => {
-            const selectedValue = locationSelect.value;
-            localStorage.setItem('simulatedLocation', selectedValue);
-
-            if (selectedValue === 'auto') {
-                getBrowserLocation();
-            } else {
-                const simulatedLoc = simulatedLocations[selectedValue];
-                if (simulatedLoc) {
-                    currentUserLocation = simulatedLoc;
-                    setStatusMessage('success');
-                    applyFiltersAndSort();
-                } else {
-                    setStatusMessage('error', 'Invalid simulated location selected.');
-                }
-            }
-        });
-        
-        // Listeners for filter and sort dropdowns to automatically re-render
-        locationSelect.addEventListener('change', applyFiltersAndSort);
-        serviceFilter.addEventListener('change', applyFiltersAndSort);
-        availabilityFilter.addEventListener('change', applyFiltersAndSort);
-        sortBy.addEventListener('change', applyFiltersAndSort);
-
-
-        // Modal close listeners
-        closeModalButton.addEventListener('click', closeRunnerModal);
-        runnerModal.addEventListener('click', (event) => {
-            if (event.target === runnerModal) {
-                closeRunnerModal();
-            }
-        });
-
-        // Mobile menu toggle
-        mobileMenuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('active');
-        });
-
-        // Back to Top button logic
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 300) {
-                backToTopButton.classList.remove('hidden');
-            } else {
-                backToTopButton.classList.add('hidden');
-            }
-        });
-
-        backToTopButton.addEventListener('click', () => {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        });
-
-        // --- Initial Page Load ---
-        fetchRunnersData();
-    });
 </script> 
-</body>
- </html>
+ </body>
+           </html>
