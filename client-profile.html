@@ -114,6 +114,7 @@
   });
 
   function populateProfile(client) {
+    // Corrected to match the lowercase property name from the database schema
     document.getElementById("profilePictureImg").src = client.profilepicture || "https://via.placeholder.com/150";
     document.getElementById("clientName").textContent = client.name || "Unnamed Client";
     document.getElementById("clientAbout").textContent = client.about || "This client has not provided a bio yet.";
@@ -162,4 +163,7 @@
 
 
 
-            
+
+
+
+
