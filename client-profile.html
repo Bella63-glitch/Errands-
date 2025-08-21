@@ -1,146 +1,153 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Client Profile</title>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-64SH312S1V"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-64SH312S1V');
-    </script>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        :root {
-            --maroon: #7B1E3A;
-            --gold: #FFD700;
-        }
-        .bg-maroon { background-color: var(--maroon); }
-        .text-gold { color: var(--gold); }
-        .bg-gold { background-color: var(--gold); }
-        .bg-maroon-dark { background-color: #66182f; }
-        body {
-            font-family: sans-serif;
-        }
-        .profile-card {
-            background-color: #ffffff;
-            border-radius: 1rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            padding: 2rem;
-        }
-    </style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Client Profile</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+  <style>
+    :root { --maroon:#7B1E3A; --gold:#FFD700; }
+    .bg-maroon{background-color:var(--maroon)} .text-gold{color:var(--gold)}
+    .bg-gold{background-color:var(--gold)} .bg-maroon-dark{background-color:#66182f}
+    body{font-family:sans-serif}
+    .profile-card{background:#fff;border-radius:1rem;box-shadow:0 4px 6px rgba(0,0,0,.1);padding:2rem}
+  </style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans min-h-screen flex flex-col">
 
-    <header class="bg-maroon shadow-lg sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto flex justify-between items-center py-5 px-6">
-            <a href="/" class="flex items-center space-x-2">
-                <img src="https://i.postimg.cc/d1z9KLkL/ei-1752053865516-removebg-preview.png" alt="Errand Logo" class="h-20 md:h-24 w-auto">
-                <h1 class="text-3xl md:text-5xl font-bold text-white transition-colors duration-300 hover:text-gold" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.4);"><strong>Run Me An Errand</strong></h1>
-            </a>
+<header class="bg-maroon shadow-lg sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto flex justify-between items-center py-5 px-6">
+    <a href="/" class="flex items-center space-x-2">
+      <img src="https://i.postimg.cc/d1z9KLkL/ei-1752053865516-removebg-preview.png" alt="Errand Logo" class="h-20 md:h-24 w-auto">
+      <h1 class="text-3xl md:text-5xl font-bold text-white hover:text-gold"><strong>Run Me An Errand</strong></h1>
+    </a>
+    <button id="logoutBtn" class="px-4 py-2 rounded-md bg-gold text-maroon font-semibold hover:bg-yellow-400">Logout</button>
+  </div>
+</header>
+
+<main class="flex-grow flex justify-center items-center p-4">
+  <div id="loading" class="text-center text-maroon text-2xl font-bold" style="display:none;">Loading client profile...</div>
+
+  <div id="profileContent" class="profile-card w-full max-w-4xl my-8" style="display:none;">
+    <div class="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-8 mb-8">
+      <div class="flex-shrink-0">
+        <img id="profilePictureImg" src="https://via.placeholder.com/150" alt="Client Profile Picture" class="w-32 h-32 rounded-full object-cover border-4 border-gold shadow-md">
+      </div>
+      <div class="text-center md:text-left flex-grow">
+        <h2 id="clientName" class="text-4xl font-bold text-maroon"></h2>
+        <p class="text-lg text-gray-600 mb-2">Client</p>
+      </div>
+      <div class="flex-shrink-0">
+        <button id="postErrandButton" class="bg-maroon text-gold font-bold py-3 px-6 rounded-md hover:bg-maroon-dark">Post a New Errand</button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div>
+        <h3 class="text-2xl font-bold text-maroon mb-4">About Me</h3>
+        <p id="clientAbout" class="text-gray-700 leading-relaxed mb-6"></p>
+
+        <h3 class="text-2xl font-bold text-maroon mb-4">My Errands</h3>
+        <div id="errandHistory" class="text-gray-700"><p>No errands posted yet.</p></div>
+      </div>
+      <div>
+        <h3 class="text-2xl font-bold text-maroon mb-4">Contact Information</h3>
+        <div class="space-y-4 text-gray-700">
+          <div class="flex items-center space-x-2"><i class="fas fa-map-marker-alt text-maroon text-xl"></i><span id="clientLocation"></span></div>
+          <div class="flex items-center space-x-2"><i class="fas fa-envelope text-maroon text-xl"></i><span id="clientEmail"></span></div>
+          <div class="flex items-center space-x-2"><i class="fas fa-phone text-maroon text-xl"></i><span id="clientPhone"></span></div>
         </div>
-    </header>
+      </div>
+    </div>
+  </div>
 
-    <main class="flex-grow flex justify-center items-center p-4">
-        <div id="loading" class="text-center text-maroon text-2xl font-bold" style="display:none;">
-            Loading client profile...
-        </div>
-        <div id="profileContent" class="profile-card w-full max-w-4xl my-8" style="display:none;">
-            <div class="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-8 mb-8">
-                <div class="flex-shrink-0">
-                    <img id="profilePictureImg" src="https://via.placeholder.com/150" alt="Client Profile Picture" class="w-32 h-32 rounded-full object-cover border-4 border-gold shadow-md">
-                </div>
-                <div class="text-center md:text-left flex-grow">
-                    <h2 id="clientName" class="text-4xl font-bold text-maroon"></h2>
-                    <p class="text-lg text-gray-600 mb-2">Client</p>
-                </div>
-                <div class="flex-shrink-0">
-                    <button id="postErrandButton" class="bg-maroon text-gold font-bold py-3 px-6 rounded-md hover:bg-maroon-dark transition-colors duration-300">
-                        Post a New Errand
-                    </button>
-                </div>
-            </div>
+  <div id="errorMessage" class="text-center text-red-500 text-2xl font-bold" style="display:none;">Client not found. Please log in again.</div>
+</main>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div>
-                    <h3 class="text-2xl font-bold text-maroon mb-4">About Me</h3>
-                    <p id="clientAbout" class="text-gray-700 leading-relaxed mb-6"></p>
+<footer class="bg-gray-800 text-gray-300 py-6 mt-auto">
+  <div class="max-w-7xl mx-auto px-6 text-center">
+    <p class="text-sm">© 2025 Run Me An Errand. All rights reserved.</p>
+  </div>
+</footer>
 
-                    <h3 class="text-2xl font-bold text-maroon mb-4">My Errands</h3>
-                    <div id="errandHistory" class="text-gray-700">
-                        <p>No errands posted yet.</p>
-                    </div>
-                </div>
+<script>
+  const APP_ID = "9223CBD1-9AFC-4C74-B56B-12F11D319DF9";
+  const API_KEY = "0C3700EB-013B-4BFE-85ED-CE0F6F7EC013";
 
-                <div>
-                    <h3 class="text-2xl font-bold text-maroon mb-4">Contact Information</h3>
-                    <div class="space-y-4 text-gray-700">
-                        <div class="flex items-center space-x-2">
-                            <i class="fas fa-map-marker-alt text-maroon text-xl"></i>
-                            <span id="clientLocation"></span>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <i class="fas fa-envelope text-maroon text-xl"></i>
-                            <span id="clientEmail"></span>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <i class="fas fa-phone text-maroon text-xl"></i>
-                            <span id="clientPhone"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div id="errorMessage" class="text-center text-red-500 text-2xl font-bold" style="display:none;">
-            Client not found. Please log in again.
-        </div>
-    </main>
+  const loadingEl = document.getElementById("loading");
+  const errorEl   = document.getElementById("errorMessage");
+  const profileEl = document.getElementById("profileContent");
 
-    <footer class="bg-gray-800 text-gray-300 py-6 mt-auto">
-        <div class="max-w-7xl mx-auto px-6 text-center">
-            <p class="text-sm">© 2025 Run Me An Errand. All rights reserved.</p>
-        </div>
-    </footer>
+  // Parse id and token from URL
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get("token");
+  // (Optional) const userId = params.get("id");
 
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const userData = JSON.parse(localStorage.getItem("userData"));
-            if (!userData) {
-                showError("No user data found. Please log in again.");
-                return;
-            }
-            populateProfile(userData);
-        });
+  document.addEventListener("DOMContentLoaded", async () => {
+    if (!token) {
+      showError("Missing user token. Please log in again.");
+      return;
+    }
+    loadingEl.style.display = "block";
 
-        function populateProfile(client) {
-            document.getElementById("profilePictureImg").src = client.profilepicture || 'https://via.placeholder.com/150';
-            document.getElementById("clientName").textContent = client.name || "Unnamed Client";
-            document.getElementById("clientAbout").textContent = client.about || 'This client has not provided a bio yet.';
-            document.getElementById("clientLocation").textContent = client.location ? `Location: ${client.location}` : 'Location: Not set';
-            document.getElementById("clientEmail").textContent = client.email ? `Email: ${client.email}` : 'Email: Not set';
-            document.getElementById("clientPhone").textContent = client.phone ? `Phone: ${client.phone}` : 'Phone: Not set';
+    try {
+      // Use token to get the current user object
+      const res = await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/users/currentuser`, {
+        method: "GET",
+        headers: { "user-token": token }
+      });
 
-            document.getElementById("profileContent").style.display = "block";
-        }
+      if (!res.ok) {
+        showError("Failed to load client data. Please log in again.");
+        return;
+      }
 
-        function showError(message) {
-            const errorMessage = document.getElementById("errorMessage");
-            errorMessage.textContent = message;
-            errorMessage.style.display = "block";
-            document.getElementById("profileContent").style.display = "none";
-        }
+      const client = await res.json();
+      populateProfile(client);
+    } catch (e) {
+      console.error(e);
+      showError("An error occurred while loading your profile.");
+    } finally {
+      loadingEl.style.display = "none";
+    }
+  });
 
-        // Example for post errand button functionality
-        document.getElementById("postErrandButton").addEventListener("click", () => {
-            alert("Redirect to errand creation form...");
-        });
-    </script>
+  function populateProfile(client) {
+    document.getElementById("profilePictureImg").src = client.profilepicture || "https://via.placeholder.com/150";
+    document.getElementById("clientName").textContent = client.name || "Unnamed Client";
+    document.getElementById("clientAbout").textContent = client.about || "This client has not provided a bio yet.";
+    document.getElementById("clientLocation").textContent = client.location || "Not specified";
+    document.getElementById("clientEmail").textContent = client.email || "Not specified";
+    document.getElementById("clientPhone").textContent = client.phone || "Not specified";
+    profileEl.style.display = "block";
+  }
+
+  function showError(text) {
+    errorEl.textContent = text;
+    errorEl.style.display = "block";
+    profileEl.style.display = "none";
+  }
+
+  // Post errand example
+  document.getElementById("postErrandButton").addEventListener("click", () => {
+    alert("Redirect to errand creation form…");
+  });
+
+  // Logout using the token from the URL
+  document.getElementById("logoutBtn").addEventListener("click", async () => {
+    if (!token) { window.location.href = "login.html"; return; }
+    try {
+      await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/users/logout`, {
+        method: "GET",
+        headers: { "user-token": token }
+      });
+    } catch (e) { /* ignore */ }
+    window.location.href = "login.html";
+  });
+</script>
 </body>
 </html>
-
 
 
 
