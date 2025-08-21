@@ -124,10 +124,12 @@
     profileEl.style.display = "block";
   }
 
+  // Updated function to handle errors by showing only the error message
   function showError(text) {
     errorEl.textContent = text;
     errorEl.style.display = "block";
     profileEl.style.display = "none";
+    loadingEl.style.display = "none";
   }
 
   // Post errand example
@@ -149,14 +151,6 @@
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
 
 
 
