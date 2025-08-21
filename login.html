@@ -94,19 +94,20 @@
             }
 
             const userDetails = await userCheckResponse.json();
-            const subscriptionStatus = userDetails.subscriptionstatus;
-            const userRole = userDetails.role; // Fetch the user's role
+            console.log("User details:", userDetails);
+
+            const subscriptionStatus = userDetails.SubscriptionStatus; // ✅ case-sensitive
+            const userRole = userDetails.role ? userDetails.role.toLowerCase() : "";
 
             if (subscriptionStatus) {
                 alert('Login successful! You have an active account.');
-                // Redirect based on user's role
+
                 if (userRole === 'runner') {
                     window.location.href = 'runners-profile.html';
-                } else if (userRole === 'client') {
+                } else if (userRole === 'user') {   // ✅ fixed from "client"
                     window.location.href = 'clients-profile.html';
                 } else {
-                    // Handle cases where the role is not defined or is something else
-                    loginMessage.textContent = 'Login successful, but your role is not recognized.';
+                    loginMessage.textContent = 'Login successful, but your role is not recognized: ' + userDetails.role;
                     await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/users/logout`, {
                         method: 'GET',
                         headers: { 'user-token': userToken }
@@ -117,7 +118,7 @@
                 await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/users/logout`, {
                         method: 'GET',
                         headers: { 'user-token': userToken }
-                    });
+                });
             }
 
         } catch (error) {
@@ -128,7 +129,6 @@
         }
     });
 </script>
-
 
 </body>
 </html>
