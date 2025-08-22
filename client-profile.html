@@ -71,21 +71,31 @@
           headers: { "user-token": userToken }
         });
 
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({}));
-          errorDiv.textContent = `Failed to load client data${err.message ? ": " + err.message : ""}`;
-          profileDiv.innerHTML = "";
+        const contentType = res.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          // Not JSON → likely an error HTML page
+          errorDiv.textContent = "Session expired. Redirecting to login...";
+          localStorage.removeItem("userToken");
+          setTimeout(() => window.location.href = "login.html", 1500);
           return;
         }
 
-        const user = await res.json();
+        const data = await res.json();
 
+        if (!res.ok || data.message?.includes("Entity with ID current not found")) {
+          errorDiv.textContent = "Session expired. Redirecting to login...";
+          localStorage.removeItem("userToken");
+          setTimeout(() => window.location.href = "login.html", 1500);
+          return;
+        }
+
+        // Profile display
         profileDiv.innerHTML = `
-          <p><strong>Name:</strong> ${user.Name || "N/A"}</p>
-          <p><strong>Email:</strong> ${user.email || "N/A"}</p>
-          <p><strong>Role:</strong> ${user.role || "N/A"}</p>
-          <p><strong>Subscription Status:</strong> ${user.SubscriptionStatus ? "Active" : "Inactive"}</p>
-          <p><strong>User ID:</strong> ${user.objectId || "N/A"}</p>
+          <p><strong>Name:</strong> ${data.Name || "N/A"}</p>
+          <p><strong>Email:</strong> ${data.email || "N/A"}</p>
+          <p><strong>Role:</strong> ${data.role || "N/A"}</p>
+          <p><strong>Subscription Status:</strong> ${data.SubscriptionStatus ? "Active" : "Inactive"}</p>
+          <p><strong>User ID:</strong> ${data.objectId || "N/A"}</p>
         `;
         errorDiv.textContent = "";
 
@@ -119,17 +129,6 @@
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
 
 
 
