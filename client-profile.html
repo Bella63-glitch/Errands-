@@ -36,15 +36,22 @@
     const APP_ID = "9223CBD1-9AFC-4C74-B56B-12F11D319DF9";
     const API_KEY = "0C3700EB-013B-4BFE-85ED-CE0F6F7EC013";
 
+    // Check URL for a token, otherwise check local storage
     const params = new URLSearchParams(window.location.search);
-    const token = params.get("token");
+    const urlToken = params.get("token");
+    let userToken = urlToken || localStorage.getItem("userToken");
+
+    // Store the token in local storage for persistence
+    if (urlToken) {
+      localStorage.setItem("userToken", urlToken);
+    }
 
     const profileDiv = document.getElementById("profileDetails");
     const errorDiv = document.getElementById("errorMessage");
     const logoutBtn = document.getElementById("logoutBtn");
 
     async function loadProfile() {
-      if (!token) {
+      if (!userToken) {
         errorDiv.textContent = "No session token found. Please log in again.";
         return;
       }
@@ -52,19 +59,19 @@
       try {
         const res = await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/users/current`, {
           method: "GET",
-          headers: { "user-token": token }
+          headers: { "user-token": userToken }
         });
 
         if (!res.ok) {
           const err = await res.json().catch(() => ({}));
-          errorDiv.textContent = `Failed to load client data${err.message ? ": " + err.message : ""}`;
+          // Display the error message from the API
+          errorDiv.textContent = `Failed to load client data: ${err.message || "Unknown error"}`;
           profileDiv.innerHTML = "";
           return;
         }
 
         const user = await res.json();
         
-        // Corrected property names
         profileDiv.innerHTML = `
           <p><strong>Name:</strong> ${user.Name || "N/A"}</p>
           <p><strong>Email:</strong> ${user.email || "N/A"}</p>
@@ -81,18 +88,20 @@
 
     // Logout
     logoutBtn.addEventListener("click", async () => {
-      if (!token) {
+      if (!userToken) {
         window.location.href = "login.html";
         return;
       }
       try {
         await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/users/logout`, {
           method: "GET",
-          headers: { "user-token": token }
+          headers: { "user-token": userToken }
         });
       } catch (err) {
         console.warn("Logout error", err);
       }
+      // Clear token from local storage and redirect
+      localStorage.removeItem("userToken");
       window.location.href = "login.html";
     });
 
@@ -100,6 +109,20 @@
   </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
