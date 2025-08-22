@@ -1,56 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Run Me an Errand - Login</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <style>
-    :root { --maroon:#7B1E3A; --gold:#FFD700; }
-    .bg-maroon{background-color:var(--maroon)} .text-maroon{color:var(--maroon)}
-    .text-gold{color:var(--gold)} .bg-gold{background-color:var(--gold)}
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-  <div class="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
-    <div class="flex justify-center mb-6">
-      <h1 class="text-3xl font-bold text-maroon">Run Me an Errand Login</h1>
-    </div>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
 
-    <form id="loginForm">
-      <div class="mb-4">
-        <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-        <input type="email" id="email" name="email" required
-               class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-maroon focus:border-maroon sm:text-sm">
-      </div>
-      <div class="mb-6">
-        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-        <input type="password" id="password" name="password" required
-               class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-maroon focus:border-maroon sm:text-sm">
-      </div>
-      <div id="loginMessage" class="mb-4 text-center font-bold text-red-500"></div>
-      <button type="submit"
-              class="w-full flex justify-center py-2 px-4 rounded-md shadow-sm text-sm font-medium text-maroon bg-gold hover:bg-maroon hover:text-gold focus:outline-none">
-        Login
-      </button>
+  <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+    <h2 class="text-2xl font-bold mb-6 text-center">Login</h2>
+    <form id="loginForm" class="space-y-4">
+      <input type="email" id="email" placeholder="Email" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+      <input type="password" id="password" placeholder="Password" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+      <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">Login</button>
     </form>
+    <p id="message" class="text-red-500 text-sm mt-4 text-center"></p>
   </div>
 
   <script>
-    const APP_ID = "9223CBD1-9AFC-4C74-B56B-12F11D319DF9";
-    const API_KEY = "0C3700EB-013B-4BFE-85ED-CE0F6F7EC013";
+    const APP_ID = "9223CBD1-9AFC-4C74-B56B-12F11D319DF9"; // your appId
+    const API_KEY = "0C3700EB-013B-4BFE-85ED-CE0F6F7EC013"; // your REST API key
 
     const form = document.getElementById("loginForm");
-    const msg  = document.getElementById("loginMessage");
+    const msg = document.getElementById("message");
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      msg.textContent = "";
+      msg.textContent = "Logging in...";
 
-      const email = document.getElementById("email").value.trim();
+      const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
 
       try {
+        // send login request
         const res = await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/users/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -63,15 +46,20 @@
           return;
         }
 
+        // ✅ token is in the headers
+        const token = res.headers.get("user-token");
         const user = await res.json();
-        const token = user["user-token"];
-        const objectId = user.objectId;
+
+        if (!token) {
+          msg.textContent = "No session token received. Please try again.";
+          return;
+        }
+
         const role = (user.role || "").toLowerCase();
         const active = !!user.SubscriptionStatus;
 
         if (!active) {
           msg.textContent = "Your account is pending activation. Please contact the administrator.";
-          // Optional: logout immediately
           await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/users/logout`, {
             method: "GET",
             headers: { "user-token": token }
@@ -79,13 +67,14 @@
           return;
         }
 
-        // Store the token in localStorage before redirecting
+        // ✅ Save session token
         localStorage.setItem("userToken", token);
 
+        // ✅ Redirect by role
         if (role === "runner") {
-          window.location.href = `runners-profile.html`;
+          window.location.href = "runners-profile.html";
         } else if (role === "user") {
-          window.location.href = `client-profile.html`;
+          window.location.href = "client-profile.html";
         } else {
           msg.textContent = `Login successful, but your role is not recognized: ${role}`;
           await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/users/logout`, {
@@ -93,20 +82,15 @@
             headers: { "user-token": token }
           }).catch(()=>{});
         }
-      } catch (err) {
-        console.error(err);
-        msg.textContent = "An unexpected error occurred. Please try again.";
+
+      } catch (error) {
+        console.error("Login error:", error);
+        msg.textContent = "An error occurred. Please try again.";
       }
     });
   </script>
 </body>
 </html>
-
-
-
-
-
-
 
 
 
