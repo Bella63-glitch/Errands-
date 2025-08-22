@@ -38,7 +38,6 @@
 
     const params = new URLSearchParams(window.location.search);
     const token = params.get("token");
-    const id = params.get("id");
 
     const profileDiv = document.getElementById("profileDetails");
     const errorDiv = document.getElementById("errorMessage");
@@ -64,14 +63,16 @@
         }
 
         const user = await res.json();
-
+        
+        // Corrected property names
         profileDiv.innerHTML = `
-          <p><strong>Name:</strong> ${user.name || "N/A"}</p>
+          <p><strong>Name:</strong> ${user.Name || "N/A"}</p>
           <p><strong>Email:</strong> ${user.email || "N/A"}</p>
           <p><strong>Role:</strong> ${user.role || "N/A"}</p>
           <p><strong>Subscription Status:</strong> ${user.SubscriptionStatus ? "Active" : "Inactive"}</p>
-          <p><strong>User ID:</strong> ${user.objectId}</p>
+          <p><strong>User ID:</strong> ${user.objectId || "N/A"}</p>
         `;
+
       } catch (err) {
         console.error(err);
         errorDiv.textContent = "Unexpected error. Please try again later.";
@@ -99,6 +100,23 @@
   </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
