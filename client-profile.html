@@ -36,15 +36,8 @@
     const APP_ID = "9223CBD1-9AFC-4C74-B56B-12F11D319DF9";
     const API_KEY = "0C3700EB-013B-4BFE-85ED-CE0F6F7EC013";
 
-    // Check URL for a token, otherwise check local storage
-    const params = new URLSearchParams(window.location.search);
-    const urlToken = params.get("token");
-    let userToken = urlToken || localStorage.getItem("userToken");
-
-    // Store the token in local storage for persistence
-    if (urlToken) {
-      localStorage.setItem("userToken", urlToken);
-    }
+    // Retrieve the token from localStorage
+    const userToken = localStorage.getItem("userToken");
 
     const profileDiv = document.getElementById("profileDetails");
     const errorDiv = document.getElementById("errorMessage");
@@ -64,8 +57,7 @@
 
         if (!res.ok) {
           const err = await res.json().catch(() => ({}));
-          // Display the error message from the API
-          errorDiv.textContent = `Failed to load client data: ${err.message || "Unknown error"}`;
+          errorDiv.textContent = `Failed to load client data${err.message ? ": " + err.message : ""}`;
           profileDiv.innerHTML = "";
           return;
         }
@@ -109,6 +101,11 @@
   </script>
 </body>
 </html>
+
+
+
+
+
 
 
 
