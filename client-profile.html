@@ -59,13 +59,12 @@
   </div>
 </footer><script>
   const APP_ID = "9223CBD1-9AFC-4C74-B56B-12F11D319DF9";
-  const API_KEY = "0C3700EB-013B-4BFE-85ED-CE0F6F7EC013";
+  const REST_API_KEY = "0C3700EB-013B-4BFE-85ED-CE0F6F7EC013";
 
   const loadingEl = document.getElementById("loading");
   const errorEl   = document.getElementById("errorMessage");
   const profileEl = document.getElementById("profileContent");
 
-  // Parse token from URL
   const params = new URLSearchParams(window.location.search);
   const token = params.get("token");
 
@@ -77,18 +76,9 @@
     loadingEl.style.display = "block";
 
     try {
-      // Validate the token first
-      const validRes = await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/users/isvalidusertoken/${token}`);
-      const isValid = await validRes.json();
-      if (!isValid) {
-        showError("Invalid session. Please log in again.");
-        return;
-      }
-
-      // Fetch the current user
-      const res = await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/users/current`, {
+      const res = await fetch(`https://api.backendless.com/${APP_ID}/${REST_API_KEY}/users/current`, {
         method: "GET",
-        headers: { "user-token": token }
+        headers: { "user-token": token, "Content-Type": "application/json" }
       });
 
       if (!res.ok) {
@@ -122,16 +112,14 @@
     profileEl.style.display = "none";
   }
 
-  // Post errand example
   document.getElementById("postErrandButton").addEventListener("click", () => {
     alert("Redirect to errand creation form…");
   });
 
-  // Logout using the token from the URL
   document.getElementById("logoutBtn").addEventListener("click", async () => {
     if (!token) { window.location.href = "login.html"; return; }
     try {
-      await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/users/logout`, {
+      await fetch(`https://api.backendless.com/${APP_ID}/${REST_API_KEY}/users/logout`, {
         method: "GET",
         headers: { "user-token": token }
       });
@@ -140,9 +128,3 @@
   });
 </script></body>
 </html>
-
-
-
-
-
-
