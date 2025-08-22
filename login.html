@@ -1,101 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://api.backendless.com/sdk/js/latest/backendless.min.js"></script>
 </head>
-<body class="bg-gray-100 flex items-center justify-center h-screen">
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
 
-  <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-    <h2 class="text-2xl font-bold mb-6 text-center">Login</h2>
+  <div class="bg-white p-8 rounded-2xl shadow-lg w-96">
+    <h2 class="text-2xl font-bold text-center mb-6">Login</h2>
+
     <form id="loginForm" class="space-y-4">
-      <input type="email" id="email" placeholder="Email" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-      <input type="password" id="password" placeholder="Password" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-      <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">Login</button>
+      <input type="email" id="email" placeholder="Email" required
+             class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      <input type="password" id="password" placeholder="Password" required
+             class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      <button type="submit"
+              class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
+        Login
+      </button>
     </form>
-    <p id="message" class="text-red-500 text-sm mt-4 text-center"></p>
+
+    <p id="msg" class="text-center mt-4 text-red-500 text-sm"></p>
   </div>
 
   <script>
-    const APP_ID = "9223CBD1-9AFC-4C74-B56B-12F11D319DF9"; // your appId
-    const API_KEY = "0C3700EB-013B-4BFE-85ED-CE0F6F7EC013"; // your REST API key
+    const APP_ID = "9223CBD1-9AFC-4C74-B56B-12F11D319DF9";
+    const API_KEY = "0C3700EB-013B-4BFE-85ED-CE0F6F7EC013";
 
-    const form = document.getElementById("loginForm");
-    const msg = document.getElementById("message");
+    Backendless.initApp(APP_ID, API_KEY);
 
-    form.addEventListener("submit", async (e) => {
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const msg = document.getElementById("msg");
       msg.textContent = "Logging in...";
 
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-
       try {
-        // send login request
-        const res = await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/users/login`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ login: email, password })
-        });
+        // login & keep session
+        const user = await Backendless.UserService.login(email, password, true);
 
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({}));
-          msg.textContent = `Login failed${err.message ? `: ${err.message}` : ""}`;
-          return;
-        }
+        // store token manually too
+        localStorage.setItem("userToken", Backendless.LocalCache.get("user-token"));
+        localStorage.setItem("userId", user.objectId);
 
-        // ✅ token is in the headers
-        const token = res.headers.get("user-token");
-        const user = await res.json();
-
-        if (!token) {
-          msg.textContent = "No session token received. Please try again.";
-          return;
-        }
-
+        // role check (if your table has a "role" column)
         const role = (user.role || "").toLowerCase();
-        const active = !!user.SubscriptionStatus;
-
-        if (!active) {
-          msg.textContent = "Your account is pending activation. Please contact the administrator.";
-          await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/users/logout`, {
-            method: "GET",
-            headers: { "user-token": token }
-          }).catch(()=>{});
-          return;
-        }
-
-        // ✅ Save session token
-        localStorage.setItem("userToken", token);
-
-        // ✅ Redirect by role
         if (role === "runner") {
-          window.location.href = "runners-profile.html";
-        } else if (role === "user") {
-          window.location.href = "client-profile.html";
+          window.location.href = "runner-profile.html";
         } else {
-          msg.textContent = `Login successful, but your role is not recognized: ${role}`;
-          await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/users/logout`, {
-            method: "GET",
-            headers: { "user-token": token }
-          }).catch(()=>{});
+          window.location.href = "client-profile.html";
         }
 
-      } catch (error) {
-        console.error("Login error:", error);
-        msg.textContent = "An error occurred. Please try again.";
+      } catch (err) {
+        msg.textContent = "Login failed: " + err.message;
       }
     });
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
 
