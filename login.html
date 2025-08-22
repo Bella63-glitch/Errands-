@@ -63,7 +63,7 @@
           return;
         }
 
-        const user = await res.json(); // contains user object + "user-token"
+        const user = await res.json();
         const token = user["user-token"];
         const objectId = user.objectId;
         const role = (user.role || "").toLowerCase();
@@ -79,11 +79,13 @@
           return;
         }
 
-        // Redirect with token in URL (no localStorage)
+        // Store the token in localStorage before redirecting
+        localStorage.setItem("userToken", token);
+
         if (role === "runner") {
-          window.location.href = `runners-profile.html?id=${encodeURIComponent(objectId)}&token=${encodeURIComponent(token)}`;
+          window.location.href = `runners-profile.html`;
         } else if (role === "user") {
-          window.location.href = `client-profile.html?id=${encodeURIComponent(objectId)}&token=${encodeURIComponent(token)}`;
+          window.location.href = `client-profile.html`;
         } else {
           msg.textContent = `Login successful, but your role is not recognized: ${role}`;
           await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/users/logout`, {
@@ -99,9 +101,6 @@
   </script>
 </body>
 </html>
-
-
-
 
 
 
