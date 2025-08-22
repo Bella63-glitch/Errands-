@@ -11,6 +11,20 @@
     .text-maroon{color:var(--maroon)}
     .text-gold{color:var(--gold)} 
     .bg-gold{background-color:var(--gold)}
+    /* Spinner animation */
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid var(--maroon);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center">
@@ -18,8 +32,9 @@
   <div class="bg-white shadow-lg rounded-xl p-8 w-full max-w-lg">
     <h1 class="text-2xl font-bold text-maroon mb-6 text-center">Client Profile</h1>
 
-    <div id="profileDetails" class="space-y-4 text-gray-700">
-      <p>Loading profile...</p>
+    <!-- Profile container -->
+    <div id="profileDetails" class="space-y-4 text-gray-700 flex justify-center">
+      <div class="spinner"></div>
     </div>
 
     <div id="errorMessage" class="mt-4 text-center text-red-600 font-semibold"></div>
@@ -34,7 +49,7 @@
 
   <script>
     const APP_ID = "9223CBD1-9AFC-4C74-B56B-12F11D319DF9";
-    const API_KEY = "0C3700EB-013B-4BFE-85ED-CE0F6F7EC013";
+    const API_KEY = "0C3700EB-013B-4BFE-85ED-CE0F6F7EC013"; // REST API Key
 
     // Retrieve the token from localStorage
     const userToken = localStorage.getItem("userToken");
@@ -45,7 +60,8 @@
 
     async function loadProfile() {
       if (!userToken) {
-        errorDiv.textContent = "No session token found. Please log in again.";
+        errorDiv.textContent = "No session token found. Redirecting to login...";
+        setTimeout(() => window.location.href = "login.html", 1500);
         return;
       }
 
@@ -63,7 +79,7 @@
         }
 
         const user = await res.json();
-        
+
         profileDiv.innerHTML = `
           <p><strong>Name:</strong> ${user.Name || "N/A"}</p>
           <p><strong>Email:</strong> ${user.email || "N/A"}</p>
@@ -71,10 +87,12 @@
           <p><strong>Subscription Status:</strong> ${user.SubscriptionStatus ? "Active" : "Inactive"}</p>
           <p><strong>User ID:</strong> ${user.objectId || "N/A"}</p>
         `;
+        errorDiv.textContent = "";
 
       } catch (err) {
         console.error(err);
         errorDiv.textContent = "Unexpected error. Please try again later.";
+        profileDiv.innerHTML = "";
       }
     }
 
@@ -101,31 +119,6 @@
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
