@@ -2,9 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login</title>
-  <script src="https://api.backendless.com/sdk/js/latest/backendless.min.js"></script>
+  <title>Backendless Login</title>
+  <script src="https://cdn.jsdelivr.net/npm/backendless@6.8.0/dist/backendless.min.js"></script>
 </head>
 <body>
   <h2>Login</h2>
@@ -14,30 +13,24 @@
     <button type="submit">Login</button>
   </form>
 
+  <div id="message"></div>
+
   <script>
-    // Initialize Backendless
-    Backendless.initApp(
-      "YOUR-APP-ID",   // replace with your App ID
-      "YOUR-API-KEY"   // replace with your JavaScript API Key
-    );
+    // ✅ Use YOUR correct keys here
+    const APP_ID = "9223CBD1-9AFC-4C74-B56B-12F11D319DF9";   // App ID
+    const API_KEY = "0391DCD5-5AAB-436D-ADE3-550712FBA557"; // JavaScript API Key
+
+    Backendless.initApp(APP_ID, API_KEY);
 
     const loginForm = document.getElementById("loginForm");
+    const messageBox = document.getElementById("message");
 
-    // Auto check if already logged in
-    async function checkExistingLogin() {
-      try {
-        const currentUser = await Backendless.UserService.getCurrentUser();
-        if (currentUser) {
-          console.log("Already logged in as:", currentUser.email);
-          window.location.href = "dashboard.html"; // redirect if session valid
-        }
-      } catch (err) {
-        console.log("No active session:", err.message);
-      }
+    // If already logged in, don’t force re-login
+    const existingUser = localStorage.getItem("userToken");
+    if (existingUser) {
+      messageBox.innerText = "Already logged in ✅";
     }
-    checkExistingLogin();
 
-    // Login form submit
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const email = document.getElementById("email").value;
@@ -45,21 +38,44 @@
 
       try {
         const user = await Backendless.UserService.login(email, password, true);
-        console.log("Login successful:", user);
-
-        // ✅ Store session token
-        localStorage.setItem("user-token", user['user-token']);
+        
+        // ✅ Save token in localStorage
+        localStorage.setItem("userToken", user['user-token']);
         localStorage.setItem("userId", user.objectId);
 
-        window.location.href = "dashboard.html"; // redirect after login
-      } catch (error) {
-        console.error("Login failed:", error.message);
-        alert("Login failed: " + error.message);
+        messageBox.innerText = "Login successful! 🎉";
+        console.log("User logged in:", user);
+
+        // Redirect to dashboard or home
+        // window.location.href = "dashboard.html";
+      } catch (err) {
+        messageBox.innerText = "Login failed: " + err.message;
+        console.error("Login error:", err);
       }
     });
   </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
