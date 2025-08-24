@@ -1,118 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Runner Profile</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        :root {
-            --maroon: #7B1E3A;
-            --gold: #FFD700;
-        }
-        .bg-maroon { background-color: var(--maroon); }
-        .text-maroon { color: var(--maroon); }
-        .text-gold { color: var(--gold); }
-        .bg-gold { background-color: var(--gold); }
-        .bg-maroon-dark { background-color: #66182f; }
-        body { font-family: sans-serif; }
-        .profile-card {
-            background-color: #ffffff;
-            border-radius: 1rem;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
-            padding: 2rem;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Runner Profile</title>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+:root {
+    --maroon: #7B1E3A;
+    --gold: #FFD700;
+}
+.bg-maroon { background-color: var(--maroon); }
+.text-maroon { color: var(--maroon); }
+.text-gold { color: var(--gold); }
+.bg-gold { background-color: var(--gold); }
+.bg-maroon-dark { background-color: #66182f; }
+body { font-family: sans-serif; }
+.profile-card {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+    padding: 2rem;
+}
+.menu { display: none; }
+.menu.active { display: block; }
+.hamburger { cursor: pointer; font-size: 1.5rem; }
+</style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans min-h-screen flex flex-col">
 
+<!-- Header with hamburger -->
 <header class="bg-maroon shadow-lg sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto flex justify-between items-center py-5 px-6">
-        <a href="client-profile.html" class="flex items-center space-x-2">
-            <img src="https://i.postimg.cc/d1z9KLkL/ei-1752053865516-removebg-preview.png" alt="Errand Logo" class="h-20 md:h-24 w-auto">
-            <h1 class="text-3xl md:text-5xl font-bold text-white hover:text-gold transition-colors duration-300"><strong>Run Me An Errand</strong></h1>
-        </a>
-        <button id="logoutBtn" class="bg-gold text-maroon font-bold py-2 px-4 rounded hover:bg-maroon hover:text-gold">Logout</button>
+<div class="max-w-7xl mx-auto flex justify-between items-center py-5 px-6">
+    <a href="client-profile.html" class="flex items-center space-x-2">
+        <img src="https://i.postimg.cc/d1z9KLkL/ei-1752053865516-removebg-preview.png" alt="Logo" class="h-16 w-auto">
+        <h1 class="text-2xl font-bold text-white">Run Me An Errand</h1>
+    </a>
+    <div class="flex items-center space-x-4">
+        <i class="fas fa-bars text-white hamburger" id="hamburgerBtn"></i>
     </div>
+</div>
+<!-- Hamburger menu links -->
+<div id="menu" class="menu bg-maroon text-white flex flex-col px-6 py-4 space-y-3">
+    <a href="client-profile.html" class="hover:text-gold">Home</a>
+    <a href="explore-runners.html" class="hover:text-gold">Explore Runners</a>
+    <button id="logoutBtn" class="bg-gold text-maroon font-bold py-1 px-4 rounded hover:bg-maroon hover:text-gold">Logout</button>
+</div>
 </header>
 
-<main class="flex-grow flex justify-center items-center p-4">
-    <div id="loading" class="text-center text-maroon text-2xl font-bold" style="display:none;">
-        Loading your profile...
-    </div>
+<main class="flex-grow flex justify-center items-start p-4 mt-4">
+<div id="loading" class="text-center text-maroon text-2xl font-bold" style="display:none;">
+    Loading your profile...
+</div>
 
-    <div id="profileContent" class="profile-card w-full max-w-4xl my-8" style="display:none;">
-        <div class="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-8 mb-8">
-            <div class="flex-shrink-0">
-                <img id="profilePictureImg" src="https://via.placeholder.com/150" alt="Runner Profile Picture" class="w-32 h-32 rounded-full object-cover border-4 border-gold shadow-md">
-            </div>
-            <div class="text-center md:text-left flex-grow">
-                <h2 id="runnerName" class="text-4xl font-bold text-maroon"></h2>
-                <div class="mt-2 flex flex-col md:flex-row md:items-center md:space-x-4">
-                    <span id="runnerEmail" class="text-gray-700"></span>
-                    <span id="runnerPhone" class="text-gray-700"></span>
-                </div>
-                <div class="mt-2">
-                    <a href="edit-runner-profile.html" class="text-gold font-semibold hover:text-maroon transition-colors">Edit Details</a>
-                </div>
+<div id="profileContent" class="profile-card w-full max-w-4xl my-8" style="display:none;">
+    <div class="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-8 mb-8">
+        <div class="flex-shrink-0">
+            <img id="profilePictureImg" src="profiles/default.png" alt="Runner Profile Picture" class="w-32 h-32 rounded-full object-cover border-4 border-gold shadow-md">
+        </div>
+        <div class="text-center md:text-left flex-grow">
+            <h2 id="runnerName" class="text-4xl font-bold text-maroon"></h2>
+            <div class="mt-2 flex flex-col md:flex-row md:items-center md:space-x-4 space-y-1 md:space-y-0">
+                <span id="runnerEmail" class="text-gray-700"></span>
+                <span id="runnerPhone" class="text-gray-700"></span>
             </div>
         </div>
+    </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-                <h3 class="text-2xl font-bold text-maroon mb-4">About Me</h3>
-                <p id="runnerAbout" class="text-gray-700 leading-relaxed mb-6"></p>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div>
+            <h3 class="text-2xl font-bold text-maroon mb-4">About Me</h3>
+            <p id="runnerAbout" class="text-gray-700 leading-relaxed mb-6"></p>
 
-                <h3 class="text-2xl font-bold text-maroon mb-4">Experience & Services</h3>
-                <p id="runnerExperience" class="text-gray-700 leading-relaxed"></p>
-            </div>
+            <h3 class="text-2xl font-bold text-maroon mb-4">Experience & Services</h3>
+            <p id="runnerExperience" class="text-gray-700 leading-relaxed"></p>
+        </div>
 
-            <div>
-                <h3 class="text-2xl font-bold text-maroon mb-4">Location & Availability</h3>
-                <div class="space-y-4 text-gray-700">
-                    <div class="flex items-center space-x-2">
-                        <i class="fas fa-map-marker-alt text-maroon text-xl"></i>
-                        <span id="runnerLocation"></span>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <i class="fas fa-clock text-maroon text-xl"></i>
-                        <span id="runnerAvailability"></span>
-                    </div>
+        <div>
+            <h3 class="text-2xl font-bold text-maroon mb-4">Location & Availability</h3>
+            <div class="space-y-4 text-gray-700">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-map-marker-alt text-maroon text-xl"></i>
+                    <span id="runnerLocation"></span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-clock text-maroon text-xl"></i>
+                    <span id="runnerAvailability"></span>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="errorMessage" class="text-center text-red-500 text-2xl font-bold" style="display:none;">
-        Runner profile not found. Please login again.
+    <div class="mt-6 flex justify-center">
+        <a href="edit-runner-profile.html" class="bg-maroon text-gold font-bold py-2 px-6 rounded hover:bg-maroon-dark hover:text-gold transition-colors">Edit Details</a>
     </div>
+</div>
+
+<div id="errorMessage" class="text-center text-red-500 text-2xl font-bold" style="display:none;">
+    Runner profile not found. Please login again.
+</div>
 </main>
 
 <footer class="bg-gray-800 text-gray-300 py-6 mt-auto">
-    <div class="max-w-7xl mx-auto px-6 text-center">
-        <p class="text-sm">© 2025 Run Me An Errand. All rights reserved.</p>
-    </div>
+<div class="max-w-7xl mx-auto px-6 text-center">
+    <p class="text-sm">© 2025 Run Me An Errand. All rights reserved.</p>
+</div>
 </footer>
 
 <script>
 const APP_ID = "9223CBD1-9AFC-4C74-B56B-12F11D319DF9";
 const API_KEY = "0C3700EB-013B-4BFE-85ED-CE0F6F7EC013";
 
+document.getElementById("hamburgerBtn").addEventListener("click", () => {
+    document.getElementById("menu").classList.toggle("active");
+});
+
 document.addEventListener("DOMContentLoaded", () => {
     const params = new URLSearchParams(window.location.search);
     let runnerId = params.get('id');
-
-    // Fallback to localStorage if no id in URL
-    if (!runnerId) {
-        runnerId = localStorage.getItem("userId");
-    }
-
-    if (runnerId) {
-        fetchRunnerData(runnerId);
-    } else {
-        showError("No runner ID found. Please login again.");
-    }
+    if (!runnerId) runnerId = localStorage.getItem("userId");
+    if (runnerId) fetchRunnerData(runnerId);
+    else showError("No runner ID found. Please login again.");
 });
 
 async function fetchRunnerData(runnerId) {
@@ -132,7 +141,7 @@ async function fetchRunnerData(runnerId) {
 }
 
 function populateProfile(runner) {
-    document.getElementById("profilePictureImg").src = runner.profilepicture || 'https://via.placeholder.com/150';
+    document.getElementById("profilePictureImg").src = runner.profilepicture ? `profiles/${runner.profilepicture}` : 'profiles/default.png';
     document.getElementById("runnerName").textContent = runner.name || "No Name Provided";
     document.getElementById("runnerAbout").textContent = runner.about || 'This runner has not provided a bio yet.';
     document.getElementById("runnerExperience").textContent = runner.experience || 'No experience details provided.';
@@ -140,7 +149,6 @@ function populateProfile(runner) {
     document.getElementById("runnerEmail").textContent = runner.email || "Email not provided";
     document.getElementById("runnerPhone").textContent = runner.phone || "Phone not provided";
     document.getElementById("runnerAvailability").textContent = runner.availability || "Availability not provided";
-
     document.getElementById("profileContent").style.display = "block";
 }
 
@@ -151,7 +159,6 @@ function showError(message) {
     document.getElementById("profileContent").style.display = "none";
 }
 
-// Logout
 document.getElementById("logoutBtn").addEventListener("click", () => {
     localStorage.removeItem("userToken");
     localStorage.removeItem("userId");
@@ -159,7 +166,6 @@ document.getElementById("logoutBtn").addEventListener("click", () => {
     window.location.href = "login.html";
 });
 </script>
-
 </body>
 </html>
 
