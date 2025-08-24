@@ -32,64 +32,71 @@
   </div>
 
   <script>
-    const APP_ID = "9223CBD1-9AFC-4C74-B56B-12F11D319DF9";
-    const API_KEY = "0C3700EB-013B-4BFE-85ED-CE0F6F7EC013";
+    document.addEventListener("DOMContentLoaded", () => {
+      const APP_ID = "9223CBD1-9AFC-4C74-B56B-12F11D319DF9";
+      const API_KEY = "0C3700EB-013B-4BFE-85ED-CE0F6F7EC013";
 
-    Backendless.initApp(APP_ID, API_KEY);
+      Backendless.initApp(APP_ID, API_KEY);
 
-    async function redirectBasedOnRole(user) {
-      const role = (user.role || "").toLowerCase();
-      if (role === "runner") {
-        window.location.href = "runner-profile.html";
-      } else if (role === "user") {
-        window.location.href = "client-profile.html";
-      } else {
-        document.getElementById("msg").textContent = "Unknown role. Please contact support.";
-      }
-    }
+      // Redirect based on user role
+      async function redirectBasedOnRole(user) {
+        console.log("User object:", user); // Debug
+        const role = (user.role || "").toLowerCase();
 
-    // 🔹 Check if user is already logged in
-    Backendless.UserService.getCurrentUser()
-      .then(user => {
-        if (user) {
-          redirectBasedOnRole(user);
+        if (role === "runner") {
+          window.location.href = "runner-profile.html";
+        } else if (role === "user") {
+          window.location.href = "client-profile.html";
+        } else {
+          document.getElementById("msg").textContent = "No role found, sending to profile...";
+          setTimeout(() => {
+            window.location.href = "profile.html";
+          }, 1500);
         }
-      })
-      .catch(err => {
-        console.log("No active session:", err.message);
-      });
-
-    document.getElementById("loginForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const msg = document.getElementById("msg");
-      msg.textContent = "Logging in...";
-
-      try {
-        // Login user (stay logged in = true)
-        const user = await Backendless.UserService.login(email, password, true);
-
-        // Save token + user
-        const token = Backendless.LocalCache.get("user-token");
-        if (!token) throw new Error("No session token received");
-
-        localStorage.setItem("userToken", token);
-        localStorage.setItem("userId", user.objectId);
-        localStorage.setItem("userRole", user.role);
-
-        await redirectBasedOnRole(user);
-
-      } catch (err) {
-        msg.textContent = "Login failed: " + err.message;
-        console.error("Login error:", err);
       }
+
+      // Auto-redirect if already logged in
+      Backendless.UserService.getCurrentUser()
+        .then(user => {
+          if (user) {
+            console.log("Already logged in:", user);
+            redirectBasedOnRole(user);
+          }
+        })
+        .catch(err => {
+          console.log("No active session:", err.message);
+        });
+
+      // Handle login form
+      document.getElementById("loginForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
+        const msg = document.getElementById("msg");
+        msg.textContent = "Logging in...";
+
+        try {
+          console.log("Attempting login for:", email);
+          const user = await Backendless.UserService.login(email, password, true);
+          console.log("Login successful:", user);
+
+          msg.textContent = "Login successful! Redirecting...";
+          await redirectBasedOnRole(user);
+
+        } catch (err) {
+          msg.textContent = "Login failed: " + err.message;
+          console.error("Login error:", err);
+        }
+      });
     });
   </script>
 
 </body>
 </html>
+
+
+
 
 
 
