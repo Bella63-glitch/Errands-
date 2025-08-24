@@ -37,6 +37,17 @@
 
     Backendless.initApp(APP_ID, API_KEY);
 
+    // Auto-login check (if token exists in localStorage, skip login page)
+    const existingToken = localStorage.getItem("userToken");
+    const existingRole = localStorage.getItem("userRole");
+    if (existingToken && existingRole) {
+      if (existingRole === "runner") {
+        window.location.href = "runner-profile.html";
+      } else if (existingRole === "user") {
+        window.location.href = "client-profile.html";
+      }
+    }
+
     document.getElementById("loginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -49,8 +60,8 @@
         // Login user (stay logged in = true)
         const user = await Backendless.UserService.login(email, password, true);
 
-        // Get token directly from user object
-        const token = user["user-token"];
+        // Get token properly from Backendless LocalCache
+        const token = Backendless.LocalCache.get("user-token");
 
         if (!token) {
           throw new Error("No session token received from Backendless");
@@ -59,11 +70,12 @@
         // Save in localStorage
         localStorage.setItem("userToken", token);
         localStorage.setItem("userId", user.objectId);
-        localStorage.setItem("userRole", user.role);
 
-        // Normalize role (from Users table 'role' column)
+        // Fetch role (must exist in Users table as 'role' column)
         const role = (user.role || "").toLowerCase();
+        localStorage.setItem("userRole", role);
 
+        // Redirect based on role
         if (role === "runner") {
           window.location.href = "runner-profile.html";
         } else if (role === "user") {
@@ -82,6 +94,14 @@
 
 </body>
 </html>
+
+
+
+
+
+
+
+
 
 
 
