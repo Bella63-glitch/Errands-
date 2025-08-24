@@ -16,11 +16,10 @@
 .text-gold { color: var(--gold); }
 .bg-gold { background-color: var(--gold); }
 .bg-maroon-dark { background-color: #66182f; }
-body { font-family: sans-serif; }
 .profile-card {
     background-color: #ffffff;
     border-radius: 1rem;
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     padding: 2rem;
 }
 .menu { display: none; }
@@ -30,18 +29,15 @@ body { font-family: sans-serif; }
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans min-h-screen flex flex-col">
 
-<!-- Header with hamburger -->
+<!-- Header -->
 <header class="bg-maroon shadow-lg sticky top-0 z-50">
 <div class="max-w-7xl mx-auto flex justify-between items-center py-5 px-6">
     <a href="client-profile.html" class="flex items-center space-x-2">
         <img src="https://i.postimg.cc/d1z9KLkL/ei-1752053865516-removebg-preview.png" alt="Logo" class="h-16 w-auto">
         <h1 class="text-2xl font-bold text-white">Run Me An Errand</h1>
     </a>
-    <div class="flex items-center space-x-4">
-        <i class="fas fa-bars text-white hamburger" id="hamburgerBtn"></i>
-    </div>
+    <i class="fas fa-bars text-white hamburger" id="hamburgerBtn"></i>
 </div>
-<!-- Hamburger menu links -->
 <div id="menu" class="menu bg-maroon text-white flex flex-col px-6 py-4 space-y-3">
     <a href="client-profile.html" class="hover:text-gold">Home</a>
     <a href="explore-runners.html" class="hover:text-gold">Explore Runners</a>
@@ -50,54 +46,74 @@ body { font-family: sans-serif; }
 </header>
 
 <main class="flex-grow flex justify-center items-start p-4 mt-4">
-<div id="loading" class="text-center text-maroon text-2xl font-bold" style="display:none;">
-    Loading your profile...
-</div>
+<div id="loading" class="text-center text-maroon text-2xl font-bold">Loading your profile...</div>
 
-<div id="profileContent" class="profile-card w-full max-w-4xl my-8" style="display:none;">
-    <div class="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-8 mb-8">
-        <div class="flex-shrink-0">
-            <img id="profilePictureImg" src="profiles/default.png" alt="Runner Profile Picture" class="w-32 h-32 rounded-full object-cover border-4 border-gold shadow-md">
-        </div>
-        <div class="text-center md:text-left flex-grow">
-            <h2 id="runnerName" class="text-4xl font-bold text-maroon"></h2>
-            <div class="mt-2 flex flex-col md:flex-row md:items-center md:space-x-4 space-y-1 md:space-y-0">
-                <span id="runnerEmail" class="text-gray-700"></span>
-                <span id="runnerPhone" class="text-gray-700"></span>
+<div id="profileContent" class="profile-card w-full max-w-4xl my-8 hidden">
+    <!-- Profile View -->
+    <div id="profileView">
+        <div class="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-8 mb-8">
+            <div class="flex-shrink-0">
+                <img id="profilePictureImg" src="profiles/default.png" alt="Runner Profile Picture" class="w-32 h-32 rounded-full object-cover border-4 border-gold shadow-md">
             </div>
-        </div>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div>
-            <h3 class="text-2xl font-bold text-maroon mb-4">About Me</h3>
-            <p id="runnerAbout" class="text-gray-700 leading-relaxed mb-6"></p>
-
-            <h3 class="text-2xl font-bold text-maroon mb-4">Experience & Services</h3>
-            <p id="runnerExperience" class="text-gray-700 leading-relaxed"></p>
-        </div>
-
-        <div>
-            <h3 class="text-2xl font-bold text-maroon mb-4">Location & Availability</h3>
-            <div class="space-y-4 text-gray-700">
-                <div class="flex items-center space-x-2">
-                    <i class="fas fa-map-marker-alt text-maroon text-xl"></i>
-                    <span id="runnerLocation"></span>
-                </div>
-                <div class="flex items-center space-x-2">
-                    <i class="fas fa-clock text-maroon text-xl"></i>
-                    <span id="runnerAvailability"></span>
+            <div class="text-center md:text-left flex-grow">
+                <h2 id="runnerName" class="text-4xl font-bold text-maroon"></h2>
+                <div class="mt-2 flex flex-col md:flex-row md:items-center md:space-x-4 space-y-1 md:space-y-0">
+                    <span id="runnerEmail" class="text-gray-700"></span>
+                    <span id="runnerPhone" class="text-gray-700"></span>
                 </div>
             </div>
         </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+                <h3 class="text-2xl font-bold text-maroon mb-4">About Me</h3>
+                <p id="runnerAbout" class="text-gray-700 leading-relaxed mb-6"></p>
+
+                <h3 class="text-2xl font-bold text-maroon mb-4">Experience & Services</h3>
+                <p id="runnerExperience" class="text-gray-700 leading-relaxed"></p>
+            </div>
+
+            <div>
+                <h3 class="text-2xl font-bold text-maroon mb-4">Location & Availability</h3>
+                <div class="space-y-4 text-gray-700">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-map-marker-alt text-maroon text-xl"></i>
+                        <span id="runnerLocation"></span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-clock text-maroon text-xl"></i>
+                        <span id="runnerAvailability"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-6 flex justify-center">
+            <button id="editBtn" class="bg-maroon text-gold font-bold py-2 px-6 rounded hover:bg-maroon-dark hover:text-gold">Edit Details</button>
+        </div>
     </div>
 
-    <div class="mt-6 flex justify-center">
-        <a href="edit-runner-profile.html" class="bg-maroon text-gold font-bold py-2 px-6 rounded hover:bg-maroon-dark hover:text-gold transition-colors">Edit Details</a>
+    <!-- Profile Edit Form -->
+    <div id="profileEdit" class="hidden">
+        <h2 class="text-3xl font-bold text-maroon mb-6">Edit Profile</h2>
+        <form id="editForm" class="space-y-4">
+            <input type="text" id="editName" placeholder="Full Name" class="w-full p-2 border rounded">
+            <input type="email" id="editEmail" placeholder="Email" class="w-full p-2 border rounded">
+            <input type="text" id="editPhone" placeholder="Phone" class="w-full p-2 border rounded">
+            <textarea id="editAbout" placeholder="About Me" class="w-full p-2 border rounded"></textarea>
+            <textarea id="editExperience" placeholder="Experience & Services" class="w-full p-2 border rounded"></textarea>
+            <input type="text" id="editLocation" placeholder="Location" class="w-full p-2 border rounded">
+            <input type="text" id="editAvailability" placeholder="Availability" class="w-full p-2 border rounded">
+
+            <div class="flex space-x-4">
+                <button type="submit" class="bg-maroon text-gold font-bold py-2 px-6 rounded hover:bg-maroon-dark hover:text-gold">Save</button>
+                <button type="button" id="cancelEdit" class="bg-gray-400 text-white font-bold py-2 px-6 rounded">Cancel</button>
+            </div>
+        </form>
     </div>
 </div>
 
-<div id="errorMessage" class="text-center text-red-500 text-2xl font-bold" style="display:none;">
+<div id="errorMessage" class="text-center text-red-500 text-2xl font-bold hidden">
     Runner profile not found. Please login again.
 </div>
 </main>
@@ -118,14 +134,12 @@ document.getElementById("hamburgerBtn").addEventListener("click", () => {
 
 document.addEventListener("DOMContentLoaded", () => {
     const params = new URLSearchParams(window.location.search);
-    let runnerId = params.get('id');
-    if (!runnerId) runnerId = localStorage.getItem("userId");
+    let runnerId = params.get('id') || localStorage.getItem("userId");
     if (runnerId) fetchRunnerData(runnerId);
     else showError("No runner ID found. Please login again.");
 });
 
 async function fetchRunnerData(runnerId) {
-    document.getElementById("loading").style.display = "block";
     try {
         const response = await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/data/users/${runnerId}`);
         if (!response.ok) throw new Error('Failed to fetch data');
@@ -134,40 +148,93 @@ async function fetchRunnerData(runnerId) {
         else showError("Runner not found.");
     } catch (error) {
         console.error("Error fetching runner data:", error);
-        showError("Failed to load runner data. Please try again later.");
+        showError("Failed to load runner data.");
     } finally {
         document.getElementById("loading").style.display = "none";
     }
 }
 
 function populateProfile(runner) {
-    document.getElementById("profilePictureImg").src = runner.profilepicture ? `profiles/${runner.profilepicture}` : 'profiles/default.png';
+    document.getElementById("profilePictureImg").src = runner.imageurl || "profiles/default.png";
     document.getElementById("runnerName").textContent = runner.name || "No Name Provided";
-    document.getElementById("runnerAbout").textContent = runner.about || 'This runner has not provided a bio yet.';
-    document.getElementById("runnerExperience").textContent = runner.experience || 'No experience details provided.';
-    document.getElementById("runnerLocation").textContent = runner.location || "Location not provided";
-    document.getElementById("runnerEmail").textContent = runner.email || "Email not provided";
-    document.getElementById("runnerPhone").textContent = runner.phone || "Phone not provided";
-    document.getElementById("runnerAvailability").textContent = runner.availability || "Availability not provided";
-    document.getElementById("profileContent").style.display = "block";
+    document.getElementById("runnerAbout").textContent = runner.about || 'No bio provided.';
+    document.getElementById("runnerExperience").textContent = runner.experience || 'No experience provided.';
+    document.getElementById("runnerLocation").textContent = runner.location || "Not provided";
+    document.getElementById("runnerEmail").textContent = runner.email || "Not provided";
+    document.getElementById("runnerPhone").textContent = runner.phone || "Not provided";
+    document.getElementById("runnerAvailability").textContent = runner.availability || "Not provided";
+
+    // Prefill form
+    document.getElementById("editName").value = runner.name || "";
+    document.getElementById("editEmail").value = runner.email || "";
+    document.getElementById("editPhone").value = runner.phone || "";
+    document.getElementById("editAbout").value = runner.about || "";
+    document.getElementById("editExperience").value = runner.experience || "";
+    document.getElementById("editLocation").value = runner.location || "";
+    document.getElementById("editAvailability").value = runner.availability || "";
+
+    document.getElementById("profileContent").classList.remove("hidden");
 }
 
 function showError(message) {
-    const errorMessage = document.getElementById("errorMessage");
-    errorMessage.textContent = message;
-    errorMessage.style.display = "block";
-    document.getElementById("profileContent").style.display = "none";
+    document.getElementById("errorMessage").textContent = message;
+    document.getElementById("errorMessage").classList.remove("hidden");
+    document.getElementById("profileContent").classList.add("hidden");
 }
 
+// Switch to edit mode
+document.getElementById("editBtn").addEventListener("click", () => {
+    document.getElementById("profileView").classList.add("hidden");
+    document.getElementById("profileEdit").classList.remove("hidden");
+});
+
+// Cancel edit
+document.getElementById("cancelEdit").addEventListener("click", () => {
+    document.getElementById("profileEdit").classList.add("hidden");
+    document.getElementById("profileView").classList.remove("hidden");
+});
+
+// Save edits
+document.getElementById("editForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    let runnerId = localStorage.getItem("userId");
+    if (!runnerId) return alert("No user found!");
+
+    const updatedData = {
+        name: document.getElementById("editName").value,
+        email: document.getElementById("editEmail").value,
+        phone: document.getElementById("editPhone").value,
+        about: document.getElementById("editAbout").value,
+        experience: document.getElementById("editExperience").value,
+        location: document.getElementById("editLocation").value,
+        availability: document.getElementById("editAvailability").value,
+    };
+
+    try {
+        const response = await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/data/users/${runnerId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updatedData),
+        });
+        if (!response.ok) throw new Error("Update failed");
+        const runner = await response.json();
+        populateProfile(runner);
+
+        document.getElementById("profileEdit").classList.add("hidden");
+        document.getElementById("profileView").classList.remove("hidden");
+    } catch (error) {
+        alert("Error saving changes: " + error.message);
+    }
+});
+
 document.getElementById("logoutBtn").addEventListener("click", () => {
-    localStorage.removeItem("userToken");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("userRole");
+    localStorage.clear();
     window.location.href = "login.html";
 });
 </script>
 </body>
 </html>
+
 
 
 
