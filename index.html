@@ -11,9 +11,7 @@
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-64SH312S1V');
+      gtag('js', new Date());  gtag('config', 'G-64SH312S1V');
     </script>
     <style>
         /* Custom CSS for colors */
@@ -27,7 +25,6 @@
         .border-maroon { border-color: var(--maroon); }
         .bg-maroon-dark { background-color: #66182f; }
         .bg-maroon-light { background-color: #8a2241; }
-
         /* --- Global Animations --- */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
@@ -36,7 +33,6 @@
         .animate-fade-in {
             animation: fadeIn 0.5s ease-out forwards;
         }
-
         @keyframes fadeDown {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -44,7 +40,6 @@
         .animate-fade-down {
             animation: fadeDown 0.5s ease-out forwards;
         }
-
         @keyframes slideInLeft {
             from { opacity: 0; transform: translateX(-50px); }
             to { opacity: 1; transform: translateX(0); }
@@ -52,7 +47,6 @@
         .animate-slide-in-left {
             animation: slideInLeft 0.7s ease-out forwards;
         }
-
         @keyframes slideInRight {
             from { opacity: 0; transform: translateX(50px); }
             to { opacity: 1; transform: translateX(0); }
@@ -63,7 +57,6 @@
         .animate-fade-right {
             animation: slideInRight 0.7s ease-out forwards;
         }
-
         @keyframes pulse {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.03); }
@@ -71,7 +64,6 @@
         .animate-pulse-subtle {
             animation: pulse 2s infinite ease-in-out;
         }
-
         @keyframes backgroundPan {
             0% { background-position: 0% 0%; }
             50% { background-position: 10% 10%; }
@@ -80,7 +72,6 @@
         .animate-bg-pan {
             animation: backgroundPan 30s infinite alternate ease-in-out;
         }
-
         @keyframes float {
             0% { transform: translateY(0px); }
             50% { transform: translateY(-8px); }
@@ -89,7 +80,6 @@
         .animate-float {
             animation: float 3s ease-in-out infinite;
         }
-
         /* --- Trust Section Specific Animations --- */
         @keyframes rotateIn {
             from { opacity: 0; transform: rotate(-90deg) scale(0.5); }
@@ -98,7 +88,6 @@
         .animate-rotate-in {
             animation: rotateIn 0.8s ease-out forwards;
         }
-
         @keyframes zoomIn {
             from { opacity: 0; transform: scale(0.5); }
             to { opacity: 1; transform: scale(1); }
@@ -106,7 +95,6 @@
         .animate-zoom-in {
             animation: zoomIn 0.6s ease-out forwards;
         }
-
         /* --- Scroll-Triggered Animations --- */
         .animated-item {
             opacity: 0;
@@ -117,7 +105,6 @@
             opacity: 1;
             transform: translateY(0);
         }
-
         /* Specific effects for trust section */
         .animated-item.rotate-effect.is-visible {
             animation: rotateIn 0.8s ease-out forwards;
@@ -129,7 +116,6 @@
             opacity: 1;
             transform: none;
         }
-
         /* --- Hero Section Specific Styles --- */
         .hero-background-image {
             background-image: url('https://i.postimg.cc/Xv93p8J1/file-00000000c624622fb8df816c050f7dea.png');
@@ -169,7 +155,6 @@
                 font-size: 1rem;
             }
         }
-
         /* --- Mobile Menu Styles --- */
         .mobile-menu {
             transition: max-height 0.3s ease-in-out;
@@ -179,7 +164,6 @@
         .mobile-menu.active {
             max-height: 500px;
         }
-
         /* Hamburger to X animation */
         .hamburger span {
             display: block;
@@ -191,7 +175,6 @@
         .hamburger span:nth-child(2) {
             margin: 5px 0;
         }
-
         .hamburger.active span:nth-child(1) {
             transform: rotate(45deg) translate(5px, 5px);
         }
@@ -201,7 +184,6 @@
         .hamburger.active span:nth-child(3) {
             transform: rotate(-45deg) translate(5px, -5px);
         }
-
         /* --- How It Works & Runner Section Icons --- */
         .step-icon, .trust-icon {
             opacity: 0;
@@ -219,7 +201,37 @@
             70% { transform: scale(0.95); }
             100% { transform: scale(1); }
         }
-
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: var(--maroon-dark);
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 10;
+            border-radius: 0.5rem;
+            padding: 0.5rem 0;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        .dropdown-content a, .dropdown-content button {
+            color: white;
+            padding: 0.75rem 1rem;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s, color 0.3s;
+            text-align: left;
+            width: 100%;
+        }
+        .dropdown-content a:hover, .dropdown-content button:hover {
+            background-color: var(--gold);
+            color: var(--maroon);
+        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans">
@@ -230,9 +242,9 @@
                 <h1 class="text-xl md:text-3xl font-bold text-white transition-colors duration-300 hover:text-gold" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.4);">Run Me An Errand</h1>
             </a>
             <nav class="hidden md:flex space-x-6 text-lg" id="desktop-nav">
-                </nav>
-            <div class="hidden md:flex space-x-4" id="desktop-auth-buttons">
-                </div>
+            </nav>
+            <div class="hidden md:flex space-x-4 items-center" id="desktop-auth-buttons">
+            </div>
             <div class="md:hidden">
                 <button id="mobile-menu-button" class="text-gray-300 hover:text-gold focus:outline-none focus:ring-2 focus:ring-gold animate-fade-in hamburger" style="animation-delay: 0.9s;" aria-label="Toggle mobile menu">
                     <span></span>
@@ -244,7 +256,6 @@
         <nav id="mobile-menu" class="mobile-menu md:hidden bg-gradient-to-r from-maroon-dark to-maroon pb-4 shadow-inner">
              </nav>
     </header>
-
     <section class="hero-background-image animate-bg-pan">
         <div class="max-w-6xl mx-auto px-6 text-center relative z-10">
             <h2 class="text-4xl lg:text-5xl font-extrabold text-white mb-6 animate-slide-in-left" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.6);">Your Errand, Our Runners.</h2>
@@ -255,7 +266,6 @@
             </div>
         </div>
     </section>
-
     <section id="how-it-works" class="bg-white py-16 px-6">
         <div class="max-w-6xl mx-auto text-center">
             <h2 class="text-3xl font-bold text-maroon mb-12 animate-fade-down animated-item">How It Works</h2>
@@ -278,24 +288,18 @@
             </div>
         </div>
     </section>
-
     <hr class="my-10 border-gray-300">
-
     <section id="runner-listings" class="max-w-7xl mx-auto py-16 px-6 bg-white rounded-xl shadow-md">
         <h2 class="text-3xl font-bold text-center text-maroon mb-12 animate-fade-down animated-item">Featured Runners</h2>
         <p class="text-center text-gray-700 mb-8 animated-item">Our network of trusted, verified runners is ready to help you with your tasks.</p>
-        
         <div id="runners-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <p class="text-center text-gray-500 col-span-3">Please <a href="login.html" class="text-maroon underline font-semibold">login</a> or <a href="sign-up.html" class="text-maroon underline font-semibold">sign up</a> to view our featured runners.</p>
         </div>
-
         <div class="text-center mt-10 animated-item">
             <a href="login.html" id="viewAllRunnersBtn" class="bg-gold text-maroon font-semibold px-6 py-3 rounded-full hover:bg-maroon hover:text-white transition duration-300">View All Runners</a>
         </div>
     </section>
-
     <hr class="my-10 border-gray-300">
-
     <section id="pricing" class="bg-gray-50 py-16 px-6">
         <div class="max-w-6xl mx-auto text-center">
             <h2 class="text-3xl font-bold text-maroon mb-12 animated-item">Simple, Fair Pricing</h2>
@@ -331,9 +335,7 @@
             </div>
         </div>
     </section>
-
     <hr class="my-10 border-gray-300">
-
     <section id="trust-section" class="py-16 bg-white px-6">
         <div class="max-w-6xl mx-auto text-center">
             <h2 class="text-3xl font-bold text-maroon mb-12 animate-fade-down animated-item">Why Run Me An Errand?</h2>
@@ -356,7 +358,6 @@
             </div>
         </div>
     </section>
-
     <section id="become-a-runner" class="py-16 bg-maroon text-white overflow-hidden relative">
         <div class="absolute bottom-0 left-0 w-1/2 md:w-1/3 opacity-60">
             <img src="https://img.icons8.com/bubbles/500/ffffff/scooter.png" alt="Scooter" class="transform scale-x-[-1]">
@@ -369,7 +370,6 @@
             </div>
         </div>
     </section>
-
     <footer id="contact" class="bg-gray-800 text-gray-300 py-12">
         <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
             <div class="animated-item" style="animation-delay: 0.1s;">
@@ -408,14 +408,12 @@
             </div>
         </div>
     </footer>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // --- Backendless Initialization ---
             const APP_ID = "9223CBD1-9AFC-4C74-B56B-12F11D319DF9";
             const API_KEY = "0C3700EB-013B-4BFE-85ED-CE0F6F7EC013";
             Backendless.initApp(APP_ID, API_KEY);
-
             const runnersContainer = document.getElementById('runners-container');
             const viewAllRunnersBtn = document.getElementById('viewAllRunnersBtn');
             const heroBrowseBtn = document.getElementById('hero-browse-btn');
@@ -430,7 +428,7 @@
                     if (user) {
                         // User is logged in
                         renderLoggedInUI(user);
-                        fetchRunners();
+                        loadRunners(); // Call the specific loadRunners() function
                     } else {
                         // User is NOT logged in
                         renderLoggedOutUI();
@@ -450,7 +448,6 @@
                     <a href="sign-up.html" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.5s;">Become a Runner</a>
                     <a href="#contact" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.6s;">Contact</a>
                 `;
-
                 mobileMenuNav.innerHTML = `
                     <a href="index.html" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Home</a>
                     <a href="about-us.html" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">About Us</a>
@@ -458,20 +455,29 @@
                     <a href="sign-up.html" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Become a Runner</a>
                     <a href="#contact" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Contact</a>
                     <div class="px-6 pt-4 flex flex-col space-y-3">
+                        <a href="profile.html" class="bg-gold text-maroon px-4 py-2 rounded-full text-center hover:bg-white hover:text-maroon transition duration-300">My Profile</a>
                         <button id="logout-btn-mobile" class="bg-white text-maroon px-4 py-2 rounded-full text-center hover:bg-gold hover:text-maroon transition duration-300">Log Out</button>
                     </div>
                 `;
-
+                // Desktop auth buttons with dropdown
                 desktopAuthButtons.innerHTML = `
-                    <span class="text-white text-sm flex items-center">Hi, ${user.name || user.email}!</span>
-                    <button id="logout-btn" class="bg-white text-maroon px-4 py-2 rounded-full hover:bg-gold hover:text-maroon transition duration-300">Log Out</button>
+                    <div class="dropdown relative">
+                        <button class="flex items-center text-white space-x-2 p-2 rounded-full hover:bg-maroon-dark focus:outline-none transition duration-300">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.98 5.98 0 0110 16a5.978 5.978 0 01-4.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="text-sm">${user.name || user.email.split('@')[0]}</span>
+                        </button>
+                        <div class="dropdown-content">
+                            <a href="profile.html">My Profile</a>
+                            <button id="logout-btn" class="w-full text-left">Log Out</button>
+                        </div>
+                    </div>
                 `;
-                
                 // Update hero and featured runner links
                 heroBrowseBtn.href = "runners.html";
                 viewAllRunnersBtn.href = "runners.html";
                 document.getElementById('footer-runners-link').href = "runners.html";
-
                 // Add logout event listeners
                 document.getElementById('logout-btn').addEventListener('click', logout);
                 document.getElementById('logout-btn-mobile').addEventListener('click', logout);
@@ -486,7 +492,6 @@
                     <a href="sign-up.html" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.5s;">Become a Runner</a>
                     <a href="#contact" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.6s;">Contact</a>
                 `;
-
                 mobileMenuNav.innerHTML = `
                     <a href="index.html" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Home</a>
                     <a href="about-us.html" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">About Us</a>
@@ -498,17 +503,14 @@
                         <a href="sign-up.html" class="bg-white text-maroon px-4 py-2 rounded-full text-center hover:bg-gold hover:text-maroon transition duration-300">Sign Up</a>
                     </div>
                 `;
-
                 desktopAuthButtons.innerHTML = `
                     <a href="login.html" class="bg-gold text-maroon px-4 py-2 rounded-full hover:bg-white hover:text-maroon transition duration-300 animate-zoom-in" style="animation-delay: 0.7s;">Login</a>
                     <a href="sign-up.html" class="bg-white text-maroon px-4 py-2 rounded-full hover:bg-gold hover:text-maroon transition duration-300 animate-zoom-in" style="animation-delay: 0.8s;">Sign Up</a>
                 `;
-                
                 // Update hero and featured runner links to redirect to login
                 heroBrowseBtn.href = "login.html";
                 viewAllRunnersBtn.href = "login.html";
                 document.getElementById('footer-runners-link').href = "login.html";
-
                 runnersContainer.innerHTML = `<p class="text-center text-gray-500 col-span-3">Please <a href="login.html" class="text-maroon underline font-semibold">login</a> or <a href="sign-up.html" class="text-maroon underline font-semibold">sign up</a> to view our featured runners.</p>`;
             }
 
@@ -521,67 +523,37 @@
                     alert("Logout failed. Please try again.");
                 }
             }
-            
-            // Function to fetch runners from Backendless
-            async function fetchRunners() {
-                try {
-                    const queryBuilder = `where=role%3D'runner'&pageSize=3`; // Fetch only runners, limit to 3
-                    const response = await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/data/Users?${queryBuilder}`, {
-                        method: 'GET',
-                        headers: { 'Content-Type': 'application/json' }
-                    });
 
-                    if (!response.ok) {
-                        const errorData = await response.json().catch(() => ({ message: 'No message available.' }));
-                        throw new Error(`Failed to fetch runners: ${response.status} ${response.statusText}. Backendless says: "${errorData.message}"`);
-                    }
-                    const runners = await response.json();
-                    renderRunners(runners);
-                } catch (error) {
-                    console.error('Error fetching runners:', error);
-                    runnersContainer.innerHTML = `<p class="text-center text-red-500 col-span-3">Could not load featured runners. Error: ${error.message}</p>`;
-                }
-            }
-
-            // Function to render the fetched runners
-            function renderRunners(runners) {
-                runnersContainer.innerHTML = ''; // Clear the container
-                if (runners.length === 0) {
-                    runnersContainer.innerHTML = `<p class="text-center text-gray-500 col-span-3">No featured runners available at the moment.</p>`;
-                    return;
-                }
-
-                runners.forEach(runner => {
-                    const profileImage = runner.profileImageUrl || 'https://via.placeholder.com/150';
-                    const runnerName = runner.name || 'Anonymous Runner';
-                    const areasServed = runner.areasServed || 'N/A';
-                    const availability = runner.availability || 'N/A';
-
-                    const runnerCard = `
-                        <div class="bg-gray-50 rounded-xl shadow-md p-6 animated-item">
-                            <div class="flex items-center mb-4">
-                                <img src="${profileImage}" alt="Runner ${runnerName}" class="h-16 w-16 rounded-full object-cover mr-4 border-2 border-gold">
-                                <div>
-                                    <h4 class="text-xl font-semibold text-maroon">${runnerName}</h4>
-                                    <div class="flex items-center text-sm text-gray-500">
-                                        <svg class="h-4 w-4 text-green-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                                        </svg>
-                                        <span>Verified Runner</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <p class="text-gray-700 mb-4">
-                                <strong class="text-maroon">Areas Served:</strong> ${areasServed}
-                            </p>
-                            <p class="text-gray-700 mb-4">
-                                <strong class="text-maroon">Availability:</strong> ${availability}
-                            </p>
-                            <a href="runners-profile.html" class="bg-maroon text-white w-full text-center px-4 py-2 rounded-full hover:bg-maroon-dark transition-colors duration-300 block">View Contact (Subscribers Only)</a>
-                        </div>
-                    `;
-                    runnersContainer.innerHTML += runnerCard;
-                });
+            // Load runners from the "runners" table (from the first file)
+            function loadRunners() {
+                Backendless.Data.of("runners").find()
+                    .then(runners => {
+                        const container = document.getElementById("runners-container");
+                        container.innerHTML = ""; // Clear placeholder
+                        if (!runners.length) {
+                            container.innerHTML = `<p class="text-center text-gray-500 col-span-3">No runners found.</p>`;
+                            return;
+                        }
+                        runners.forEach(runner => {
+                            const card = document.createElement("div");
+                            card.className = "p-6 bg-gray-50 rounded-xl shadow-md text-center animate-fade-in";
+                            card.innerHTML = `
+                                ${runner.profilepicture || runner.imageUrl ?
+                                  `<img src="${runner.profilepicture || runner.imageUrl}"
+                                        alt="${runner.name}"
+                                        class="w-24 h-24 mx-auto rounded-full mb-3 object-cover">`
+                                  : ""
+                                }
+                                <h3 class="text-xl font-semibold text-maroon mb-2">${runner.name || "Unnamed Runner"}</h3>
+                                <p class="text-gray-700 mb-2">${runner.about || "No description available"}</p>
+                                <p class="text-gray-600"><strong>Phone:</strong> ${runner.phone || runner.PhoneNumber || "N/A"}</p>
+                                <p class="text-gray-600"><strong>Experience:</strong> ${runner.experience || "N/A"}</p>
+                                <p class="text-gray-600"><strong>Location:</strong> ${runner.location || "N/A"}</p>
+                            `;
+                            container.appendChild(card);
+                        });
+                    })
+                    .catch(err => console.error("Error loading runners:", err));
             }
 
             // --- Mobile Menu Toggle ---
@@ -593,7 +565,6 @@
                     mobileMenu.classList.toggle('active');
                     mobileMenuButton.classList.toggle('active');
                 });
-
                 mobileMenu.querySelectorAll('a').forEach(link => {
                     link.addEventListener('click', () => {
                         mobileMenu.classList.remove('active');
@@ -618,7 +589,6 @@
                         }
                     });
                 }, observerOptions);
-
                 elements.forEach((el, index) => {
                     if (!el.style.animationDelay) {
                         el.style.animationDelay = `${index * delayIncrement}s`;
@@ -636,4 +606,4 @@
         });
     </script>
 </body>
-    </html>
+                    </html>
