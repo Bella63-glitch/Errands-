@@ -48,15 +48,6 @@
       }
     }
 
-    // Check if user is already logged in
-    Backendless.UserService.getCurrentUser()
-      .then(user => {
-        if (user) {
-          redirectBasedOnRole(user);
-        }
-      })
-      .catch(err => console.log("No active session:", err.message));
-
     document.getElementById("loginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -68,13 +59,30 @@
       try {
         const user = await Backendless.UserService.login(email, password, true);
 
-        if (!user) throw new Error("Login failed: no user returned");
+        // Check 1: Check if the account is disabled
+        if (!user.isEnabled) {
+            await Backendless.UserService.logout();
+            msg.textContent = "Login failed: Your account has been deactivated. Please contact support.";
+            return;
+        }
+        
+        // Check 2: Check for subscription status and expiry
+        const now = new Date();
+        const expiryDate = user.subscriptionExpiry ? new Date(user.subscriptionExpiry) : null;
 
+        if (!user.SubscriptionStatus || (expiryDate && expiryDate < now)) {
+            await Backendless.UserService.logout();
+            msg.textContent = "Your subscription has expired. Please make a payment to continue.";
+            return;
+        }
+
+        // If both checks pass, proceed with the normal login flow
         localStorage.setItem("userToken", Backendless.LocalCache.get("user-token"));
         localStorage.setItem("userId", user.objectId);
         localStorage.setItem("userRole", user.role);
 
         await redirectBasedOnRole(user);
+
       } catch (err) {
         msg.textContent = "Login failed: " + err.message;
         console.error("Login error:", err);
@@ -84,6 +92,16 @@
 
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
 
 
 
