@@ -6,6 +6,7 @@
 <title>Runner Profile</title>
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<script src="https://api.backendless.com/sdk/js/latest/backendless.min.js"></script>
 <style>
 :root {
     --maroon: #7B1E3A;
@@ -177,6 +178,7 @@
 <script>
 const APP_ID = "9223CBD1-9AFC-4C74-B56B-12F11D319DF9";
 const API_KEY = "0C3700EB-013B-4BFE-85ED-CE0F6F7EC013";
+const TIMEOUT = 10000; // 10 seconds
 
 Backendless.initApp(APP_ID, API_KEY);
 
@@ -186,14 +188,34 @@ document.getElementById("hamburgerBtn").addEventListener("click", () => {
 
 document.addEventListener("DOMContentLoaded", () => {
     const params = new URLSearchParams(window.location.search);
-    let runnerId = params.get('id') || localStorage.getItem("userId");
-    if (runnerId) fetchRunnerData(runnerId);
-    else showError("No runner ID found. Please login again.");
+    const runnerId = params.get('id') || localStorage.getItem("userId");
+    
+    if (runnerId) {
+        fetchRunnerData(runnerId);
+    } else {
+        showError("No runner ID found. Please log in again.");
+    }
 });
 
 async function fetchRunnerData(runnerId) {
+    document.getElementById("loading").style.display = "block";
+    document.getElementById("profileContent").classList.add("hidden");
+    document.getElementById("errorMessage").classList.add("hidden");
+
     try {
-        const response = await Backendless.Data.of("Users").findById(runnerId);
+        console.log(`Attempting to load profile for user ID: ${runnerId}`);
+
+        const timeoutPromise = new Promise((resolve, reject) => {
+            setTimeout(() => {
+                reject(new Error("Request timed out. Please check your internet connection or try again."));
+            }, TIMEOUT);
+        });
+
+        const response = await Promise.race([
+            Backendless.Data.of("Users").findById(runnerId),
+            timeoutPromise
+        ]);
+
         if (response) {
             populateProfile(response);
         } else {
@@ -201,18 +223,16 @@ async function fetchRunnerData(runnerId) {
         }
     } catch (error) {
         console.error("Error fetching runner data:", error);
-        showError("Failed to load runner data.");
+        showError(`Failed to load profile. ${error.message}`);
     } finally {
         document.getElementById("loading").style.display = "none";
     }
 }
 
 function populateProfile(runner) {
-    // Set a default profile picture if none is provided
     const profilePictureUrl = runner.imageurl || "https://i.postimg.cc/66gvtGG8/man3-512.png";
     document.getElementById("profilePictureImg").src = profilePictureUrl;
     
-    // Populate profile view
     document.getElementById("runnerName").textContent = runner.name || "No Name Provided";
     document.getElementById("runnerEmail").textContent = runner.email || "Not provided";
     document.getElementById("runnerPhone").textContent = runner.phone || "Not provided";
@@ -221,7 +241,6 @@ function populateProfile(runner) {
     document.getElementById("runnerExperience").textContent = runner.experience || 'No experience provided. Click "Edit Profile" to add your services.';
     document.getElementById("runnerAvailability").textContent = runner.availability || "Not provided. Click 'Edit Profile' to add your schedule.";
 
-    // Prefill edit form
     document.getElementById("editName").value = runner.name || "";
     document.getElementById("editEmail").value = runner.email || "";
     document.getElementById("editPhone").value = runner.phone || "";
@@ -247,7 +266,6 @@ document.getElementById("editBtn").addEventListener("click", () => {
 document.getElementById("cancelEdit").addEventListener("click", async () => {
     document.getElementById("profileEdit").classList.add("hidden");
     document.getElementById("profileView").classList.remove("hidden");
-    // Re-fetch data to ensure profile view is up-to-date in case of unsaved changes
     const runnerId = localStorage.getItem("userId");
     if (runnerId) {
         document.getElementById("loading").style.display = "block";
@@ -266,17 +284,16 @@ document.getElementById("editForm").addEventListener("submit", async (e) => {
 
     const updatedData = {
         name: document.getElementById("editName").value,
-        email: document.getElementById("editEmail").value, // Email is disabled, but we'll include it for the update call
+        email: document.getElementById("editEmail").value,
         phone: document.getElementById("editPhone").value,
         about: document.getElementById("editAbout").value,
         experience: document.getElementById("editExperience").value,
         location: document.getElementById("editLocation").value,
         availability: document.getElementById("editAvailability").value,
-        objectId: runnerId // Backendless requires the objectId for a successful update
+        objectId: runnerId
     };
 
     try {
-        // Use Backendless.UserService.update for a logged-in user to ensure proper permissions
         const updatedRunner = await Backendless.UserService.update(updatedData);
         populateProfile(updatedRunner);
         document.getElementById("profileEdit").classList.add("hidden");
@@ -294,26 +311,11 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
         window.location.href = "login.html";
     } catch (error) {
         console.error("Logout failed:", error);
-        localStorage.clear(); // Clear local storage anyway for safety
+        localStorage.clear();
         window.location.href = "login.html";
     }
 });
 </script>
 </body>
-</html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    </html>
+    
