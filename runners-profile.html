@@ -25,11 +25,37 @@
 .menu { display: none; }
 .menu.active { display: block; }
 .hamburger { cursor: pointer; font-size: 1.5rem; }
+
+/* Custom Button Styles */
+.custom-btn {
+    font-weight: bold;
+    padding: 0.75rem 2rem;
+    border-radius: 9999px; /* full-rounded */
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.custom-btn-primary {
+    background-color: var(--maroon);
+    color: var(--gold);
+}
+.custom-btn-primary:hover {
+    background-color: var(--gold);
+    color: var(--maroon);
+    box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+}
+.custom-btn-secondary {
+    background-color: #e5e7eb;
+    color: #4b5563;
+}
+.custom-btn-secondary:hover {
+    background-color: #d1d5db;
+}
 </style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans min-h-screen flex flex-col">
 
-<!-- Header -->
 <header class="bg-maroon shadow-lg sticky top-0 z-50">
 <div class="max-w-7xl mx-auto flex justify-between items-center py-5 px-6">
     <a href="index.html" class="flex items-center space-x-2">
@@ -45,74 +71,99 @@
 </header>
 
 <main class="flex-grow flex justify-center items-start p-4 mt-4">
-<div id="loading" class="text-center text-maroon text-2xl font-bold">Loading your profile...</div>
+<div id="loading" class="text-center text-maroon text-2xl font-bold mt-12">Loading your profile...</div>
 
 <div id="profileContent" class="profile-card w-full max-w-4xl my-8 hidden">
-    <!-- Profile View -->
     <div id="profileView">
-        <div class="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-8 mb-8">
+        <div class="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-12 mb-8">
             <div class="flex-shrink-0">
-                <img id="profilePictureImg" src="profiles/default.png" alt="Runner Profile Picture" class="w-32 h-32 rounded-full object-cover border-4 border-gold shadow-md">
+                <img id="profilePictureImg" src="https://i.postimg.cc/66gvtGG8/man3-512.png" alt="Runner Profile Picture" class="w-40 h-40 rounded-full object-cover border-4 border-gold shadow-md">
             </div>
             <div class="text-center md:text-left flex-grow">
-                <h2 id="runnerName" class="text-4xl font-bold text-maroon"></h2>
-                <div class="mt-2 flex flex-col md:flex-row md:items-center md:space-x-4 space-y-1 md:space-y-0">
-                    <span id="runnerEmail" class="text-gray-700"></span>
-                    <span id="runnerPhone" class="text-gray-700"></span>
+                <h2 id="runnerName" class="text-4xl font-extrabold text-maroon mb-2"></h2>
+                <div class="flex flex-col md:flex-row md:items-center md:space-x-4 text-gray-700">
+                    <span id="runnerEmail" class="mb-1 md:mb-0"><i class="fas fa-envelope text-maroon mr-2"></i></span>
+                    <span id="runnerPhone"><i class="fas fa-phone-alt text-maroon mr-2"></i></span>
+                </div>
+                <div class="flex items-center justify-center md:justify-start mt-4">
+                    <i class="fas fa-map-marker-alt text-maroon text-xl mr-2"></i>
+                    <span id="runnerLocation" class="text-lg font-semibold text-gray-600"></span>
                 </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-                <h3 class="text-2xl font-bold text-maroon mb-4">About Me</h3>
-                <p id="runnerAbout" class="text-gray-700 leading-relaxed mb-6"></p>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <div class="bg-gray-50 p-6 rounded-lg shadow-inner">
+                <h3 class="text-2xl font-bold text-maroon mb-4 flex items-center">
+                    <i class="fas fa-user-circle mr-3 text-gold"></i>
+                    About Me
+                </h3>
+                <p id="runnerAbout" class="text-gray-700 leading-relaxed"></p>
+            </div>
 
-                <h3 class="text-2xl font-bold text-maroon mb-4">Experience & Services</h3>
+            <div class="bg-gray-50 p-6 rounded-lg shadow-inner">
+                <h3 class="text-2xl font-bold text-maroon mb-4 flex items-center">
+                    <i class="fas fa-briefcase mr-3 text-gold"></i>
+                    Experience & Services
+                </h3>
                 <p id="runnerExperience" class="text-gray-700 leading-relaxed"></p>
             </div>
 
-            <div>
-                <h3 class="text-2xl font-bold text-maroon mb-4">Location & Availability</h3>
-                <div class="space-y-4 text-gray-700">
-                    <div class="flex items-center space-x-2">
-                        <i class="fas fa-map-marker-alt text-maroon text-xl"></i>
-                        <span id="runnerLocation"></span>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <i class="fas fa-clock text-maroon text-xl"></i>
-                        <span id="runnerAvailability"></span>
-                    </div>
-                </div>
+            <div class="lg:col-span-2 bg-gray-50 p-6 rounded-lg shadow-inner">
+                <h3 class="text-2xl font-bold text-maroon mb-4 flex items-center">
+                    <i class="fas fa-clock mr-3 text-gold"></i>
+                    Availability
+                </h3>
+                <p id="runnerAvailability" class="text-gray-700 leading-relaxed"></p>
             </div>
         </div>
 
-        <div class="mt-6 flex justify-center">
-            <button id="editBtn" class="bg-maroon text-gold font-bold py-2 px-6 rounded hover:bg-maroon-dark hover:text-gold">Edit Details</button>
+        <div class="mt-8 flex justify-center">
+            <button id="editBtn" class="custom-btn custom-btn-primary">Edit My Profile</button>
         </div>
     </div>
 
-    <!-- Profile Edit Form -->
     <div id="profileEdit" class="hidden">
         <h2 class="text-3xl font-bold text-maroon mb-6">Edit Profile</h2>
-        <form id="editForm" class="space-y-4">
-            <input type="text" id="editName" placeholder="Full Name" class="w-full p-2 border rounded">
-            <input type="email" id="editEmail" placeholder="Email" class="w-full p-2 border rounded">
-            <input type="text" id="editPhone" placeholder="Phone" class="w-full p-2 border rounded">
-            <textarea id="editAbout" placeholder="About Me" class="w-full p-2 border rounded"></textarea>
-            <textarea id="editExperience" placeholder="Experience & Services" class="w-full p-2 border rounded"></textarea>
-            <input type="text" id="editLocation" placeholder="Location" class="w-full p-2 border rounded">
-            <input type="text" id="editAvailability" placeholder="Availability" class="w-full p-2 border rounded">
+        <form id="editForm" class="space-y-6">
+            <div>
+                <label for="editName" class="block text-lg font-medium text-maroon">Full Name</label>
+                <input type="text" id="editName" placeholder="Full Name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50">
+            </div>
+            <div>
+                <label for="editEmail" class="block text-lg font-medium text-maroon">Email</label>
+                <input type="email" id="editEmail" placeholder="Email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 bg-gray-200" disabled>
+            </div>
+            <div>
+                <label for="editPhone" class="block text-lg font-medium text-maroon">Phone</label>
+                <input type="text" id="editPhone" placeholder="Phone" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50">
+            </div>
+            <div>
+                <label for="editAbout" class="block text-lg font-medium text-maroon">About Me</label>
+                <textarea id="editAbout" placeholder="Briefly describe yourself and your service..." rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50"></textarea>
+            </div>
+            <div>
+                <label for="editExperience" class="block text-lg font-medium text-maroon">Experience & Services</label>
+                <textarea id="editExperience" placeholder="List the types of errands you run, your experience level, etc." rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50"></textarea>
+            </div>
+            <div>
+                <label for="editLocation" class="block text-lg font-medium text-maroon">Location</label>
+                <input type="text" id="editLocation" placeholder="Your primary operating area (e.g., Nairobi, Mombasa)" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50">
+            </div>
+            <div>
+                <label for="editAvailability" class="block text-lg font-medium text-maroon">Availability</label>
+                <input type="text" id="editAvailability" placeholder="Your availability (e.g., Mon-Fri, 9am-5pm)" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50">
+            </div>
 
-            <div class="flex space-x-4">
-                <button type="submit" class="bg-maroon text-gold font-bold py-2 px-6 rounded hover:bg-maroon-dark hover:text-gold">Save</button>
-                <button type="button" id="cancelEdit" class="bg-gray-400 text-white font-bold py-2 px-6 rounded">Cancel</button>
+            <div class="flex justify-end space-x-4 mt-8">
+                <button type="button" id="cancelEdit" class="custom-btn custom-btn-secondary">Cancel</button>
+                <button type="submit" class="custom-btn custom-btn-primary">Save Changes</button>
             </div>
         </form>
     </div>
 </div>
 
-<div id="errorMessage" class="text-center text-red-500 text-2xl font-bold hidden">
+<div id="errorMessage" class="text-center text-red-500 text-2xl font-bold hidden mt-12">
     Runner profile not found. Please login again.
 </div>
 </main>
@@ -127,6 +178,8 @@
 const APP_ID = "9223CBD1-9AFC-4C74-B56B-12F11D319DF9";
 const API_KEY = "0C3700EB-013B-4BFE-85ED-CE0F6F7EC013";
 
+Backendless.initApp(APP_ID, API_KEY);
+
 document.getElementById("hamburgerBtn").addEventListener("click", () => {
     document.getElementById("menu").classList.toggle("active");
 });
@@ -140,11 +193,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function fetchRunnerData(runnerId) {
     try {
-        const response = await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/data/users/${runnerId}`);
-        if (!response.ok) throw new Error('Failed to fetch data');
-        const runner = await response.json();
-        if (runner) populateProfile(runner);
-        else showError("Runner not found.");
+        const response = await Backendless.Data.of("Users").findById(runnerId);
+        if (response) {
+            populateProfile(response);
+        } else {
+            showError("Runner not found.");
+        }
     } catch (error) {
         console.error("Error fetching runner data:", error);
         showError("Failed to load runner data.");
@@ -154,16 +208,20 @@ async function fetchRunnerData(runnerId) {
 }
 
 function populateProfile(runner) {
-    document.getElementById("profilePictureImg").src = runner.imageurl || "profiles/default.png";
+    // Set a default profile picture if none is provided
+    const profilePictureUrl = runner.imageurl || "https://i.postimg.cc/66gvtGG8/man3-512.png";
+    document.getElementById("profilePictureImg").src = profilePictureUrl;
+    
+    // Populate profile view
     document.getElementById("runnerName").textContent = runner.name || "No Name Provided";
-    document.getElementById("runnerAbout").textContent = runner.about || 'No bio provided.';
-    document.getElementById("runnerExperience").textContent = runner.experience || 'No experience provided.';
-    document.getElementById("runnerLocation").textContent = runner.location || "Not provided";
     document.getElementById("runnerEmail").textContent = runner.email || "Not provided";
     document.getElementById("runnerPhone").textContent = runner.phone || "Not provided";
-    document.getElementById("runnerAvailability").textContent = runner.availability || "Not provided";
+    document.getElementById("runnerLocation").textContent = runner.location || "Not provided";
+    document.getElementById("runnerAbout").textContent = runner.about || 'No bio provided. Click "Edit Profile" to add one.';
+    document.getElementById("runnerExperience").textContent = runner.experience || 'No experience provided. Click "Edit Profile" to add your services.';
+    document.getElementById("runnerAvailability").textContent = runner.availability || "Not provided. Click 'Edit Profile' to add your schedule.";
 
-    // Prefill form
+    // Prefill edit form
     document.getElementById("editName").value = runner.name || "";
     document.getElementById("editEmail").value = runner.email || "";
     document.getElementById("editPhone").value = runner.phone || "";
@@ -181,58 +239,70 @@ function showError(message) {
     document.getElementById("profileContent").classList.add("hidden");
 }
 
-// Switch to edit mode
 document.getElementById("editBtn").addEventListener("click", () => {
     document.getElementById("profileView").classList.add("hidden");
     document.getElementById("profileEdit").classList.remove("hidden");
 });
 
-// Cancel edit
-document.getElementById("cancelEdit").addEventListener("click", () => {
+document.getElementById("cancelEdit").addEventListener("click", async () => {
     document.getElementById("profileEdit").classList.add("hidden");
     document.getElementById("profileView").classList.remove("hidden");
+    // Re-fetch data to ensure profile view is up-to-date in case of unsaved changes
+    const runnerId = localStorage.getItem("userId");
+    if (runnerId) {
+        document.getElementById("loading").style.display = "block";
+        document.getElementById("profileContent").classList.add("hidden");
+        await fetchRunnerData(runnerId);
+    }
 });
 
-// Save edits
 document.getElementById("editForm").addEventListener("submit", async (e) => {
     e.preventDefault();
-    let runnerId = localStorage.getItem("userId");
-    if (!runnerId) return alert("No user found!");
+    const runnerId = localStorage.getItem("userId");
+    if (!runnerId) {
+        alert("No user found! Please log in.");
+        return;
+    }
 
     const updatedData = {
         name: document.getElementById("editName").value,
-        email: document.getElementById("editEmail").value,
+        email: document.getElementById("editEmail").value, // Email is disabled, but we'll include it for the update call
         phone: document.getElementById("editPhone").value,
         about: document.getElementById("editAbout").value,
         experience: document.getElementById("editExperience").value,
         location: document.getElementById("editLocation").value,
         availability: document.getElementById("editAvailability").value,
+        objectId: runnerId // Backendless requires the objectId for a successful update
     };
 
     try {
-        const response = await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/data/users/${runnerId}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(updatedData),
-        });
-        if (!response.ok) throw new Error("Update failed");
-        const runner = await response.json();
-        populateProfile(runner);
-
+        // Use Backendless.UserService.update for a logged-in user to ensure proper permissions
+        const updatedRunner = await Backendless.UserService.update(updatedData);
+        populateProfile(updatedRunner);
         document.getElementById("profileEdit").classList.add("hidden");
         document.getElementById("profileView").classList.remove("hidden");
     } catch (error) {
         alert("Error saving changes: " + error.message);
+        console.error("Error saving changes:", error);
     }
 });
 
-document.getElementById("logoutBtn").addEventListener("click", () => {
-    localStorage.clear();
-    window.location.href = "login.html";
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+    try {
+        await Backendless.UserService.logout();
+        localStorage.clear();
+        window.location.href = "login.html";
+    } catch (error) {
+        console.error("Logout failed:", error);
+        localStorage.clear(); // Clear local storage anyway for safety
+        window.location.href = "login.html";
+    }
 });
 </script>
 </body>
 </html>
+
+
 
 
 
