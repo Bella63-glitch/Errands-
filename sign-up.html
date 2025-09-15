@@ -1,19 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create account- Sign Up</title>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-64SH312S1V"></script>
-    <script>
+<!doctype html>
+<html lang="en"> 
+ <head> 
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <title>Create account- Sign Up</title> 
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-64SH312S1V"></script> 
+  <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
       gtag('config', 'G-64SH312S1V');
-    </script>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <style>
+    </script> 
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> 
+  <style>
     /* Custom CSS for colors and specific elements not handled by Tailwind */
     :root {
         --maroon: #7B1E3A;
@@ -60,86 +60,49 @@
     margin-bottom: 8px;
 }
 
-</style>
-</head>
-<body class="bg-gray-100 text-gray-800 font-sans min-h-screen flex flex-col">
-    <header class="bg-maroon shadow-lg sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto flex justify-between items-center py-5 px-6">
-            <a href="/" class="flex items-center space-x-2">
-                <img src="https://i.postimg.cc/d1z9KLkL/ei-1752053865516-removebg-preview.png" alt="Errand Logo" class="h-20 md:h-24 w-auto">
-                <h1 class="text-3xl md:text-5xl font-bold text-white transition-colors duration-300 hover:text-gold" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.4);"><strong>Run Me An Errand</strong></h1>
-            </a>
-        </div>
-    </header>
-
-    <main class="flex-grow flex justify-center items-center p-4">
-        <div class="signup-container w-full max-w-lg bg-white p-8 rounded-xl shadow-md my-8">
-            <h2 class="text-3xl text-center font-bold text-maroon mb-6">Sign Up</h2>
-
-            <label for="accountType" class="block font-semibold text-maroon mb-2">Account Type</label>
-            <select id="accountType" class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-maroon focus:border-maroon mb-4">
-                <option value="user">User (Free)</option>
-                <option value="runner">Runner (KES 100/month)</option>
-            </select>
-
-            <label for="fullName" class="block font-semibold text-maroon mb-2">Full Name</label>
-            <input type="text" id="fullName" class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-maroon focus:border-maroon mb-4">
-
-            <label for="email" class="block font-semibold text-maroon mb-2">Email</label>
-            <input type="email" id="email" class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-maroon focus:border-maroon mb-4">
-
-            <label for="phone" class="block font-semibold text-maroon mb-2">Phone</label>
-            <input type="text" id="phone" class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-maroon focus:border-maroon mb-4">
-
-            <label for="password" class="block font-semibold text-maroon mb-2">Password</label>
-            <input type="password" id="password" class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-maroon focus:border-maroon mb-4">
-
-            <label for="location" class="block font-semibold text-maroon mb-2">Location</label>
-            <input type="text" id="location" placeholder="e.g., Nairobi, Kenya" class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-maroon focus:border-maroon mb-4">
-
-            <div id="runnerFields" class="space-y-4" style="display:none;">
-                <div>
-                    <label for="profilePicture" class="block font-semibold text-maroon mb-2">Upload Profile Picture</label>
-                    <input type="file" id="profilePicture" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-maroon file:text-gold hover:file:bg-maroon-dark">
-                </div>
-                <div>
-                    <label for="about" class="block font-semibold text-maroon mb-2 mt-4">About Me</label>
-                    <textarea id="about" rows="3" placeholder="Tell us a little about yourself..." class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-maroon focus:border-maroon"></textarea>
-                </div>
-                <div>
-                    <label for="idNumber" class="block font-semibold text-maroon mb-2">ID Number</label>
-                    <input type="text" id="idNumber" class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-maroon focus:border-maroon">
-                </div>
-                <div>
-                    <label for="idPicture" class="block font-semibold text-maroon mb-2"> Upload ID Picture
-                        <p class="id-info text-gray-500 font-normal">We require your ID for verification and security to build trust within our community.</p>
-                    </label>
-                    <input type="file" id="idPicture" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-maroon file:text-gold hover:file:bg-maroon-dark">
-                </div>
-                <div>
-                    <label for="experience" class="block font-semibold text-maroon mb-2">Experience</label>
-                    <textarea id="experience" rows="3" placeholder="Describe your experience as an errand runner..." class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-maroon focus:border-maroon"></textarea>
-                </div>
-                <div>
-                    <label for="availability" class="block font-semibold text-maroon mb-2">Availability</label>
-                    <input type="text" id="availability" placeholder="e.g., Weekends, Mon-Fri 9am-5pm" class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-maroon focus:border-maroon">
-                </div>
-            </div>
-
-            <button onclick="signUp()" class="w-full bg-maroon text-gold font-bold py-2 px-4 rounded-md mt-6 hover:bg-maroon-dark transition-colors duration-300">Sign Up</button>
-            <div id="paymentNotice" class="payment-notice mt-4"></div>
-        </div>
-    </main>
-
-    <div class="popup" id="popup"></div>
-
-    <footer class="bg-gray-800 text-gray-300 py-6">
-        <div class="max-w-7xl mx-auto px-6 text-center">
-            <p class="text-sm">© 2025 Run Me An Errand. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <script>
+</style> 
+ </head> 
+ <body class="bg-gray-100 text-gray-800 font-sans min-h-screen flex flex-col"> 
+  <header class="bg-maroon shadow-lg sticky top-0 z-50"> 
+   <div class="max-w-7xl mx-auto flex justify-between items-center py-5 px-6"> <a href="/" class="flex items-center space-x-2"> <img src="https://i.postimg.cc/d1z9KLkL/ei-1752053865516-removebg-preview.png" alt="Errand Logo" class="h-20 md:h-24 w-auto"> <h1 class="text-3xl md:text-5xl font-bold text-white transition-colors duration-300 hover:text-gold" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.4);"><strong>Run Me An Errand</strong></h1> </a> 
+   </div> 
+  </header> 
+  <main class="flex-grow flex justify-center items-center p-4"> 
+   <div class="signup-container w-full max-w-lg bg-white p-8 rounded-xl shadow-md my-8"> 
+    <h2 class="text-3xl text-center font-bold text-maroon mb-6">Sign Up</h2> <label for="accountType" class="block font-semibold text-maroon mb-2">Account Type</label> <select id="accountType" class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-maroon focus:border-maroon mb-4"> <option value="user">User (Free)</option> <option value="runner">Runner (KES 100/month)</option> </select> <label for="fullName" class="block font-semibold text-maroon mb-2">Full Name</label> 
+    <input type="text" id="fullName" class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-maroon focus:border-maroon mb-4"> <label for="email" class="block font-semibold text-maroon mb-2">Email</label> 
+    <input type="email" id="email" class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-maroon focus:border-maroon mb-4"> <label for="phone" class="block font-semibold text-maroon mb-2">Phone</label> 
+    <input type="text" id="phone" class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-maroon focus:border-maroon mb-4"> <label for="password" class="block font-semibold text-maroon mb-2">Password</label> 
+    <input type="password" id="password" class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-maroon focus:border-maroon mb-4"> <label for="location" class="block font-semibold text-maroon mb-2">Location</label> 
+    <input type="text" id="location" placeholder="e.g., Nairobi, Kenya" class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-maroon focus:border-maroon mb-4"> 
+    <div id="runnerFields" class="space-y-4" style="display:none;"> 
+     <div> <label for="profilePicture" class="block font-semibold text-maroon mb-2">Upload Profile Picture</label> 
+      <input type="file" id="profilePicture" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-maroon file:text-gold hover:file:bg-maroon-dark"> 
+     </div> 
+     <div> <label for="about" class="block font-semibold text-maroon mb-2 mt-4">About Me</label> <textarea id="about" rows="3" placeholder="Tell us a little about yourself..." class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-maroon focus:border-maroon"></textarea> 
+     </div> 
+     <div> <label for="idNumber" class="block font-semibold text-maroon mb-2">ID Number</label> 
+      <input type="text" id="idNumber" class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-maroon focus:border-maroon"> 
+     </div> 
+     <div> <label for="idPicture" class="block font-semibold text-maroon mb-2"> Upload ID Picture <p class="id-info text-gray-500 font-normal">We require your ID for verification and security to build trust within our community.</p> </label> 
+      <input type="file" id="idPicture" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-maroon file:text-gold hover:file:bg-maroon-dark"> 
+     </div> 
+     <div> <label for="experience" class="block font-semibold text-maroon mb-2">Experience</label> <textarea id="experience" rows="3" placeholder="Describe your experience as an errand runner..." class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-maroon focus:border-maroon"></textarea> 
+     </div> 
+     <div> <label for="availability" class="block font-semibold text-maroon mb-2">Availability</label> 
+      <input type="text" id="availability" placeholder="e.g., Weekends, Mon-Fri 9am-5pm" class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-maroon focus:border-maroon"> 
+     </div> 
+    </div> <button onclick="signUp()" class="w-full bg-maroon text-gold font-bold py-2 px-4 rounded-md mt-6 hover:bg-maroon-dark transition-colors duration-300">Sign Up</button> 
+    <div id="paymentNotice" class="payment-notice mt-4"></div> 
+   </div> 
+  </main> 
+  <div class="popup" id="popup"></div> 
+  <footer class="bg-gray-800 text-gray-300 py-6"> 
+   <div class="max-w-7xl mx-auto px-6 text-center"> 
+    <p class="text-sm">© 2025 Run Me An Errand. All rights reserved.</p> 
+   </div> 
+  </footer> 
+  <script>
 const APP_ID = "9223CBD1-9AFC-4C74-B56B-12F11D319DF9";
 const API_KEY = "0C3700EB-013B-4BFE-85ED-CE0F6F7EC013";
 const accountTypeSelect = document.getElementById("accountType");
@@ -168,10 +131,9 @@ if (accountType === "runner") {
     `;
     paymentNotice.style.display = "block";
 } else { // accountType === "user"
-    // Change: Simpler, more direct message for the free user account
     paymentNotice.innerHTML = `
         <h4>Open an account today and connect with runners!</h4>
-        <p>Your account is free and will be activated immediately.</p>
+        <p>Your account is free and will be activated immediately. Post an errand and get help today!</p>
     `;
     paymentNotice.style.display = "block";
 }
@@ -288,7 +250,9 @@ const userData = {
     experience,
     availability,
     isavailable: false,
-    subscriptionstatus: (accountType === 'user') ? true : false
+    SubscriptionStatus: (accountType === 'user') ? true : false,
+    // THE FIX: Force the account to be enabled
+    isEnabled: true
 };
 
 const res = await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/users/register`, {
@@ -300,8 +264,7 @@ const res = await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/users/
 if (res.ok) {
     let successMessage;
     if (accountType === 'user') {
-        // Change: Simpler, more direct success message
-        successMessage = "Sign up successful! Your account is now active.";
+        successMessage = "Sign up successful! Your account is now active. Post your first errand and connect with a runner today!";
     } else {
         successMessage = "Sign up successful! Your account is pending activation. We will verify your KES 100 payment and send you an email shortly to confirm and tell you how to login.";
     }
@@ -327,9 +290,6 @@ if (res.ok) {
 }
 
 }
-</script>
-</body>
-</html>
-
-
-
+</script> 
+ </body>
+        </html>
