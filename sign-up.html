@@ -78,8 +78,8 @@
 
             <label for="accountType" class="block font-semibold text-maroon mb-2">Account Type</label>
             <select id="accountType" class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-maroon focus:border-maroon mb-4">
-                <option value="user">User (KES 100/month)</option>
-                <option value="runner">Runner (KES 50/month)</option>
+                <option value="user">User (Free)</option>
+                <option value="runner">Runner (KES 100/month)</option>
             </select>
 
             <label for="fullName" class="block font-semibold text-maroon mb-2">Full Name</label>
@@ -152,28 +152,29 @@ let feeAmount;
 let message;
 
 if (accountType === "runner") {
-    feeAmount = 50;
+    feeAmount = 100;
     message = `
         <h4>Subscription & Verification</h4>
         <p>To join our community of trusted Runners, we ask for a small monthly subscription fee of **KES ${feeAmount}**. This fee gives you access to our platform and helps us cover administrative costs to ensure a safe and reliable service for all users.</p>
     `;
-} else { // accountType === "user"
-    feeAmount = 100;
-    message = `
-        <h4>Subscription & Verification</h4>
-        <p>To access our network of reliable runners, we ask for a monthly subscription fee of **KES ${feeAmount}**. This fee gives you full access to the platform to post errands and connect with our vetted runners.</p>
+    paymentNotice.innerHTML = `
+        ${message}
+        <p class="mt-2 font-bold">Here's how to complete your first payment:</p>
+        <ol class="list-decimal list-inside mt-2 text-sm space-y-1">
+            <li>Send **KES ${feeAmount}** to our Pochi la Biashara account: <b>011585194</b></li>
+            <li>Forward the M-Pesa confirmation message to: <b>0797046378</b></li>
+        </ol>
+        <p class="mt-2 text-sm italic">Once we verify your payment, your account will be activated. Thank you for helping us build a great community!</p>
     `;
+    paymentNotice.style.display = "block";
+} else { // accountType === "user"
+    // Change: Simpler, more direct message for the free user account
+    paymentNotice.innerHTML = `
+        <h4>Open an account today and connect with runners!</h4>
+        <p>Your account is free and will be activated immediately.</p>
+    `;
+    paymentNotice.style.display = "block";
 }
-
-paymentNotice.innerHTML = `
-    ${message}
-    <p class="mt-2 font-bold">Here's how to complete your first payment:</p>
-    <ol class="list-decimal list-inside mt-2 text-sm space-y-1">
-        <li>Send **KES ${feeAmount}** to our Pochi la Biashara account: <b>011585194</b></li>
-        <li>Forward the M-Pesa confirmation message to: <b>0797046378</b></li>
-    </ol>
-    <p class="mt-2 text-sm italic">Once we verify your payment, your account will be activated. Thank you for helping us build a great community!</p>
-`;
 
 }
 
@@ -217,7 +218,6 @@ let idPictureUrl = "";
 let experience = "";
 let availability = "";
 
-// Basic validation for all users
 if (!fullName || !email || !phone || !password || !location) {
     showPopup("Please fill all required fields", "error");
     return;
@@ -232,14 +232,12 @@ if (accountType === "runner") {
     availability = document.getElementById("availability").value;
 
 
-    // Specific validation for runners
     if (!about || !profilePictureFile || !idNumber || !idPictureFile || !experience || !availability) {
         showPopup("Please provide all required Runner details", "error");
         return;
     }
 
     try {
-        // Handle profile picture upload
         const profilePicFormData = new FormData();
         profilePicFormData.append("file", profilePictureFile);
         const profilePicUploadRes = await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/files/profiles/${profilePictureFile.name}`, {
@@ -254,7 +252,6 @@ if (accountType === "runner") {
         const profilePicData = await profilePicUploadRes.json();
         imageUrl = profilePicData.fileURL;
 
-        // Handle ID picture upload
         const idPicFormData = new FormData();
         idPicFormData.append("file", idPictureFile);
         const idPicUploadRes = await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/files/ids/${idPictureFile.name}`, {
@@ -291,7 +288,7 @@ const userData = {
     experience,
     availability,
     isavailable: false,
-    subscriptionstatus: false
+    subscriptionstatus: (accountType === 'user') ? true : false
 };
 
 const res = await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/users/register`, {
@@ -301,7 +298,13 @@ const res = await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/users/
 });
 
 if (res.ok) {
-    const successMessage = "Sign up successful! Your account is pending activation. We will verify your payment and send you an email shortly to confirm and tell you how to login.";
+    let successMessage;
+    if (accountType === 'user') {
+        // Change: Simpler, more direct success message
+        successMessage = "Sign up successful! Your account is now active.";
+    } else {
+        successMessage = "Sign up successful! Your account is pending activation. We will verify your KES 100 payment and send you an email shortly to confirm and tell you how to login.";
+    }
     showPopup(successMessage, "success", 7000);
 
     document.querySelector("input#fullName").value = '';
@@ -327,5 +330,6 @@ if (res.ok) {
 </script>
 </body>
 </html>
+
 
 
