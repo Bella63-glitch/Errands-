@@ -59,6 +59,18 @@
     color: var(--maroon);
     margin-bottom: 8px;
 }
+.runner-intro {
+    background-color: #fcece0; /* New, softer peachy/orange background */
+    border: 1px solid #d4a77d; /* A complementary border */
+    color: #4a5568;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 0.95em;
+}
+.runner-intro h4 {
+    color: var(--maroon);
+}
 
 </style> 
  </head> 
@@ -69,7 +81,12 @@
   </header> 
   <main class="flex-grow flex justify-center items-center p-4"> 
    <div class="signup-container w-full max-w-lg bg-white p-8 rounded-xl shadow-md my-8"> 
-    <h2 class="text-3xl text-center font-bold text-maroon mb-6">Sign Up</h2> <label for="accountType" class="block font-semibold text-maroon mb-2">Account Type</label> <select id="accountType" class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-maroon focus:border-maroon mb-4"> <option value="user">User (Free)</option> <option value="runner">Runner (KES 100/month)</option> </select> <label for="fullName" class="block font-semibold text-maroon mb-2">Full Name</label> 
+    <h2 class="text-3xl text-center font-bold text-maroon mb-6">Sign Up</h2> 
+    <div id="runnerIntro" class="runner-intro" style="display:none;"> 
+     <h4 class="font-bold text-lg mb-2">👋 Welcome to Kenya’s Trusted Errand Runners Directory!</h4> 
+     <p>Earn money by completing simple errands in your area.</p> 
+     <p>Fill out this quick form to create your professional profile. Your **KES 100 monthly subscription** gives you verified status and visibility to clients who will contact you directly!</p> 
+    </div> <label for="accountType" class="block font-semibold text-maroon mb-2">Account Type</label> <select id="accountType" class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-maroon focus:border-maroon mb-4"> <option value="user">User (Free)</option> <option value="runner">Runner (KES 100/month)</option> </select> <label for="fullName" class="block font-semibold text-maroon mb-2">Full Name</label> 
     <input type="text" id="fullName" class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-maroon focus:border-maroon mb-4"> <label for="email" class="block font-semibold text-maroon mb-2">Email</label> 
     <input type="email" id="email" class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-maroon focus:border-maroon mb-4"> <label for="phone" class="block font-semibold text-maroon mb-2">Phone</label> 
     <input type="text" id="phone" class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-maroon focus:border-maroon mb-4"> <label for="password" class="block font-semibold text-maroon mb-2">Password</label> 
@@ -105,35 +122,38 @@
   <script>
 const APP_ID = "9223CBD1-9AFC-4C74-B56B-12F11D319DF9";
 const API_KEY = "0C3700EB-013B-4BFE-85ED-CE0F6F7EC013";
+const PochiLaBiasharaNumber = "0115815194"; // CORRECTED NUMBER
+const VerificationNumber = "0797046378";
+
 const accountTypeSelect = document.getElementById("accountType");
 const runnerFields = document.getElementById("runnerFields");
 const paymentNotice = document.getElementById("paymentNotice");
+const runnerIntro = document.getElementById("runnerIntro");
 
 function updatePaymentNotice() {
 const accountType = accountTypeSelect.value;
-let feeAmount;
+const feeAmount = 100;
 let message;
 
 if (accountType === "runner") {
-    feeAmount = 100;
+    
+    // Updated Payment Notice Text with corrected Pochi number
     message = `
-        <h4>Subscription & Verification</h4>
-        <p>To join our community of trusted Runners, we ask for a small monthly subscription fee of **KES ${feeAmount}**. This fee gives you access to our platform and helps us cover administrative costs to ensure a safe and reliable service for all users.</p>
-    `;
-    paymentNotice.innerHTML = `
-        ${message}
-        <p class="mt-2 font-bold">Here's how to complete your first payment:</p>
+        <h4 class="font-bold text-maroon mb-2">✅ Complete Your Subscription (KES ${feeAmount})</h4>
+        <p class="mt-2 font-bold">To finalize and activate your runner profile, please complete your first monthly payment:</p>
         <ol class="list-decimal list-inside mt-2 text-sm space-y-1">
-            <li>Send **KES ${feeAmount}** to our Pochi la Biashara account: <b>0115815194</b></li>
-            <li>Forward the M-Pesa confirmation message to: <b>0797046378</b></li>
+            <li>Send **KES ${feeAmount}** to our Pochi la Biashara account: <b>${PochiLaBiasharaNumber}</b></li>
+            <li>Forward the M-Pesa confirmation message to: <b>${VerificationNumber}</b></li>
         </ol>
-        <p class="mt-2 text-sm italic">Once we verify your payment, your account will be activated. Thank you for helping us build a great community!</p>
+        <p class="mt-2 text-sm italic">Once verified, your profile will be live and clients can contact you for errands!</p>
     `;
+    paymentNotice.innerHTML = message;
     paymentNotice.style.display = "block";
 } else { // accountType === "user"
+    // Updated User Message to reflect browsing runners
     paymentNotice.innerHTML = `
-        <h4>Open an account today and connect with runners!</h4>
-        <p>Your account is free and will be activated immediately. Post an errand and get help today!</p>
+        <h4>Open an account today and find the perfect runner!</h4>
+        <p>Your account is free and will be activated immediately. Browse our list of verified runners and hire help today!</p>
     `;
     paymentNotice.style.display = "block";
 }
@@ -142,9 +162,11 @@ if (accountType === "runner") {
 
 function updateFormVisibility() {
 if (accountTypeSelect.value === "runner") {
-runnerFields.style.display = "block";
+    runnerFields.style.display = "block";
+    runnerIntro.style.display = "block"; 
 } else {
-runnerFields.style.display = "none";
+    runnerFields.style.display = "none";
+    runnerIntro.style.display = "none"; 
 }
 }
 
@@ -264,7 +286,8 @@ const res = await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/users/
 if (res.ok) {
     let successMessage;
     if (accountType === 'user') {
-        successMessage = "Sign up successful! Your account is now active. Post your first errand and connect with a runner today!";
+        // Updated success message for user
+        successMessage = "Sign up successful! Your account is now active. Browse runners and hire your help today!";
     } else {
         successMessage = "Sign up successful! Your account is pending activation. We will verify your KES 100 payment and send you an email shortly to confirm and tell you how to login.";
     }
@@ -292,4 +315,4 @@ if (res.ok) {
 }
 </script> 
  </body>
-        </html>
+</html>
