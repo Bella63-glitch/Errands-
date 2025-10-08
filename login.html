@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - Run Me An Errand</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://api.backendless.com/sdk/js/latest/backendless.min.js"></script>
 </head>
 <body class="flex items-center justify-center h-screen bg-gray-100">
 
@@ -31,44 +30,90 @@
     <p id="msg" class="text-center mt-4 text-red-500"></p>
   </div>
 
-  <script>
-    const APP_ID = "9223CBD1-9AFC-4C74-B56B-12F11D319DF9";
-    const API_KEY = "0C3700EB-013B-4BFE-85ED-CE0F6F7EC013";
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-    Backendless.initApp(APP_ID, API_KEY);
+    // ✅ Supabase connection
+    const SUPABASE_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    async function redirectBasedOnRole(user) {
-      const role = (user.role || "").toLowerCase();
-      if (role === "runner") {
-        window.location.href = "runners-profile.html";
-      } else if (role === "user") {
-        window.location.href = "client-profile.html";
-      } else {
-        document.getElementById("msg").textContent = "Unknown role. Please contact support.";
-      }
-    }
+    const msg = document.getElementById("msg");
+    const form = document.getElementById("loginForm");
 
-    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value.trim();
-      const msg = document.getElementById("msg");
       msg.textContent = "Logging in...";
 
-      try {
-        const user = await Backendless.UserService.login(email, password, true);
+      // 🔐 Try login
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-        // Check 1: Check if the account is disabled
-        if (!user.isEnabled) {
-            await Backendless.UserService.logout();
-            msg.textContent = "Login failed: Your account has been deactivated. Please contact support.";
-            return;
-        }
-        
-        // Check 2: Check for subscription status and expiry
-        const now = new Date();
-        const expiryDate = user.subscriptionExpiry ? new Date(user.subscriptionExpiry) : null;
+      if (error) {
+        console.error("Login error:", error);
+        msg.textContent = "Login failed: " + error.message;
+        return;
+      }
+
+      const user = data.user;
+      msg.textContent = "Login successful! Checking profile...";
+
+      // ✅ Fetch runner/user details from your database
+      const { data: runner, error: runnerError } = await supabase
+        .from("runners")
+        .select("*")
+        .eq("email", email)
+        .single();
+
+      if (runnerError) {
+        console.error("Runner fetch error:", runnerError);
+        msg.textContent = "Login successful, but no runner profile found.";
+        // Optionally redirect to client dashboard
+        window.location.href = "client-profile.html";
+        return;
+      }
+
+      // ✅ Check if runner is enabled and active
+      if (!runner.isEnabled) {
+        msg.textContent = "Your account is deactivated. Please contact support.";
+        await supabase.auth.signOut();
+        return;
+      }
+
+      if (!runner.SubscriptionStatus) {
+        msg.textContent = "Your subscription is inactive. Please renew to continue.";
+        await supabase.auth.signOut();
+        return;
+      }
+
+      // ✅ Save session and redirect based on role
+      localStorage.setItem("userEmail", email);
+      localStorage.setItem("userRole", runner.role);
+
+      if (runner.role && runner.role.toLowerCase() === "runner") {
+        window.location.href = "runners-profile.html";
+      } else if (runner.role && runner.role.toLowerCase() === "user") {
+        window.location.href = "client-profile.html";
+      } else {
+        msg.textContent = "Unknown role. Please contact support.";
+      }
+    });
+  </script>
+
+</body>
+</html>
+
+
+
+
+
+
+<!doctype         const expiryDate = user.subscriptionExpiry ? new Date(user.subscriptionExpiry) : null;
 
         if (!user.SubscriptionStatus || (expiryDate && expiryDate < now)) {
             await Backendless.UserService.logout();
@@ -92,23 +137,6 @@
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
