@@ -5,74 +5,70 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
   <title>Create account- Sign Up</title> 
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-64SH312S1V"></script> 
-  <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-64SH312S1V');
-    </script> 
+  <script>    
+      window.dataLayer = window.dataLayer || [];    
+      function gtag(){dataLayer.push(arguments);}    
+      gtag('js', new Date());  gtag('config', 'G-64SH312S1V');    
+</script> 
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> 
-  <style>
-    /* Custom CSS for colors and specific elements not handled by Tailwind */
-    :root {
-        --maroon: #7B1E3A;
-        --gold: #FFD700;
-    }
-    .bg-maroon { background-color: var(--maroon); }
-    .text-gold { color: var(--gold); }
-    .bg-gold { background-color: var(--gold); }
-    .bg-maroon-dark { background-color: #66182f; }  body {
-    font-family: sans-serif;
-}
-.id-info {
-    font-size: 0.8em;
-    color: #666;
-    margin-top: 5px;
-    font-weight: normal;
-}
-.popup {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 15px;
-    border-radius: 5px;
-    display: none;
-    color: white;
-    font-weight: bold;
-    z-index: 1000;
-}
-.popup.success { background: green; }
-.popup.error { background: red; }
-.payment-notice {
-    background-color: #fffbeb; /* A soft, light yellow background */
-    border-left: 4px solid var(--gold);
-    color: #4a5568;
-    padding: 16px;
-    border-radius: 8px;
-}
-.payment-notice p {
-    margin: 0;
-}
-.payment-notice h4 {
-    font-weight: bold;
-    color: var(--maroon);
-    margin-bottom: 8px;
-}
-.runner-intro {
-    background-color: #fcece0; /* New, softer peachy/orange background */
-    border: 1px solid #d4a77d; /* A complementary border */
-    color: #4a5568;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    font-size: 0.95em;
-}
-.runner-intro h4 {
-    color: var(--maroon);
-}
-
-</style> 
+  <style>    
+    /* Custom CSS for colors and specific elements not handled by Tailwind */    
+    :root {    
+        --maroon: #7B1E3A;    
+        --gold: #FFD700;    
+    }    
+    .bg-maroon { background-color: var(--maroon); }    
+    .text-gold { color: var(--gold); }    
+    .bg-gold { background-color: var(--gold); }    
+    .bg-maroon-dark { background-color: #66182f; }  body {    
+    font-family: sans-serif;    
+}    
+.id-info {    
+    font-size: 0.8em;    
+    color: #666;    
+    margin-top: 5px;    
+    font-weight: normal;    
+}    
+.popup {    
+    position: fixed;    
+    top: 20px;    
+    right: 20px;    
+    padding: 15px;    
+    border-radius: 5px;    
+    display: none;    
+    color: white;    
+    font-weight: bold;    
+    z-index: 1000;    
+}    
+.popup.success { background: green; }    
+.popup.error { background: red; }    
+.payment-notice {    
+    background-color: #fffbeb; /* A soft, light yellow background */    
+    border-left: 4px solid var(--gold);    
+    color: #4a5568;    
+    padding: 16px;    
+    border-radius: 8px;    
+}    
+.payment-notice p {    
+    margin: 0;    
+}    
+.payment-notice h4 {    
+    font-weight: bold;    
+    color: var(--maroon);    
+    margin-bottom: 8px;    
+}    
+.runner-intro {    
+    background-color: #fcece0; /* New, softer peachy/orange background */    
+    border: 1px solid #d4a77d; /* A complementary border */    
+    color: #4a5568;    
+    padding: 15px;    
+    border-radius: 8px;    
+    margin-bottom: 20px;    
+    font-size: 0.95em;    
+}    
+.runner-intro h4 {    
+    color: var(--maroon);    
+}  </style> 
  </head> 
  <body class="bg-gray-100 text-gray-800 font-sans min-h-screen flex flex-col"> 
   <header class="bg-maroon shadow-lg sticky top-0 z-50"> 
@@ -93,7 +89,7 @@
     <input type="password" id="password" class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-maroon focus:border-maroon mb-4"> <label for="location" class="block font-semibold text-maroon mb-2">Location</label> 
     <input type="text" id="location" placeholder="e.g., Nairobi, Kenya" class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-maroon focus:border-maroon mb-4"> 
     <div id="runnerFields" class="space-y-4" style="display:none;"> 
-     <div> <label for="profilePicture" class="block font-semibold text-maroon mb-2">Upload Profile Picture</label> 
+     <div> <label for="profilePicture" class="block font-semibold text-maroon mb-2 mt-4">Upload Profile Picture</label> 
       <input type="file" id="profilePicture" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-maroon file:text-gold hover:file:bg-maroon-dark"> 
      </div> 
      <div> <label for="about" class="block font-semibold text-maroon mb-2 mt-4">About Me</label> <textarea id="about" rows="3" placeholder="Tell us a little about yourself..." class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-maroon focus:border-maroon"></textarea> 
@@ -119,200 +115,243 @@
     <p class="text-sm">© 2025 Run Me An Errand. All rights reserved.</p> 
    </div> 
   </footer> 
-  <script>
-const APP_ID = "9223CBD1-9AFC-4C74-B56B-12F11D319DF9";
-const API_KEY = "0C3700EB-013B-4BFE-85ED-CE0F6F7EC013";
-const PochiLaBiasharaNumber = "0115815194"; // CORRECTED NUMBER
-const VerificationNumber = "0797046378";
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
+  <script>    
+// Supabase Configuration
+// !! IMPORTANT: Replace these with your actual Supabase URL and Key !!
+const SUPABASE_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const accountTypeSelect = document.getElementById("accountType");
-const runnerFields = document.getElementById("runnerFields");
-const paymentNotice = document.getElementById("paymentNotice");
-const runnerIntro = document.getElementById("runnerIntro");
+// Payment & Verification Info
+const PochiLaBiasharaNumber = "0115815194";    
+const VerificationNumber = "0797046378";  
 
-function updatePaymentNotice() {
-const accountType = accountTypeSelect.value;
-const feeAmount = 100;
-let message;
+// DOM Elements
+const accountTypeSelect = document.getElementById("accountType");  
+const runnerFields = document.getElementById("runnerFields");  
+const paymentNotice = document.getElementById("paymentNotice");  
+const runnerIntro = document.getElementById("runnerIntro");  
 
-if (accountType === "runner") {
-    
-    // Updated Payment Notice Text with corrected Pochi number
-    message = `
-        <h4 class="font-bold text-maroon mb-2">✅ Complete Your Subscription (KES ${feeAmount})</h4>
-        <p class="mt-2 font-bold">To finalize and activate your runner profile, please complete your first monthly payment:</p>
-        <ol class="list-decimal list-inside mt-2 text-sm space-y-1">
-            <li>Send **KES ${feeAmount}** to our Pochi la Biashara account: <b>${PochiLaBiasharaNumber}</b></li>
-            <li>Forward the M-Pesa confirmation message to: <b>${VerificationNumber}</b></li>
-        </ol>
-        <p class="mt-2 text-sm italic">Once verified, your profile will be live and clients can contact you for errands!</p>
-    `;
-    paymentNotice.innerHTML = message;
-    paymentNotice.style.display = "block";
-} else { // accountType === "user"
-    // Updated User Message to reflect browsing runners
-    paymentNotice.innerHTML = `
-        <h4>Open an account today and find the perfect runner!</h4>
-        <p>Your account is free and will be activated immediately. Browse our list of verified runners and hire help today!</p>
-    `;
-    paymentNotice.style.display = "block";
+// Helper function to initialize Supabase client
+function createClient(supabaseUrl, supabaseAnonKey) {
+    if (typeof window.supabase === 'object' && window.supabase.createClient) {
+        return window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+    } else {
+        console.error("Supabase client library not loaded. Check the <script> tag.");
+        return null;
+    }
 }
 
+function updatePaymentNotice() {
+    const accountType = accountTypeSelect.value;
+    const feeAmount = 100;
+    let message;
+
+    if (accountType === "runner") {
+        message = `
+            <h4 class="font-bold text-maroon mb-2">✅ Complete Your Subscription (KES ${feeAmount})</h4>
+            <p class="mt-2 font-bold">To finalize and activate your runner profile, please complete your first monthly payment:</p>
+            <ol class="list-decimal list-inside mt-2 text-sm space-y-1">
+            <li>Send **KES ${feeAmount}** to our Pochi la Biashara account: <b>${PochiLaBiasharaNumber}</b></li>
+            <li>Forward the M-Pesa confirmation message to: <b>${VerificationNumber}</b></li>
+            </ol>
+            <p class="mt-2 text-sm italic">Once verified, your profile will be live and clients can contact you for errands!</p>
+        `;
+        paymentNotice.innerHTML = message;
+        paymentNotice.style.display = "block";
+    } else { // accountType === "user"
+        paymentNotice.innerHTML = `
+            <h4>Open an account today and find the perfect runner!</h4>
+            <p>Your account is free and will be activated immediately. Browse our list of verified runners and hire help today!</p>
+        `;
+        paymentNotice.style.display = "block";
+    }
 }
 
 function updateFormVisibility() {
-if (accountTypeSelect.value === "runner") {
-    runnerFields.style.display = "block";
-    runnerIntro.style.display = "block"; 
-} else {
-    runnerFields.style.display = "none";
-    runnerIntro.style.display = "none"; 
-}
+    if (accountTypeSelect.value === "runner") {
+        runnerFields.style.display = "block";
+        runnerIntro.style.display = "block";
+    } else {
+        runnerFields.style.display = "none";
+        runnerIntro.style.display = "none";
+    }
 }
 
 accountTypeSelect.addEventListener("change", () => {
-updateFormVisibility();
-updatePaymentNotice();
+    updateFormVisibility();
+    updatePaymentNotice();
 });
+
 document.addEventListener("DOMContentLoaded", () => {
-updateFormVisibility();
-updatePaymentNotice();
+    updateFormVisibility();
+    updatePaymentNotice();
 });
 
 function showPopup(message, type, duration = 4000) {
-const popup = document.getElementById("popup");
-popup.textContent = message;
-popup.className = "popup " + type;
-popup.style.display = "block";
-setTimeout(() => { popup.style.display = "none"; }, duration);
+    const popup = document.getElementById("popup");
+    popup.textContent = message;
+    popup.className = "popup " + type;
+    popup.style.display = "block";
+    setTimeout(() => { popup.style.display = "none"; }, duration);
 }
 
+// Function to upload file to Supabase Storage
+async function uploadFile(file, bucketName) {
+    if (!supabase) throw new Error("Supabase client is not initialized.");
+
+    // Generate a unique path for the file
+    const filePath = `${Date.now()}-${file.name.replace(/\s/g, '_')}`;
+
+    const { error } = await supabase.storage
+        .from(bucketName)
+        .upload(filePath, file, {
+            cacheControl: '3600',
+            upsert: false
+        });
+
+    if (error) {
+        throw new Error(`Supabase Storage upload failed in bucket '${bucketName}': ${error.message}`);
+    }
+
+    // Get public URL
+    const { data: publicURLData } = supabase.storage
+        .from(bucketName)
+        .getPublicUrl(filePath);
+        
+    return publicURLData.publicUrl;
+}
+
+// 🛑 FINAL UPDATED signUp() FUNCTION WITH CONDITIONAL REDIRECTION 🛑
 async function signUp() {
-const accountType = document.getElementById("accountType").value;
-const fullName = document.getElementById("fullName").value;
-const email = document.getElementById("email").value;
-const phone = document.getElementById("phone").value;
-const password = document.getElementById("password").value;
-const location = document.getElementById("location").value;
-
-let about = "";
-let imageUrl = "";
-let idNumber = "";
-let idPictureUrl = "";
-let experience = "";
-let availability = "";
-
-if (!fullName || !email || !phone || !password || !location) {
-    showPopup("Please fill all required fields", "error");
-    return;
-}
-
-if (accountType === "runner") {
-    about = document.getElementById("about").value;
-    const profilePictureFile = document.getElementById("profilePicture").files[0];
-    idNumber = document.getElementById("idNumber").value;
-    const idPictureFile = document.getElementById("idPicture").files[0];
-    experience = document.getElementById("experience").value;
-    availability = document.getElementById("availability").value;
-
-
-    if (!about || !profilePictureFile || !idNumber || !idPictureFile || !experience || !availability) {
-        showPopup("Please provide all required Runner details", "error");
+    if (!supabase) {
+        showPopup("Supabase client not loaded. Cannot proceed.", "error");
         return;
     }
 
-    try {
-        const profilePicFormData = new FormData();
-        profilePicFormData.append("file", profilePictureFile);
-        const profilePicUploadRes = await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/files/profiles/${profilePictureFile.name}`, {
-            method: "POST",
-            body: profilePicFormData
-        });
+    const accountType = document.getElementById("accountType").value;
+    const fullName = document.getElementById("fullName").value;
+    const email = document.getElementById("email").value;
+    const phone = document.getElementById("phone").value;
+    const password = document.getElementById("password").value;
+    const location = document.getElementById("location").value;
 
-        if (!profilePicUploadRes.ok) {
-            const error = await profilePicUploadRes.json();
-            throw new Error(error.message || "Failed to upload profile picture.");
-        }
-        const profilePicData = await profilePicUploadRes.json();
-        imageUrl = profilePicData.fileURL;
-
-        const idPicFormData = new FormData();
-        idPicFormData.append("file", idPictureFile);
-        const idPicUploadRes = await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/files/ids/${idPictureFile.name}`, {
-            method: "POST",
-            body: idPicFormData
-        });
-
-        if (!idPicUploadRes.ok) {
-            const error = await idPicUploadRes.json();
-            throw new Error(error.message || "Failed to upload ID picture.");
-        }
-        const idPicData = await idPicUploadRes.json();
-        idPictureUrl = idPicData.fileURL;
-
-    } catch (error) {
-        console.error("Image upload error:", error);
-        showPopup(error.message || "An error occurred during image upload. Please try again.", "error");
+    if (!fullName || !email || !phone || !password || !location) {
+        showPopup("Please fill all required basic fields", "error");
         return;
     }
-}
 
-const userData = {
-    name: fullName,
-    email,
-    phone,
-    password,
-    location,
-    profiletype: accountType,
-    role: accountType,
-    about: about,
-    imageurl: imageUrl,
-    idNumber,
-    idimage: idPictureUrl,
-    experience,
-    availability,
-    isavailable: false,
-    SubscriptionStatus: (accountType === 'user') ? true : false,
-    // THE FIX: Force the account to be enabled
-    isEnabled: true
-};
+    let about = "";
+    let imageUrl = null; 
+    let idNumber = "";
+    let idPictureUrl = null; 
+    let experience = "";
+    let availability = "";
 
-const res = await fetch(`https://api.backendless.com/${APP_ID}/${API_KEY}/users/register`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(userData)
-});
-
-if (res.ok) {
-    let successMessage;
-    if (accountType === 'user') {
-        // Updated success message for user
-        successMessage = "Sign up successful! Your account is now active. Browse runners and hire your help today!";
-    } else {
-        successMessage = "Sign up successful! Your account is pending activation. We will verify your KES 100 payment and send you an email shortly to confirm and tell you how to login.";
-    }
-    showPopup(successMessage, "success", 7000);
-
-    document.querySelector("input#fullName").value = '';
-    document.querySelector("input#email").value = '';
-    document.querySelector("input#phone").value = '';
-    document.querySelector("input#password").value = '';
-    document.querySelector("input#location").value = '';
+    // 1. Handle Runner-Specific Data (Uploads)
     if (accountType === "runner") {
-      document.querySelector("input#profilePicture").value = '';
-      document.querySelector("textarea#about").value = '';
-      document.querySelector("input#idNumber").value = '';
-      document.querySelector("input#idPicture").value = '';
-      document.querySelector("textarea#experience").value = '';
-      document.querySelector("input#availability").value = '';
+        about = document.getElementById("about").value;
+        const profilePictureFile = document.getElementById("profilePicture").files[0];
+        idNumber = document.getElementById("idNumber").value;
+        const idPictureFile = document.getElementById("idPicture").files[0];
+        experience = document.getElementById("experience").value;
+        availability = document.getElementById("availability").value;
+
+        if (!about || !profilePictureFile || !idNumber || !idPictureFile || !experience || !availability) {
+            showPopup("Please provide all required Runner details and files", "error");
+            return;
+        }
+
+        try {
+            // Upload images and get URLs (this must still be done client-side)
+            imageUrl = await uploadFile(profilePictureFile, 'profiles'); 
+            idPictureUrl = await uploadFile(idPictureFile, 'ids');
+            
+        } catch (error) {
+            console.error("File upload error:", error);
+            showPopup(error.message || "An error occurred during file upload. Check your Supabase Storage policies.", "error");
+            return;
+        }
     }
 
-} else {
-    const error = await res.json();
-    showPopup(error.message || "Sign up failed", "error");
-}
+    // 2. Sign Up the User (Auth Table) - Data passed via metadata for DB Trigger
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: email,
+        password: password,
+        options: {
+            data: {
+                full_name: fullName,
+                phone: phone,
+                profile_type: accountType,
+                location: location,
+                // Pass runner-specific data for the database function to use if applicable
+                about: about,
+                image_url: imageUrl, 
+                id_number: idNumber,
+                id_image_url: idPictureUrl,
+                experience: experience, 
+                availability: availability
+            }
+        }
+    });
+
+    if (authError) {
+        console.error("Supabase Auth Error:", authError);
+        showPopup(authError.message || "Sign up failed in authentication step.", "error");
+        return;
+    }
+
+    // 3. Handle Success and Redirect
+    if (authData.user) {
+        // Clear essential form fields after successful sign-up
+        document.getElementById("fullName").value = '';
+        document.getElementById("email").value = '';
+        document.getElementById("phone").value = '';
+        document.getElementById("password").value = '';
+        document.getElementById("location").value = '';
+        
+        // Clear runner-specific fields if visible
+        if (accountType === 'runner') {
+            document.getElementById("about").value = '';
+            document.getElementById("idNumber").value = '';
+            // File inputs are generally left alone after clearing others
+        }
+        
+        let successMessage;
+        
+        if (accountType === 'runner') {
+            // Message for runners: payment/verification needed. 
+            successMessage = "Account created! Please complete payment and verification using the details below to activate your Runner profile. You can now log in.";
+            
+            // 🛑 Runner: Show success message and STOP. (Stay on the page for payment notice)
+
+        } else {
+            // Message for basic users: they can log in immediately
+            successMessage = "Account created! You can now log in and find a runner.";
+            
+            // 🛑 User: Redirect to login.html after a slight delay
+            setTimeout(() => {
+                window.location.href = 'login.html'; 
+            }, 1500); 
+        }
+
+        // Display the success message (for both user types)
+        showPopup(successMessage, "success", 5000); 
+    } else {
+        showPopup("An unknown error occurred during sign up.", "error");
+    }
 
 }
 </script> 
  </body>
 </html>
+
+
+
+
+
+
+
+
+
