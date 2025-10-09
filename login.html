@@ -33,7 +33,7 @@
   <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-    // ✅ Supabase connection
+    // ✅ Supabase connection - VERIFY YOUR KEYS
     const SUPABASE_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -46,20 +46,40 @@
         const { data, error } = await supabase
             .from(table)
             .select("*")
-            .eq("id", userId)
+            .eq("id", userId) 
             .single();
         return { data, error };
     }
 
-    // Helper function for redirection
-    function redirectUser(profileData, role) {
-        localStorage.setItem("userRole", role);
-        localStorage.setItem("userId", profileData.id); // Save the UUID
+    // NEW: Function to create a basic client profile if one is missing
+    async function createClientProfile(userId) {
+        console.log("Profile missing. Attempting to create basic client profile...");
         
+        const email = document.getElementById("email").value.trim();
+
+        // Inserts a new row into the 'users' table using the logged-in Auth ID
+        const { error } = await supabase
+            .from('users')
+            .insert({ 
+                id: userId, 
+                email: email,
+                name: email.split('@')[0] || 'New Client' // Uses username part of email as default name
+            });
+            
+        if (error) {
+            console.error("Failed to create client profile:", error);
+            // RLS may block INSERT, so we still must check
+            return false;
+        }
+        return true;
+    }
+
+    // Helper function for redirection
+    function redirectUser(role) {
         if (role === "runner") {
-            window.location.href = "runners-profile.html";
-        } else { // Defaults to client profile
-            window.location.href = "client-profile.html";
+            window.location.href = "runner_profile.html";
+        } else { 
+            window.location.href = "client_profile.html";
         }
     }
 
@@ -79,7 +99,11 @@
 
       if (authError) {
         console.error("Login error:", authError);
-        msg.textContent = "Login failed: " + authError.message;
+        if (authError.message.includes('Email not confirmed')) {
+             msg.textContent = "Login failed: Please check your email to confirm your account.";
+        } else {
+             msg.textContent = "Login failed: Invalid credentials.";
+        }
         return;
       }
 
@@ -87,65 +111,54 @@
       msg.textContent = "Login successful! Checking profile role...";
 
 
-      // 2. 🏃 Check the RUNNERS table first (Most restricted role)
+      // 2. 🏃 Check the RUNNERS table first
       const { data: runnerProfile, error: runnerError } = await getProfile(userId, "runners");
 
       if (runnerProfile) {
-        // User is a Runner
-        msg.textContent = "Runner profile found. Checking activation status...";
-        
-        const status = runnerProfile.subscription_status;
-        
-        // 🛑 CRITICAL CHECK: Runner must be paid or verified to proceed
+        // Runner is found
+        const status = runnerProfile["SubscriptionStatus"]; 
         if (status !== 'paid' && status !== 'verified') {
             msg.textContent = "Account not activated yet. Please complete payment and verification to proceed.";
-            // Since the user is logged in via Auth, we sign them out to force them to re-login after activation
             await supabase.auth.signOut(); 
             return;
         }
-
-        // Runner is active and paid/verified, redirect them
-        redirectUser(runnerProfile, "runner");
+        redirectUser("runner");
         return;
       }
       
-      // If runner fetch failed (because they are not a runner), check the USERS table
-      if (runnerError && runnerError.code === 'PGRST116') { // PGRST116 = No row found
-          
-          // 3. 👤 Check the USERS table (Basic client role)
-          const { data: userProfile, error: userError } = await getProfile(userId, "users");
+      // 3. 👤 Check the USERS table (Client role)
+      let { data: userProfile, error: userError } = await getProfile(userId, "users");
 
-          if (userProfile) {
-             // User is a basic client
-             msg.textContent = "Client profile found. Redirecting...";
-             redirectUser(userProfile, "client");
-             return;
-          }
+      if (userProfile) {
+         // Client profile is found
+         msg.textContent = "Client profile found. Redirecting...";
+         redirectUser("client");
+         return;
+      }
+      
+      // 4. 🛑 CRITICAL FIX: If profile is still missing (after RLS fix), create the row.
+      if (!userProfile) { 
+          msg.textContent = "Profile data is missing. Attempting to restore profile...";
           
-          // 4. 🛑 Profile not found in EITHER table
-          if (userError) {
-              msg.textContent = "Error: Profile data not found. Please re-sign up or contact support.";
-              console.error("User profile fetch error:", userError);
-              await supabase.auth.signOut();
-              return;
+          // Must ensure RLS policy allows INSERT: auth.uid() = id on the 'users' table
+          const created = await createClientProfile(userId);
+          
+          if (created) {
+             msg.textContent = "Profile restored. Redirecting...";
+             redirectUser("client");
+             return;
           }
       }
       
-      // Fallback for unexpected errors during profile check
-      msg.textContent = "An error occurred during profile retrieval. Please contact support.";
+      // Final Fallback for all errors
+      msg.textContent = "Critical Error: Cannot find or create user profile. Please try again.";
+      console.error("Fatal login error. Likely RLS on INSERT or SELECT, or Auth failure:", userError);
       await supabase.auth.signOut();
 
     });
   </script> 
  </body>
 </html>
-
-
-
-
-
-
-
 
 
 
