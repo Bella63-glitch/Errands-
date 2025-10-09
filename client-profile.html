@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Client Profile - Run Me an Errand</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://api.backendless.com/sdk/js/latest/backendless.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root { --maroon:#7B1E3A; --gold:#FFD700; }
     .bg-maroon{background-color:var(--maroon);} 
@@ -105,42 +105,68 @@
   </div>
 
   <script>
+    // 🛑 REPLACE with your ACTUAL Supabase URL and Anon Key
+    const SUPABASE_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
+
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
     document.addEventListener("DOMContentLoaded", async () => {
-      const APP_ID = "9223CBD1-9AFC-4C74-B56B-12F11D319DF9";
-      const API_KEY = "0C3700EB-013B-4BFE-85ED-CE0F6F7EC013";
-
-      Backendless.initApp(APP_ID, API_KEY);
-
       const profileDiv = document.getElementById("profileDetails");
       const errorDiv = document.getElementById("errorMessage");
       const logoutBtn = document.getElementById("logoutBtn");
       const exploreBtn = document.getElementById("exploreRunnersBtn");
 
       async function loadProfile() {
-        try {
-          const user = await Backendless.UserService.getCurrentUser();
+        profileDiv.innerHTML = `<div class="spinner"></div>`;
+        errorDiv.textContent = "";
 
-          if (!user) {
+        try {
+          // 1. Get the authenticated user session/data from Supabase Auth
+          const { data: authData, error: authError } = await supabase.auth.getUser();
+          
+          if (authError || !authData.user) {
             errorDiv.textContent = "No active session. Redirecting to login...";
             setTimeout(() => window.location.href = "login.html", 1500);
             return;
           }
 
+          const authUser = authData.user;
+          const userId = authUser.id;
+
+          // 2. Fetch detailed profile from the 'users' table using the Auth ID
+          const { data: clientProfile, error: profileError } = await supabase
+            .from('users')
+            .select('full_name, email, phone') // 🛑 Using 'full_name' for client name
+            .eq('id', userId)
+            .single();
+
+          if (profileError) {
+             console.error("Profile fetch error:", profileError);
+             errorDiv.textContent = "Could not load client details. Check the 'users' table RLS policy.";
+             return;
+          }
+          
+          // Combine auth and profile data
+          const user = { ...authUser, ...clientProfile };
+
           displayProfile(user);
 
         } catch (err) {
-          console.error("Error loading profile:", err);
-          errorDiv.textContent = "Unexpected error. Redirecting to login...";
-          setTimeout(() => window.location.href = "login.html", 1500);
+          console.error("Critical error loading profile:", err);
+          errorDiv.textContent = "Unexpected error. Please try again.";
         }
       }
 
       function displayProfile(user) {
+        // Use full_name for display, falling back to email if name is missing
+        const displayName = user.full_name || user.email || "Client"; 
+        
         profileDiv.innerHTML = `
           <div class="flex items-center space-x-6 mb-8 border-b-2 border-gray-200 pb-6">
             <img src="https://i.postimg.cc/TPfbBM5Q/black-woman-icon-flat-user-avatar-vector-illustration-158483-1678.jpg" alt="Profile Picture" class="w-24 h-24 rounded-full border-4 border-gold object-cover">
             <div>
-              <h2 class="text-3xl font-bold text-maroon">${user.Name || user.name || "User"}</h2>
+              <h2 class="text-3xl font-bold text-maroon">${displayName}</h2>
               <p class="text-lg text-gray-500">${user.email || "N/A"}</p>
             </div>
           </div>
@@ -149,7 +175,7 @@
             <div class="flex flex-col space-y-4">
               <h3 class="text-xl font-bold text-maroon border-b pb-2">Personal Information</h3>
               <p class="text-lg"><strong>Email:</strong> ${user.email || "N/A"}</p>
-              <p class="text-lg"><strong>Phone:</strong> ${user.PhoneNumber || user.phone || "N/A"}</p>
+              <p class="text-lg"><strong>Phone:</strong> ${user.phone || "N/A"}</p>
               <div class="mt-4">
                 <button id="editBtn" class="edit-btn">Edit Profile</button>
               </div>
@@ -180,7 +206,7 @@
           <div class="flex flex-col space-y-4">
             <label class="block">
               <span class="text-lg font-semibold text-maroon">Full Name:</span>
-              <input type="text" id="nameInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50" value="${user.Name || user.name || ""}">
+              <input type="text" id="nameInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50" value="${user.full_name || ""}">
             </label>
             <label class="block">
               <span class="text-lg font-semibold text-maroon">Email:</span>
@@ -188,7 +214,7 @@
             </label>
             <label class="block">
               <span class="text-lg font-semibold text-maroon">Phone:</span>
-              <input type="text" id="phoneInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50" value="${user.PhoneNumber || user.phone || ""}">
+              <input type="text" id="phoneInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50" value="${user.phone || ""}">
             </label>
             <div class="mt-6 flex space-x-4">
               <button id="saveBtn" class="save-btn">Save Changes</button>
@@ -200,24 +226,39 @@
         document.getElementById("cancelBtn").addEventListener("click", () => displayProfile(user));
 
         document.getElementById("saveBtn").addEventListener("click", async () => {
-          const updatedUser = {
-            ...user,
-            Name: document.getElementById("nameInput").value.trim(),
-            PhoneNumber: document.getElementById("phoneInput").value.trim()
+          const updatedFields = {
+            full_name: document.getElementById("nameInput").value.trim(), // 🛑 Correct column name
+            phone: document.getElementById("phoneInput").value.trim()      // 🛑 Correct column name
           };
+          
           try {
-            await Backendless.UserService.update(updatedUser);
+            // 🛑 SUPABASE UPDATE LOGIC on the 'users' table
+            const { data: updatedData, error } = await supabase
+              .from('users')
+              .update(updatedFields)
+              .eq('id', user.id)
+              .select('full_name, email, phone') // Select the updated fields
+              .single();
+
+            if (error) throw error;
+            
+            // Re-render profile with the new combined data
+            const updatedUser = { ...user, ...updatedData };
             displayProfile(updatedUser);
+            errorDiv.textContent = "Profile updated successfully!";
+            setTimeout(() => errorDiv.textContent = "", 3000);
+
           } catch (err) {
             console.error("Error updating profile:", err);
-            errorDiv.textContent = "Failed to update profile.";
+            errorDiv.textContent = "Failed to update profile. Check RLS policy on 'users' table (UPDATE).";
           }
         });
       }
 
       logoutBtn.addEventListener("click", async () => {
         try {
-          await Backendless.UserService.logout();
+          // 🛑 SUPABASE LOGOUT LOGIC
+          await supabase.auth.signOut();
         } catch (err) {
           console.warn("Logout error:", err);
         }
@@ -233,6 +274,10 @@
   </script>
 </body>
 </html>
+
+
+
+
 
 
 
