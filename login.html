@@ -1,35 +1,35 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - Run Me An Errand</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="flex items-center justify-center h-screen bg-gray-100">
-
-  <div class="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
-    <h2 class="text-2xl font-bold text-center mb-6 text-maroon">Login</h2>
-
-    <form id="loginForm" class="space-y-4">
-      <div>
-        <label class="block mb-1 font-medium">Email</label>
-        <input type="email" id="email" class="w-full border rounded px-3 py-2" required>
-      </div>
-
-      <div>
-        <label class="block mb-1 font-medium">Password</label>
-        <input type="password" id="password" class="w-full border rounded px-3 py-2" required>
-      </div>
-
-      <button type="submit" class="w-full bg-maroon text-gold py-2 rounded-lg hover:bg-gold hover:text-maroon font-bold">
-        Login
-      </button>
-    </form>
-
-    <p id="msg" class="text-center mt-4 text-red-500"></p>
-  </div>
-
+<html lang="en"> 
+ <head> 
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <title>Login - Run Me An Errand</title> 
+  <script src="https://cdn.tailwindcss.com"></script> 
+  <style>
+    :root {
+      --maroon: #7B1E3A;
+      --gold: #FFD700;
+    }
+    .text-maroon { color: var(--maroon); }
+    .bg-maroon { background-color: var(--maroon); }
+    .text-gold { color: var(--gold); }
+    .hover\:bg-gold:hover { background-color: var(--gold); }
+    .hover\:text-maroon:hover { color: var(--maroon); }
+  </style> 
+ </head> 
+ <body class="flex items-center justify-center h-screen bg-gray-100"> 
+  <div class="w-full max-w-md bg-white rounded-lg shadow-lg p-8"> 
+   <h2 class="text-2xl font-bold text-center mb-6 text-maroon">Login</h2> 
+   <form id="loginForm" class="space-y-4"> 
+    <div> <label class="block mb-1 font-medium">Email</label> 
+     <input type="email" id="email" class="w-full border rounded px-3 py-2" required> 
+    </div> 
+    <div> <label class="block mb-1 font-medium">Password</label> 
+     <input type="password" id="password" class="w-full border rounded px-3 py-2" required> 
+    </div> <button type="submit" class="w-full bg-maroon text-gold py-2 rounded-lg hover:bg-gold hover:text-maroon font-bold"> Login </button> 
+   </form> 
+   <p id="msg" class="text-center mt-4 text-red-500"></p> 
+  </div> 
   <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -41,6 +41,29 @@
     const msg = document.getElementById("msg");
     const form = document.getElementById("loginForm");
 
+    // Helper function to fetch profile from the appropriate table
+    async function getProfile(userId, table) {
+        const { data, error } = await supabase
+            .from(table)
+            .select("*")
+            .eq("id", userId)
+            .single();
+        return { data, error };
+    }
+
+    // Helper function for redirection
+    function redirectUser(profileData, role) {
+        localStorage.setItem("userRole", role);
+        localStorage.setItem("userId", profileData.id); // Save the UUID
+        
+        if (role === "runner") {
+            window.location.href = "runners-profile.html";
+        } else { // Defaults to client profile
+            window.location.href = "client-profile.html";
+        }
+    }
+
+
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -48,18 +71,94 @@
       const password = document.getElementById("password").value.trim();
       msg.textContent = "Logging in...";
 
-      // 🔐 Try login
-      const { data, error } = await supabase.auth.signInWithPassword({
+      // 1. 🔐 Authenticate User
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (error) {
-        console.error("Login error:", error);
-        msg.textContent = "Login failed: " + error.message;
+      if (authError) {
+        console.error("Login error:", authError);
+        msg.textContent = "Login failed: " + authError.message;
         return;
       }
 
+      const userId = authData.user.id;
+      msg.textContent = "Login successful! Checking profile role...";
+
+
+      // 2. 🏃 Check the RUNNERS table first (Most restricted role)
+      const { data: runnerProfile, error: runnerError } = await getProfile(userId, "runners");
+
+      if (runnerProfile) {
+        // User is a Runner
+        msg.textContent = "Runner profile found. Checking activation status...";
+        
+        const status = runnerProfile.subscription_status;
+        
+        // 🛑 CRITICAL CHECK: Runner must be paid or verified to proceed
+        if (status !== 'paid' && status !== 'verified') {
+            msg.textContent = "Account not activated yet. Please complete payment and verification to proceed.";
+            // Since the user is logged in via Auth, we sign them out to force them to re-login after activation
+            await supabase.auth.signOut(); 
+            return;
+        }
+
+        // Runner is active and paid/verified, redirect them
+        redirectUser(runnerProfile, "runner");
+        return;
+      }
+      
+      // If runner fetch failed (because they are not a runner), check the USERS table
+      if (runnerError && runnerError.code === 'PGRST116') { // PGRST116 = No row found
+          
+          // 3. 👤 Check the USERS table (Basic client role)
+          const { data: userProfile, error: userError } = await getProfile(userId, "users");
+
+          if (userProfile) {
+             // User is a basic client
+             msg.textContent = "Client profile found. Redirecting...";
+             redirectUser(userProfile, "client");
+             return;
+          }
+          
+          // 4. 🛑 Profile not found in EITHER table
+          if (userError) {
+              msg.textContent = "Error: Profile data not found. Please re-sign up or contact support.";
+              console.error("User profile fetch error:", userError);
+              await supabase.auth.signOut();
+              return;
+          }
+      }
+      
+      // Fallback for unexpected errors during profile check
+      msg.textContent = "An error occurred during profile retrieval. Please contact support.";
+      await supabase.auth.signOut();
+
+    });
+  </script> 
+ </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!doctype html>
       const user = data.user;
       msg.textContent = "Login successful! Checking profile...";
 
@@ -107,44 +206,6 @@
 
 </body>
 </html>
-
-
-
-
-
-
-<!doctype         const expiryDate = user.subscriptionExpiry ? new Date(user.subscriptionExpiry) : null;
-
-        if (!user.SubscriptionStatus || (expiryDate && expiryDate < now)) {
-            await Backendless.UserService.logout();
-            msg.textContent = "Your subscription has expired. Please make a payment to continue.";
-            return;
-        }
-
-        // If both checks pass, proceed with the normal login flow
-        localStorage.setItem("userToken", Backendless.LocalCache.get("user-token"));
-        localStorage.setItem("userId", user.objectId);
-        localStorage.setItem("userRole", user.role);
-
-        await redirectBasedOnRole(user);
-
-      } catch (err) {
-        msg.textContent = "Login failed: " + err.message;
-        console.error("Login error:", err);
-      }
-    });
-  </script>
-
-</body>
-</html>
-
-
-
-
-
-
-
-
 
 
 
