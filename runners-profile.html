@@ -58,7 +58,7 @@
     </div>
 
     <div id="profileContent" class="profile-card w-full max-w-4xl my-8 hidden">
-      </div>
+    </div>
 
     <div id="errorMessage" class="text-center text-red-500 text-xl font-bold hidden mt-12">
         Runner profile not found. Please login again.
@@ -66,8 +66,8 @@
 </main>
 
 <script>
-    // 1. Supabase Initialization - Using your provided keys
-    const SUPABASE_URL = 'https://zchofpncqskvnfrzbcww.supabase.co'; 
+    // Supabase initialization
+    const SUPABASE_URL = 'https://zchofpncqskvnfrzbcww.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAkSopWR9-YXUI';
     const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -78,52 +78,47 @@
     const logoutBtn = document.getElementById('logoutBtn');
     const hamburgerBtn = document.getElementById('hamburgerBtn');
     const menuEl = document.getElementById('menu');
-    
-    // --- KEY DATABASE/SESSION SPECIFICATIONS ---
-    const RUNNER_EMAIL_KEY = 'runner_email'; 
-    const RUNNER_TABLE = 'runners'; // Your specified table
-    const PHONE_COLUMN = 'phone_number'; // Assuming the phone column is named phone_number
-    // --- ---
 
-    // ----------------------------------------------------
-    // Utility Functions
-    // ----------------------------------------------------
+    // Constants
+    const RUNNER_EMAIL_KEY = 'runner_email';
+    const RUNNER_TABLE = 'runners';
+    const PHONE_COLUMN = 'phone';
+    const NAME_COLUMN = 'name';
 
-    /** Toggles the mobile menu */
+    // Hamburger toggle
     if (hamburgerBtn) {
         hamburgerBtn.addEventListener('click', () => {
             menuEl.classList.toggle('active');
         });
     }
 
-    /** Handles user logout and redirects to home/login */
+    // Logout
     if (logoutBtn) {
         logoutBtn.addEventListener('click', async () => {
-            localStorage.removeItem(RUNNER_EMAIL_KEY); 
-            await supabase.auth.signOut(); // Clear auth session just in case
-            window.location.href = 'index.html'; 
+            localStorage.removeItem(RUNNER_EMAIL_KEY);
+            await supabase.auth.signOut();
+            window.location.href = 'index.html';
         });
     }
-    
-    /** Redirects to login if session is missing */
+
+    // Redirect
     function redirectToLogin(message) {
         if (loadingEl) loadingEl.classList.add('hidden');
         if (errorMessageEl) {
-             errorMessageEl.innerText = message;
-             errorMessageEl.classList.remove('hidden');
+            errorMessageEl.innerText = message;
+            errorMessageEl.classList.remove('hidden');
         }
         setTimeout(() => window.location.href = 'index.html', 1500);
     }
 
-    /** Creates the HTML structure for the runner profile display */
+    // Create Profile Card
     function createProfileCard(profile) {
         const avatarUrl = profile.avatar_url || 'https://via.placeholder.com/150/7B1E3A/FFD700?text=R';
-
         return `
             <div class="flex flex-col md:flex-row gap-8">
                 <div class="md:w-1/3 flex flex-col items-center text-center">
-                    <img src="${avatarUrl}" alt="${profile.full_name}'s Avatar" class="w-40 h-40 rounded-full object-cover border-4 border-gold mb-4 shadow-lg">
-                    <h2 class="text-3xl font-extrabold text-maroon">${profile.full_name || 'Runner'}</h2>
+                    <img src="${avatarUrl}" alt="${profile[NAME_COLUMN]}'s Avatar" class="w-40 h-40 rounded-full object-cover border-4 border-gold mb-4 shadow-lg">
+                    <h2 class="text-3xl font-extrabold text-maroon">${profile[NAME_COLUMN] || 'Runner'}</h2>
                     <p class="text-xl text-gray-600 mb-2">${profile.city || 'Set Location'}, ${profile.country || 'Set Country'}</p>
                     <p class="text-gold text-2xl mb-4">
                         <i class="fas fa-running"></i> Your Dashboard
@@ -136,7 +131,7 @@
                     <div class="grid grid-cols-2 gap-4 text-lg">
                         <div class="flex flex-col p-3 bg-gray-50 rounded-lg">
                             <span class="font-semibold text-gray-500">Total Deliveries</span>
-                            <span class="text-maroon text-2xl font-bold">${profile.total_deliveries || 0}</span> 
+                            <span class="text-maroon text-2xl font-bold">${profile.total_deliveries || 0}</span>
                         </div>
                         <div class="flex flex-col p-3 bg-gray-50 rounded-lg">
                             <span class="font-semibold text-gray-500">Average Rating</span>
@@ -146,9 +141,8 @@
                             <span class="font-semibold text-gray-500">Bio</span>
                             <p class="text-gray-700 mt-1 italic">"${profile.bio || 'Tell clients about yourself!'}"</p>
                         </div>
-                        
                     </div>
-                    
+
                     <h3 class="text-2xl font-bold text-maroon border-b-2 border-gold pb-2 mt-8 mb-4">Account Details</h3>
                     <p class="text-lg mb-2"><i class="fas fa-envelope text-maroon w-6"></i> ${profile.email || 'N/A'}</p>
                     <p class="text-lg mb-2"><i class="fas fa-phone text-maroon w-6"></i> ${profile[PHONE_COLUMN] || 'Not Set'}</p>
@@ -157,14 +151,14 @@
         `;
     }
 
-    /** Switches the content to the edit form */
+    // Enable Edit
     function enableEdit(profile) {
         profileContentEl.innerHTML = `
             <div class="flex flex-col space-y-4">
                 <h3 class="text-2xl font-bold text-maroon border-b-2 border-gold pb-2 mb-4">Edit Profile</h3>
                 <label class="block">
                     <span class="text-lg font-semibold text-maroon">Full Name:</span>
-                    <input type="text" id="nameInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50 p-2" value="${profile.full_name || ''}">
+                    <input type="text" id="nameInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50 p-2" value="${profile[NAME_COLUMN] || ''}">
                 </label>
                 <label class="block">
                     <span class="text-lg font-semibold text-maroon">Phone:</span>
@@ -188,45 +182,41 @@
                 </div>
             </div>
         `;
-        
-        // Add event listeners for the edit form buttons
+
         document.getElementById('cancelBtn').addEventListener('click', () => displayProfile(profile));
         document.getElementById('saveBtn').addEventListener('click', () => handleSave(profile));
     }
 
-    /** Handles saving the updated profile data */
+    // Handle Save
     async function handleSave(originalProfile) {
         errorMessageEl.classList.add('hidden');
-        
+
         const updatedFields = {
-            full_name: document.getElementById('nameInput').value.trim(),
+            [NAME_COLUMN]: document.getElementById('nameInput').value.trim(),
             [PHONE_COLUMN]: document.getElementById('phoneInput').value.trim(),
             city: document.getElementById('cityInput').value.trim(),
             country: document.getElementById('countryInput').value.trim(),
             bio: document.getElementById('bioInput').value.trim(),
         };
 
-        if (!updatedFields.full_name) {
+        if (!updatedFields[NAME_COLUMN]) {
             errorMessageEl.innerText = "Full Name cannot be empty.";
             errorMessageEl.classList.remove('hidden');
             return;
         }
 
         try {
-            // Update the record in the 'runners' table using the profile's email
             const { data: updatedData, error } = await supabase
                 .from(RUNNER_TABLE)
                 .update(updatedFields)
-                .eq('email', originalProfile.email) // Match by runner's email
+                .eq('email', originalProfile.email)
                 .select('*')
                 .single();
 
             if (error) throw error;
 
-            // Redisplay the profile with the newly saved data
             displayProfile(updatedData);
-            
-            // Show success message
+
             errorMessageEl.innerText = "Profile updated successfully! ✅";
             errorMessageEl.classList.remove('hidden');
             setTimeout(() => errorMessageEl.classList.add('hidden'), 3000);
@@ -238,80 +228,60 @@
         }
     }
 
-    /** Binds the profile data to the display template and adds the edit button listener */
+    // Display profile
     function displayProfile(profile) {
-        // Populate and display profile
         profileContentEl.innerHTML = createProfileCard(profile);
-        
-        // Hide loading, show content
-        if (loadingEl) loadingEl.classList.add('hidden');
-        if (profileContentEl) profileContentEl.classList.remove('hidden');
-        
-        // Attach listener for the 'Edit Profile' button
+        loadingEl.classList.add('hidden');
+        profileContentEl.classList.remove('hidden');
+
         const editBtn = document.getElementById('editProfileBtn');
-        if(editBtn) editBtn.addEventListener('click', () => enableEdit(profile));
+        if (editBtn) editBtn.addEventListener('click', () => enableEdit(profile));
     }
 
-
-    // ----------------------------------------------------
-    // Main Profile Loading Logic
-    // ----------------------------------------------------
-
+    // Load profile
     async function loadRunnerProfile() {
-        // 1. Check for the runner's custom session (email in localStorage)
         const runnerEmail = localStorage.getItem(RUNNER_EMAIL_KEY);
-
         if (!runnerEmail) {
             redirectToLogin("Runner session expired. Please log in.");
             return;
         }
-        
-        // Show loading state
-        if (profileContentEl) profileContentEl.classList.add('hidden');
-        if (loadingEl) loadingEl.classList.remove('hidden');
-        if (errorMessageEl) errorMessageEl.classList.add('hidden');
+
+        profileContentEl.classList.add('hidden');
+        loadingEl.classList.remove('hidden');
+        errorMessageEl.classList.add('hidden');
 
         try {
-            // 2. Fetch runner data from the 'runners' table using the email
             const { data: profile, error } = await supabase
                 .from(RUNNER_TABLE)
-                .select('*') 
-                .eq('email', runnerEmail) // Query the 'runners' table using the email from localStorage
+                .select('*')
+                .eq('email', runnerEmail)
                 .single();
 
-            if (error && error.code !== 'PGRST116') { 
-                throw error;
-            }
+            if (error) throw error;
 
-            // 3. Check if profile data was found
             if (!profile) {
-                console.warn(`Profile data missing in ${RUNNER_TABLE} for email:`, runnerEmail);
-                if (loadingEl) loadingEl.classList.add('hidden');
-                if (errorMessageEl) {
-                    errorMessageEl.innerText = 'Profile not found. Please contact support.';
-                    errorMessageEl.classList.remove('hidden');
-                }
+                loadingEl.classList.add('hidden');
+                errorMessageEl.innerText = 'Profile not found. Please contact support.';
+                errorMessageEl.classList.remove('hidden');
                 return;
             }
 
-            // 4. Display the profile
             displayProfile(profile);
 
         } catch (error) {
-            console.error('Failed to load dashboard:', error.message);
-            if (loadingEl) loadingEl.classList.add('hidden');
-            if (errorMessageEl) {
-                errorMessageEl.innerText = 'Could not load your dashboard due to a network or database error.';
-                errorMessageEl.classList.remove('hidden');
-            }
+            console.error('Failed to load dashboard:', error);
+            loadingEl.classList.add('hidden');
+            errorMessageEl.innerText = 'Could not load your dashboard due to a network or database error.';
+            errorMessageEl.classList.remove('hidden');
         }
     }
 
-    // Run the main function when the page loads
     document.addEventListener('DOMContentLoaded', loadRunnerProfile);
 </script>
 </body>
 </html>
+
+
 
 
 
