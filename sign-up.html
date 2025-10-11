@@ -1,12 +1,11 @@
 <!doctype html>
 <html lang="en"> 
-<head> 
+ <head> 
   <meta charset="UTF-8"> 
   <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
   <title>Create Account - Sign Up</title> 
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> 
-  <!-- Bcrypt.js for browser hashing -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> <!-- Bcrypt.js for browser hashing --> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script> 
   <style>
     :root { --maroon: #7B1E3A; --gold: #FFD700; }
     .bg-maroon { background-color: var(--maroon); }
@@ -20,70 +19,31 @@
     .popup.success { background: green; }
     .popup.error { background: red; }
   </style> 
-</head> 
-<body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col"> 
+ </head> 
+ <body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col"> 
   <header class="bg-maroon shadow-lg sticky top-0 z-50"> 
-    <div class="max-w-7xl mx-auto flex justify-between items-center py-5 px-6">
-      <a href="/" class="flex items-center space-x-2">
-        <img src="https://i.postimg.cc/d1z9KLkL/ei-1752053865516-removebg-preview.png" alt="Logo" class="h-20 w-auto">
-        <h1 class="text-3xl font-bold text-white hover:text-gold">Run Me An Errand</h1>
-      </a>
-    </div> 
+   <div class="max-w-7xl mx-auto flex justify-between items-center py-5 px-6"> <a href="/" class="flex items-center space-x-2"> <img src="https://i.postimg.cc/d1z9KLkL/ei-1752053865516-removebg-preview.png" alt="Logo" class="h-20 w-auto"> <h1 class="text-3xl font-bold text-white hover:text-gold">Run Me An Errand</h1> </a> 
+   </div> 
   </header> 
-
   <main class="flex-grow flex justify-center items-center p-4"> 
-    <div class="signup-container w-full max-w-lg bg-white p-8 rounded-xl shadow-md my-8"> 
-      <h2 class="text-3xl text-center font-bold text-maroon mb-6">Sign Up</h2> 
-      <form id="signupForm">
-        <label class="block font-semibold text-maroon mb-2">Account Type</label>
-        <select id="accountType" class="w-full border rounded-md py-2 px-3 mb-4">
-          <option value="user">User (Free)</option>
-          <option value="runner">Runner (KES 100/month)</option>
-        </select>
-
-        <label class="block font-semibold text-maroon mb-2">Full Name</label> 
-        <input id="fullName" class="w-full border rounded-md py-2 px-3 mb-4" required>
-
-        <label class="block font-semibold text-maroon mb-2">Email</label> 
-        <input type="email" id="email" class="w-full border rounded-md py-2 px-3 mb-4" required>
-
-        <label class="block font-semibold text-maroon mb-2">Phone</label> 
-        <input id="phone" class="w-full border rounded-md py-2 px-3 mb-4" required>
-
-        <label class="block font-semibold text-maroon mb-2">Password</label> 
-        <input type="password" id="password" class="w-full border rounded-md py-2 px-3 mb-4" required>
-
-        <label class="block font-semibold text-maroon mb-2">Location</label> 
-        <input id="location" class="w-full border rounded-md py-2 px-3 mb-4" required>
-
-        <!-- Runner specific fields -->
-        <div id="runnerFields" style="display:none;">
-          <label class="block font-semibold text-maroon mb-2">About Me</label>
-          <textarea id="about" class="w-full border rounded-md py-2 px-3 mb-4"></textarea>
-
-          <label class="block font-semibold text-maroon mb-2">Experience</label>
-          <textarea id="experience" class="w-full border rounded-md py-2 px-3 mb-4"></textarea>
-
-          <label class="block font-semibold text-maroon mb-2">Availability</label> 
-          <input id="availability" class="w-full border rounded-md py-2 px-3 mb-4">
-
-          <label class="block font-semibold text-maroon mb-2">ID Number</label> 
-          <input id="idNumber" class="w-full border rounded-md py-2 px-3 mb-4">
-
-          <label class="block font-semibold text-maroon mb-2">Upload Profile Picture</label> 
-          <input type="file" id="profilePicture" accept="image/*" class="mb-4">
-
-          <label class="block font-semibold text-maroon mb-2">Upload ID Picture</label> 
-          <input type="file" id="idPicture" accept="image/*" class="mb-4">
-        </div> 
-
-        <button type="submit" class="w-full bg-maroon text-gold font-bold py-2 px-4 rounded-md hover:bg-maroon-dark"> Sign Up </button> 
-      </form> 
-    </div> 
+   <div class="signup-container w-full max-w-lg bg-white p-8 rounded-xl shadow-md my-8"> 
+    <h2 class="text-3xl text-center font-bold text-maroon mb-6">Sign Up</h2> 
+    <form id="signupForm"> <label class="block font-semibold text-maroon mb-2">Account Type</label> <select id="accountType" class="w-full border rounded-md py-2 px-3 mb-4"> <option value="user">User (Free)</option> <option value="runner">Runner (KES 100/month)</option> </select> <label class="block font-semibold text-maroon mb-2">Full Name</label> 
+     <input id="fullName" class="w-full border rounded-md py-2 px-3 mb-4" required> <label class="block font-semibold text-maroon mb-2">Email</label> 
+     <input type="email" id="email" class="w-full border rounded-md py-2 px-3 mb-4" required> <label class="block font-semibold text-maroon mb-2">Phone</label> 
+     <input id="phone" class="w-full border rounded-md py-2 px-3 mb-4" required> <label class="block font-semibold text-maroon mb-2">Password</label> 
+     <input type="password" id="password" class="w-full border rounded-md py-2 px-3 mb-4" required> <label class="block font-semibold text-maroon mb-2">Location</label> 
+     <input id="location" class="w-full border rounded-md py-2 px-3 mb-4" required> <!-- Runner specific fields --> 
+     <div id="runnerFields" style="display:none;"> <label class="block font-semibold text-maroon mb-2">About Me</label> <textarea id="about" class="w-full border rounded-md py-2 px-3 mb-4"></textarea> <label class="block font-semibold text-maroon mb-2">Experience</label> <textarea id="experience" class="w-full border rounded-md py-2 px-3 mb-4"></textarea> <label class="block font-semibold text-maroon mb-2">Availability</label> 
+      <input id="availability" class="w-full border rounded-md py-2 px-3 mb-4"> <label class="block font-semibold text-maroon mb-2">ID Number</label> 
+      <input id="idNumber" class="w-full border rounded-md py-2 px-3 mb-4"> <label class="block font-semibold text-maroon mb-2">Upload Profile Picture</label> 
+      <input type="file" id="profilePicture" accept="image/*" class="mb-4"> <label class="block font-semibold text-maroon mb-2">Upload ID Picture</label> 
+      <input type="file" id="idPicture" accept="image/*" class="mb-4"> 
+     </div> <button type="submit" class="w-full bg-maroon text-gold font-bold py-2 px-4 rounded-md hover:bg-maroon-dark"> Sign Up </button> 
+    </form> 
+   </div> 
   </main> 
-
   <div class="popup" id="popup"></div> 
-
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
   <script>
     const SUPABASE_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
@@ -179,9 +139,12 @@
         showPopup("Signup failed: " + err.message, "error");
       }
     });
-  </script>
-</body>
+  </script> 
+ </body>
 </html>
+
+
+
 
 
 
