@@ -7,34 +7,86 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root { --maroon: #7B1E3A; --gold: #FFD700; }
-  body { font-family: sans-serif; background-color: #f3f3f3; margin:0; min-height:100vh; display:flex; justify-content:center; align-items:flex-start; padding-top:50px; }
-  .profile-card { background:#fff; border-radius:1rem; padding:2rem; box-shadow:0 4px 6px rgba(0,0,0,0.1); max-width:800px; width:100%; }
-  .spinner { border:4px solid #f3f3f3; border-top:4px solid var(--maroon); border-radius:50%; width:40px; height:40px; animation:spin 1s linear infinite; margin:4rem auto; }
-  @keyframes spin { 0% { transform:rotate(0deg); } 100% { transform:rotate(360deg); } }
+  body {
+    font-family: sans-serif;
+    background-color: #f3f3f3;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 50px;
+  }
+  .profile-card {
+    background: #fff;
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    max-width: 800px;
+    width: 100%;
+  }
+  .spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid var(--maroon);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 4rem auto;
+  }
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
   .text-maroon { color: var(--maroon); }
   .text-gold { color: var(--gold); }
-  button { font-weight:bold; padding:0.75rem 1.5rem; border-radius:8px; cursor:pointer; transition:all 0.3s; margin-right:0.5rem; }
-  .btn-primary { background-color: var(--maroon); color: var(--gold); }
-  .btn-primary:hover { background-color: var(--gold); color: var(--maroon); }
-  .btn-secondary { background-color:#e5e7eb; color:#4b5563; }
-  .btn-secondary:hover { background-color:#d1d5db; }
-  input { width:100%; padding:0.6rem; margin-top:0.3rem; border:1px solid #ccc; border-radius:6px; }
+  button {
+    font-weight: bold;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-right: 0.5rem;
+  }
+  .btn-primary {
+    background-color: var(--maroon);
+    color: var(--gold);
+  }
+  .btn-primary:hover {
+    background-color: var(--gold);
+    color: var(--maroon);
+  }
+  .btn-secondary {
+    background-color: #e5e7eb;
+    color: #4b5563;
+  }
+  .btn-secondary:hover {
+    background-color: #d1d5db;
+  }
+  input {
+    width: 100%;
+    padding: 0.6rem;
+    margin-top: 0.3rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
 </style>
 </head>
 <body>
-
-<div id="loading">
-  <div class="spinner"></div>
-  <p class="text-maroon" style="text-align:center;">Loading your profile...</p>
-</div>
-
-<div id="profileContent" class="profile-card" style="display:none;"></div>
-<div id="errorMessage" class="text-maroon" style="text-align:center; display:none;"></div>
+  <div id="loading">
+    <div class="spinner"></div>
+    <p class="text-maroon" style="text-align:center;">Loading your profile...</p>
+  </div>
+  <div id="profileContent" class="profile-card" style="display:none;"></div>
+  <div id="errorMessage" class="text-maroon" style="text-align:center; display:none;"></div>
 
 <script>
   const SUPABASE_URL = 'https://zchofpncqskvnfrzbcww.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAkSopWR9-YXUI';
-  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // ✅ Correct Supabase initialization
+  const { createClient } = window.supabase;
+  const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
   const profileDiv = document.getElementById('profileContent');
   const loadingDiv = document.getElementById('loading');
@@ -53,7 +105,7 @@
     const table = runnerEmail ? 'runners' : 'users';
 
     try {
-      const { data: profile, error } = await supabase
+      const { data: profile, error } = await supabaseClient
         .from(table)
         .select('*')
         .eq('email', email)
@@ -61,8 +113,7 @@
 
       if (error || !profile) throw error || new Error("Profile not found");
 
-      displayProfile(profile, runnerEmail ? true : false);
-
+      displayProfile(profile, !!runnerEmail);
     } catch (err) {
       console.error("Profile load error:", err);
       loadingDiv.style.display = 'none';
@@ -113,7 +164,7 @@
       if (isRunner) updatedFields.phone = document.getElementById('phoneInput').value.trim();
 
       try {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
           .from(isRunner ? 'runners' : 'users')
           .update(updatedFields)
           .eq('email', profile.email)
@@ -121,7 +172,6 @@
           .single();
 
         if (error) throw error;
-
         displayProfile(data, isRunner);
       } catch (err) {
         console.error("Update error:", err);
@@ -141,9 +191,10 @@
 
   loadProfile();
 </script>
-
 </body>
 </html>
+
+
 
 
 
