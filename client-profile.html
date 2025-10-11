@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Client Profile - Run Me an Errand</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -38,18 +38,49 @@
       border: 1px solid #e5e7eb;
       border-radius: 1rem;
       padding: 2rem;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-                  0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      transition: box-shadow 0.3s ease-in-out;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
     }
-    .profile-card:hover {
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-                  0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    button.explore-btn, button.edit-btn, button.save-btn, button.cancel-btn {
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    button.explore-btn {
+      background-color: var(--maroon);
+      color: var(--gold);
+    }
+    button.explore-btn:hover {
+      background-color: var(--gold);
+      color: var(--maroon);
+    }
+    button.edit-btn {
+      background-color: var(--gold);
+      color: var(--maroon);
+    }
+    button.edit-btn:hover {
+      background-color: var(--maroon);
+      color: var(--gold);
+    }
+    button.save-btn {
+      background-color: var(--maroon);
+      color: var(--gold);
+    }
+    button.save-btn:hover {
+      background-color: var(--gold);
+      color: var(--maroon);
+    }
+    button.cancel-btn {
+      background-color: #ccc;
+      color: #333;
+    }
+    button.cancel-btn:hover {
+      background-color: #999;
+      color: #fff;
     }
   </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col items-center justify-start pt-12">
-
   <h1 class="text-4xl font-bold text-maroon mb-10">My Profile</h1>
 
   <div id="profileContainer" class="w-full max-w-4xl px-4">
@@ -60,9 +91,7 @@
     <div id="errorMessage" class="mt-4 text-center text-red-600 font-semibold"></div>
 
     <div class="mt-8 flex flex-col items-center space-y-4">
-      <button id="exploreRunnersBtn" class="px-6 py-2 rounded-lg bg-maroon text-gold font-semibold hover:bg-gold hover:text-maroon transition">
-        Explore Runners
-      </button>
+      <button id="exploreRunnersBtn" class="explore-btn w-64">Explore Runners</button>
       <div class="flex space-x-4">
         <a href="index.html" class="nav-link px-4 py-2 rounded-lg border border-maroon hover:bg-maroon hover:text-gold transition">Home</a>
         <button id="logoutBtn" class="px-4 py-2 rounded-lg bg-maroon text-gold font-bold hover:bg-gold hover:text-maroon transition">Logout</button>
@@ -71,97 +100,134 @@
   </div>
 
   <script>
+    // ---------- SUPABASE SETUP ----------
     const SUPABASE_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const SUPABASE_ANON_KEY =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
+
+    // ✅ Persist session & auto refresh
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+      },
+    });
 
     const profileDiv = document.getElementById("profileDetails");
     const errorDiv = document.getElementById("errorMessage");
     const logoutBtn = document.getElementById("logoutBtn");
     const exploreBtn = document.getElementById("exploreRunnersBtn");
 
-    // Redirect helper
     function redirectToLogin(message) {
       profileDiv.innerHTML = `<p class="text-center text-maroon text-lg font-semibold">${message}</p>`;
-      setTimeout(() => window.location.href = "login.html", 1500);
+      setTimeout(() => (window.location.href = "login.html"), 1500);
     }
 
     async function loadProfile(authUser) {
       profileDiv.innerHTML = `<div class="spinner"></div>`;
       errorDiv.textContent = "";
+
       const userId = authUser.id;
 
-      const { data, error } = await supabase
-        .from('users')
-        .select('full_name, email, phone')
-        .eq('auth_id', userId)
-        .maybeSingle();
+      const { data: clientProfile, error: profileError } = await supabase
+        .from("users")
+        .select("full_name, email, phone")
+        .eq("auth_id", userId)
+        .single();
 
-      if (error) {
-        console.error(error);
-        errorDiv.textContent = "Error loading profile. Check your Supabase policies.";
+      if (profileError) {
+        console.error("Profile fetch error:", profileError);
+        errorDiv.textContent =
+          "Could not load profile. Please check your account data.";
         return;
       }
 
-      if (!data) {
-        errorDiv.textContent = "No profile found for this account.";
-        return;
-      }
-
-      displayProfile({ ...authUser, ...data });
+      const user = { ...authUser, ...clientProfile };
+      displayProfile(user);
     }
 
     function displayProfile(user) {
-      const name = user.full_name || "Client";
+      const displayName = user.full_name || user.email || "Client";
       profileDiv.innerHTML = `
         <div class="flex items-center space-x-6 mb-8 border-b-2 border-gray-200 pb-6">
-          <img src="https://i.postimg.cc/TPfbBM5Q/black-woman-icon-flat-user-avatar-vector-illustration-158483-1678.jpg" alt="Profile" class="w-24 h-24 rounded-full border-4 border-gold object-cover">
+          <img src="https://i.postimg.cc/TPfbBM5Q/black-woman-icon-flat-user-avatar-vector-illustration-158483-1678.jpg"
+               class="w-24 h-24 rounded-full border-4 border-gold object-cover">
           <div>
-            <h2 class="text-3xl font-bold text-maroon">${name}</h2>
-            <p class="text-lg text-gray-500">${user.email}</p>
+            <h2 class="text-3xl font-bold text-maroon">${displayName}</h2>
+            <p class="text-lg text-gray-500">${user.email || "N/A"}</p>
           </div>
         </div>
-        <div>
-          <p class="text-lg"><strong>Email:</strong> ${user.email}</p>
-          <p class="text-lg"><strong>Phone:</strong> ${user.phone || "N/A"}</p>
+        <div class="md:grid md:grid-cols-2 md:gap-8">
+          <div class="flex flex-col space-y-4">
+            <h3 class="text-xl font-bold text-maroon border-b pb-2">Personal Information</h3>
+            <p class="text-lg"><strong>Email:</strong> ${user.email || "N/A"}</p>
+            <p class="text-lg"><strong>Phone:</strong> ${user.phone || "N/A"}</p>
+            <div class="mt-4"><button id="editBtn" class="edit-btn">Edit Profile</button></div>
+          </div>
+          <div class="mt-8 md:mt-0 flex flex-col space-y-4">
+            <h3 class="text-xl font-bold text-maroon border-b pb-2">My Activity</h3>
+            <div class="bg-gray-100 p-4 rounded-lg">
+              <p class="text-gray-600">Your recent errands will appear here soon.</p>
+            </div>
+          </div>
         </div>
       `;
+      document.getElementById("editBtn").addEventListener("click", () => enableEdit(user));
     }
 
-    // Logout button
+    function enableEdit(user) {
+      profileDiv.innerHTML = `
+        <h2 class="text-3xl font-bold text-maroon mb-6">Edit Profile</h2>
+        <label class="block mb-4">
+          <span class="text-maroon font-semibold">Full Name:</span>
+          <input id="nameInput" class="w-full border rounded p-2 mt-1" value="${user.full_name || ""}">
+        </label>
+        <label class="block mb-4">
+          <span class="text-maroon font-semibold">Phone:</span>
+          <input id="phoneInput" class="w-full border rounded p-2 mt-1" value="${user.phone || ""}">
+        </label>
+        <div class="flex space-x-4">
+          <button id="saveBtn" class="save-btn">Save</button>
+          <button id="cancelBtn" class="cancel-btn">Cancel</button>
+        </div>
+      `;
+      document.getElementById("cancelBtn").addEventListener("click", () => displayProfile(user));
+      document.getElementById("saveBtn").addEventListener("click", async () => {
+        const updates = {
+          full_name: document.getElementById("nameInput").value,
+          phone: document.getElementById("phoneInput").value,
+        };
+        const { error } = await supabase
+          .from("users")
+          .update(updates)
+          .eq("auth_id", user.id);
+        if (error) {
+          errorDiv.textContent = "Failed to update profile.";
+        } else {
+          displayProfile({ ...user, ...updates });
+        }
+      });
+    }
+
     logoutBtn.addEventListener("click", async () => {
       await supabase.auth.signOut();
       window.location.href = "login.html";
     });
+    exploreBtn.addEventListener("click", () => (window.location.href = "runners.html"));
 
-    // Explore button
-    exploreBtn.addEventListener("click", () => {
-      window.location.href = "runners.html";
-    });
-
-    // ✅ Fix: Persistent session check
-    (async function checkSession() {
-      const { data, error } = await supabase.auth.getSession();
-      if (error || !data.session) {
-        redirectToLogin("Session expired or not logged in. Redirecting...");
-        return;
+    // ✅ Proper session check (persistent)
+    document.addEventListener("DOMContentLoaded", async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        loadProfile(session.user);
+      } else {
+        redirectToLogin("Session expired or no user found. Redirecting...");
       }
-      await loadProfile(data.session.user);
-    })();
-
-    // Keep session live on auth changes
-    supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) loadProfile(session.user);
     });
   </script>
 </body>
 </html>
-
-
-
-
-
-
 
 
 
