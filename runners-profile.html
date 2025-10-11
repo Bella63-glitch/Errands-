@@ -1,220 +1,366 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Runner Profile - Run Me An Errand</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    :root {
-      --maroon: #7B1E3A;
-      --gold: #FFD700;
-      --light-bg: #f5f5f5;
+    :root{
+      --maroon:#7B1E3A;
+      --gold:#FFD700;
+      --bg:#f5f6f7;
+      --card:#ffffff;
+      --muted:#6b7280;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --radius:12px;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
     }
-
-    body {
-      font-family: 'Arial', sans-serif;
-      margin: 0;
-      background: var(--light-bg);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2rem;
+    html,body{height:100%;margin:0;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px}
+    .card{width:100%;max-width:720px;background:var(--card);border-radius:var(--radius);box-shadow:0 8px 28px rgba(16,24,40,.08);padding:20px;display:grid;grid-template-columns:220px 1fr;gap:20px}
+    .left{display:flex;flex-direction:column;align-items:center;gap:12px}
+    .avatar{
+      width:160px;height:160px;border-radius:18px;object-fit:cover;border:4px solid var(--gold);background:#eee;
+      box-shadow:0 6px 18px rgba(16,24,40,.06)
     }
-
-    .profile-container {
-      background-color: #fff;
-      border-radius: 15px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-      padding: 2rem;
-      width: 100%;
-      max-width: 500px;
-      text-align: center;
+    .file-input{display:flex;flex-direction:column;gap:6px;width:100%}
+    .btn{
+      background:var(--maroon);color:var(--gold);border:none;padding:10px 14px;border-radius:10px;font-weight:600;cursor:pointer
     }
-
-    h2 {
-      color: var(--maroon);
-      margin-bottom: 1rem;
+    .btn.secondary{background:#e6eef3;color:#03263a}
+    .form{display:flex;flex-direction:column;gap:10px}
+    label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px}
+    input[type="text"], input[type="email"], textarea, select{
+      width:100%;padding:10px;border:1px solid #e6e9ee;border-radius:8px;font-size:14px;background:#fff
     }
-
-    .profile-pic {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid var(--gold);
-      margin-bottom: 1rem;
-    }
-
-    .details {
-      text-align: left;
-      margin-top: 1.5rem;
-    }
-
-    .details p {
-      font-size: 1rem;
-      padding: 0.4rem 0;
-      border-bottom: 1px solid #eee;
-    }
-
-    .highlight {
-      color: var(--maroon);
-      font-weight: bold;
-    }
-
-    .status-badge {
-      display: inline-block;
-      padding: 0.3rem 0.6rem;
-      border-radius: 6px;
-      color: white;
-      font-weight: bold;
-      font-size: 0.9rem;
-    }
-
-    .active {
-      background-color: green;
-    }
-
-    .inactive {
-      background-color: red;
-    }
-
-    button {
-      margin-top: 1.5rem;
-      background-color: var(--maroon);
-      color: var(--gold);
-      border: none;
-      border-radius: 10px;
-      padding: 0.9rem 1.5rem;
-      cursor: pointer;
-      font-size: 1rem;
-      font-weight: bold;
-      transition: 0.3s;
-    }
-
-    button:hover {
-      background-color: #66182f;
-    }
-
-    .popup {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #333;
-      color: #fff;
-      padding: 12px 20px;
-      border-radius: 8px;
-      font-weight: bold;
-      display: none;
-      z-index: 10;
-    }
-
-    .popup.success { background: green; }
-    .popup.error { background: red; }
-    .popup.info { background: #ff9900; }
+    textarea{min-height:88px;resize:vertical}
+    .row{display:flex;gap:12px}
+    .row .col{flex:1}
+    .status-badge{display:inline-block;padding:6px 10px;border-radius:8px;color:#fff;font-weight:700;font-size:13px}
+    .active{background:var(--success)}
+    .inactive{background:var(--danger)}
+    .actions{display:flex;gap:10px;justify-content:flex-end;margin-top:8px}
+    .popup{position:fixed;left:50%;transform:translateX(-50%);top:18px;padding:10px 14px;border-radius:9px;color:#fff;font-weight:700;display:none;z-index:999}
+    .popup.info{background:#2563eb}
+    .popup.success{background:var(--success)}
+    .popup.error{background:var(--danger)}
+    @media (max-width:640px){.card{grid-template-columns:1fr;max-width:420px;padding:16px}.left{flex-direction:row;gap:12px}.avatar{width:96px;height:96px}}
   </style>
 </head>
 <body>
-  <div id="popup" class="popup"></div>
+  <div id="popup" class="popup info"></div>
 
-  <div class="profile-container">
-    <h2>Runner Profile</h2>
-    <img id="runnerImage" class="profile-pic" src="https://via.placeholder.com/120" alt="Profile Picture" />
-    
-    <div class="details" id="runnerDetails">
-      <p><strong>Name:</strong> <span id="runnerName" class="highlight">Loading...</span></p>
-      <p><strong>Email:</strong> <span id="runnerEmail" class="highlight">Loading...</span></p>
-      <p><strong>Phone:</strong> <span id="runnerPhone" class="highlight">Loading...</span></p>
-      <p><strong>About:</strong> <span id="runnerAbout" class="highlight">Loading...</span></p>
-      <p><strong>Experience:</strong> <span id="runnerExperience" class="highlight">Loading...</span></p>
-      <p><strong>Availability:</strong> <span id="runnerAvailability" class="highlight">Loading...</span></p>
-      <p><strong>Location:</strong> <span id="runnerLocation" class="highlight">Loading...</span></p>
-      <p><strong>Status:</strong> <span id="runnerStatus" class="status-badge">Loading...</span></p>
+  <div class="card" role="main" aria-label="Runner profile editor">
+    <div class="left">
+      <img id="runnerImage" class="avatar" src="https://via.placeholder.com/160" alt="Runner picture" />
+      <div class="file-input" style="width:100%">
+        <label for="imageFile">Change profile picture</label>
+        <input id="imageFile" type="file" accept="image/*" />
+        <small style="color:var(--muted)">Choose a new image then click Save.</small>
+      </div>
+
+      <div style="width:100%;display:flex;gap:8px;margin-top:8px">
+        <button id="saveBtn" class="btn">Save</button>
+        <button id="logoutBtn" class="btn secondary">Logout</button>
+      </div>
     </div>
 
-    <button id="logoutBtn">Logout</button>
+    <form id="profileForm" class="form" autocomplete="off">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h2 style="margin:0;color:var(--maroon);font-size:18px">Runner Profile</h2>
+        <span id="statusBadge" class="status-badge inactive">Loading</span>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <label for="fullName">Full name</label>
+          <input id="fullName" name="full_name" type="text" placeholder="Full name" />
+        </div>
+        <div class="col">
+          <label for="phone">Phone</label>
+          <input id="phone" name="phone" type="text" placeholder="07..." />
+        </div>
+      </div>
+
+      <label for="email">Email (readonly)</label>
+      <input id="email" name="email" type="email" readonly />
+
+      <label for="location">Location</label>
+      <input id="location" name="location" type="text" placeholder="Town, County" />
+
+      <div class="row">
+        <div class="col">
+          <label for="experience">Experience</label>
+          <input id="experience" name="experience" type="text" placeholder="e.g. 2 years" />
+        </div>
+        <div class="col">
+          <label for="availability">Availability</label>
+          <select id="availability" name="availability">
+            <option value="">Select availability</option>
+            <option value="full-time">Full-time</option>
+            <option value="part-time">Part-time</option>
+            <option value="weekends">Weekends</option>
+            <option value="on-call">On-call</option>
+          </select>
+        </div>
+      </div>
+
+      <label for="about">About</label>
+      <textarea id="about" name="about" placeholder="Short bio or skills"></textarea>
+
+      <label for="subscription">Subscription status</label>
+      <select id="subscription" name="subscription_status">
+        <option value="">Select status</option>
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+      </select>
+
+      <div class="actions">
+        <button type="button" id="cancelBtn" class="btn secondary">Cancel</button>
+        <button type="button" id="saveBtnBottom" class="btn">Save changes</button>
+      </div>
+    </form>
   </div>
 
   <script>
-    const supabaseUrl = "https://zchofpncqskvnfrzbcww.supabase.co";
-    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
-    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+    // CONFIG - keep values secure in production. This mirrors your supplied values.
+    const SUPABASE_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
+
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const bucketName = "profile-pictures"; // ensure this bucket exists and is public or adjust rules
 
     const popup = document.getElementById("popup");
-    const logoutBtn = document.getElementById("logoutBtn");
-
-    function showPopup(message, type = "info") {
-      popup.textContent = message;
-      popup.className = "popup " + type;
+    const showPopup = (msg, type = "info") => {
+      popup.textContent = msg;
+      popup.className = "popup " + (type === "error" ? "error" : type === "success" ? "success" : "info");
       popup.style.display = "block";
-      setTimeout(() => (popup.style.display = "none"), 4000);
-    }
+      clearTimeout(showPopup._t);
+      showPopup._t = setTimeout(()=> popup.style.display = "none", 3500);
+    };
 
-    // Check login
-    const email = localStorage.getItem("loggedInEmail");
+    // Elements
+    const imageFile = document.getElementById("imageFile");
+    const runnerImage = document.getElementById("runnerImage");
+    const emailEl = document.getElementById("email");
+    const fullNameEl = document.getElementById("fullName");
+    const phoneEl = document.getElementById("phone");
+    const locationEl = document.getElementById("location");
+    const aboutEl = document.getElementById("about");
+    const experienceEl = document.getElementById("experience");
+    const availabilityEl = document.getElementById("availability");
+    const subscriptionEl = document.getElementById("subscription");
+    const statusBadge = document.getElementById("statusBadge");
+    const saveBtn = document.getElementById("saveBtn");
+    const saveBtnBottom = document.getElementById("saveBtnBottom");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const cancelBtn = document.getElementById("cancelBtn");
+
+    // session check using localStorage (as in your current app)
+    const loggedEmail = localStorage.getItem("loggedInEmail");
     const userType = localStorage.getItem("userType");
-
-    if (!email || userType !== "runner") {
-      alert("Session expired. Please log in again.");
-      window.location.href = "login.html";
+    if (!loggedEmail || userType !== "runner") {
+      // preserve UX: brief info before redirect
+      showPopup("Session expired. Redirecting to login.", "error");
+      setTimeout(()=> window.location.href = "login.html", 900);
     }
 
-    // Load runner details
+    let currentRunner = null;
+    let pendingFile = null;
+
+    // Preview selected file
+    imageFile.addEventListener("change", (e) => {
+      const f = e.target.files?.[0];
+      if (!f) return;
+      if (!f.type.startsWith("image/")) { showPopup("Choose an image file only.", "error"); imageFile.value = ""; return; }
+      pendingFile = f;
+      const url = URL.createObjectURL(f);
+      runnerImage.src = url;
+    });
+
+    // Load profile from Supabase
     async function loadRunnerProfile() {
+      showPopup("Loading profile...", "info");
       try {
         const { data, error } = await supabase
           .from("runners")
           .select("*")
-          .eq("email", email)
+          .eq("email", loggedEmail)
           .maybeSingle();
 
-        if (error || !data) {
-          console.error("Profile load error:", error);
-          showPopup("❌ Failed to load profile. Please log in again.", "error");
-          setTimeout(() => window.location.href = "login.html", 2000);
+        if (error) throw error;
+        if (!data) {
+          showPopup("Profile not found. Please login again.", "error");
+          setTimeout(()=> window.location.href = "login.html", 1200);
           return;
         }
 
-        document.getElementById("runnerName").textContent = data.full_name || "N/A";
-        document.getElementById("runnerEmail").textContent = data.email;
-        document.getElementById("runnerPhone").textContent = data.phone || "N/A";
-        document.getElementById("runnerAbout").textContent = data.about || "N/A";
-        document.getElementById("runnerExperience").textContent = data.experience || "N/A";
-        document.getElementById("runnerAvailability").textContent = data.availability || "N/A";
-        document.getElementById("runnerLocation").textContent = data.location || "N/A";
+        currentRunner = data;
+        // Fill form
+        emailEl.value = data.email || loggedEmail;
+        fullNameEl.value = data.full_name || "";
+        phoneEl.value = data.phone || "";
+        locationEl.value = data.location || "";
+        aboutEl.value = data.about || "";
+        experienceEl.value = data.experience || "";
+        availabilityEl.value = data.availability || "";
+        subscriptionEl.value = data.subscription_status || "";
 
-        const statusSpan = document.getElementById("runnerStatus");
-        if (data.subscription_status === "active") {
-          statusSpan.textContent = "Active ✅";
-          statusSpan.className = "status-badge active";
+        // status badge
+        updateStatusBadge(data.subscription_status);
+
+        // image: if profile_picture is a storage path or a full URL handle both
+        if (data.profile_picture) {
+          const src = await resolveImageUrl(data.profile_picture);
+          runnerImage.src = src;
         } else {
-          statusSpan.textContent = "Inactive ❌";
-          statusSpan.className = "status-badge inactive";
+          runnerImage.src = "https://via.placeholder.com/160";
         }
 
-        const imgEl = document.getElementById("runnerImage");
-        imgEl.src = data.profile_picture || "https://via.placeholder.com/120";
-
+        showPopup("Profile loaded", "success");
       } catch (err) {
-        console.error("Error fetching profile:", err);
-        showPopup("❌ Error loading profile", "error");
+        console.error(err);
+        showPopup("Failed to load profile", "error");
       }
     }
 
-    // Logout
+    function updateStatusBadge(status) {
+      if (status === "active") {
+        statusBadge.textContent = "Active";
+        statusBadge.className = "status-badge active";
+      } else {
+        statusBadge.textContent = "Inactive";
+        statusBadge.className = "status-badge inactive";
+      }
+    }
+
+    // If stored value looks like a full URL use as-is, otherwise treat as storage path and get public url.
+    async function resolveImageUrl(value) {
+      if (!value) return "https://via.placeholder.com/160";
+      try {
+        if (value.startsWith("http://") || value.startsWith("https://")) return value;
+        // assume storage path
+        const { data } = supabase.storage.from(bucketName).getPublicUrl(value);
+        return data?.publicUrl || "https://via.placeholder.com/160";
+      } catch (err) {
+        console.warn("resolveImageUrl error", err);
+        return "https://via.placeholder.com/160";
+      }
+    }
+
+    // Upload image to storage and return path (not full URL).
+    async function uploadImage(file) {
+      if (!file) return null;
+      try {
+        const ext = file.name.split('.').pop();
+        const filename = `${loggedEmail.replace(/[@.]/g,'_')}-${Date.now()}.${ext}`;
+        const path = filename; // you may include folder names here
+
+        const { data, error: uploadError } = await supabase.storage
+          .from(bucketName)
+          .upload(path, file, { upsert: true });
+
+        if (uploadError) {
+          // if conflict due to permissions or missing bucket, bubble up
+          throw uploadError;
+        }
+        return path; // store path in profile_picture column
+      } catch (err) {
+        console.error("Upload failed", err);
+        throw err;
+      }
+    }
+
+    // Save handler
+    async function saveProfile() {
+      showPopup("Saving...", "info");
+      try {
+        let profile_picture_path = currentRunner?.profile_picture || null;
+
+        // If user selected new image upload it
+        if (pendingFile) {
+          try {
+            profile_picture_path = await uploadImage(pendingFile);
+          } catch (err) {
+            showPopup("Image upload failed. Save aborted.", "error");
+            return;
+          }
+        }
+
+        const payload = {
+          full_name: fullNameEl.value.trim() || null,
+          phone: phoneEl.value.trim() || null,
+          location: locationEl.value.trim() || null,
+          about: aboutEl.value.trim() || null,
+          experience: experienceEl.value.trim() || null,
+          availability: availabilityEl.value || null,
+          subscription_status: subscriptionEl.value || null,
+          profile_picture: profile_picture_path
+        };
+
+        // remove undefined keys
+        Object.keys(payload).forEach(k => { if (payload[k] === undefined) delete payload[k]; });
+
+        const { data, error } = await supabase
+          .from("runners")
+          .update(payload)
+          .eq("email", loggedEmail)
+          .select()
+          .maybeSingle();
+
+        if (error) throw error;
+
+        currentRunner = data || currentRunner;
+        updateStatusBadge(currentRunner.subscription_status);
+        // update displayed image to public URL if stored path
+        if (currentRunner.profile_picture) {
+          const src = await resolveImageUrl(currentRunner.profile_picture);
+          runnerImage.src = src;
+        }
+
+        pendingFile = null;
+        imageFile.value = "";
+        showPopup("Profile saved", "success");
+      } catch (err) {
+        console.error(err);
+        showPopup("Failed to save profile", "error");
+      }
+    }
+
+    // Cancel restores last loaded values
+    function cancelEdits() {
+      if (!currentRunner) return;
+      fullNameEl.value = currentRunner.full_name || "";
+      phoneEl.value = currentRunner.phone || "";
+      locationEl.value = currentRunner.location || "";
+      aboutEl.value = currentRunner.about || "";
+      experienceEl.value = currentRunner.experience || "";
+      availabilityEl.value = currentRunner.availability || "";
+      subscriptionEl.value = currentRunner.subscription_status || "";
+      // reset image preview to stored image
+      resolveImageUrl(currentRunner.profile_picture).then(url => runnerImage.src = url);
+      pendingFile = null;
+      imageFile.value = "";
+      showPopup("Changes reverted", "info");
+    }
+
+    // Event wiring
+    saveBtn.addEventListener("click", saveProfile);
+    saveBtnBottom.addEventListener("click", saveProfile);
+    cancelBtn.addEventListener("click", cancelEdits);
     logoutBtn.addEventListener("click", () => {
       localStorage.removeItem("loggedInEmail");
       localStorage.removeItem("userType");
-      showPopup("Logging out...", "info");
-      setTimeout(() => window.location.href = "login.html", 1000);
+      showPopup("Logging out", "info");
+      setTimeout(()=> window.location.href = "login.html", 600);
     });
 
+    // Load on start
     loadRunnerProfile();
   </script>
 </body>
 </html>
-
 
 
 
