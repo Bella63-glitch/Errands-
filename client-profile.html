@@ -3,124 +3,130 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Client Profile - Run Me an Errand</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Login - Run Me An Errand</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    :root { --maroon:#7B1E3A; --gold:#FFD700; }
-    .bg-maroon{background-color:var(--maroon);} 
-    .text-maroon{color:var(--maroon);}
-    .text-gold{color:var(--gold);} 
-    .bg-gold{background-color:var(--gold);}
-    .spinner {
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid var(--maroon);
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-      margin: auto;
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fff;
+      color: maroon;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
     }
-    @keyframes spin { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
+    .login-container {
+      background-color: maroon;
+      color: white;
+      padding: 2rem;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    input {
+      width: 100%;
+      padding: 0.8rem;
+      margin: 0.6rem 0;
+      border: none;
+      border-radius: 5px;
+    }
+    input:focus {
+      outline: 2px solid white;
+    }
+    button {
+      width: 100%;
+      padding: 0.8rem;
+      background-color: white;
+      color: maroon;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #f0f0f0;
+    }
+    .message {
+      margin-top: 1rem;
+    }
+    a {
+      color: white;
+      display: inline-block;
+      margin-top: 1rem;
+      text-decoration: underline;
+    }
   </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-start pt-12">
-  <h1 class="text-4xl font-bold text-maroon mb-10">My Profile</h1>
+<body>
 
-  <div id="profileContainer" class="w-full max-w-4xl px-4">
-    <div id="profileDetails" class="p-6 bg-white shadow rounded-lg">
-      <div class="spinner"></div>
-    </div>
-    <div id="errorMessage" class="mt-4 text-center text-red-600 font-semibold"></div>
-
-    <div class="mt-8 flex flex-col items-center space-y-4">
-      <button id="exploreRunnersBtn" class="bg-maroon text-gold px-6 py-2 rounded font-semibold hover:bg-gold hover:text-maroon transition">Explore Runners</button>
-      <div class="flex space-x-4">
-        <a href="index.html" class="border border-maroon text-maroon px-4 py-2 rounded hover:bg-maroon hover:text-gold transition">Home</a>
-        <button id="logoutBtn" class="bg-maroon text-gold px-4 py-2 rounded font-semibold hover:bg-gold hover:text-maroon transition">Logout</button>
-      </div>
-    </div>
+  <div class="login-container">
+    <h2>Login</h2>
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <button id="loginBtn">Login</button>
+    <div class="message" id="message"></div>
+    <a href="index.html">← Back to Homepage</a>
   </div>
 
   <script>
-    // --- Supabase Setup ---
-    const SUPABASE_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
-    const SUPABASE_ANON_KEY =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
+    const supabaseUrl = "https://zchofpncqskvnfrzbcww.supabase.co";
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true,
-      },
-    });
+    const loginBtn = document.getElementById("loginBtn");
+    const message = document.getElementById("message");
 
-    const profileDiv = document.getElementById("profileDetails");
-    const errorDiv = document.getElementById("errorMessage");
+    loginBtn.addEventListener("click", async () => {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      message.textContent = "Logging in...";
 
-    function redirectToLogin(message) {
-      profileDiv.innerHTML = `<p class="text-center text-maroon text-lg font-semibold">${message}</p>`;
-      setTimeout(() => (window.location.href = "login.html"), 1500);
-    }
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-    async function loadProfile(user) {
-      profileDiv.innerHTML = `<div class="spinner"></div>`;
-      errorDiv.textContent = "";
-      const { data, error } = await supabase.from("users").select("*").eq("auth_id", user.id).single();
       if (error) {
-        console.error("Profile error:", error);
-        errorDiv.textContent = "Error loading profile data.";
+        message.textContent = "❌ Invalid login credentials.";
         return;
       }
-      profileDiv.innerHTML = `
-        <div class="flex items-center space-x-4 mb-6">
-          <img src="https://i.postimg.cc/TPfbBM5Q/black-woman-icon-flat-user-avatar-vector-illustration-158483-1678.jpg" class="w-20 h-20 rounded-full border-4 border-gold">
-          <div>
-            <h2 class="text-2xl font-bold text-maroon">${data.full_name || "Client"}</h2>
-            <p>${data.email || user.email}</p>
-            <p>${data.phone || "No phone set"}</p>
-          </div>
-        </div>
-      `;
-    }
 
-    async function checkSessionWithRetry(retries = 5) {
-      for (let i = 0; i < retries; i++) {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user) {
-          console.log("Session found ✅");
-          loadProfile(session.user);
+      // Wait for Supabase session to be available
+      setTimeout(async () => {
+        const { data: userData, error: userError } = await supabase.auth.getUser();
+        if (userError || !userData.user) {
+          message.textContent = "⚠️ Session not found. Please try again.";
           return;
         }
-        console.log("No session yet, retrying...");
-        await new Promise((r) => setTimeout(r, 500));
-      }
-      redirectToLogin("Session expired or no user found. Redirecting...");
-    }
 
-    // --- Event Listeners ---
-    document.getElementById("logoutBtn").addEventListener("click", async () => {
-      await supabase.auth.signOut();
-      window.location.href = "login.html";
-    });
-    document.getElementById("exploreRunnersBtn").addEventListener("click", () => {
-      window.location.href = "runners.html";
-    });
+        const userEmail = userData.user.email;
 
-    // --- Combined Session Check ---
-    document.addEventListener("DOMContentLoaded", async () => {
-      // 1️⃣ Check existing session
-      await checkSessionWithRetry();
+        // Check if this is a runner
+        const { data: runner, error: runnerError } = await supabase
+          .from("runners")
+          .select("*")
+          .eq("email", userEmail)
+          .maybeSingle();
 
-      // 2️⃣ Also listen for sign-in events (keeps session after refresh)
-      supabase.auth.onAuthStateChange(async (event, session) => {
-        if (event === "SIGNED_IN" && session?.user) {
-          loadProfile(session.user);
-        } else if (event === "SIGNED_OUT") {
-          redirectToLogin("You’ve been logged out.");
+        if (runner && runner.status === "active") {
+          window.location.href = "runners-profile.html";
+          return;
         }
-      });
+
+        // Otherwise check if this is a client/user
+        const { data: client, error: clientError } = await supabase
+          .from("users")
+          .select("*")
+          .eq("email", userEmail)
+          .maybeSingle();
+
+        if (client) {
+          window.location.href = "client-profile.html";
+          return;
+        }
+
+        message.textContent = "⚠️ Account not found or inactive.";
+      }, 500);
     });
   </script>
 </body>
