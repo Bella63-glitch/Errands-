@@ -1,130 +1,150 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login - Run Me An Errand</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    :root { --maroon: #7B1E3A; --gold: #FFD700; }
-    .bg-maroon { background-color: var(--maroon); }
-    .text-gold { color: var(--gold); }
-    .bg-maroon-dark { background-color: #66182f; }
-    .popup {
-      position: fixed; top: 20px; right: 20px;
-      padding: 15px; border-radius: 5px;
-      display: none; color: white; font-weight: bold; z-index: 1000;
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fff;
+      color: maroon;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
     }
-    .popup.success { background: green; }
-    .popup.error { background: red; }
+    .login-container {
+      background-color: maroon;
+      color: white;
+      padding: 2rem;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    input {
+      width: 100%;
+      padding: 0.8rem;
+      margin: 0.6rem 0;
+      border: none;
+      border-radius: 5px;
+    }
+    input:focus {
+      outline: 2px solid white;
+    }
+    button {
+      width: 100%;
+      padding: 0.8rem;
+      background-color: white;
+      color: maroon;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #f0f0f0;
+    }
+    .message {
+      margin-top: 1rem;
+    }
+    a {
+      color: white;
+      display: inline-block;
+      margin-top: 1rem;
+      text-decoration: underline;
+    }
   </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col">
+<body>
+  <div class="login-container">
+    <h2>Login</h2>
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <button id="loginBtn">Login</button>
+    <div class="message" id="message"></div>
+    <a href="index.html">← Back to Homepage</a>
+  </div>
 
-  <header class="bg-maroon shadow-lg sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto flex justify-between items-center py-5 px-6">
-      <a href="index.html" class="flex items-center space-x-2">
-        <img src="https://i.postimg.cc/d1z9KLkL/ei-1752053865516-removebg-preview.png" alt="Logo" class="h-20 w-auto">
-        <h1 class="text-3xl font-bold text-white hover:text-gold">Run Me An Errand</h1>
-      </a>
-    </div>
-  </header>
-
-  <main class="flex-grow flex justify-center items-center p-4">
-    <div class="w-full max-w-md bg-white p-8 rounded-xl shadow-md">
-      <h2 class="text-3xl text-center font-bold text-maroon mb-6">Login</h2>
-
-      <form id="loginForm">
-        <label class="block font-semibold text-maroon mb-2">Email</label>
-        <input type="email" id="email" class="w-full border rounded-md py-2 px-3 mb-4" required>
-
-        <label class="block font-semibold text-maroon mb-2">Password</label>
-        <input type="password" id="password" class="w-full border rounded-md py-2 px-3 mb-4" required>
-
-        <button type="submit" class="w-full bg-maroon text-gold font-bold py-2 px-4 rounded-md hover:bg-maroon-dark">
-          Log In
-        </button>
-
-        <p class="text-center mt-4">
-          <a href="index.html" class="text-maroon hover:text-gold font-semibold">← Back to Home</a>
-        </p>
-      </form>
-    </div>
-  </main>
-
-  <div class="popup" id="popup"></div>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const SUPABASE_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabaseUrl = "https://zchofpncqskvnfrzbcww.supabase.co";
+    const supabaseKey =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-    function showPopup(message, type) {
-      const popup = document.getElementById("popup");
-      popup.textContent = message;
-      popup.className = "popup " + type;
-      popup.style.display = "block";
-      setTimeout(() => popup.style.display = "none", 4000);
-    }
+    const loginBtn = document.getElementById("loginBtn");
+    const message = document.getElementById("message");
 
-    document.getElementById("loginForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
+    loginBtn.addEventListener("click", async () => {
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value.trim();
 
-      try {
-        // Try to find user in "runners" table
-        const { data: runner, error: runnerError } = await supabaseClient
-          .from("runners")
-          .select("*, is_active") // Include is_active in select
-          .eq("email", email)
-          .eq("password", password)
-          .maybeSingle();
-
-        if (runner && !runnerError) {
-          if (runner.is_active) { // Check if the runner's account is active
-            showPopup("Runner login successful! Redirecting...", "success");
-            localStorage.setItem("userType", "runner");
-            localStorage.setItem("userName", runner.name);
-            // Redirect to runners-profile.html
-            setTimeout(() => window.location.href = "runners-profile.html", 2000); 
-            return;
-          } else {
-            // Runner found but not active
-            showPopup("Your runner account is not yet active. Please wait for approval.", "error");
-            return;
-          }
-        }
-
-        // Try to find user in "users" table
-        const { data: user, error: userError } = await supabaseClient
-          .from("users")
-          .select("*")
-          .eq("email", email)
-          .eq("password", password)
-          .maybeSingle();
-
-        if (user && !userError) {
-          showPopup("User login successful! Redirecting...", "success");
-          localStorage.setItem("userType", "user");
-          localStorage.setItem("userName", user.full_name);
-          // Redirect to client-profile.html
-          setTimeout(() => window.location.href = "client-profile.html", 2000); 
-          return;
-        }
-
-        // If neither found
-        showPopup("Invalid email or password", "error");
-
-      } catch (err) {
-        console.error("Login error:", err);
-        showPopup("Error logging in. Please try again.", "error");
+      if (!email || !password) {
+        message.textContent = "⚠️ Please fill all fields.";
+        return;
       }
+
+      message.textContent = "Checking credentials...";
+
+      // First, check runners table
+      const { data: runner, error: runnerError } = await supabase
+        .from("runners")
+        .select("*")
+        .eq("email", email)
+        .eq("password", password)
+        .maybeSingle();
+
+      if (runnerError) {
+        console.error("Runner check error:", runnerError);
+      }
+
+      if (runner && runner.status === "active") {
+        message.textContent = "✅ Login successful! Redirecting...";
+        setTimeout(() => {
+          window.location.href = "runners-profile.html";
+        }, 1000);
+        return;
+      }
+
+      // Then, check users table
+      const { data: user, error: userError } = await supabase
+        .from("users")
+        .select("*")
+        .eq("email", email)
+        .eq("password", password)
+        .maybeSingle();
+
+      if (userError) {
+        console.error("User check error:", userError);
+      }
+
+      if (user) {
+        message.textContent = "✅ Login successful! Redirecting...";
+        setTimeout(() => {
+          window.location.href = "client-profile.html";
+        }, 1000);
+        return;
+      }
+
+      message.textContent = "❌ Invalid email or password.";
     });
   </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
 
 
 
