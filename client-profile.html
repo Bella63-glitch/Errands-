@@ -87,9 +87,11 @@
     }
 
     async function loadProfile() {
-      const email = localStorage.getItem('client_email');
-      if (!email) {
-        redirectToLogin("No user info found. Redirecting to login...");
+      const email = localStorage.getItem('loggedInEmail');
+      const userType = localStorage.getItem('userType');
+
+      if (!email || userType !== "client") {
+        redirectToLogin("Session expired. Redirecting to login...");
         return;
       }
 
@@ -101,7 +103,7 @@
           .from('users')
           .select('id, full_name, email, phone')
           .eq('email', email)
-          .single();
+          .maybeSingle();
 
         if (error || !user) {
           console.error("User fetch error:", error);
@@ -188,7 +190,7 @@
             .update(updatedFields)
             .eq('email', user.email)
             .select('id, full_name, email, phone')
-            .single();
+            .maybeSingle();
 
           if (error) throw error;
 
@@ -204,7 +206,8 @@
     }
 
     logoutBtn.addEventListener("click", () => {
-      localStorage.removeItem('client_email');
+      localStorage.removeItem('loggedInEmail');
+      localStorage.removeItem('userType');
       window.location.href = "login.html";
     });
 
@@ -215,9 +218,6 @@
   </script>
 </body>
 </html>
-
-
-
 
 
 
