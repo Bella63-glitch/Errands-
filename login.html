@@ -104,8 +104,11 @@
    <div id="popup" class="popup"></div> 
    <h2>Login</h2> 
    <input type="email" id="email" placeholder="Email" required> 
-   <input type="password" id="password" placeholder="Password" required> <button id="loginBtn">Login</button> <a href="index.html">← Back to Homepage</a> 
+   <input type="password" id="password" placeholder="Password" required> 
+   <button id="loginBtn">Login</button> 
+   <a href="index.html">← Back to Homepage</a> 
   </div> 
+
   <script>
     const supabaseUrl = "https://zchofpncqskvnfrzbcww.supabase.co";
     const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
@@ -133,7 +136,7 @@
       showPopup("Checking credentials...", "info");
 
       try {
-        // Check runners first
+        // Check runners table
         const { data: runner, error: runnerError } = await supabase
           .from("runners")
           .select("*")
@@ -143,10 +146,11 @@
         if (runnerError) console.error("Runner error:", runnerError);
 
         if (runner) {
-          // Compare password
           if (dcodeIO.bcrypt.compareSync(password, runner.password)) {
             if (runner.subscription_status === "active") {
               showPopup("✅ Login successful! Redirecting...", "success");
+              localStorage.setItem("loggedInEmail", email);
+              localStorage.setItem("userType", "runner");
               setTimeout(() => window.location.href = "runners-profile.html", 1000);
             } else {
               showPopup("❌ Account inactive. Please confirm payment to activate.", "error");
@@ -170,6 +174,8 @@
         if (user) {
           if (dcodeIO.bcrypt.compareSync(password, user.password)) {
             showPopup("✅ Login successful! Redirecting...", "success");
+            localStorage.setItem("loggedInEmail", email);
+            localStorage.setItem("userType", "client");
             setTimeout(() => window.location.href = "client-profile.html", 1000);
             return;
           } else {
@@ -188,13 +194,6 @@
   </script> 
  </body>
 </html>
-
-
-
-
-
-
-
 
 
 
