@@ -110,61 +110,63 @@
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
 
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    
+    // UI elements
+    const profileDiv = document.getElementById("profileDetails");
+    const errorDiv = document.getElementById("errorMessage");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const exploreBtn = document.getElementById("exploreRunnersBtn");
 
-    document.addEventListener("DOMContentLoaded", async () => {
-      const profileDiv = document.getElementById("profileDetails");
-      const errorDiv = document.getElementById("errorMessage");
-      const logoutBtn = document.getElementById("logoutBtn");
-      const exploreBtn = document.getElementById("exploreRunnersBtn");
+    /**
+     * Redirects to the login page and shows a temporary message.
+     */
+    function redirectToLogin(message) {
+        profileDiv.innerHTML = `<p class="text-center text-maroon text-lg font-semibold">${message}</p>`;
+        setTimeout(() => window.location.href = "login.html", 1500);
+    }
+    
+    /**
+     * Fetches and displays the user's detailed profile data from the 'users' table.
+     * @param {Object} authUser - The user object from Supabase Auth.
+     */
+    async function loadProfile(authUser) {
+      profileDiv.innerHTML = `<div class="spinner"></div>`;
+      errorDiv.textContent = "";
+      
+      const userId = authUser.id; // This is the UUID from auth.users
 
-      async function loadProfile() {
-        profileDiv.innerHTML = `<div class="spinner"></div>`;
-        errorDiv.textContent = "";
+      try {
+        // Fetch detailed profile from the 'users' table using the correct linking column: 'auth_id'
+        const { data: clientProfile, error: profileError } = await supabase
+          .from('users')
+          .select('full_name, email, phone') 
+          .eq('auth_id', userId) // <-- Correct column based on your schema
+          .single();
 
-        try {
-          // 1. Get the authenticated user session/data from Supabase Auth
-          const { data: authData, error: authError } = await supabase.auth.getUser();
-          
-          if (authError || !authData.user) {
-            console.warn("Authentication Error:", authError ? authError.message : "No user object found in session. Redirecting.");
-            errorDiv.textContent = "No active session found. Redirecting to login...";
-            
-            // Redirect if not logged in
-            setTimeout(() => window.location.href = "login.html", 1500);
+        if (profileError) {
+            console.error("Profile fetch error:", profileError);
+            if (profileError.code === 'PGRST116') { // No rows returned (user signed up but has no entry in 'users' table)
+                errorDiv.textContent = "Profile data is missing. Please ensure your user signed up successfully.";
+            } else {
+                errorDiv.textContent = "Could not load client details. Check the 'users' RLS Policy (SELECT).";
+            }
             return;
-          }
-
-          const authUser = authData.user;
-          const userId = authUser.id; // This is the UUID from auth.users
-
-          // 2. Fetch detailed profile from the 'users' table using the correct linking column
-          // FIX: Querying the 'auth_id' column, as shown in the schema visualizer.
-          const { data: clientProfile, error: profileError } = await supabase
-            .from('users')
-            .select('full_name, email, phone') 
-            .eq('auth_id', userId) // <-- FIXED COLUMN NAME
-            .single();
-
-          if (profileError) {
-             console.error("Profile fetch error:", profileError);
-             errorDiv.textContent = "Could not load client details. Please ensure the 'users' table is populated for this user and RLS policy allows read access.";
-             // If the error is 'PostgrestError: JSON object requested, multiple (or zero) rows returned', 
-             // it means the user's profile doesn't exist in the 'users' table yet.
-             return;
-          }
-          
-          // Combine auth and profile data
-          const user = { ...authUser, ...clientProfile };
-
-          displayProfile(user);
-
-        } catch (err) {
-          console.error("Critical error loading profile:", err);
-          errorDiv.textContent = "Unexpected error. Please try again.";
         }
-      }
+        
+        // Combine auth and profile data for display/editing
+        const user = { ...authUser, ...clientProfile };
+        displayProfile(user);
 
-      function displayProfile(user) {
+      } catch (err) {
+        console.error("Critical error loading profile:", err);
+        errorDiv.textContent = "Unexpected error during profile load. Please try again.";
+      }
+    }
+
+    /**
+     * Renders the profile data in read-only mode.
+     */
+    function displayProfile(user) {
         // Use full_name for display, falling back to email if name is missing
         const displayName = user.full_name || user.email || "Client"; 
         
@@ -198,9 +200,12 @@
 
         const editBtn = document.getElementById("editBtn");
         editBtn.addEventListener("click", () => enableEdit(user));
-      }
+    }
 
-      function enableEdit(user) {
+    /**
+     * Renders the profile data in edit mode.
+     */
+    function enableEdit(user) {
         profileDiv.innerHTML = `
           <div class="flex items-center space-x-6 mb-8 border-b-2 border-gray-200 pb-6">
             <img src="https://i.postimg.cc/TPfbBM5Q/black-woman-icon-flat-user-avatar-vector-illustration-158483-1678.jpg" alt="Profile Picture" class="w-24 h-24 rounded-full border-4 border-gold object-cover">
@@ -242,7 +247,7 @@
             const { data: updatedData, error } = await supabase
               .from('users')
               .update(updatedFields)
-              .eq('auth_id', user.id) // <-- FIXED COLUMN NAME for update
+              .eq('auth_id', user.id) // <-- Correct column for update
               .select('full_name, email, phone') 
               .single();
 
@@ -256,31 +261,37 @@
 
           } catch (err) {
             console.error("Error updating profile:", err);
-            errorDiv.textContent = "Failed to update profile. Ensure you've set up RLS 'UPDATE' policy for the 'users' table.";
+            errorDiv.textContent = "Failed to update profile. Check RLS Policy (UPDATE).";
           }
         });
       }
 
-      logoutBtn.addEventListener("click", async () => {
+    // ---------- EVENT LISTENERS ----------
+    logoutBtn.addEventListener("click", async () => {
         try {
-          // SUPABASE LOGOUT LOGIC
-          await supabase.auth.signOut();
+            await supabase.auth.signOut();
         } catch (err) {
-          console.warn("Logout error:", err);
+            console.warn("Logout error:", err);
         }
         window.location.href = "login.html";
-      });
+    });
 
-      exploreBtn.addEventListener("click", () => {
-        window.location.href = "runners.html"; // link to runners page
-      });
+    exploreBtn.addEventListener("click", () => {
+        window.location.href = "runners.html"; 
+    });
 
-      // Initial call to load the profile
-      loadProfile();
+    // ---------- INITIALIZATION (The most reliable way to check session) ----------
+    supabase.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+            loadProfile(session.user);
+        } else {
+            redirectToLogin("Session expired or no user found. Taking you to login...");
+        }
     });
   </script>
 </body>
-</html>
+</html>/
+
 
 
 
