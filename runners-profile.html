@@ -1,366 +1,572 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Runner Profile - Run Me An Errand</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    :root{
-      --maroon:#7B1E3A;
-      --gold:#FFD700;
-      --bg:#f5f6f7;
-      --card:#ffffff;
-      --muted:#6b7280;
-      --success: #16a34a;
-      --danger: #dc2626;
-      --radius:12px;
-      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    :root {
+      --maroon: #7B1E3A;
+      --gold: #FFD700;
+      --light-bg: #f0f4f8; /* Softer background */
+      --text-dark: #333;
+      --border-light: #e0e0e0;
     }
-    html,body{height:100%;margin:0;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px}
-    .card{width:100%;max-width:720px;background:var(--card);border-radius:var(--radius);box-shadow:0 8px 28px rgba(16,24,40,.08);padding:20px;display:grid;grid-template-columns:220px 1fr;gap:20px}
-    .left{display:flex;flex-direction:column;align-items:center;gap:12px}
-    .avatar{
-      width:160px;height:160px;border-radius:18px;object-fit:cover;border:4px solid var(--gold);background:#eee;
-      box-shadow:0 6px 18px rgba(16,24,40,.06)
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      background: var(--light-bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 3rem 1rem;
     }
-    .file-input{display:flex;flex-direction:column;gap:6px;width:100%}
-    .btn{
-      background:var(--maroon);color:var(--gold);border:none;padding:10px 14px;border-radius:10px;font-weight:600;cursor:pointer
+
+    .profile-container {
+      background-color: #fff;
+      border-radius: 20px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+      padding: 3rem;
+      width: 100%;
+      max-width: 600px;
+      text-align: center;
+      transition: transform 0.3s ease-in-out;
     }
-    .btn.secondary{background:#e6eef3;color:#03263a}
-    .form{display:flex;flex-direction:column;gap:10px}
-    label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px}
-    input[type="text"], input[type="email"], textarea, select{
-      width:100%;padding:10px;border:1px solid #e6e9ee;border-radius:8px;font-size:14px;background:#fff
+
+    h2 {
+      color: var(--maroon);
+      margin-bottom: 0.5rem;
+      font-weight: 700;
     }
-    textarea{min-height:88px;resize:vertical}
-    .row{display:flex;gap:12px}
-    .row .col{flex:1}
-    .status-badge{display:inline-block;padding:6px 10px;border-radius:8px;color:#fff;font-weight:700;font-size:13px}
-    .active{background:var(--success)}
-    .inactive{background:var(--danger)}
-    .actions{display:flex;gap:10px;justify-content:flex-end;margin-top:8px}
-    .popup{position:fixed;left:50%;transform:translateX(-50%);top:18px;padding:10px 14px;border-radius:9px;color:#fff;font-weight:700;display:none;z-index:999}
-    .popup.info{background:#2563eb}
-    .popup.success{background:var(--success)}
-    .popup.error{background:var(--danger)}
-    @media (max-width:640px){.card{grid-template-columns:1fr;max-width:420px;padding:16px}.left{flex-direction:row;gap:12px}.avatar{width:96px;height:96px}}
+
+    .profile-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .profile-pic-wrapper {
+      position: relative;
+      width: 130px;
+      height: 130px;
+      margin-bottom: 1.5rem;
+    }
+
+    .profile-pic {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--gold);
+      box-shadow: 0 0 0 3px var(--maroon);
+    }
+
+    .details {
+      text-align: left;
+    }
+
+    .details p, .details .detail-item {
+      font-size: 1.05rem;
+      padding: 0.8rem 0;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--text-dark);
+    }
+
+    .details p:last-child, .details .detail-item:last-child {
+      border-bottom: none;
+    }
+
+    .details strong {
+      color: var(--maroon);
+      font-weight: 600;
+      min-width: 100px; /* Aligns labels */
+    }
+
+    .highlight {
+      font-weight: 500;
+      color: var(--text-dark);
+      text-align: right;
+      flex-grow: 1;
+    }
+
+    .status-badge {
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      color: white;
+      font-weight: bold;
+      font-size: 0.85rem;
+    }
+
+    .active { background-color: #28a745; } /* Green */
+    .inactive { background-color: #dc3545; } /* Red */
+
+    .button-group {
+      margin-top: 2rem;
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    button {
+      background-color: var(--maroon);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(123, 30, 58, 0.2);
+    }
+
+    button:hover {
+      background-color: #66182f;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(123, 30, 58, 0.3);
+    }
+
+    #editBtn {
+      background-color: var(--gold);
+      color: var(--maroon);
+    }
+
+    #editBtn:hover {
+      background-color: #e6c500;
+    }
+
+    /* --- Popup/Toast Notification --- */
+    .popup {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #333;
+      color: #fff;
+      padding: 12px 25px;
+      border-radius: 8px;
+      font-weight: 600;
+      display: none;
+      z-index: 1000;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      animation: fadeInOut 4s ease-in-out forwards;
+    }
+
+    .popup.success { background: #28a745; }
+    .popup.error { background: #dc3545; }
+    .popup.info { background: #17a2b8; }
+
+    /* --- Edit Form Styling (Hidden by default) --- */
+    #editForm {
+      text-align: left;
+      margin-top: 2rem;
+      display: none; /* Initially hidden */
+    }
+
+    #editForm label {
+      display: block;
+      margin-top: 1rem;
+      margin-bottom: 0.3rem;
+      font-weight: 600;
+      color: var(--maroon);
+    }
+
+    #editForm input[type="text"],
+    #editForm input[type="email"],
+    #editForm textarea {
+      width: calc(100% - 20px);
+      padding: 10px;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    #editForm textarea {
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    .edit-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 1.5rem;
+    }
+
+    .edit-actions button {
+        margin: 0;
+        padding: 10px 25px;
+    }
+
+    #cancelEditBtn {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    #cancelEditBtn:hover {
+        background-color: #5a6268;
+    }
+
+    #imageUploadLabel {
+        display: block;
+        width: 100%;
+        text-align: center;
+        margin-top: 1rem;
+        padding: 10px;
+        background-color: var(--maroon);
+        color: white;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    #imageUploadLabel:hover {
+        background-color: #66182f;
+    }
+
+    #profilePictureInput {
+        display: none;
+    }
+
+    /* Animation for fadeInOut popup */
+    @keyframes fadeInOut {
+        0% { opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { opacity: 0; }
+    }
   </style>
 </head>
 <body>
-  <div id="popup" class="popup info"></div>
+  <div id="popup" class="popup"></div>
 
-  <div class="card" role="main" aria-label="Runner profile editor">
-    <div class="left">
-      <img id="runnerImage" class="avatar" src="https://via.placeholder.com/160" alt="Runner picture" />
-      <div class="file-input" style="width:100%">
-        <label for="imageFile">Change profile picture</label>
-        <input id="imageFile" type="file" accept="image/*" />
-        <small style="color:var(--muted)">Choose a new image then click Save.</small>
-      </div>
+  <div class="profile-container">
+    <div id="viewMode">
+        <div class="profile-header">
+            <h2>Runner Profile</h2>
+            <div class="profile-pic-wrapper">
+                <img id="runnerImage" class="profile-pic" src="https://via.placeholder.com/130/7B1E3A/FFD700?text=R" alt="Profile Picture" />
+            </div>
+        </div>
 
-      <div style="width:100%;display:flex;gap:8px;margin-top:8px">
-        <button id="saveBtn" class="btn">Save</button>
-        <button id="logoutBtn" class="btn secondary">Logout</button>
-      </div>
+        <div class="details" id="runnerDetails">
+            <div class="detail-item">
+                <strong>Name:</strong> <span id="runnerName" class="highlight">Loading...</span>
+            </div>
+            <div class="detail-item">
+                <strong>Email:</strong> <span id="runnerEmail" class="highlight">Loading...</span>
+            </div>
+            <div class="detail-item">
+                <strong>Phone:</strong> <span id="runnerPhone" class="highlight">Loading...</span>
+            </div>
+            <div class="detail-item">
+                <strong>About:</strong> <span id="runnerAbout" class="highlight">Loading...</span>
+            </div>
+            <div class="detail-item">
+                <strong>Experience:</strong> <span id="runnerExperience" class="highlight">Loading...</span>
+            </div>
+            <div class="detail-item">
+                <strong>Availability:</strong> <span id="runnerAvailability" class="highlight">Loading...</span>
+            </div>
+            <div class="detail-item">
+                <strong>Location:</strong> <span id="runnerLocation" class="highlight">Loading...</span>
+            </div>
+            <div class="detail-item">
+                <strong>Status:</strong> <span id="runnerStatus" class="status-badge">Loading...</span>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button id="editBtn"><i class="fas fa-edit"></i> Edit Profile</button>
+            <button id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
     </div>
 
-    <form id="profileForm" class="form" autocomplete="off">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <h2 style="margin:0;color:var(--maroon);font-size:18px">Runner Profile</h2>
-        <span id="statusBadge" class="status-badge inactive">Loading</span>
-      </div>
+    <div id="editMode">
+        <form id="editForm">
+            <h3>Edit Your Details</h3>
 
-      <div class="row">
-        <div class="col">
-          <label for="fullName">Full name</label>
-          <input id="fullName" name="full_name" type="text" placeholder="Full name" />
-        </div>
-        <div class="col">
-          <label for="phone">Phone</label>
-          <input id="phone" name="phone" type="text" placeholder="07..." />
-        </div>
-      </div>
+            <label for="profilePictureInput" id="imageUploadLabel">
+                <i class="fas fa-camera"></i> Change Profile Picture
+            </label>
+            <input type="file" id="profilePictureInput" accept="image/*">
+            <small>Note: Image will update upon saving.</small>
 
-      <label for="email">Email (readonly)</label>
-      <input id="email" name="email" type="email" readonly />
+            <label for="editName">Full Name</label>
+            <input type="text" id="editName" required>
 
-      <label for="location">Location</label>
-      <input id="location" name="location" type="text" placeholder="Town, County" />
+            <label for="editPhone">Phone</label>
+            <input type="text" id="editPhone">
 
-      <div class="row">
-        <div class="col">
-          <label for="experience">Experience</label>
-          <input id="experience" name="experience" type="text" placeholder="e.g. 2 years" />
-        </div>
-        <div class="col">
-          <label for="availability">Availability</label>
-          <select id="availability" name="availability">
-            <option value="">Select availability</option>
-            <option value="full-time">Full-time</option>
-            <option value="part-time">Part-time</option>
-            <option value="weekends">Weekends</option>
-            <option value="on-call">On-call</option>
-          </select>
-        </div>
-      </div>
+            <label for="editLocation">Location</label>
+            <input type="text" id="editLocation">
 
-      <label for="about">About</label>
-      <textarea id="about" name="about" placeholder="Short bio or skills"></textarea>
+            <label for="editAvailability">Availability</label>
+            <input type="text" id="editAvailability">
 
-      <label for="subscription">Subscription status</label>
-      <select id="subscription" name="subscription_status">
-        <option value="">Select status</option>
-        <option value="active">Active</option>
-        <option value="inactive">Inactive</option>
-      </select>
+            <label for="editExperience">Experience (e.g., 2 years)</label>
+            <input type="text" id="editExperience">
 
-      <div class="actions">
-        <button type="button" id="cancelBtn" class="btn secondary">Cancel</button>
-        <button type="button" id="saveBtnBottom" class="btn">Save changes</button>
-      </div>
-    </form>
+            <label for="editAbout">About Me</label>
+            <textarea id="editAbout"></textarea>
+
+            <div class="edit-actions">
+                <button type="button" id="cancelEditBtn">Cancel</button>
+                <button type="submit" id="saveBtn"><i class="fas fa-save"></i> Save Changes</button>
+            </div>
+        </form>
+    </div>
   </div>
 
   <script>
-    // CONFIG - keep values secure in production. This mirrors your supplied values.
-    const SUPABASE_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
+    // Supabase Configuration
+    const supabaseUrl = "https://zchofpncqskvnfrzbcww.supabase.co";
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+    // **CRUCIAL CHANGE: Using the bucket name you provided**
+    const BUCKET_NAME = 'profiles'; 
 
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    const bucketName = "profile-pictures"; // ensure this bucket exists and is public or adjust rules
-
+    // DOM Elements
     const popup = document.getElementById("popup");
-    const showPopup = (msg, type = "info") => {
-      popup.textContent = msg;
-      popup.className = "popup " + (type === "error" ? "error" : type === "success" ? "success" : "info");
-      popup.style.display = "block";
-      clearTimeout(showPopup._t);
-      showPopup._t = setTimeout(()=> popup.style.display = "none", 3500);
-    };
-
-    // Elements
-    const imageFile = document.getElementById("imageFile");
-    const runnerImage = document.getElementById("runnerImage");
-    const emailEl = document.getElementById("email");
-    const fullNameEl = document.getElementById("fullName");
-    const phoneEl = document.getElementById("phone");
-    const locationEl = document.getElementById("location");
-    const aboutEl = document.getElementById("about");
-    const experienceEl = document.getElementById("experience");
-    const availabilityEl = document.getElementById("availability");
-    const subscriptionEl = document.getElementById("subscription");
-    const statusBadge = document.getElementById("statusBadge");
-    const saveBtn = document.getElementById("saveBtn");
-    const saveBtnBottom = document.getElementById("saveBtnBottom");
     const logoutBtn = document.getElementById("logoutBtn");
-    const cancelBtn = document.getElementById("cancelBtn");
+    const editBtn = document.getElementById("editBtn");
+    const cancelEditBtn = document.getElementById("cancelEditBtn");
+    const saveBtn = document.getElementById("saveBtn");
+    const viewMode = document.getElementById("viewMode");
+    const editMode = document.getElementById("editMode");
+    const editForm = document.getElementById("editForm");
+    const profilePictureInput = document.getElementById("profilePictureInput");
 
-    // session check using localStorage (as in your current app)
-    const loggedEmail = localStorage.getItem("loggedInEmail");
+    // Current User State
+    const email = localStorage.getItem("loggedInEmail");
     const userType = localStorage.getItem("userType");
-    if (!loggedEmail || userType !== "runner") {
-      // preserve UX: brief info before redirect
-      showPopup("Session expired. Redirecting to login.", "error");
-      setTimeout(()=> window.location.href = "login.html", 900);
+    let currentRunnerData = null; // Store fetched data
+
+    /**
+     * Toggles the view between the profile details and the edit form.
+     * @param {boolean} isEditing - True to show the edit form, false to show details.
+     */
+    function toggleEditMode(isEditing) {
+        viewMode.style.display = isEditing ? "none" : "block";
+        editMode.style.display = isEditing ? "block" : "none";
     }
 
-    let currentRunner = null;
-    let pendingFile = null;
+    /**
+     * Displays a temporary notification popup.
+     * @param {string} message - The message to display.
+     * @param {string} type - The type of popup ('success', 'error', 'info').
+     */
+    function showPopup(message, type = "info") {
+      popup.textContent = message;
+      popup.className = "popup " + type;
+      popup.style.display = "block";
+      setTimeout(() => (popup.style.display = "none"), 4000);
+    }
 
-    // Preview selected file
-    imageFile.addEventListener("change", (e) => {
-      const f = e.target.files?.[0];
-      if (!f) return;
-      if (!f.type.startsWith("image/")) { showPopup("Choose an image file only.", "error"); imageFile.value = ""; return; }
-      pendingFile = f;
-      const url = URL.createObjectURL(f);
-      runnerImage.src = url;
-    });
+    /**
+     * Authenticates the user session.
+     */
+    function checkLogin() {
+        if (!email || userType !== "runner") {
+            alert("Session expired. Please log in again.");
+            window.location.href = "login.html";
+        }
+    }
 
-    // Load profile from Supabase
+    /**
+     * Loads the runner profile details from Supabase and populates the view mode and edit form.
+     */
     async function loadRunnerProfile() {
-      showPopup("Loading profile...", "info");
+      checkLogin();
+
       try {
         const { data, error } = await supabase
           .from("runners")
           .select("*")
-          .eq("email", loggedEmail)
+          .eq("email", email)
           .maybeSingle();
 
-        if (error) throw error;
-        if (!data) {
-          showPopup("Profile not found. Please login again.", "error");
-          setTimeout(()=> window.location.href = "login.html", 1200);
+        if (error || !data) {
+          console.error("Profile load error:", error);
+          showPopup("❌ Failed to load profile. Please log in again.", "error");
+          setTimeout(() => window.location.href = "login.html", 2000);
           return;
         }
 
-        currentRunner = data;
-        // Fill form
-        emailEl.value = data.email || loggedEmail;
-        fullNameEl.value = data.full_name || "";
-        phoneEl.value = data.phone || "";
-        locationEl.value = data.location || "";
-        aboutEl.value = data.about || "";
-        experienceEl.value = data.experience || "";
-        availabilityEl.value = data.availability || "";
-        subscriptionEl.value = data.subscription_status || "";
+        currentRunnerData = data;
+        populateViewMode(data);
+        populateEditForm(data);
 
-        // status badge
-        updateStatusBadge(data.subscription_status);
+      } catch (err) {
+        console.error("Error fetching profile:", err);
+        showPopup("❌ Error loading profile", "error");
+      }
+    }
 
-        // image: if profile_picture is a storage path or a full URL handle both
-        if (data.profile_picture) {
-          const src = await resolveImageUrl(data.profile_picture);
-          runnerImage.src = src;
+    /**
+     * Populates the read-only view mode with runner data.
+     * @param {object} data - The runner profile data.
+     */
+    function populateViewMode(data) {
+        document.getElementById("runnerName").textContent = data.full_name || "N/A";
+        document.getElementById("runnerEmail").textContent = data.email;
+        document.getElementById("runnerPhone").textContent = data.phone || "N/A";
+        document.getElementById("runnerAbout").textContent = data.about || "N/A";
+        document.getElementById("runnerExperience").textContent = data.experience || "N/A";
+        document.getElementById("runnerAvailability").textContent = data.availability || "N/A";
+        document.getElementById("runnerLocation").textContent = data.location || "N/A";
+
+        const statusSpan = document.getElementById("runnerStatus");
+        if (data.subscription_status === "active") {
+            statusSpan.textContent = "Active ✅";
+            statusSpan.className = "status-badge active";
         } else {
-          runnerImage.src = "https://via.placeholder.com/160";
+            statusSpan.textContent = "Inactive ❌";
+            statusSpan.className = "status-badge inactive";
         }
 
-        showPopup("Profile loaded", "success");
-      } catch (err) {
-        console.error(err);
-        showPopup("Failed to load profile", "error");
-      }
+        const imgEl = document.getElementById("runnerImage");
+        imgEl.src = data.profile_picture || "https://via.placeholder.com/130/7B1E3A/FFD700?text=R";
     }
 
-    function updateStatusBadge(status) {
-      if (status === "active") {
-        statusBadge.textContent = "Active";
-        statusBadge.className = "status-badge active";
-      } else {
-        statusBadge.textContent = "Inactive";
-        statusBadge.className = "status-badge inactive";
-      }
+    /**
+     * Populates the edit form fields with runner data.
+     * @param {object} data - The runner profile data.
+     */
+    function populateEditForm(data) {
+        document.getElementById("editName").value = data.full_name || "";
+        document.getElementById("editPhone").value = data.phone || "";
+        document.getElementById("editLocation").value = data.location || "";
+        document.getElementById("editAvailability").value = data.availability || "";
+        document.getElementById("editExperience").value = data.experience || "";
+        document.getElementById("editAbout").value = data.about || "";
     }
 
-    // If stored value looks like a full URL use as-is, otherwise treat as storage path and get public url.
-    async function resolveImageUrl(value) {
-      if (!value) return "https://via.placeholder.com/160";
-      try {
-        if (value.startsWith("http://") || value.startsWith("https://")) return value;
-        // assume storage path
-        const { data } = supabase.storage.from(bucketName).getPublicUrl(value);
-        return data?.publicUrl || "https://via.placeholder.com/160";
-      } catch (err) {
-        console.warn("resolveImageUrl error", err);
-        return "https://via.placeholder.com/160";
-      }
-    }
+    /**
+     * Handles the file upload to Supabase Storage.
+     * @param {File} file - The image file to upload.
+     * @returns {Promise<string|null>} The public URL of the uploaded image or null on error.
+     */
+    async function uploadProfilePicture(file) {
+        // We use the runner's email to create a folder path for organization
+        const fileExtension = file.name.split('.').pop();
+        const filePath = `${email}/${Date.now()}.${fileExtension}`; 
 
-    // Upload image to storage and return path (not full URL).
-    async function uploadImage(file) {
-      if (!file) return null;
-      try {
-        const ext = file.name.split('.').pop();
-        const filename = `${loggedEmail.replace(/[@.]/g,'_')}-${Date.now()}.${ext}`;
-        const path = filename; // you may include folder names here
+        try {
+            // Upload the file to the 'profiles' bucket
+            const { error: uploadError } = await supabase.storage
+                .from(BUCKET_NAME)
+                .upload(filePath, file, {
+                    cacheControl: '3600',
+                    upsert: true,
+                });
 
-        const { data, error: uploadError } = await supabase.storage
-          .from(bucketName)
-          .upload(path, file, { upsert: true });
+            if (uploadError) throw uploadError;
 
-        if (uploadError) {
-          // if conflict due to permissions or missing bucket, bubble up
-          throw uploadError;
+            // Get the public URL
+            const { data: publicUrlData } = supabase.storage
+                .from(BUCKET_NAME)
+                .getPublicUrl(filePath);
+
+            return publicUrlData.publicUrl;
+
+        } catch (error) {
+            console.error('Error uploading file:', error);
+            showPopup(`❌ File upload failed: ${error.message}`, 'error');
+            return null;
         }
-        return path; // store path in profile_picture column
-      } catch (err) {
-        console.error("Upload failed", err);
-        throw err;
-      }
     }
 
-    // Save handler
-    async function saveProfile() {
-      showPopup("Saving...", "info");
-      try {
-        let profile_picture_path = currentRunner?.profile_picture || null;
+    /**
+     * Handles the form submission for updating the runner profile.
+     * @param {Event} e - The form submit event.
+     */
+    async function handleUpdateProfile(e) {
+        e.preventDefault();
+        saveBtn.disabled = true;
+        showPopup("Saving changes...", "info");
 
-        // If user selected new image upload it
-        if (pendingFile) {
-          try {
-            profile_picture_path = await uploadImage(pendingFile);
-          } catch (err) {
-            showPopup("Image upload failed. Save aborted.", "error");
-            return;
-          }
+        let imageUrl = currentRunnerData.profile_picture; // Start with existing URL
+
+        // 1. Handle image upload if a new file is selected
+        const file = profilePictureInput.files[0];
+        if (file) {
+            imageUrl = await uploadProfilePicture(file);
+            if (!imageUrl) {
+                saveBtn.disabled = false;
+                return; // Stop if image upload failed
+            }
         }
 
-        const payload = {
-          full_name: fullNameEl.value.trim() || null,
-          phone: phoneEl.value.trim() || null,
-          location: locationEl.value.trim() || null,
-          about: aboutEl.value.trim() || null,
-          experience: experienceEl.value.trim() || null,
-          availability: availabilityEl.value || null,
-          subscription_status: subscriptionEl.value || null,
-          profile_picture: profile_picture_path
+        // 2. Prepare the update data
+        const updatedProfile = {
+            full_name: document.getElementById("editName").value,
+            phone: document.getElementById("editPhone").value,
+            location: document.getElementById("editLocation").value,
+            availability: document.getElementById("editAvailability").value,
+            experience: document.getElementById("editExperience").value,
+            about: document.getElementById("editAbout").value,
+            profile_picture: imageUrl, // New or existing URL
         };
 
-        // remove undefined keys
-        Object.keys(payload).forEach(k => { if (payload[k] === undefined) delete payload[k]; });
+        // 3. Update the database record
+        try {
+            const { error: updateError } = await supabase
+                .from('runners')
+                .update(updatedProfile)
+                .eq('email', email);
 
-        const { data, error } = await supabase
-          .from("runners")
-          .update(payload)
-          .eq("email", loggedEmail)
-          .select()
-          .maybeSingle();
+            if (updateError) throw updateError;
 
-        if (error) throw error;
+            showPopup("✅ Profile updated successfully!", "success");
+            // Reload the profile to show new data
+            await loadRunnerProfile();
+            toggleEditMode(false); // Switch back to view mode
 
-        currentRunner = data || currentRunner;
-        updateStatusBadge(currentRunner.subscription_status);
-        // update displayed image to public URL if stored path
-        if (currentRunner.profile_picture) {
-          const src = await resolveImageUrl(currentRunner.profile_picture);
-          runnerImage.src = src;
+        } catch (error) {
+            console.error("Update error:", error);
+            showPopup(`❌ Failed to save profile: ${error.message}`, "error");
+        } finally {
+            saveBtn.disabled = false;
         }
-
-        pendingFile = null;
-        imageFile.value = "";
-        showPopup("Profile saved", "success");
-      } catch (err) {
-        console.error(err);
-        showPopup("Failed to save profile", "error");
-      }
     }
 
-    // Cancel restores last loaded values
-    function cancelEdits() {
-      if (!currentRunner) return;
-      fullNameEl.value = currentRunner.full_name || "";
-      phoneEl.value = currentRunner.phone || "";
-      locationEl.value = currentRunner.location || "";
-      aboutEl.value = currentRunner.about || "";
-      experienceEl.value = currentRunner.experience || "";
-      availabilityEl.value = currentRunner.availability || "";
-      subscriptionEl.value = currentRunner.subscription_status || "";
-      // reset image preview to stored image
-      resolveImageUrl(currentRunner.profile_picture).then(url => runnerImage.src = url);
-      pendingFile = null;
-      imageFile.value = "";
-      showPopup("Changes reverted", "info");
-    }
+    // --- Event Listeners ---
 
-    // Event wiring
-    saveBtn.addEventListener("click", saveProfile);
-    saveBtnBottom.addEventListener("click", saveProfile);
-    cancelBtn.addEventListener("click", cancelEdits);
+    // Edit button click
+    editBtn.addEventListener("click", () => {
+        populateEditForm(currentRunnerData); // Ensure fields are current before editing
+        toggleEditMode(true);
+    });
+
+    // Cancel button click
+    cancelEditBtn.addEventListener("click", () => {
+        toggleEditMode(false);
+    });
+
+    // Form submission
+    editForm.addEventListener("submit", handleUpdateProfile);
+
+    // Logout
     logoutBtn.addEventListener("click", () => {
       localStorage.removeItem("loggedInEmail");
       localStorage.removeItem("userType");
-      showPopup("Logging out", "info");
-      setTimeout(()=> window.location.href = "login.html", 600);
+      showPopup("Logging out...", "info");
+      setTimeout(() => window.location.href = "login.html", 1000);
     });
 
-    // Load on start
+    // Initial load
     loadRunnerProfile();
+
   </script>
 </body>
-</html>
-
-
-
+              </html>
+  
