@@ -22,11 +22,7 @@
       margin: auto;
     }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    a.nav-link {
-      color: var(--maroon);
-      font-weight: 600;
-      transition: color 0.2s;
-    }
+    a.nav-link { color: var(--maroon); font-weight: 600; transition: color 0.2s; }
     a.nav-link:hover { color: var(--gold); }
     .profile-card {
       background-color: #fff;
@@ -45,38 +41,14 @@
       border-radius: 8px;
       transition: all 0.2s;
     }
-    button.explore-btn {
-      background-color: var(--maroon);
-      color: var(--gold);
-    }
-    button.explore-btn:hover {
-      background-color: var(--gold);
-      color: var(--maroon);
-    }
-    button.edit-btn {
-      background-color: var(--gold);
-      color: var(--maroon);
-    }
-    button.edit-btn:hover {
-      background-color: var(--maroon);
-      color: var(--gold);
-    }
-    button.save-btn {
-      background-color: var(--maroon);
-      color: var(--gold);
-    }
-    button.save-btn:hover {
-      background-color: var(--gold);
-      color: var(--maroon);
-    }
-    button.cancel-btn {
-      background-color: #ccc;
-      color: #333;
-    }
-    button.cancel-btn:hover {
-      background-color: #999;
-      color: #fff;
-    }
+    button.explore-btn { background-color: var(--maroon); color: var(--gold); }
+    button.explore-btn:hover { background-color: var(--gold); color: var(--maroon); }
+    button.edit-btn { background-color: var(--gold); color: var(--maroon); }
+    button.edit-btn:hover { background-color: var(--maroon); color: var(--gold); }
+    button.save-btn { background-color: var(--maroon); color: var(--gold); }
+    button.save-btn:hover { background-color: var(--gold); color: var(--maroon); }
+    button.cancel-btn { background-color: #ccc; color: #333; }
+    button.cancel-btn:hover { background-color: #999; color: #fff; }
   </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col items-center justify-start pt-12">
@@ -103,7 +75,6 @@
     // ---------- SUPABASE SETUP ----------
     const SUPABASE_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
-
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     
     const profileDiv = document.getElementById("profileDetails");
@@ -112,8 +83,8 @@
     const exploreBtn = document.getElementById("exploreRunnersBtn");
 
     function redirectToLogin(message) {
-        profileDiv.innerHTML = `<p class="text-center text-maroon text-lg font-semibold">${message}</p>`;
-        setTimeout(() => window.location.href = "login.html", 1500);
+      profileDiv.innerHTML = `<p class="text-center text-maroon text-lg font-semibold">${message}</p>`;
+      setTimeout(() => window.location.href = "login.html", 1500);
     }
 
     async function loadProfile(authUser) {
@@ -129,9 +100,9 @@
           .single();
 
         if (profileError) {
-            console.error("Profile fetch error:", profileError);
-            errorDiv.textContent = "Could not load client details. Check the 'users' RLS Policy.";
-            return;
+          console.error("Profile fetch error:", profileError);
+          errorDiv.textContent = "Could not load client details. Check the 'users' RLS Policy.";
+          return;
         }
 
         const user = { ...authUser, ...clientProfile };
@@ -144,139 +115,122 @@
     }
 
     function displayProfile(user) {
-        const displayName = user.full_name || user.email || "Client"; 
-        
-        profileDiv.innerHTML = `
-          <div class="flex items-center space-x-6 mb-8 border-b-2 border-gray-200 pb-6">
-            <img src="https://i.postimg.cc/TPfbBM5Q/black-woman-icon-flat-user-avatar-vector-illustration-158483-1678.jpg" alt="Profile Picture" class="w-24 h-24 rounded-full border-4 border-gold object-cover">
-            <div>
-              <h2 class="text-3xl font-bold text-maroon">${displayName}</h2>
-              <p class="text-lg text-gray-500">${user.email || "N/A"}</p>
+      const displayName = user.full_name || user.email || "Client"; 
+      profileDiv.innerHTML = `
+        <div class="flex items-center space-x-6 mb-8 border-b-2 border-gray-200 pb-6">
+          <img src="https://i.postimg.cc/TPfbBM5Q/black-woman-icon-flat-user-avatar-vector-illustration-158483-1678.jpg" alt="Profile Picture" class="w-24 h-24 rounded-full border-4 border-gold object-cover">
+          <div>
+            <h2 class="text-3xl font-bold text-maroon">${displayName}</h2>
+            <p class="text-lg text-gray-500">${user.email || "N/A"}</p>
+          </div>
+        </div>
+        <div class="md:grid md:grid-cols-2 md:gap-8">
+          <div class="flex flex-col space-y-4">
+            <h3 class="text-xl font-bold text-maroon border-b pb-2">Personal Information</h3>
+            <p class="text-lg"><strong>Email:</strong> ${user.email || "N/A"}</p>
+            <p class="text-lg"><strong>Phone:</strong> ${user.phone || "N/A"}</p>
+            <div class="mt-4">
+              <button id="editBtn" class="edit-btn">Edit Profile</button>
             </div>
           </div>
-          
-          <div class="md:grid md:grid-cols-2 md:gap-8">
-            <div class="flex flex-col space-y-4">
-              <h3 class="text-xl font-bold text-maroon border-b pb-2">Personal Information</h3>
-              <p class="text-lg"><strong>Email:</strong> ${user.email || "N/A"}</p>
-              <p class="text-lg"><strong>Phone:</strong> ${user.phone || "N/A"}</p>
-              <div class="mt-4">
-                <button id="editBtn" class="edit-btn">Edit Profile</button>
-              </div>
-            </div>
-            
-            <div class="mt-8 md:mt-0 flex flex-col space-y-4">
-              <h3 class="text-xl font-bold text-maroon border-b pb-2">My Activity</h3>
-              <div class="bg-gray-100 p-4 rounded-lg">
-                <p class="text-gray-600">Your recent errand history will appear here. Start by exploring our runners!</p>
-              </div>
+          <div class="mt-8 md:mt-0 flex flex-col space-y-4">
+            <h3 class="text-xl font-bold text-maroon border-b pb-2">My Activity</h3>
+            <div class="bg-gray-100 p-4 rounded-lg">
+              <p class="text-gray-600">Your recent errand history will appear here. Start by exploring our runners!</p>
             </div>
           </div>
-        `;
-
-        const editBtn = document.getElementById("editBtn");
-        editBtn.addEventListener("click", () => enableEdit(user));
+        </div>
+      `;
+      document.getElementById("editBtn").addEventListener("click", () => enableEdit(user));
     }
 
     function enableEdit(user) {
-        profileDiv.innerHTML = `
-          <div class="flex items-center space-x-6 mb-8 border-b-2 border-gray-200 pb-6">
-            <img src="https://i.postimg.cc/TPfbBM5Q/black-woman-icon-flat-user-avatar-vector-illustration-158483-1678.jpg" alt="Profile Picture" class="w-24 h-24 rounded-full border-4 border-gold object-cover">
-            <div>
-              <h2 class="text-3xl font-bold text-maroon">Edit Profile</h2>
-              <p class="text-lg text-gray-500">Update your details below.</p>
-            </div>
+      profileDiv.innerHTML = `
+        <div class="flex items-center space-x-6 mb-8 border-b-2 border-gray-200 pb-6">
+          <img src="https://i.postimg.cc/TPfbBM5Q/black-woman-icon-flat-user-avatar-vector-illustration-158483-1678.jpg" alt="Profile Picture" class="w-24 h-24 rounded-full border-4 border-gold object-cover">
+          <div>
+            <h2 class="text-3xl font-bold text-maroon">Edit Profile</h2>
+            <p class="text-lg text-gray-500">Update your details below.</p>
           </div>
-          <div class="flex flex-col space-y-4">
-            <label class="block">
-              <span class="text-lg font-semibold text-maroon">Full Name:</span>
-              <input type="text" id="nameInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50" value="${user.full_name || ""}">
-            </label>
-            <label class="block">
-              <span class="text-lg font-semibold text-maroon">Email:</span>
-              <input type="email" id="emailInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50" value="${user.email || ""}" disabled>
-            </label>
-            <label class="block">
-              <span class="text-lg font-semibold text-maroon">Phone:</span>
-              <input type="text" id="phoneInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50" value="${user.phone || ""}">
-            </label>
-            <div class="mt-6 flex space-x-4">
-              <button id="saveBtn" class="save-btn">Save Changes</button>
-              <button id="cancelBtn" class="cancel-btn">Cancel</button>
-            </div>
+        </div>
+        <div class="flex flex-col space-y-4">
+          <label class="block">
+            <span class="text-lg font-semibold text-maroon">Full Name:</span>
+            <input type="text" id="nameInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50" value="${user.full_name || ""}">
+          </label>
+          <label class="block">
+            <span class="text-lg font-semibold text-maroon">Email:</span>
+            <input type="email" id="emailInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50" value="${user.email || ""}" disabled>
+          </label>
+          <label class="block">
+            <span class="text-lg font-semibold text-maroon">Phone:</span>
+            <input type="text" id="phoneInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50" value="${user.phone || ""}">
+          </label>
+          <div class="mt-6 flex space-x-4">
+            <button id="saveBtn" class="save-btn">Save Changes</button>
+            <button id="cancelBtn" class="cancel-btn">Cancel</button>
           </div>
-        `;
-
-        document.getElementById("cancelBtn").addEventListener("click", () => displayProfile(user));
-
-        document.getElementById("saveBtn").addEventListener("click", async () => {
-          const updatedFields = {
-            full_name: document.getElementById("nameInput").value.trim(), 
-            phone: document.getElementById("phoneInput").value.trim()      
-          };
-          
-          try {
-            const { data: updatedData, error } = await supabase
-              .from('users')
-              .update(updatedFields)
-              .eq('auth_id', user.id)
-              .select('full_name, email, phone') 
-              .single();
-
-            if (error) throw error;
-            
-            const updatedUser = { ...user, ...updatedData };
-            displayProfile(updatedUser);
-            errorDiv.textContent = "Profile updated successfully! ✅";
-            setTimeout(() => errorDiv.textContent = "", 3000);
-
-          } catch (err) {
-            console.error("Error updating profile:", err);
-            errorDiv.textContent = "Failed to update profile. Check RLS Policy (UPDATE).";
-          }
-        });
-      }
-
-    logoutBtn.addEventListener("click", async () => {
-        try { await supabase.auth.signOut(); } catch (err) { console.warn(err); }
-        window.location.href = "login.html";
-    });
-
-    exploreBtn.addEventListener("click", () => {
-        window.location.href = "runners.html"; 
-    });
-
-    // ---------- FIXED INITIALIZATION ----------
-    async function initProfile() {
-      const { data: { session }, error } = await supabase.auth.getSession();
-
-      if (error) {
-        console.error("Error fetching session:", error);
-        redirectToLogin("Session error. Redirecting to login...");
-        return;
-      }
-
-      if (!session || !session.user) {
-        redirectToLogin("Session expired or no user found. Redirecting to login...");
-        return;
-      }
-
-      loadProfile(session.user);
-
-      supabase.auth.onAuthStateChange((event, session) => {
-        if (event === 'SIGNED_OUT') {
-          redirectToLogin("You have been logged out. Redirecting to login...");
+        </div>
+      `;
+      document.getElementById("cancelBtn").addEventListener("click", () => displayProfile(user));
+      document.getElementById("saveBtn").addEventListener("click", async () => {
+        const updatedFields = {
+          full_name: document.getElementById("nameInput").value.trim(), 
+          phone: document.getElementById("phoneInput").value.trim()
+        };
+        try {
+          const { data: updatedData, error } = await supabase
+            .from('users')
+            .update(updatedFields)
+            .eq('auth_id', user.id)
+            .select('full_name, email, phone')
+            .single();
+          if (error) throw error;
+          displayProfile({ ...user, ...updatedData });
+          errorDiv.textContent = "Profile updated successfully! ✅";
+          setTimeout(() => errorDiv.textContent = "", 3000);
+        } catch (err) {
+          console.error("Error updating profile:", err);
+          errorDiv.textContent = "Failed to update profile. Check RLS Policy (UPDATE).";
         }
       });
+    }
+
+    logoutBtn.addEventListener("click", async () => {
+      try { await supabase.auth.signOut(); } catch (err) { console.warn(err); }
+      window.location.href = "login.html";
+    });
+
+    exploreBtn.addEventListener("click", () => window.location.href = "runners.html");
+
+    // ---------- FIXED SESSION CHECK ----------
+    async function initProfile() {
+      try {
+        const { data: { user }, error } = await supabase.auth.getUser();
+
+        if (error || !user) {
+          redirectToLogin("Session expired or no user found. Redirecting to login...");
+          return;
+        }
+
+        loadProfile(user);
+
+        supabase.auth.onAuthStateChange((event, session) => {
+          if (event === 'SIGNED_OUT') {
+            redirectToLogin("You have been logged out. Redirecting to login...");
+          }
+        });
+
+      } catch (err) {
+        console.error("Auth check failed:", err);
+        redirectToLogin("Session error. Redirecting to login...");
+      }
     }
 
     initProfile();
   </script>
 </body>
-  </html>
-
-
-
+</html>
 
 
 
