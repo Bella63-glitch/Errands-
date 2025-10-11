@@ -105,7 +105,7 @@
   </div>
 
   <script>
-    // 🛑 REPLACE with your ACTUAL Supabase URL and Anon Key
+    // ---------- SUPABASE SETUP ----------
     const SUPABASE_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
 
@@ -126,24 +126,30 @@
           const { data: authData, error: authError } = await supabase.auth.getUser();
           
           if (authError || !authData.user) {
-            errorDiv.textContent = "No active session. Redirecting to login...";
+            console.warn("Authentication Error:", authError ? authError.message : "No user object found in session. Redirecting.");
+            errorDiv.textContent = "No active session found. Redirecting to login...";
+            
+            // Redirect if not logged in
             setTimeout(() => window.location.href = "login.html", 1500);
             return;
           }
 
           const authUser = authData.user;
-          const userId = authUser.id;
+          const userId = authUser.id; // This is the UUID from auth.users
 
-          // 2. Fetch detailed profile from the 'users' table using the Auth ID
+          // 2. Fetch detailed profile from the 'users' table using the correct linking column
+          // FIX: Querying the 'auth_id' column, as shown in the schema visualizer.
           const { data: clientProfile, error: profileError } = await supabase
             .from('users')
-            .select('full_name, email, phone') // 🛑 Using 'full_name' for client name
-            .eq('id', userId)
+            .select('full_name, email, phone') 
+            .eq('auth_id', userId) // <-- FIXED COLUMN NAME
             .single();
 
           if (profileError) {
              console.error("Profile fetch error:", profileError);
-             errorDiv.textContent = "Could not load client details. Check the 'users' table RLS policy.";
+             errorDiv.textContent = "Could not load client details. Please ensure the 'users' table is populated for this user and RLS policy allows read access.";
+             // If the error is 'PostgrestError: JSON object requested, multiple (or zero) rows returned', 
+             // it means the user's profile doesn't exist in the 'users' table yet.
              return;
           }
           
@@ -227,17 +233,17 @@
 
         document.getElementById("saveBtn").addEventListener("click", async () => {
           const updatedFields = {
-            full_name: document.getElementById("nameInput").value.trim(), // 🛑 Correct column name
-            phone: document.getElementById("phoneInput").value.trim()      // 🛑 Correct column name
+            full_name: document.getElementById("nameInput").value.trim(), 
+            phone: document.getElementById("phoneInput").value.trim()      
           };
           
           try {
-            // 🛑 SUPABASE UPDATE LOGIC on the 'users' table
+            // SUPABASE UPDATE LOGIC on the 'users' table
             const { data: updatedData, error } = await supabase
               .from('users')
               .update(updatedFields)
-              .eq('id', user.id)
-              .select('full_name, email, phone') // Select the updated fields
+              .eq('auth_id', user.id) // <-- FIXED COLUMN NAME for update
+              .select('full_name, email, phone') 
               .single();
 
             if (error) throw error;
@@ -245,19 +251,19 @@
             // Re-render profile with the new combined data
             const updatedUser = { ...user, ...updatedData };
             displayProfile(updatedUser);
-            errorDiv.textContent = "Profile updated successfully!";
+            errorDiv.textContent = "Profile updated successfully! ✅";
             setTimeout(() => errorDiv.textContent = "", 3000);
 
           } catch (err) {
             console.error("Error updating profile:", err);
-            errorDiv.textContent = "Failed to update profile. Check RLS policy on 'users' table (UPDATE).";
+            errorDiv.textContent = "Failed to update profile. Ensure you've set up RLS 'UPDATE' policy for the 'users' table.";
           }
         });
       }
 
       logoutBtn.addEventListener("click", async () => {
         try {
-          // 🛑 SUPABASE LOGOUT LOGIC
+          // SUPABASE LOGOUT LOGIC
           await supabase.auth.signOut();
         } catch (err) {
           console.warn("Logout error:", err);
@@ -269,17 +275,12 @@
         window.location.href = "runners.html"; // link to runners page
       });
 
+      // Initial call to load the profile
       loadProfile();
     });
   </script>
 </body>
 </html>
-
-
-
-
-
-
 
 
 
