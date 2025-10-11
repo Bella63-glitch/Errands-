@@ -1,0 +1,1329 @@
+<!doctype html>
+<html lang="en"> 
+ <head> 
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <title>Run Me An Errand - Detailed Runners</title> 
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-64SH312S1V"></script> 
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-64SH312S1V');
+    </script> 
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> 
+  <style>
+        /* Custom CSS for colors */
+        :root {
+            --maroon: #7B1E3A;
+            --gold: #FFD700;
+            --light-gold: #FFEB80; /* A lighter shade for backgrounds */
+        }
+        .bg-maroon { background-color: var(--maroon); }
+        .text-gold { color: var(--gold); }
+        .bg-gold { background-color: var(--gold); }
+        .border-gold { border-color: var(--gold); }
+        .bg-light-gold { background-color: var(--light-gold); }
+        /* Animation for runner cards */
+    @keyframes fadeInSlideUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in-slide-up {
+        animation: fadeInSlideUp 0.6s ease-out forwards;
+    }
+
+    /* Loading spinner */
+    .loader {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid var(--maroon);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Mobile Menu Styles */
+    .mobile-menu {
+        transition: max-height 0.3s ease-in-out;
+        overflow: hidden;
+        max-height: 0;
+    }
+    .mobile-menu.active {
+        max-height: 500px; /* Sufficiently large to show all content */
+    }
+
+    /* Modal specific styles */
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1000; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+        justify-content: center;
+        align-items: center;
+    }
+    .modal-content {
+        background-color: #fefefe;
+        margin: auto;
+        padding: 0; /* Changed from 30px to 0 for internal padding control */
+        border-radius: 12px;
+        width: 90%;
+        max-width: 800px;
+        position: relative;
+        animation: fadeInScale 0.3s ease-out forwards;
+        max-height: 90vh; /* Max height for modal content */
+        overflow-y: auto; /* Enable scrolling within modal */
+        -webkit-overflow-scrolling: touch; /* For smoother scrolling on iOS */
+    }
+    @keyframes fadeInScale {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    .close-button {
+        color: #aaa;
+        position: absolute;
+        top: 15px;
+        right: 25px;
+        font-size: 36px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: color 0.3s;
+        z-index: 1010; /* Ensure it's above modal header */
+    }
+    .close-button:hover,
+    .close-button:focus {
+        color: var(--maroon);
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    /* Skeleton loader for cards */
+    .skeleton {
+        background-color: #e2e8f0; /* bg-gray-200 */
+        border-radius: 8-px;
+        animation: pulse 1.5s infinite ease-in-out;
+    }
+
+    .skeleton-circle {
+        width: 96px; /* w-24 */
+        height: 96px; /* h-24 */
+        border-radius: 50%;
+    }
+
+    .skeleton-text {
+        height: 1em;
+        width: 80%;
+        margin-bottom: 0.5em;
+    }
+    .skeleton-text.long {
+        width: 90%;
+    }
+    .skeleton-text.short {
+        width: 60%;
+    }
+    @keyframes pulse {
+        0% { opacity: 0.6; }
+        50% { opacity: 1; }
+        100% { opacity: 0.6; }
+    }
+</style> 
+ </head> 
+ <body class="bg-gray-50 text-gray-800 font-sans"> 
+  <header class="bg-maroon shadow-md sticky top-0 z-50"> 
+   <div class="max-w-7xl mx-auto flex justify-between items-center py-5 px-6"> <a href="index.html" class="flex items-center space-x-2"> <img src="https://i.postimg.cc/yW47TyMj/ei-1752053865516-removebg-preview.png" alt="Run Me An Errand Logo" class="h-10 w-auto"> <h1 class="text-2xl font-bold text-white transition-colors duration-300 hover:text-gold">Run Me An Errand</h1> </a> 
+    <nav class="hidden md:flex space-x-6 text-lg"> <a href="index.html" class="text-gray-300 hover:text-gold transition-colors duration-300">Home</a> <a href="index.html#how-it-works" class="text-gray-300 hover:text-gold transition-colors duration-300">How It Works</a> <a href="index.html#why-choose-us" class="text-gray-300 hover:text-gold transition-colors duration-300">Why Choose Us</a> <a href="index.html#testimonials" class="text-gray-300 hover:text-gold transition-colors duration-300">Reviews</a> <a href="index.html#contact" class="text-gray-300 hover:text-gold transition-colors duration-300">Contact</a> <a href="#" class="text-gray-300 hover:text-gold transition-colors duration-300">Become a Runner</a> 
+    </nav> 
+    <div class="hidden md:flex space-x-4"> <a href="#" class="bg-gold text-maroon px-4 py-2 rounded-full hover:bg-white hover:text-maroon transition duration-300">Login</a> <a href="#" class="bg-white text-maroon px-4 py-2 rounded-full hover:bg-gold hover:text-maroon transition duration-300">Sign Up</a> 
+    </div> 
+    <div class="md:hidden"> <button id="mobile-menu-button" class="text-gray-300 hover:text-gold focus:outline-none focus:ring-2 focus:ring-gold"> 
+      <svg class="h-6 w-6 fill-current" viewbox="0 0 24 24"> <path fill-rule="evenodd" clip-rule="evenodd" d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h16v2H4v-2z"></path> 
+      </svg> </button> 
+    </div> 
+   </div> 
+   <nav id="mobile-menu" class="mobile-menu md:hidden bg-maroon pb-4"> <a href="index.html" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Home</a> <a href="index.html#how-it-works" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Why Choose Us</a> <a href="index.html#testimonials" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Reviews</a> <a href="index.html#contact" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Contact</a> <a href="#" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Become a Runner</a> 
+    <div class="px-6 pt-4 flex flex-col space-y-3"> <a href="#" class="bg-gold text-maroon px-4 py-2 rounded-full text-center hover:bg-white hover:text-maroon transition duration-300">Login</a> <a href="#" class="bg-white text-maroon px-4 py-2 rounded-full text-center hover:bg-gold hover:text-maroon transition duration-300">Sign Up</a> 
+    </div> 
+   </nav> 
+  </header> 
+  <main class="py-12 px-6"> 
+   <div class="max-w-7xl mx-auto"> 
+    <h2 class="text-4xl font-extrabold text-maroon text-center mb-4">Discover Your Ideal Runner</h2> 
+    <p class="text-xl text-gray-700 text-center mb-10">Browse through our trusted runners and call them to book with confidence.</p> 
+    <div class="bg-white p-6 rounded-lg shadow-md mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"> 
+     <div> <label for="location-filter" class="block text-sm font-medium text-gray-700 mb-2">Your Location:</label> <select id="location-filter" class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-maroon focus:border-maroon"> <option value="all">All Locations</option> <option value="Nairobi">Nairobi</option> <option value="Mombasa">Mombasa</option> <option value="Kisumu">Kisumu</option> <option value="Eldoret">Eldoret</option> <option value="Nakuru">Nakuru</option> <option value="Thika">Thika</option> <option value="Kakamega">Kakamega</option> <option value="Machakos">Machakos</option> <option value="Kitale">Kitale</option> <option value="Meru">Meru</option> <option value="Bungoma">Bungoma</option> <option value="Homa Bay">Homa Bay</option> <option value="Nyeri">Nyeri</option> <option value="Kisii">Kisii</option> </select> 
+     </div> 
+     <div> <label for="availability-filter" class="block text-sm font-medium text-gray-700 mb-2">Availability:</label> <select id="availability-filter" class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-maroon focus:border-maroon"> <option value="all">All</option> <option value="Available">Available Now</option> </select> 
+     </div> 
+     <div> <label for="sort-by" class="block text-sm font-medium text-gray-700 mb-2">Sort By:</label> <select id="sort-by" class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-maroon focus:border-maroon"> <option value="rating">Rating (Highest First)</option> <option value="tasksCompleted">Tasks Completed (Most First)</option> <option value="distance">Closest to Me</option> </select> 
+     </div> 
+     <div class="md:col-span-2 lg:col-span-3 text-center"> <button id="apply-filters" class="w-full md:w-auto bg-maroon text-white px-8 py-3 rounded-md hover:bg-gold hover:text-maroon transition duration-300 font-semibold shadow-lg">Apply Filters &amp; Find Runners</button> 
+     </div> 
+    </div> 
+    <div id="status-container" class="mb-8 min-h-[80px] flex items-center justify-center"> 
+     <div id="no-runners-found" class="text-center p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded-lg hidden"> 
+      <p class="text-lg font-semibold mb-2">No runners match your criteria.</p> 
+      <p class="text-md">Try adjusting your filters.</p> 
+     </div> 
+     <div id="fetch-error" class="text-center p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded-lg hidden"> 
+      <p class="text-lg font-semibold mb-2">Failed to load runners data.</p> 
+      <p class="text-md">There was a problem connecting to the server. Please try again later.</p> 
+     </div> 
+    </div> 
+    <div id="runners-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"> 
+     <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-200"> 
+      <div class="skeleton-circle mb-4 skeleton"></div> 
+      <div class="skeleton-text long skeleton"></div> 
+      <div class="skeleton-text short skeleton"></div> 
+      <div class="skeleton-text skeleton w-full mt-3"></div> 
+      <div class="skeleton-text skeleton w-1/2 mt-2"></div> 
+      <div class="skeleton-text skeleton w-full h-8 mt-4"></div> 
+     </div> 
+     <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-200"> 
+      <div class="skeleton-circle mb-4 skeleton"></div> 
+      <div class="skeleton-text long skeleton"></div> 
+      <div class="skeleton-text short skeleton"></div> 
+      <div class="skeleton-text skeleton w-full mt-3"></div> 
+      <div class="skeleton-text skeleton w-1/2 mt-2"></div> 
+      <div class="skeleton-text skeleton w-full h-8 mt-4"></div> 
+     </div> 
+     <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-200 hidden lg:flex"> 
+      <div class="skeleton-circle mb-4 skeleton"></div> 
+      <div class="skeleton-text long skeleton"></div> 
+      <div class="skeleton-text short skeleton"></div> 
+      <div class="skeleton-text skeleton w-full mt-3"></div> 
+      <div class="skeleton-text skeleton w-1/2 mt-2"></div> 
+      <div class="skeleton-text skeleton w-full h-8 mt-4"></div> 
+     </div> 
+     <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-200 hidden xl:flex"> 
+      <div class="skeleton-circle mb-4 skeleton"></div> 
+      <div class="skeleton-text long skeleton"></div> 
+      <div class="skeleton-text short skeleton"></div> 
+      <div class="skeleton-text skeleton w-full mt-3"></div> 
+      <div class="skeleton-text skeleton w-1/2 mt-2"></div> 
+      <div class="skeleton-text skeleton w-full h-8 mt-4"></div> 
+     </div> 
+    </div> 
+   </div> 
+  </main> 
+  <div id="runner-modal" class="modal"> 
+   <div class="modal-content"> <span class="close-button">×</span> 
+    <div id="modal-content-area"> 
+     <div class="bg-maroon text-white p-6 rounded-t-lg text-center relative overflow-hidden"> 
+      <img id="modal-runner-photo" src="" alt="Runner Photo" class="w-32 h-32 rounded-full object-cover mx-auto mb-4 border-4 border-gold shadow-lg transform translate-y-8 relative z-10"> 
+      <div class="pt-8 pb-4"> 
+       <h3 id="modal-runner-name" class="text-3xl font-extrabold mb-1"></h3> 
+       <div class="flex items-center justify-center mb-2"> 
+        <div id="modal-runner-rating-stars" class="flex"></div> <span id="modal-runner-rating-value" class="font-semibold ml-2"></span> <span id="modal-runner-tasks" class="text-gray-300 text-sm ml-2"></span> 
+       </div> 
+       <p id="modal-runner-availability" class="text-md font-bold px-4 py-1 rounded-full inline-block mt-2"></p> 
+      </div> 
+     </div> 
+     <div class="bg-white p-6 pb-2 grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8 -mt-8 relative z-0 rounded-b-lg"> 
+      <div> 
+       <h4 class="text-xl font-bold text-maroon mb-3 border-b pb-2 border-gray-200">About <span id="modal-about-runner-name"></span></h4> 
+       <p id="modal-runner-bio" class="text-gray-700 leading-relaxed text-sm"></p> 
+      </div> 
+      <div> 
+       <h4 class="text-xl font-bold text-maroon mb-3 border-b pb-2 border-gray-200">Key Details</h4> 
+       <ul class="space-y-2 text-gray-700 text-sm"> 
+        <li><strong class="text-maroon">Current Location:</strong> <span id="modal-runner-location"></span></li> 
+        <li><strong class="text-maroon">Hourly Rate:</strong> <span id="modal-runner-rate"></span></li> 
+        <li><strong class="text-maroon">Vehicle Type:</strong> <span id="modal-runner-vehicle"></span></li> 
+        <li><strong class="text-maroon">Avg. Response Time:</strong> <span id="modal-runner-response-time"></span></li> 
+        <li><strong class="text-maroon">Languages Spoken:</strong> <span id="modal-runner-languages"></span></li> 
+       </ul> <a id="modal-runner-map-link" href="#" target="_blank" class="text-blue-600 hover:underline text-sm mt-4 flex items-center hidden"> 
+        <svg class="w-4 h-4 mr-1" fill="currentColor" viewbox="0 0 20 20"> <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path> 
+        </svg> View Runner's Base on Map </a> 
+      </div> 
+      <div> 
+       <h4 class="text-xl font-bold text-maroon mb-3 border-b pb-2 border-gray-200">Recent Reviews</h4> 
+       <div id="modal-runner-reviews" class="space-y-4 text-sm"></div> 
+      </div> 
+     </div> 
+     <div class="bg-gray-50 p-6 pt-4 text-center rounded-b-lg border-t border-gray-200"> <button id="modal-call-now-btn" class="bg-gold text-maroon px-8 py-3 rounded-full font-bold text-lg hover:bg-maroon hover:text-white transition duration-300 shadow-xl w-full md:w-2/3">Contact Runner</button> 
+      <p id="contact-status-message" class="text-gray-600 text-xs mt-3">We'll connect you directly to the runner to discuss your errand.</p> 
+     </div> 
+    </div> 
+   </div> 
+  </div> 
+  <footer class="bg-gray-800 text-gray-300 py-12"> 
+   <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8"> 
+    <div> 
+     <h4 class="text-lg font-bold text-gold mb-4">Run Me An Errand</h4> 
+     <p class="text-sm mb-2">Your reliable partner for errand services across Kenya.</p> 
+     <p class="text-sm">© 2025 Run Me An Errand. All rights reserved.</p> 
+    </div> 
+    <div> 
+     <h4 class="text-lg font-bold text-gold mb-4">Quick Links</h4> 
+     <ul class="space-y-2 text-sm"> 
+      <li><a href="index.html" class="hover:text-gold transition-colors duration-200">Home</a></li> 
+      <li><a href="#" class="hover:text-gold transition-colors duration-200">Services</a></li> 
+      <li><a href="index.html#how-it-works" class="hover:text-gold transition-colors duration-200">How It Works</a></li> 
+      <li><a href="index.html#why-choose-us" class="hover:text-gold transition-colors duration-200">Why Choose Us</a></li> 
+      <li><a href="index.html#testimonials" class="hover:text-gold transition-colors duration-200">Reviews</a></li> 
+      <li><a href="index.html#contact" class="hover:text-gold transition-colors duration-200">Contact Us</a></li> 
+      <li><a href="#" class="hover:text-gold transition-colors duration-200">Become a Runner</a></li> 
+      <li><a href="#" class="hover:text-gold transition-colors duration-200">FAQ</a></li> 
+      <li><a href="#" class="hover:text-gold transition-colors duration-200">Privacy Policy</a></li> 
+      <li><a href="#" class="hover:text-gold transition-colors duration-200">Terms of Service</a></li> 
+     </ul> 
+    </div> 
+    <div> 
+     <h4 class="text-lg font-bold text-gold mb-4">Contact Info</h4> 
+     <p class="text-sm mb-2">Email: <a href="mailto:ranmeanerrand@gmail.com" class="hover:text-gold">ranmeanerrand@gmail.com</a></p> 
+     <p class="text-sm mb-2">Phone: <a href="tel:+254797046378" class="hover:text-gold">+254 797 046378</a></p> 
+     <div class="flex space-x-4 mt-4"> <a href="#" class="text-gray-300 hover:text-gold" aria-label="Twitter"> 
+       <svg class="h-5 w-5 fill-current" viewbox="0 0 24 24"> <path fill="currentColor" d="M22.46 6c-.77.67-1.72 1.13-2.77 1.33a4.76 4.76 0 002.07-2.62c-.82.48-1.75.83-2.79 1.02a4.78 4.78 0 00-8.13 4.3A13.54 13.54 0 013.57 4.3c.83 1.42 2.08 2.4 3.57 3.07a4.78 4.78 0 00-2.22-.61c.3-.08.59-.12.88-.12a4.78 4.78 0 004.46 3.31 9.5 9.5 0 01-5.78 1.98c-.34-.1-.68-.16-1.02-.18a4.75 4.75 0 004.88 3.3 9.5 9.5 0 01-7.64 3.27c-.36-.02-.72-.03-1.08-.03a13.57 13.57 0 006.94 2.16c4.16 0 7.67-3.46 7.67-7.67 0-.12 0-.23-.34-.69a4.66 4.66 0 001.53-1.3"></path> 
+       </svg> </a> <a href="#" class="text-gray-300 hover:text-gold" aria-label="Facebook"> 
+       <svg class="h-5 w-5 fill-current" viewbox="0 0 24 24"> <path fill="currentColor" d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.88V15H8v-3h2V9.5c0-2.17 1.34-3.34 3.27-3.34 1.83 0 2.93 1.5 2.93 3.34V12h2v3h-2v6.88c4.56-1.01 8-5.04 8-9.88z"></path> 
+       </svg> </a> <a href="#" class="text-gray-300 hover:text-gold" aria-label="Instagram"> 
+       <svg class="h-5 w-5 fill-current" viewbox="0 0 24 24"> <path fill="currentColor" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.148 3.252-1.691 4.771-4.919 4.919-1.265-.058-1.644-.07-4.849-.07zM12 6.893c-2.857 0-5.146 2.289-5.146 5.146 0 2.857 2.289 5.146 5.146 5.146 2.857 0 5.146-2.289 5.146-5.146 0-2.857-2.289-5.146-5.146-5.146zm0 8.469c-1.827 0-3.333-1.506-3.333-3.333 0-1.827 1.506-3.333 3.333-3.333 1.827 0 3.333 1.506 3.333 3.333 0 1.827-1.506 3.333-3.333 3.333z"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M12 3.998c-4.414 0-8 3.586-8 8 0 4.414 3.586 8 8 8 4.414 0 8-3.586 8-8 0-4.414-3.586-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-3.31 2.69-6 6-6 3.31 0 6 2.69 6 6 0 3.31-2.69 6-6 6z"></path> 
+       </svg> </a> 
+     </div> 
+    </div> 
+   </div> 
+  </footer> <button id="back-to-top" class="fixed bottom-6 right-6 bg-maroon text-white p-3 rounded-full shadow-lg hover:bg-gold hover:text-maroon transition duration-300 hidden"> 
+   <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path> 
+   </svg> </button> 
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- Backendless Credentials ---
+        const APP_ID = "9223CBD1-9AFC-4C74-B56B-12F11D319DF9";
+        const API_KEY = "0C3700EB-013B-4BFE-85ED-CE0F6F7EC013";
+        let runnersData = [];
+
+        // Random avatar generator
+        function getRandomAvatarUrl(name) {
+            // Using a text-based generator for unique avatars based on name
+            const seed = name.replace(/\s+/g, '-').toLowerCase();
+            return `https://api.dicebear.com/8.x/initials/svg?seed=${seed}&backgroundColor=7B1E3A,FFD700&size=150`;
+        }
+
+        // Function to get a random number of tasks up to a specified maximum
+        function getRandomTasks(max = 50) {
+            return Math.floor(Math.random() * max) + 1;
+        }
+        
+        // --- MODIFIED FAKE_RUNNERS_DATA: Phone numbers are set to null for examples ---
+        const FAKE_RUNNERS_DATA = [
+            {
+                objectId: "runner1",
+                name: "Alex Mwai",
+                email: "alex.mwai@example.com",
+                phone: null, // HIDDEN FOR EXAMPLE
+                role: "runner",
+                isEnabled: true,
+                isavailable: true,
+                rating: 4.9,
+                tasksCompleted: getRandomTasks(),
+                imageurl: getRandomAvatarUrl("Alex Mwai"),
+                about: "A dedicated and reliable runner with over three years of experience serving the Nairobi area. Specializes in grocery shopping, package delivery, and urgent document transfers. I am known for my punctuality and attention to detail. I drive a fuel-efficient motorbike, ensuring quick and affordable service. Ready to make your life easier!",
+                location: "Nairobi (Kilimani)",
+                hourlyRate: "Ksh 500/hr",
+                vehicle: "Motorbike",
+                responseTime: "10 minutes",
+                languages: ["English", "Swahili"],
+                reviews: [
+                    { reviewer: "Sarah K.", text: "Alex is a lifesaver! He picked up my groceries and even sent me pictures to confirm the items. Highly recommended!", stars: 5 },
+                    { reviewer: "James W.", text: "Fast and professional service. My package arrived ahead of schedule. Will definitely use him again.", stars: 5 },
+                    { reviewer: "Emily N.", text: "Great communication and very courteous. The whole process was smooth and hassle-free.", stars: 4.5 }
+                ]
+            },
+            {
+                objectId: "runner2",
+                name: "Grace Onyango",
+                email: "grace.o@example.com",
+                phone: null, // HIDDEN FOR EXAMPLE
+                role: "runner",
+                isEnabled: true,
+                isavailable: true,
+                rating: 4.8,
+                tasksCompleted: getRandomTasks(),
+                imageurl: getRandomAvatarUrl("Grace Onyango"),
+                about: "Your friendly and efficient runner in Mombasa. I handle everything from pharmacy pickups to bank errands. My goal is to save you time and provide a seamless, trustworthy service. I use a bicycle, which is perfect for navigating the city's streets quickly and is eco-friendly. I'm always available with a positive attitude!",
+                location: "Mombasa (Nyali)",
+                hourlyRate: "Ksh 250/hr",
+                vehicle: "Bicycle",
+                responseTime: "15 minutes",
+                languages: ["English", "Swahili"],
+                reviews: [
+                    { reviewer: "Ben M.", text: "Grace was fantastic. She handled a complex bank errand with ease. So grateful for her help!", stars: 5 },
+                    { reviewer: "Fatuma A.", text: "Excellent service and a very pleasant person to deal with. My documents were delivered safely and on time.", stars: 4.5 }
+                ]
+            },
+            {
+                objectId: "runner3",
+                name: "Samuel Ochieng",
+                email: "samuel.o@example.com",
+                phone: null, // HIDDEN FOR EXAMPLE
+                role: "runner",
+                isEnabled: true,
+                isavailable: false,
+                rating: 4.7,
+                tasksCompleted: getRandomTasks(),
+                imageurl: getRandomAvatarUrl("Samuel Ochieng"),
+                about: "Highly experienced runner based in Nairobi with a reputation for tackling complex errands. I have a small van, which is ideal for larger items or multiple deliveries. I'm a former logistics professional, so I prioritize efficiency and security. Currently focusing on pre-booked tasks, so please book in advance!",
+                location: "Nairobi (Westlands)",
+                hourlyRate: "Ksh 600/hr",
+                vehicle: "Van",
+                responseTime: "30 minutes (pre-booked)",
+                languages: ["English", "Swahili", "Luo"],
+                reviews: [
+                    { reviewer: "Christine L.", text: "Samuel's professionalism is unmatched. He moved several boxes for me quickly and carefully. The van was a huge plus.", stars: 5 },
+                    { reviewer: "David G.", text: "Reliable and trustworthy. He's my go-to person for anything too large to fit on a bike.", stars: 4.5 }
+                ]
+            },
+            {
+                objectId: "runner4",
+                name: "Fiona Adhiambo",
+                email: "fiona.a@example.com",
+                phone: null, // HIDDEN FOR EXAMPLE
+                role: "runner",
+                isEnabled: true,
+                isavailable: true,
+                rating: 4.9,
+                tasksCompleted: getRandomTasks(),
+                imageurl: getRandomAvatarUrl("Fiona Adhiambo"),
+                about: "Hey there! I'm Fiona, your go-to person in Kisumu for anything you need to get done. Picking up laundry, grabbing a last-minute gift, or delivering lunch—I've got you! I'm super flexible for short distances. Let's make your day easier!",
+                location: "Kisumu",
+                hourlyRate: "Ksh 200/hr",
+                vehicle: "On Foot",
+                responseTime: "10 minutes",
+                languages: ["English", "Swahili"],
+                reviews: [
+                    { reviewer: "Pius O.", text: "Fiona delivered my lunch hot and on time. Her service is fantastic and her attitude is so positive.", stars: 5 },
+                    { reviewer: "Mercy J.", text: "Very prompt and professional. I've used her multiple times for small errands around Kisumu.", stars: 5 }
+                ]
+            },
+            {
+                objectId: "runner5",
+                name: "Daniel Kimani",
+                email: "daniel.k@example.com",
+                phone: null, // HIDDEN FOR EXAMPLE
+                role: "runner",
+                isEnabled: true,
+                isavailable: true,
+                rating: 4.6,
+                tasksCompleted: getRandomTasks(),
+                imageurl: getRandomAvatarUrl("Daniel Kimani"),
+                about: "Hey, I'm Daniel! I'm based in Eldoret and ready to help you with any errand. Whether it's picking up prescriptions or delivering business supplies, my motorbike and I are on the case. I'm all about fast and safe service, and I'm always committed to doing a great job.",
+                location: "Eldoret",
+                hourlyRate: "Ksh 480/hr",
+                vehicle: "Motorbike",
+                responseTime: "12 minutes",
+                languages: ["English", "Swahili", "Kalenjin"],
+                reviews: [
+                    { reviewer: "Joyce K.", text: "Daniel is highly dependable. He delivered a crucial document for me on a tight deadline.", stars: 4.5 },
+                    { reviewer: "Mark W.", text: "I've used him for my business deliveries and he's always on time. Highly recommend his services.", stars: 5 }
+                ]
+            },
+            {
+                objectId: "runner6",
+                name: "Aisha Mohammed",
+                email: "aisha.m@example.com",
+                phone: null, // HIDDEN FOR EXAMPLE
+                role: "runner",
+                isEnabled: true,
+                isavailable: true,
+                rating: 5.0,
+                tasksCompleted: getRandomTasks(),
+                imageurl: getRandomAvatarUrl("Aisha Mohammed"),
+                about: "My passion is helping others, and as a runner, I get to do that every day. I'm new to the platform but have years of experience with local errands. I focus on personalized service, treating every task as if it were my own. I have a reliable car that is perfect for larger or more sensitive items.",
+                location: "Nakuru",
+                hourlyRate: "Ksh 550/hr",
+                vehicle: "Car",
+                responseTime: "15 minutes",
+                languages: ["English", "Swahili"],
+                reviews: [
+                    { reviewer: "David T.", text: "Aisha is wonderful! She went above and beyond for my delivery. A true professional.", stars: 5 },
+                    { reviewer: "Lillian B.", text: "Such a kind and helpful runner. She handled a fragile item with great care.", stars: 5 }
+                ]
+            },
+            {
+                objectId: "runner7",
+                name: "Chris Njoroge",
+                email: "chris.n@example.com",
+                phone: null, // HIDDEN FOR EXAMPLE
+                role: "runner",
+                isEnabled: true,
+                isavailable: true,
+                rating: 4.7,
+                tasksCompleted: getRandomTasks(),
+                imageurl: getRandomAvatarUrl("Chris Njoroge"),
+                about: "A seasoned runner with extensive knowledge of Nairobi's city layout. I can navigate traffic like a pro to get your errand done in record time. I'm perfect for urgent and high-priority tasks. My motorbike is my secret weapon against traffic!",
+                location: "Nairobi (CBD)",
+                hourlyRate: "Ksh 500/hr",
+                vehicle: "Motorbike",
+                responseTime: "8 minutes",
+                languages: ["English", "Swahili"],
+                reviews: [
+                    { reviewer: "Victor M.", text: "Incredibly fast! Chris got my documents across town faster than I thought was possible.", stars: 5 },
+                    { reviewer: "Naomi O.", text: "His knowledge of the city is unmatched. Great service.", stars: 4.5 }
+                ]
+            },
+            {
+                objectId: "runner8",
+                name: "Purity Wanjiru",
+                email: "purity.w@example.com",
+                phone: null, // HIDDEN FOR EXAMPLE
+                role: "runner",
+                isEnabled: true,
+                isavailable: false,
+                rating: 4.9,
+                tasksCompleted: getRandomTasks(),
+                imageurl: getRandomAvatarUrl("Purity Wanjiru"),
+                about: "Hi! I'm Purity, and I'm all about making your life easier with my friendly errand service. Need me to pick up a cake, some flowers, or a special gift? I handle every task with care. My service is ideal for local delivery of small, fragile items. I'm usually available on weekends, just book in advance!",
+                location: "Nairobi (Runda)",
+                hourlyRate: "Ksh 220/hr",
+                vehicle: "On Foot",
+                responseTime: "N/A (pre-booked only)",
+                languages: ["English", "Swahili", "Kikuyu"],
+                reviews: [
+                    { reviewer: "Talia H.", text: "Purity helped me with a surprise gift delivery. She was wonderful and very discreet.", stars: 5 },
+                    { reviewer: "Leo N.", text: "Reliable and great at communicating. Highly recommended for sensitive tasks.", stars: 5 }
+                ]
+            },
+            {
+                objectId: "runner9",
+                name: "David Kipkoech",
+                email: "david.k@example.com",
+                phone: null, // HIDDEN FOR EXAMPLE
+                role: "runner",
+                isEnabled: true,
+                isavailable: true,
+                rating: 4.7,
+                tasksCompleted: getRandomTasks(),
+                imageurl: getRandomAvatarUrl("David Kipkoech"),
+                about: "I'm a friendly and reliable guy in Nakuru. I'm always up for a quick errand or a bigger job. With my motorbike, I can zip through traffic to get your stuff to you fast. Let me handle the heavy lifting so you don't have to!",
+                location: "Nakuru",
+                hourlyRate: "Ksh 450/hr",
+                vehicle: "Motorbike",
+                responseTime: "15 minutes",
+                languages: ["English", "Swahili", "Kalenjin"],
+                reviews: [
+                    { reviewer: "Sam L.", text: "David was very professional and delivered my package on time. Great service!", stars: 4.5 }
+                ]
+            },
+            {
+                objectId: "runner10",
+                name: "Wanjiku Mwangi",
+                email: "wanjiku.m@example.com",
+                phone: null, // HIDDEN FOR EXAMPLE
+                role: "runner",
+                isEnabled: true,
+                isavailable: true,
+                rating: 5.0,
+                tasksCompleted: getRandomTasks(),
+                imageurl: getRandomAvatarUrl("Wanjiku Mwangi"),
+                about: "Hi there! I'm Wanjiku, your go-to errand runner in Nairobi's CBD. Need something picked up from a shop or documents delivered urgently? I'm your person! I'm super fast on foot and love helping people save time.",
+                location: "Nairobi (CBD)",
+                hourlyRate: "Ksh 200/hr",
+                vehicle: "On Foot",
+                responseTime: "10 minutes",
+                languages: ["English", "Swahili", "Kikuyu"],
+                reviews: [
+                    { reviewer: "Grace O.", text: "Wanjiku is a lifesaver for my urgent deliveries around the city. So fast!", stars: 5 }
+                ]
+            },
+            {
+                objectId: "runner11",
+                name: "Ken Omondi",
+                email: "ken.o@example.com",
+                phone: null, // HIDDEN FOR EXAMPLE
+                role: "runner",
+                isEnabled: true,
+                isavailable: false,
+                rating: 4.8,
+                tasksCompleted: getRandomTasks(),
+                imageurl: getRandomAvatarUrl("Ken Omondi"),
+                about: "Greetings from Kisumu! I'm a professional runner with a strong focus on security and discretion. I have a car, which is great for sensitive deliveries and larger items. I am committed to providing top-notch service every time.",
+                location: "Kisumu",
+                hourlyRate: "Ksh 580/hr",
+                vehicle: "Car",
+                responseTime: "25 minutes",
+                languages: ["English", "Swahili", "Luo"],
+                reviews: [
+                    { reviewer: "Peter M.", text: "Ken was fantastic. He handled a very important delivery for my business with professionalism.", stars: 5 }
+                ]
+            },
+            {
+                objectId: "runner12",
+                name: "Judy Wambui",
+                email: "judy.w@example.com",
+                phone: null, // HIDDEN FOR EXAMPLE
+                role: "runner",
+                isEnabled: true,
+                isavailable: true,
+                rating: 4.5,
+                tasksCompleted: getRandomTasks(),
+                imageurl: getRandomAvatarUrl("Judy Wambui"),
+                about: "Hey! I'm Judy, a runner in Eldoret who loves a challenge. Whether it's a complicated grocery run or a special delivery, I'll get it done with a smile. I'm quick, trustworthy, and ready to help!",
+                location: "Eldoret",
+                hourlyRate: "Ksh 400/hr",
+                vehicle: "Motorbike",
+                responseTime: "15 minutes",
+                languages: ["English", "Swahili", "Kikuyu"],
+                reviews: [
+                    { reviewer: "Jane K.", text: "Judy is so cheerful and helpful. She made my grocery trip so easy!", stars: 4.5 }
+                ]
+            },
+            {
+                objectId: "runner13",
+                name: "Peter Kamau",
+                email: "peter.k@example.com",
+                phone: null, // HIDDEN FOR EXAMPLE
+                role: "runner",
+                isEnabled: true,
+                isavailable: true,
+                rating: 4.9,
+                tasksCompleted: getRandomTasks(),
+                imageurl: getRandomAvatarUrl("Peter Kamau"),
+                about: "With years of experience and a reliable van, I specialize in logistics and large-item deliveries around Nairobi. My service is perfect for business supplies, furniture, and big moves. Punctuality and efficiency are my priorities.",
+                location: "Nairobi (Industrial Area)",
+                hourlyRate: "Ksh 800/hr",
+                vehicle: "Van",
+                responseTime: "45 minutes",
+                languages: ["English", "Swahili"],
+                reviews: [
+                    { reviewer: "Mark T.", text: "Peter moved some office equipment for us. He was fast, careful, and very professional.", stars: 5 }
+                ]
+            },
+            {
+                objectId: "runner14",
+                name: "Njeri Kariuki",
+                email: "njeri.k@example.com",
+                phone: null, // HIDDEN FOR EXAMPLE
+                role: "runner",
+                isEnabled: true,
+                isavailable: true,
+                rating: 4.8,
+                tasksCompleted: getRandomTasks(),
+                imageurl: getRandomAvatarUrl("Njeri Kariuki"),
+                about: "Your friendly and dependable runner in Thika. I'm all about making life simpler for you. From pharmacy pickups to paying bills, I'm here to handle your tasks so you can focus on what matters.",
+                location: "Thika",
+                hourlyRate: "Ksh 350/hr",
+                vehicle: "Motorbike",
+                responseTime: "12 minutes",
+                languages: ["English", "Swahili", "Kikuyu"],
+                reviews: [
+                    { reviewer: "Ben N.", text: "Njeri is my go-to person for all my errands in Thika. She's so reliable!", stars: 5 }
+                ]
+            },
+            {
+                objectId: "runner15",
+                name: "Collins Ochieng",
+                email: "collins.o@example.com",
+                phone: null, // HIDDEN FOR EXAMPLE
+                role: "runner",
+                isEnabled: true,
+                isavailable: true,
+                rating: 4.9,
+                tasksCompleted: getRandomTasks(),
+                imageurl: getRandomAvatarUrl("Collins Ochieng"),
+                about: "I am a professional and seasoned runner in Mombasa. I am known for my meticulous attention to detail and careful handling of items. I use a motorbike to ensure swift, efficient, and secure deliveries.",
+                location: "Mombasa (CBD)",
+                hourlyRate: "Ksh 480/hr",
+                vehicle: "Motorbike",
+                responseTime: "10 minutes",
+                languages: ["English", "Swahili", "Luo"],
+                reviews: [
+                    { reviewer: "Amina J.", text: "Collins is the best. He delivered a very fragile item for me and handled it with great care.", stars: 5 }
+                ]
+            },
+            {
+                objectId: "runner16",
+                name: "Lydia Cheptoo",
+                email: "lydia.c@example.com",
+                phone: null, // HIDDEN FOR EXAMPLE
+                role: "runner",
+                isEnabled: true,
+                isavailable: false,
+                rating: 4.6,
+                tasksCompleted: getRandomTasks(),
+                imageurl: getRandomAvatarUrl("Lydia Cheptoo"),
+                about: "A dedicated runner in Nakuru, I offer swift and secure errand services with a personal touch. I specialize in delivering documents and other small packages. You can count on me to be on time, every time.",
+                location: "Nakuru",
+                hourlyRate: "Ksh 300/hr",
+                vehicle: "On Foot",
+                responseTime: "15 minutes",
+                languages: ["English", "Swahili", "Kalenjin"],
+                reviews: [
+                    { reviewer: "Joshua M.", text: "Lydia is super reliable. She delivered my documents to the office right on schedule.", stars: 4.5 }
+                ]
+            },
+            {
+                objectId: "runner17",
+                name: "Moses Otieno",
+                email: "moses.o@example.com",
+                phone: null, // HIDDEN FOR EXAMPLE
+                role: "runner",
+                isEnabled: true,
+                isavailable: true,
+                rating: 4.7,
+                tasksCompleted: getRandomTasks(),
+                imageurl: getRandomAvatarUrl("Moses Otieno"),
+                about: "I’m a hardworking runner in Kisumu who prides himself on excellent communication and great service. I use a bicycle to navigate the city, which means I'm eco-friendly and fast! I'm always ready to help.",
+                location: "Kisumu",
+                hourlyRate: "Ksh 250/hr",
+                vehicle: "Bicycle",
+                responseTime: "15 minutes",
+                languages: ["English", "Swahili", "Luo"],
+                reviews: [
+                    { reviewer: "Brenda A.", text: "Moses is the best! His service is excellent and he's a very kind person.", stars: 5 }
+                ]
+            },
+            {
+                objectId: "runner18",
+                name: "Grace Auma",
+                email: "grace.a@example.com",
+                phone: null, // HIDDEN FOR EXAMPLE
+                role: "runner",
+                isEnabled: true,
+                isavailable: true,
+                rating: 4.9,
+                tasksCompleted: getRandomTasks(),
+                imageurl: getRandomAvatarUrl("Grace Auma"),
+                about: "Hi, I'm Grace! I'm a new but highly enthusiastic runner based in Nairobi. My mission is to provide you with a hassle-free experience. I'm great with grocery shopping and helping with household errands. Let's get things done together!",
+                location: "Nairobi (Ruiru)",
+                hourlyRate: "Ksh 380/hr",
+                vehicle: "On Foot",
+                responseTime: "20 minutes",
+                languages: ["English", "Swahili"],
+                reviews: [
+                    { reviewer: "Teresia M.", text: "Grace helped me with my weekly shopping. She was so quick and helpful. Will definitely use her again.", stars: 5 }
+                ]
+            },
+            {
+                objectId: "runner19",
+                name: "Samson Maina",
+                email: "samson.m@example.com",
+                phone: null, // HIDDEN FOR EXAMPLE
+                role: "runner",
+                isEnabled: true,
+                isavailable: true,
+                rating: 4.6,
+                tasksCompleted: getRandomTasks(),
+                imageurl: getRandomAvatarUrl("Samson Maina"),
+                about: "I'm Samson, a runner with a van, serving the Eldoret area. I'm the perfect choice for moving larger items, from household goods to office supplies. My commitment is to get your items where they need to go, safely and efficiently.",
+                location: "Eldoret",
+                hourlyRate: "Ksh 750/hr",
+                vehicle: "Van",
+                responseTime: "30 minutes",
+                languages: ["English", "Swahili"],
+                reviews: [
+                    { reviewer: "Patrick L.", text: "Used Samson for a small office move. Very impressed with his professionalism and efficiency.", stars: 4.5 }
+                ]
+            },
+            {
+                objectId: "runner20",
+                name: "Jane Akinyi",
+                email: "jane.a@example.com",
+                phone: null, // HIDDEN FOR EXAMPLE
+                role: "runner",
+                isEnabled: true,
+                isavailable: true,
+                rating: 4.8,
+                tasksCompleted: getRandomTasks(),
+                imageurl: getRandomAvatarUrl("Jane Akinyi"),
+                about: "Based in Kakamega, I am a trustworthy and fast runner. I specialize in local pickups and deliveries. I am always happy to help with any task, big or small!",
+                location: "Kakamega",
+                hourlyRate: "Ksh 300/hr",
+                vehicle: "Bicycle",
+                responseTime: "15 minutes",
+                languages: ["English", "Swahili", "Luhya"],
+                reviews: [
+                    { reviewer: "Daniel O.", text: "Jane is fantastic. She’s quick, efficient, and very friendly. I highly recommend her.", stars: 5 }
+                ]
+            },
+            {
+                objectId: "runner21",
+                name: "Elias Makau",
+                email: "elias.m@example.com",
+                phone: null, // HIDDEN FOR EXAMPLE
+                role: "runner",
+                isEnabled: true,
+                isavailable: true,
+                rating: 4.7,
+                tasksCompleted: getRandomTasks(),
+                imageurl: getRandomAvatarUrl("Elias Makau"),
+                about: "I’m a punctual and reliable runner in Machakos. I use a motorbike to beat traffic and deliver your items on time, every time. I am an excellent choice for urgent deliveries.",
+                location: "Machakos",
+                hourlyRate: "Ksh 400/hr",
+                vehicle: "Motorbike",
+                responseTime: "10 minutes",
+                languages: ["English", "Swahili", "Kamba"],
+                reviews: [
+                    { reviewer: "Felicity G.", text: "Elias is very fast and reliable. My documents were delivered without any issues.", stars: 4.5 }
+                ]
+            },
+            {
+                objectId: "runner22",
+                name: "Sharon Wanjala",
+                email: "sharon.w@example.com",
+                phone: null, // HIDDEN FOR EXAMPLE
+                role: "runner",
+                isEnabled: true,
+                isavailable: true,
+                rating: 4.9,
+                tasksCompleted: getRandomTasks(),
+                imageurl: getRandomAvatarUrl("Sharon Wanjala"),
+                about: "Your friendly neighborhood runner in Kitale! I love helping people with their daily tasks, from picking up laundry to grabbing a quick bite. I am known for my positive attitude and can-do spirit.",
+                location: "Kitale",
+                hourlyRate: "Ksh 320/hr",
+                vehicle: "On Foot",
+                responseTime: "15 minutes",
+                languages: ["English", "Swahili"],
+                reviews: [
+                    { reviewer: "Joseph O.", text: "Sharon is a star! She’s always happy and ready to help. Great service every time.", stars: 5 }
+                ]
+            },
+            {
+                objectId: "runner23",
+                name: "Robert Kiplagat",
+                email: "robert.k@example.com",
+                phone: null, // HIDDEN FOR EXAMPLE
+                role: "runner",
+                isEnabled: true,
+                isavailable: false,
+                rating: 4.8,
+                tasksCompleted: getRandomTasks(),
+                imageurl: getRandomAvatarUrl("Robert Kiplagat"),
+                about: "A professional runner with extensive knowledge of the Nairobi area. My car allows me to handle sensitive and valuable items with care. I am available for pre-booked tasks and committed to providing a secure service.",
+                location: "Nairobi (Lavington)",
+                hourlyRate: "Ksh 650/hr",
+                vehicle: "Car",
+                responseTime: "N/A (pre-booked only)",
+                languages: ["English", "Swahili", "Kalenjin"],
+                reviews: [
+                    { reviewer: "Catherine A.", text: "Robert handled a very valuable delivery for me. His service was impeccable and discreet.", stars: 5 }
+                ]
+            },
+            {
+                objectId: "runner24",
+                name: "Lucy Moraa",
+                email: "lucy.m@example.com",
+                phone: null, // HIDDEN FOR EXAMPLE
+                role: "runner",
+                isEnabled: true,
+                isavailable: true,
+                rating: 4.6,
+                tasksCompleted: getRandomTasks(),
+                imageurl: getRandomAvatarUrl("Lucy Moraa"),
+                about: "Hi, I’m Lucy! I’m a student runner in Kisii, and I can help with a variety of tasks. I’m especially good at school-related errands, like picking up books or documents. I am flexible and always available on short notice.",
+                location: "Kisii",
+                hourlyRate: "Ksh 250/hr",
+                vehicle: "On Foot",
+                responseTime: "10 minutes",
+                languages: ["English", "Swahili", "Ekegusii"],
+                reviews: [
+                    { reviewer: "David M.", text: "Lucy helped me with a last-minute school document delivery. She was a lifesaver!", stars: 5 }
+                ]
+            },
+            {
+                objectId: "runner25",
+                name: "James Mwangi",
+                email: "james.m@example.com",
+                phone: null, // HIDDEN FOR EXAMPLE
+                role: "runner",
+                isEnabled: true,
+                isavailable: true,
+                rating: 4.7,
+                tasksCompleted: getRandomTasks(),
+                imageurl: getRandomAvatarUrl("James Mwangi"),
+                about: "A highly efficient and experienced runner in Meru. I use a motorbike for quick deliveries and am known for my reliability. I’ve handled over 200 tasks and am ready for your next one!",
+                location: "Meru",
+                hourlyRate: "Ksh 450/hr",
+                vehicle: "Motorbike",
+                responseTime: "12 minutes",
+                languages: ["English", "Swahili", "Kimeru"],
+                reviews: [
+                    { reviewer: "Emily N.", text: "James is my go-to runner in Meru. He's always on time and gets the job done perfectly.", stars: 5 }
+                ]
+            },
+            {
+                objectId: "runner26",
+                name: "Caroline Nanjala",
+                email: "caroline.n@example.com",
+                phone: null, // HIDDEN FOR EXAMPLE
+                role: "runner",
+                isEnabled: true,
+                isavailable: true,
+                rating: 4.9,
+                tasksCompleted: getRandomTasks(),
+                imageurl: getRandomAvatarUrl("Caroline Nanjala"),
+                about: "I'm a cheerful runner serving the Bungoma area. My main goal is to save you time and energy. I am a great choice for last-minute errands and small pickups. Let me know what you need, and I'll get it done!",
+                location: "Bungoma",
+                hourlyRate: "Ksh 280/hr",
+                vehicle: "Bicycle",
+                responseTime: "15 minutes",
+                languages: ["English", "Swahili"],
+                reviews: [
+                    { reviewer: "Mark W.", text: "Caroline is very friendly and efficient. She picked up my order quickly.", stars: 5 }
+                ]
+            },
+            {
+                objectId: "runner27",
+                name: "Daniel Otieno",
+                email: "daniel.o@example.com",
+                phone: null, // HIDDEN FOR EXAMPLE
+                role: "runner",
+                isEnabled: true,
+                isavailable: true,
+                rating: 4.8,
+                tasksCompleted: getRandomTasks(),
+                imageurl: getRandomAvatarUrl("Daniel Otieno"),
+                about: "A dedicated and trustworthy runner in Homa Bay. I am always on time and handle every task with great care. With my motorbike, I am able to navigate the city with ease.",
+                location: "Homa Bay",
+                hourlyRate: "Ksh 420/hr",
+                vehicle: "Motorbike",
+                responseTime: "10 minutes",
+                languages: ["English", "Swahili", "Luo"],
+                reviews: [
+                    { reviewer: "Stephen O.", text: "Daniel is highly dependable. He delivered my package safely and on time.", stars: 5 }
+                ]
+            },
+            {
+                objectId: "runner28",
+                name: "Mercy Njoki",
+                email: "mercy.n@example.com",
+                phone: null, // HIDDEN FOR EXAMPLE
+                role: "runner",
+                isEnabled: true,
+                isavailable: true,
+                rating: 5.0,
+                tasksCompleted: getRandomTasks(),
+                imageurl: getRandomAvatarUrl("Mercy Njoki"),
+                about: "Your dependable errand runner in Nyeri. I provide a wide range of services, including grocery shopping and personal deliveries. I am known for my attention to detail and excellent communication.",
+                location: "Nyeri",
+                hourlyRate: "Ksh 350/hr",
+                vehicle: "On Foot",
+                responseTime: "15 minutes",
+                languages: ["English", "Swahili", "Kikuyu"],
+                reviews: [
+                    { reviewer: "Teresia W.", text: "Mercy is fantastic! She's my go-to person for groceries and always picks the best items.", stars: 5 }
+                ]
+            },
+            {
+                objectId: "runner29",
+                name: "Esther Wambui",
+                email: "esther.w@example.com",
+                phone: null, // HIDDEN FOR EXAMPLE
+                role: "runner",
+                isEnabled: true,
+                isavailable: true,
+                rating: 4.7,
+                tasksCompleted: getRandomTasks(),
+                imageurl: getRandomAvatarUrl("Esther Wambui"),
+                about: "I am a reliable runner based in Kiambu. I offer a range of errand services, from document delivery to pharmacy pickups. I'm committed to providing a professional and timely service.",
+                location: "Kiambu",
+                hourlyRate: "Ksh 380/hr",
+                vehicle: "Motorbike",
+                responseTime: "15 minutes",
+                languages: ["English", "Swahili", "Kikuyu"],
+                reviews: [
+                    { reviewer: "John K.", text: "Esther is dependable and efficient. She's my first choice for any errands in Kiambu.", stars: 5 }
+                ]
+            },
+            {
+                objectId: "runner30",
+                name: "Bernard Mwenda",
+                email: "bernard.m@example.com",
+                phone: null, // HIDDEN FOR EXAMPLE
+                role: "runner",
+                isEnabled: true,
+                isavailable: false,
+                rating: 4.8,
+                tasksCompleted: getRandomTasks(),
+                imageurl: getRandomAvatarUrl("Bernard Mwenda"),
+                about: "A highly experienced runner with a reputation for tackling complex errands in Nairobi. I use a car for larger or more sensitive deliveries. Please book in advance as I'm usually busy!",
+                location: "Nairobi (Parklands)",
+                hourlyRate: "Ksh 600/hr",
+                vehicle: "Car",
+                responseTime: "40 minutes (pre-booked)",
+                languages: ["English", "Swahili", "Meru"],
+                reviews: [
+                    { reviewer: "Lucy N.", text: "Bernard is a true professional. He handled a complicated multi-stop errand for me flawlessly.", stars: 5 }
+                ]
+            }
+        ];
+
+
+        // --- DOM Elements ---
+        const runnersListDiv = document.getElementById('runners-list');
+        const noRunnersFoundDiv = document.getElementById('no-runners-found');
+        const fetchErrorDiv = document.getElementById('fetch-error');
+        const locationFilter = document.getElementById('location-filter');
+        const availabilityFilter = document.getElementById('availability-filter');
+        const sortBy = document.getElementById('sort-by');
+        const applyFiltersButton = document.getElementById('apply-filters');
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const backToTopButton = document.getElementById('back-to-top');
+
+        // Modal Elements
+        const runnerModal = document.getElementById('runner-modal');
+        const closeModalButton = document.querySelector('.close-button');
+        const modalRunnerPhoto = document.getElementById('modal-runner-photo');
+        const modalRunnerName = document.getElementById('modal-runner-name');
+        const modalAboutRunnerName = document.getElementById('modal-about-runner-name');
+        const modalRunnerRatingStars = document.getElementById('modal-runner-rating-stars');
+        const modalRunnerRatingValue = document.getElementById('modal-runner-rating-value');
+        const modalRunnerTasks = document.getElementById('modal-runner-tasks');
+        const modalRunnerAvailability = document.getElementById('modal-runner-availability');
+        const modalRunnerLocation = document.getElementById('modal-runner-location');
+        const modalRunnerMapLink = document.getElementById('modal-runner-map-link');
+        const modalRunnerBio = document.getElementById('modal-runner-bio');
+        const modalRunnerRate = document.getElementById('modal-runner-rate');
+        const modalRunnerVehicle = document.getElementById('modal-runner-vehicle');
+        const modalRunnerResponseTime = document.getElementById('modal-runner-response-time');
+        const modalRunnerLanguages = document.getElementById('modal-runner-languages');
+        const modalRunnerReviews = document.getElementById('modal-runner-reviews');
+        const modalCallNowBtn = document.getElementById('modal-call-now-btn');
+        const contactStatusMessage = document.getElementById('contact-status-message'); // NEW ELEMENT
+
+        // --- Helper: Get Profile Image URL ---
+        function getRunnerImageUrl(imageUrl, name) {
+            return imageUrl || getRandomAvatarUrl(name);
+        }
+
+        // --- Helper: Generate Star HTML ---
+        function generateStarRating(rating) {
+            let starsHtml = '';
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 >= 0.5;
+
+            for (let i = 0; i < fullStars; i++) {
+                starsHtml += '<svg class="w-5 h-5 text-gold fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>';
+            }
+            if (hasHalfStar) {
+                starsHtml += '<svg class="w-5 h-5 text-gold fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>';
+            }
+            return starsHtml;
+        }
+
+        // --- Display Runners Function ---
+        function displayRunners(runnersToDisplay) {
+            runnersListDiv.innerHTML = '';
+            runnersListDiv.classList.remove('hidden');
+
+            if (runnersToDisplay.length === 0) {
+                setStatusMessage('no_runners');
+                runnersListDiv.classList.add('hidden');
+                return;
+            } else {
+                setStatusMessage('success');
+            }
+
+            runnersToDisplay.forEach((runner, index) => {
+                const runnerCard = document.createElement('div');
+                runnerCard.className = `bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-200 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 cursor-pointer animate-fade-in-slide-up`;
+                runnerCard.style.animationDelay = `${index * 0.1}s`;
+                runnerCard.dataset.runnerId = runner.objectId;
+
+                const availabilityClass = runner.isavailable ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
+                const photoUrl = getRunnerImageUrl(runner.imageurl, runner.name);
+                const vehicleText = runner.vehicle === 'On Foot' ? 'On Foot' : runner.vehicle;
+
+                runnerCard.innerHTML = `
+                    <img src="${photoUrl}" alt="${runner.name}" class="w-24 h-24 rounded-full object-cover mb-4 border-2 border-gold shadow-md">
+                    <h3 class="text-xl font-bold text-maroon mb-1">${runner.name}</h3>
+                    <div class="flex items-center justify-center mb-2">
+                        ${generateStarRating(runner.rating || 0)}
+                        <span class="text-gray-700 font-medium ml-1">${(runner.rating || 0).toFixed(1)}</span>
+                        <span class="text-gray-500 text-sm ml-2">(${runner.tasksCompleted || 0} tasks)</span>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-2">${runner.location ? `Based in ${runner.location}` : 'Location not specified'}</p>
+                    <p class="text-xs font-semibold ${availabilityClass} px-3 py-1 rounded-full mt-2">${runner.isavailable ? 'Available Now' : 'Currently Unavailable'}</p>
+                    <p class="text-sm text-gray-600 italic mt-3 mb-4 line-clamp-3">${runner.about || 'This runner has not provided a bio yet.'}</p>
+                    <button class="book-now-btn bg-maroon text-white px-5 py-2 rounded-full font-semibold hover:bg-gold hover:text-maroon transition duration-300 shadow mt-auto w-full" data-phone="${runner.phone || ''}" data-name="${runner.name}">Book Now</button>
+                `;
+                runnersListDiv.appendChild(runnerCard);
+            });
+
+            document.querySelectorAll('.animate-fade-in-slide-up').forEach(element => {
+                element.addEventListener('click', (event) => {
+                    if (event.target.classList.contains('book-now-btn')) {
+                        return;
+                    }
+                    const runnerId = event.currentTarget.dataset.runnerId;
+                    openRunnerModal(runnerId);
+                });
+            });
+
+            document.querySelectorAll('.book-now-btn').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const phoneNumber = event.currentTarget.dataset.phone;
+                    const runnerName = event.currentTarget.dataset.name;
+                    
+                    // --- MODIFIED CARD BOOK NOW LOGIC ---
+                    if (phoneNumber && phoneNumber !== 'null') {
+                        alert(`To book with ${runnerName}, please call or WhatsApp this number: ${phoneNumber}`);
+                        window.location.href = `tel:${phoneNumber}`;
+                    } else {
+                        alert(`The runner, ${runnerName}, is currently on another errand or busy. Please check back later.`);
+                    }
+                    // --- END MODIFIED CARD BOOK NOW LOGIC ---
+                });
+            });
+        }
+
+        
+        
+        // --- Check if running locally ---
+        if (window.location.protocol === "file:") {
+            document.body.innerHTML = `
+                <div style="text-align:center; padding:3rem; font-family:sans-serif;">
+                    <h2 style="color:#7B1E3A;">⚠️ Supabase Connection Blocked</h2>
+                    <p style="font-size:1.1rem; color:#333;">This page is being opened directly from your device (<b>file://</b>).</p>
+                    <p style="color:#555;">Supabase cannot connect locally due to browser security. Please upload this file to a live host such as Netlify, Vercel, or your Truehost account (https://).</p>
+                </div>`;
+            throw new Error("Running locally — Supabase disabled.");
+        }
+// --- Supabase API Call (final version with OR filter) ---
+        async function fetchRunnersData() {
+            setStatusMessage('loading', 'Fetching active runners from Supabase...');
+            try {
+                const SUPABASE_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
+                const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
+                const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+                const { data, error } = await supabase
+                    .from("runners")
+                    .select("*")
+                    .or("subscription_status.eq.active,SubscriptionStatus.eq.active");
+
+                if (error) {
+                    console.error("Supabase fetch error:", error);
+                    setStatusMessage('fetch_error', 'Failed to load runners from Supabase.');
+                    runnersData = [...FAKE_RUNNERS_DATA];
+                    applyFiltersAndSort();
+                    return;
+                }
+
+                if (!data || data.length === 0) {
+                    setStatusMessage('no_runners', 'No active runners available.');
+                    runnersData = [...FAKE_RUNNERS_DATA];
+                    applyFiltersAndSort();
+                    return;
+                }
+
+                const supabaseRunners = data.map(u => ({
+                    objectId: u.id || ('sup_' + Math.random().toString(36).slice(2,9)),
+                    name: u.name || 'Unnamed Runner',
+                    email: u.email || 'N/A',
+                    phone: u.phone || 'N/A',
+                    location: u.location || 'Unknown',
+                    profilepicture: u.profilepicture || '',
+                    about: u.about || '',
+                    availability: u.availability || 'unavailable',
+                    subscription_status: u.subscription_status || u.SubscriptionStatus || 'inactive',
+                    imageurl: u.profilepicture || `https://api.dicebear.com/8.x/initials/svg?seed=${encodeURIComponent(u.name || 'Runner')}`
+                }));
+
+                runnersData = [...supabaseRunners, ...FAKE_RUNNERS_DATA];
+                setStatusMessage('success', `Loaded ${supabaseRunners.length} active runner(s) from Supabase.`);
+                applyFiltersAndSort();
+            } catch (error) {
+                console.error("Supabase connection error:", error);
+                setStatusMessage('fetch_error', 'Connection error fetching runners.');
+                runnersData = [...FAKE_RUNNERS_DATA];
+                applyFiltersAndSort();
+            }
+        }
+// --- Filter and Sort Logic (fixed) ---
+        function applyFiltersAndSort() {
+            let filteredRunners = [...runnersData];
+
+            // 1. Filter by Location (case-insensitive, partial match allowed)
+            const selectedLocation = String(locationFilter.value || '').trim().toLowerCase();
+            if (selectedLocation !== 'all' && selectedLocation !== '') {
+                filteredRunners = filteredRunners.filter(runner => {
+                    if (!runner.location) return false;
+                    // normalize and allow partial matches (e.g., "nairobi" matches "Nairobi, Kenya")
+                    return String(runner.location).toLowerCase().includes(selectedLocation);
+                });
+            }
+
+            // 2. Filter by Availability (handles boolean true and "true" string)
+            const selectedAvailability = String(availabilityFilter.value || '').trim();
+            if (selectedAvailability === 'Available') {
+                filteredRunners = filteredRunners.filter(runner => {
+                    const val = runner.isavailable;
+                    // treat true boolean or "true" (case-insensitive) as available
+                    return val === true || String(val).toLowerCase() === 'true';
+                });
+            }
+
+            // 3. Sort
+            const selectedSort = sortBy.value;
+            filteredRunners.sort((a, b) => {
+                if (selectedSort === 'rating') {
+                    return (b.rating || 0) - (a.rating || 0);
+                } else if (selectedSort === 'tasksCompleted') {
+                    return (b.tasksCompleted || 0) - (a.tasksCompleted || 0);
+                }
+                return 0;
+            });
+
+            setTimeout(() => {
+                displayRunners(filteredRunners);
+            }, 700);
+        }
+
+        // --- Status Handling Functions ---
+        function setStatusMessage(type, message = null) {
+            noRunnersFoundDiv.classList.add('hidden');
+            fetchErrorDiv.classList.add('hidden');
+            runnersListDiv.innerHTML = '';
+            runnersListDiv.classList.remove('hidden');
+
+            if (type === 'loading') {
+                runnersListDiv.innerHTML = `
+                    <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-200"><div class="skeleton-circle mb-4 skeleton"></div><div class="skeleton-text long skeleton"></div><div class="skeleton-text short skeleton"></div><div class="skeleton-text skeleton w-full mt-3"></div><div class="skeleton-text skeleton w-1/2 mt-2"></div><div class="skeleton-text skeleton w-full h-8 mt-4"></div></div>
+                    <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-200"><div class="skeleton-circle mb-4 skeleton"></div><div class="skeleton-text long skeleton"></div><div class="skeleton-text short skeleton"></div><div class="skeleton-text skeleton w-full mt-3"></div><div class="skeleton-text skeleton w-1/2 mt-2"></div><div class="skeleton-text skeleton w-full h-8 mt-4"></div></div>
+                    <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-200 hidden lg:flex"><div class="skeleton-circle mb-4 skeleton"></div><div class="skeleton-text long skeleton"></div><div class="skeleton-text short skeleton"></div><div class="skeleton-text skeleton w-full mt-3"></div><div class="skeleton-text skeleton w-1/2 mt-2"></div><div class="skeleton-text skeleton w-full h-8 mt-4"></div></div>
+                    <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-200 hidden xl:flex"><div class="skeleton-circle mb-4 skeleton"></div><div class="skeleton-text long skeleton"></div><div class="skeleton-text short skeleton"></div><div class="skeleton-text skeleton w-full mt-3"></div><div class="skeleton-text skeleton w-1/2 mt-2"></div><div class="skeleton-text skeleton w-full h-8 mt-4"></div></div>
+                `;
+            } else if (type === 'no_runners') {
+                noRunnersFoundDiv.classList.remove('hidden');
+            } else if (type === 'fetch_error') {
+                fetchErrorDiv.classList.remove('hidden');
+            }
+        }
+
+        // --- Modal Functions ---
+        function openRunnerModal(runnerId) {
+            const runner = runnersData.find(r => r.objectId === runnerId);
+            if (!runner) return;
+
+            const photoUrl = getRunnerImageUrl(runner.imageurl, runner.name);
+            modalRunnerPhoto.src = photoUrl;
+            modalRunnerName.textContent = runner.name;
+            modalAboutRunnerName.textContent = runner.name;
+            modalRunnerRatingStars.innerHTML = generateStarRating(runner.rating || 0);
+            modalRunnerRatingValue.textContent = (runner.rating || 0).toFixed(1);
+            modalRunnerTasks.textContent = `(${runner.tasksCompleted || 0} tasks completed)`;
+            modalRunnerAvailability.textContent = runner.isavailable ? 'Available Now' : 'Currently Unavailable';
+
+            const availabilityClass = runner.isavailable ? 'bg-green-50 text-green-700 border border-green-300' : 'bg-red-50 text-red-700 border border-red-300';
+            modalRunnerAvailability.className = `text-md font-bold px-4 py-1 rounded-full inline-block mt-2 ${availabilityClass}`;
+
+            modalRunnerLocation.textContent = runner.location || 'Not specified';
+            modalRunnerMapLink.href = '#';
+            modalRunnerMapLink.classList.add('hidden');
+
+            modalRunnerBio.textContent = runner.about || 'This runner has not provided a bio yet.';
+
+            modalRunnerRate.textContent = runner.hourlyRate || 'Varies by task';
+
+            const vehicleText = runner.vehicle === 'On Foot' ? 'On Foot' : runner.vehicle;
+            modalRunnerVehicle.textContent = vehicleText;
+
+            modalRunnerResponseTime.textContent = runner.responseTime || 'N/A';
+            modalRunnerLanguages.textContent = (runner.languages || []).join(', ') || 'N/A';
+
+            modalRunnerReviews.innerHTML = '';
+            if (runner.reviews && runner.reviews.length > 0) {
+                runner.reviews.forEach(review => {
+                    const reviewDiv = document.createElement('div');
+                    reviewDiv.className = 'bg-gray-50 p-4 rounded-lg border border-gray-200';
+                    reviewDiv.innerHTML = `
+                        <div class="flex items-center mb-2">
+                            <div class="flex mr-2">${generateStarRating(review.stars)}</div>
+                            <span class="font-semibold text-gray-800">${review.reviewer}</span>
+                        </div>
+                        <p class="text-sm text-gray-700 leading-relaxed">${review.text}</p>
+                    `;
+                    modalRunnerReviews.appendChild(reviewDiv);
+                });
+            } else {
+                modalRunnerReviews.innerHTML = '<p class="text-gray-500 text-sm italic">No reviews yet. Be the first to review!</p>';
+            }
+            
+            // --- MODIFIED MODAL CONTACT LOGIC ---
+            if (runner.phone && runner.phone !== 'null') {
+                modalCallNowBtn.textContent = 'Call Now';
+                contactStatusMessage.textContent = "We'll connect you directly to the runner to discuss your errand.";
+                modalCallNowBtn.onclick = () => {
+                    alert(`To contact ${runner.name}, please call this number: ${runner.phone}`);
+                    window.location.href = `tel:${runner.phone}`;
+                    closeRunnerModal();
+                };
+                modalCallNowBtn.classList.remove('bg-gray-400', 'cursor-not-allowed');
+                modalCallNowBtn.classList.add('bg-gold', 'hover:bg-maroon');
+                modalCallNowBtn.disabled = false;
+            } else {
+                modalCallNowBtn.textContent = 'Contact Runner';
+                contactStatusMessage.textContent = 'The runner is currently on another errand or busy. Please check back later.';
+                modalCallNowBtn.onclick = () => {
+                    alert('The runner is currently on another errand or busy. Please check back later.');
+                    closeRunnerModal();
+                };
+                modalCallNowBtn.classList.remove('bg-gold', 'hover:bg-maroon');
+                modalCallNowBtn.classList.add('bg-gray-400', 'cursor-not-allowed');
+                modalCallNowBtn.disabled = true;
+            }
+            // --- END MODIFIED MODAL CONTACT LOGIC ---
+
+            runnerModal.style.display = 'flex';
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function closeRunnerModal() {
+            runnerModal.style.display = 'none';
+            document.body.classList.remove('overflow-hidden');
+            modalCallNowBtn.onclick = null;
+        }
+
+        // --- Event Listeners ---
+        applyFiltersButton.addEventListener('click', applyFiltersAndSort);
+        locationFilter.addEventListener('change', applyFiltersAndSort);
+        availabilityFilter.addEventListener('change', applyFiltersAndSort);
+        sortBy.addEventListener('change', applyFiltersAndSort);
+
+        // Modal close listeners
+        closeModalButton.addEventListener('click', closeRunnerModal);
+        runnerModal.addEventListener('click', (event) => {
+            if (event.target === runnerModal) {
+                closeRunnerModal();
+            }
+        });
+
+        // Mobile menu toggle
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+        });
+
+        // Back to Top button logic
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopButton.classList.remove('hidden');
+            } else {
+                backToTopButton.classList.add('hidden');
+            }
+        });
+
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // --- Initial Page Load ---
+        fetchRunnersData();
+    });
+
+</script> 
+ </body>
+ </html>
