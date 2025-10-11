@@ -87,30 +87,45 @@
       setTimeout(() => window.location.href = "login.html", 1500);
     }
 
-    async function loadProfile(authUser) {
+    async function loadProfile() {
+      const email = localStorage.getItem('client_email');
+      if (!email) {
+        redirectToLogin("No user info found. Redirecting to login...");
+        return;
+      }
+
       profileDiv.innerHTML = `<div class="spinner"></div>`;
       errorDiv.textContent = "";
-      const userId = authUser.id;
 
       try {
-        const { data: clientProfile, error: profileError } = await supabase
+        // Fetch client profile from 'users' table
+        const { data: client, error: clientError } = await supabase
           .from('users')
-          .select('full_name, email, phone') 
-          .eq('auth_id', userId)
+          .select('id, full_name, email, phone')
+          .eq('email', email)
           .single();
 
-        if (profileError) {
-          console.error("Profile fetch error:", profileError);
-          errorDiv.textContent = "Could not load client details. Check the 'users' RLS Policy.";
+        if (clientError || !client) {
+          console.error("Client fetch error:", clientError);
+          redirectToLogin("User not found. Redirecting to login...");
           return;
         }
 
-        const user = { ...authUser, ...clientProfile };
-        displayProfile(user);
+        displayProfile(client);
+
+        // Fetch active runners from 'runners' table
+        const { data: runners, error: runnersError } = await supabase
+          .from('runners')
+          .select('id, full_name, email, phone, status')
+          .eq('status', 'active');
+
+        if (runnersError) console.warn("Runners fetch error:", runnersError);
+
+        console.log("Active runners:", runners);
 
       } catch (err) {
-        console.error("Critical error loading profile:", err);
-        errorDiv.textContent = "Unexpected error during profile load.";
+        console.error("Error loading profile:", err);
+        errorDiv.textContent = "Unexpected error fetching profile.";
       }
     }
 
@@ -141,6 +156,7 @@
           </div>
         </div>
       `;
+
       document.getElementById("editBtn").addEventListener("click", () => enableEdit(user));
     }
 
@@ -172,23 +188,28 @@
           </div>
         </div>
       `;
+
       document.getElementById("cancelBtn").addEventListener("click", () => displayProfile(user));
+
       document.getElementById("saveBtn").addEventListener("click", async () => {
         const updatedFields = {
-          full_name: document.getElementById("nameInput").value.trim(), 
+          full_name: document.getElementById("nameInput").value.trim(),
           phone: document.getElementById("phoneInput").value.trim()
         };
         try {
           const { data: updatedData, error } = await supabase
             .from('users')
             .update(updatedFields)
-            .eq('auth_id', user.id)
+            .eq('email', user.email)
             .select('full_name, email, phone')
             .single();
+
           if (error) throw error;
+
           displayProfile({ ...user, ...updatedData });
           errorDiv.textContent = "Profile updated successfully! ✅";
           setTimeout(() => errorDiv.textContent = "", 3000);
+
         } catch (err) {
           console.error("Error updating profile:", err);
           errorDiv.textContent = "Failed to update profile. Check RLS Policy (UPDATE).";
@@ -196,41 +217,22 @@
       });
     }
 
-    logoutBtn.addEventListener("click", async () => {
-      try { await supabase.auth.signOut(); } catch (err) { console.warn(err); }
+    logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem('client_email');
       window.location.href = "login.html";
     });
 
     exploreBtn.addEventListener("click", () => window.location.href = "runners.html");
 
-    // ---------- FIXED SESSION CHECK ----------
-    async function initProfile() {
-      try {
-        const { data: { user }, error } = await supabase.auth.getUser();
-
-        if (error || !user) {
-          redirectToLogin("Session expired or no user found. Redirecting to login...");
-          return;
-        }
-
-        loadProfile(user);
-
-        supabase.auth.onAuthStateChange((event, session) => {
-          if (event === 'SIGNED_OUT') {
-            redirectToLogin("You have been logged out. Redirecting to login...");
-          }
-        });
-
-      } catch (err) {
-        console.error("Auth check failed:", err);
-        redirectToLogin("Session error. Redirecting to login...");
-      }
-    }
-
-    initProfile();
+    // ---------- INITIALIZE ----------
+    loadProfile();
   </script>
 </body>
 </html>
+
+
+
+
 
 
 
