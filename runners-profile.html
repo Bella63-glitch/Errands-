@@ -6,53 +6,23 @@
 <title>Runner Profile</title>
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root {
-    --maroon: #7B1E3A;
-    --gold: #FFD700;
-}
+:root { --maroon: #7B1E3A; --gold: #FFD700; }
 .bg-maroon { background-color: var(--maroon); }
 .text-maroon { color: var(--maroon); }
 .text-gold { color: var(--gold); }
 .bg-gold { background-color: var(--gold); }
 .bg-maroon-dark { background-color: #66182f; }
-.profile-card {
-    background-color: #ffffff;
-    border-radius: 1rem;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    padding: 2rem;
-}
+.profile-card { background-color: #ffffff; border-radius: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 2rem; }
 .menu { display: none; }
 .menu.active { display: block; }
 .hamburger { cursor: pointer; font-size: 1.5rem; }
-
-/* Custom Button Styles */
-.custom-btn {
-    font-weight: bold;
-    padding: 0.75rem 2rem;
-    border-radius: 9999px; /* full-rounded */
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
-.custom-btn-primary {
-    background-color: var(--maroon);
-    color: var(--gold);
-}
-.custom-btn-primary:hover {
-    background-color: var(--gold);
-    color: var(--maroon);
-    box-shadow: 0 6px 8px rgba(0,0,0,0.15);
-}
-.custom-btn-secondary {
-    background-color: #e5e7eb;
-    color: #4b5563;
-}
-.custom-btn-secondary:hover {
-    background-color: #d1d5db;
-}
+.custom-btn { font-weight: bold; padding: 0.75rem 2rem; border-radius: 9999px; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 0.05em; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.custom-btn-primary { background-color: var(--maroon); color: var(--gold); }
+.custom-btn-primary:hover { background-color: var(--gold); color: var(--maroon); box-shadow: 0 6px 8px rgba(0,0,0,0.15); }
+.custom-btn-secondary { background-color: #e5e7eb; color: #4b5563; }
+.custom-btn-secondary:hover { background-color: #d1d5db; }
 </style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans min-h-screen flex flex-col">
@@ -75,266 +45,18 @@
 <div id="loading" class="text-center text-maroon text-2xl font-bold mt-12">Loading your profile...</div>
 
 <div id="profileContent" class="profile-card w-full max-w-4xl my-8 hidden">
-    <div id="profileView">
-        <div class="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-12 mb-8">
-            <div class="flex-shrink-0">
-                <img id="profilePictureImg" src="https://i.postimg.cc/66gvtGG8/man3-512.png" alt="Runner Profile Picture" class="w-40 h-40 rounded-full object-cover border-4 border-gold shadow-md">
-            </div>
-            <div class="text-center md:text-left flex-grow">
-                <h2 id="runnerName" class="text-4xl font-extrabold text-maroon mb-2"></h2>
-                <div class="flex flex-col md:flex-row md:items-center md:space-x-4 text-gray-700">
-                    <span id="runnerEmail" class="mb-1 md:mb-0"><i class="fas fa-envelope text-maroon mr-2"></i></span>
-                    <span id="runnerPhone"><i class="fas fa-phone-alt text-maroon mr-2"></i></span>
-                </div>
-                <div class="flex items-center justify-center md:justify-start mt-4">
-                    <i class="fas fa-map-marker-alt text-maroon text-xl mr-2"></i>
-                    <span id="runnerLocation" class="text-lg font-semibold text-gray-600"></span>
-                </div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
-            <div class="bg-gray-50 p-6 rounded-lg shadow-inner">
-                <h3 class="text-2xl font-bold text-maroon mb-4 flex items-center">
-                    <i class="fas fa-user-circle mr-3 text-gold"></i>
-                    About Me
-                </h3>
-                <p id="runnerAbout" class="text-gray-700 leading-relaxed"></p>
-            </div>
-
-            <div class="bg-gray-50 p-6 rounded-lg shadow-inner">
-                <h3 class="text-2xl font-bold text-maroon mb-4 flex items-center">
-                    <i class="fas fa-briefcase mr-3 text-gold"></i>
-                    Experience & Services
-                </h3>
-                <p id="runnerExperience" class="text-gray-700 leading-relaxed"></p>
-            </div>
-
-            <div class="lg:col-span-2 bg-gray-50 p-6 rounded-lg shadow-inner">
-                <h3 class="text-2xl font-bold text-maroon mb-4 flex items-center">
-                    <i class="fas fa-clock mr-3 text-gold"></i>
-                    Availability
-                </h3>
-                <p id="runnerAvailability" class="text-gray-700 leading-relaxed"></p>
-            </div>
-        </div>
-
-        <div class="mt-8 flex justify-center">
-            <button id="editBtn" class="custom-btn custom-btn-primary">Edit My Profile</button>
-        </div>
-    </div>
-
-    <div id="profileEdit" class="hidden">
-        <h2 class="text-3xl font-bold text-maroon mb-6">Edit Profile</h2>
-        <form id="editForm" class="space-y-6">
-            <div>
-                <label for="editName" class="block text-lg font-medium text-maroon">Full Name</label>
-                <input type="text" id="editName" placeholder="Full Name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50">
-            </div>
-            <div>
-                <label for="editEmail" class="block text-lg font-medium text-maroon">Email</label>
-                <input type="email" id="editEmail" placeholder="Email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 bg-gray-200" disabled>
-            </div>
-            <div>
-                <label for="editPhone" class="block text-lg font-medium text-maroon">Phone</label>
-                <input type="text" id="editPhone" placeholder="Phone" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50">
-            </div>
-            <div>
-                <label for="editAbout" class="block text-lg font-medium text-maroon">About Me</label>
-                <textarea id="editAbout" placeholder="Briefly describe yourself and your service..." rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50"></textarea>
-            </div>
-            <div>
-                <label for="editExperience" class="block text-lg font-medium text-maroon">Experience & Services</label>
-                <textarea id="editExperience" placeholder="List the types of errands you run, your experience level, etc." rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50"></textarea>
-            </div>
-            <div>
-                <label for="editLocation" class="block text-lg font-medium text-maroon">Location</label>
-                <input type="text" id="editLocation" placeholder="Your primary operating area (e.g., Nairobi, Mombasa)" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50">
-            </div>
-            <div>
-                <label for="editAvailability" class="block text-lg font-medium text-maroon">Availability</label>
-                <input type="text" id="editAvailability" placeholder="Your availability (e.g., Mon-Fri, 9am-5pm)" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50">
-            </div>
-
-            <div class="flex justify-end space-x-4 mt-8">
-                <button type="button" id="cancelEdit" class="custom-btn custom-btn-secondary">Cancel</button>
-                <button type="submit" class="custom-btn custom-btn-primary">Save Changes</button>
-            </div>
-        </form>
-    </div>
+  <!-- Profile display populated dynamically -->
 </div>
 
 <div id="errorMessage" class="text-center text-red-500 text-2xl font-bold hidden mt-12">
     Runner profile not found. Please login again.
 </div>
-</main>
+</main
 
-<footer class="bg-gray-800 text-gray-300 py-6 mt-auto">
-<div class="max-w-7xl mx-auto px-6 text-center">
-    <p class="text-sm">© 2025 Run Me An Errand. All rights reserved.</p>
-</div>
-</footer>
 
-<script>
-// 🛑 REPLACE with your ACTUAL Supabase URL and Anon Key
-const SUPABASE_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-const TIMEOUT = 10000; // 10 seconds
 
-document.getElementById("hamburgerBtn").addEventListener("click", () => {
-    document.getElementById("menu").classList.toggle("active");
-});
 
-document.addEventListener("DOMContentLoaded", () => {
-    const params = new URLSearchParams(window.location.search);
-    // Use the ID from the URL or local storage (where ID is stored after login)
-    const runnerId = params.get('id') || localStorage.getItem("runnerId");
-    
-    if (runnerId) {
-        fetchRunnerData(runnerId);
-    } else {
-        // If no ID is found, assume the user needs to log in
-        window.location.href = "login.html";
-    }
-});
 
-async function fetchRunnerData(runnerId) {
-    document.getElementById("loading").style.display = "block";
-    document.getElementById("profileContent").classList.add("hidden");
-    document.getElementById("errorMessage").classList.add("hidden");
-
-    try {
-        console.log(`Attempting to load profile for runner ID: ${runnerId}`);
-
-        // 🛑 SUPABASE FETCH LOGIC for the 'runners' table
-        const { data: runner, error } = await supabase
-            .from('runners')
-            // Fetch all columns needed for the profile view
-            .select('name, email, phone, location, about, experience, availability, imageurl') 
-            .eq('id', runnerId)
-            .single();
-
-        if (error && error.code !== 'PGRST116') { // PGRST116 is 'no rows found'
-            throw new Error(error.message);
-        }
-
-        if (runner) {
-            populateProfile(runner);
-            // Ensure we save the ID for updates/logout, if it wasn't there already
-            localStorage.setItem("runnerId", runnerId); 
-        } else {
-            showError("Runner profile not found.");
-        }
-    } catch (error) {
-        console.error("Error fetching runner data:", error);
-        showError(`Failed to load profile. ${error.message}`);
-    } finally {
-        document.getElementById("loading").style.display = "none";
-    }
-}
-
-function populateProfile(runner) {
-    // Note: Assuming Supabase column names are lowercase (name, email, etc.)
-    const profilePictureUrl = runner.imageurl || "https://i.postimg.cc/66gvtGG8/man3-512.png";
-    document.getElementById("profilePictureImg").src = profilePictureUrl;
-    
-    document.getElementById("runnerName").textContent = runner.name || "No Name Provided";
-    document.getElementById("runnerEmail").textContent = runner.email || "Not provided";
-    document.getElementById("runnerPhone").textContent = runner.phone || "Not provided";
-    document.getElementById("runnerLocation").textContent = runner.location || "Not provided";
-    document.getElementById("runnerAbout").textContent = runner.about || 'No bio provided. Click "Edit Profile" to add one.';
-    document.getElementById("runnerExperience").textContent = runner.experience || 'No experience provided. Click "Edit Profile" to add your services.';
-    document.getElementById("runnerAvailability").textContent = runner.availability || "Not provided. Click 'Edit Profile' to add your schedule.";
-
-    document.getElementById("editName").value = runner.name || "";
-    document.getElementById("editEmail").value = runner.email || "";
-    document.getElementById("editPhone").value = runner.phone || "";
-    document.getElementById("editAbout").value = runner.about || "";
-    document.getElementById("editExperience").value = runner.experience || "";
-    document.getElementById("editLocation").value = runner.location || "";
-    document.getElementById("editAvailability").value = runner.availability || "";
-
-    document.getElementById("profileContent").classList.remove("hidden");
-}
-
-function showError(message) {
-    document.getElementById("errorMessage").textContent = message;
-    document.getElementById("errorMessage").classList.remove("hidden");
-    document.getElementById("profileContent").classList.add("hidden");
-}
-
-document.getElementById("editBtn").addEventListener("click", () => {
-    document.getElementById("profileView").classList.add("hidden");
-    document.getElementById("profileEdit").classList.remove("hidden");
-});
-
-document.getElementById("cancelEdit").addEventListener("click", async () => {
-    document.getElementById("profileEdit").classList.add("hidden");
-    document.getElementById("profileView").classList.remove("hidden");
-    const runnerId = localStorage.getItem("runnerId");
-    if (runnerId) {
-        document.getElementById("loading").style.display = "block";
-        document.getElementById("profileContent").classList.add("hidden");
-        await fetchRunnerData(runnerId); // Reload data to show original values
-    }
-});
-
-document.getElementById("editForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const runnerId = localStorage.getItem("runnerId");
-    if (!runnerId) {
-        alert("No runner ID found! Please log in.");
-        return;
-    }
-
-    const updatedData = {
-        name: document.getElementById("editName").value,
-        // email: document.getElementById("editEmail").value, // Cannot update email if using Supabase Auth ID/Email
-        phone: document.getElementById("editPhone").value,
-        about: document.getElementById("editAbout").value,
-        experience: document.getElementById("editExperience").value,
-        location: document.getElementById("editLocation").value,
-        availability: document.getElementById("editAvailability").value,
-    };
-
-    try {
-        // 🛑 SUPABASE UPDATE LOGIC
-        const { data: updatedRunner, error } = await supabase
-            .from('runners')
-            .update(updatedData)
-            .eq('id', runnerId)
-            .select() // Return the updated row
-            .single();
-
-        if (error) throw error;
-        
-        populateProfile(updatedRunner);
-        document.getElementById("profileEdit").classList.add("hidden");
-        document.getElementById("profileView").classList.remove("hidden");
-    } catch (error) {
-        alert("Error saving changes: " + error.message);
-        console.error("Error saving changes:", error);
-    }
-});
-
-document.getElementById("logoutBtn").addEventListener("click", async () => {
-    try {
-        // 🛑 SUPABASE LOGOUT LOGIC
-        const { error } = await supabase.auth.signOut();
-        if (error) throw error;
-
-        localStorage.clear();
-        window.location.href = "login.html";
-    } catch (error) {
-        console.error("Logout failed:", error);
-        localStorage.clear();
-        window.location.href = "login.html";
-    }
-});
-</script>
-</body>
-</html>
 
 
