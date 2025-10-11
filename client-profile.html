@@ -21,18 +21,13 @@
       animation: spin 1s linear infinite;
       margin: auto;
     }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     a.nav-link {
       color: var(--maroon);
       font-weight: 600;
       transition: color 0.2s;
     }
-    a.nav-link:hover {
-      color: var(--gold);
-    }
+    a.nav-link:hover { color: var(--gold); }
     .profile-card {
       background-color: #fff;
       border: 1px solid #e5e7eb;
@@ -111,63 +106,44 @@
 
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     
-    // UI elements
     const profileDiv = document.getElementById("profileDetails");
     const errorDiv = document.getElementById("errorMessage");
     const logoutBtn = document.getElementById("logoutBtn");
     const exploreBtn = document.getElementById("exploreRunnersBtn");
 
-    /**
-     * Redirects to the login page and shows a temporary message.
-     */
     function redirectToLogin(message) {
         profileDiv.innerHTML = `<p class="text-center text-maroon text-lg font-semibold">${message}</p>`;
         setTimeout(() => window.location.href = "login.html", 1500);
     }
-    
-    /**
-     * Fetches and displays the user's detailed profile data from the 'users' table.
-     * @param {Object} authUser - The user object from Supabase Auth.
-     */
+
     async function loadProfile(authUser) {
       profileDiv.innerHTML = `<div class="spinner"></div>`;
       errorDiv.textContent = "";
-      
-      const userId = authUser.id; // This is the UUID from auth.users
+      const userId = authUser.id;
 
       try {
-        // Fetch detailed profile from the 'users' table using the correct linking column: 'auth_id'
         const { data: clientProfile, error: profileError } = await supabase
           .from('users')
           .select('full_name, email, phone') 
-          .eq('auth_id', userId) // <-- Correct column based on your schema
+          .eq('auth_id', userId)
           .single();
 
         if (profileError) {
             console.error("Profile fetch error:", profileError);
-            if (profileError.code === 'PGRST116') { // No rows returned (user signed up but has no entry in 'users' table)
-                errorDiv.textContent = "Profile data is missing. Please ensure your user signed up successfully.";
-            } else {
-                errorDiv.textContent = "Could not load client details. Check the 'users' RLS Policy (SELECT).";
-            }
+            errorDiv.textContent = "Could not load client details. Check the 'users' RLS Policy.";
             return;
         }
-        
-        // Combine auth and profile data for display/editing
+
         const user = { ...authUser, ...clientProfile };
         displayProfile(user);
 
       } catch (err) {
         console.error("Critical error loading profile:", err);
-        errorDiv.textContent = "Unexpected error during profile load. Please try again.";
+        errorDiv.textContent = "Unexpected error during profile load.";
       }
     }
 
-    /**
-     * Renders the profile data in read-only mode.
-     */
     function displayProfile(user) {
-        // Use full_name for display, falling back to email if name is missing
         const displayName = user.full_name || user.email || "Client"; 
         
         profileDiv.innerHTML = `
@@ -202,9 +178,6 @@
         editBtn.addEventListener("click", () => enableEdit(user));
     }
 
-    /**
-     * Renders the profile data in edit mode.
-     */
     function enableEdit(user) {
         profileDiv.innerHTML = `
           <div class="flex items-center space-x-6 mb-8 border-b-2 border-gray-200 pb-6">
@@ -243,17 +216,15 @@
           };
           
           try {
-            // SUPABASE UPDATE LOGIC on the 'users' table
             const { data: updatedData, error } = await supabase
               .from('users')
               .update(updatedFields)
-              .eq('auth_id', user.id) // <-- Correct column for update
+              .eq('auth_id', user.id)
               .select('full_name, email, phone') 
               .single();
 
             if (error) throw error;
             
-            // Re-render profile with the new combined data
             const updatedUser = { ...user, ...updatedData };
             displayProfile(updatedUser);
             errorDiv.textContent = "Profile updated successfully! ✅";
@@ -266,13 +237,8 @@
         });
       }
 
-    // ---------- EVENT LISTENERS ----------
     logoutBtn.addEventListener("click", async () => {
-        try {
-            await supabase.auth.signOut();
-        } catch (err) {
-            console.warn("Logout error:", err);
-        }
+        try { await supabase.auth.signOut(); } catch (err) { console.warn(err); }
         window.location.href = "login.html";
     });
 
@@ -280,17 +246,36 @@
         window.location.href = "runners.html"; 
     });
 
-    // ---------- INITIALIZATION (The most reliable way to check session) ----------
-    supabase.auth.onAuthStateChange((event, session) => {
-        if (event === 'SIGNED_IN' && session) {
-            loadProfile(session.user);
-        } else {
-            redirectToLogin("Session expired or no user found. Taking you to login...");
+    // ---------- FIXED INITIALIZATION ----------
+    async function initProfile() {
+      const { data: { session }, error } = await supabase.auth.getSession();
+
+      if (error) {
+        console.error("Error fetching session:", error);
+        redirectToLogin("Session error. Redirecting to login...");
+        return;
+      }
+
+      if (!session || !session.user) {
+        redirectToLogin("Session expired or no user found. Redirecting to login...");
+        return;
+      }
+
+      loadProfile(session.user);
+
+      supabase.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_OUT') {
+          redirectToLogin("You have been logged out. Redirecting to login...");
         }
-    });
+      });
+    }
+
+    initProfile();
   </script>
 </body>
-</html>
+  </html>
+
+
 
 
 
