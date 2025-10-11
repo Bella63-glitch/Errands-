@@ -37,6 +37,15 @@
       margin-bottom: 1rem;
     }
 
+    .profile-pic {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--gold);
+      margin-bottom: 1rem;
+    }
+
     .details {
       text-align: left;
       margin-top: 1.5rem;
@@ -51,6 +60,23 @@
     .highlight {
       color: var(--maroon);
       font-weight: bold;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      color: white;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+
+    .active {
+      background-color: green;
+    }
+
+    .inactive {
+      background-color: red;
     }
 
     button {
@@ -94,12 +120,19 @@
 
   <div class="profile-container">
     <h2>Runner Profile</h2>
+    <img id="runnerImage" class="profile-pic" src="https://via.placeholder.com/120" alt="Profile Picture" />
+    
     <div class="details" id="runnerDetails">
       <p><strong>Name:</strong> <span id="runnerName" class="highlight">Loading...</span></p>
       <p><strong>Email:</strong> <span id="runnerEmail" class="highlight">Loading...</span></p>
       <p><strong>Phone:</strong> <span id="runnerPhone" class="highlight">Loading...</span></p>
-      <p><strong>Status:</strong> <span id="runnerStatus" class="highlight">Loading...</span></p>
+      <p><strong>About:</strong> <span id="runnerAbout" class="highlight">Loading...</span></p>
+      <p><strong>Experience:</strong> <span id="runnerExperience" class="highlight">Loading...</span></p>
+      <p><strong>Availability:</strong> <span id="runnerAvailability" class="highlight">Loading...</span></p>
+      <p><strong>Location:</strong> <span id="runnerLocation" class="highlight">Loading...</span></p>
+      <p><strong>Status:</strong> <span id="runnerStatus" class="status-badge">Loading...</span></p>
     </div>
+
     <button id="logoutBtn">Logout</button>
   </div>
 
@@ -146,7 +179,22 @@
         document.getElementById("runnerName").textContent = data.full_name || "N/A";
         document.getElementById("runnerEmail").textContent = data.email;
         document.getElementById("runnerPhone").textContent = data.phone || "N/A";
-        document.getElementById("runnerStatus").textContent = data.subscription_status === "active" ? "Active ✅" : "Inactive ❌";
+        document.getElementById("runnerAbout").textContent = data.about || "N/A";
+        document.getElementById("runnerExperience").textContent = data.experience || "N/A";
+        document.getElementById("runnerAvailability").textContent = data.availability || "N/A";
+        document.getElementById("runnerLocation").textContent = data.location || "N/A";
+
+        const statusSpan = document.getElementById("runnerStatus");
+        if (data.subscription_status === "active") {
+          statusSpan.textContent = "Active ✅";
+          statusSpan.className = "status-badge active";
+        } else {
+          statusSpan.textContent = "Inactive ❌";
+          statusSpan.className = "status-badge inactive";
+        }
+
+        const imgEl = document.getElementById("runnerImage");
+        imgEl.src = data.profile_picture || "https://via.placeholder.com/120";
 
       } catch (err) {
         console.error("Error fetching profile:", err);
@@ -166,8 +214,6 @@
   </script>
 </body>
 </html>
-
-
 
 
 
