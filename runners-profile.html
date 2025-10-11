@@ -3,191 +3,148 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Runner Profile - Run Me An Errand</title>
-<script src="https://cdn.tailwindcss.com"></script>
+<title>Profile - Run Me An Errand</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  :root { --maroon:#7B1E3A; --gold:#FFD700; }
-  .bg-maroon{background-color:var(--maroon);} 
-  .text-maroon{color:var(--maroon);}
-  .text-gold{color:var(--gold);} 
-  .bg-gold{background-color:var(--gold);}
-  .spinner {
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid var(--maroon);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-    margin: auto;
-  }
-  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-  a.nav-link { color: var(--maroon); font-weight: 600; transition: color 0.2s; }
-  a.nav-link:hover { color: var(--gold); }
-  .profile-card {
-    background-color: #fff;
-    border: 1px solid #e5e7eb;
-    border-radius: 1rem;
-    padding: 2rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    transition: box-shadow 0.3s ease-in-out;
-  }
-  .profile-card:hover { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1),0 4px 6px -2px rgba(0,0,0,0.05);}
-  button.edit-btn, button.save-btn, button.cancel-btn {
-    font-weight: 600; padding: 0.5rem 1rem; border-radius: 8px; transition: all 0.2s;
-  }
-  button.edit-btn { background-color: var(--gold); color: var(--maroon);}
-  button.edit-btn:hover { background-color: var(--maroon); color: var(--gold);}
-  button.save-btn { background-color: var(--maroon); color: var(--gold);}
-  button.save-btn:hover { background-color: var(--gold); color: var(--maroon);}
-  button.cancel-btn { background-color: #ccc; color: #333;}
-  button.cancel-btn:hover { background-color: #999; color: #fff;}
+  :root { --maroon: #7B1E3A; --gold: #FFD700; }
+  body { font-family: sans-serif; background-color: #f3f3f3; margin:0; min-height:100vh; display:flex; justify-content:center; align-items:flex-start; padding-top:50px; }
+  .profile-card { background:#fff; border-radius:1rem; padding:2rem; box-shadow:0 4px 6px rgba(0,0,0,0.1); max-width:800px; width:100%; }
+  .spinner { border:4px solid #f3f3f3; border-top:4px solid var(--maroon); border-radius:50%; width:40px; height:40px; animation:spin 1s linear infinite; margin:4rem auto; }
+  @keyframes spin { 0% { transform:rotate(0deg); } 100% { transform:rotate(360deg); } }
+  .text-maroon { color: var(--maroon); }
+  .text-gold { color: var(--gold); }
+  button { font-weight:bold; padding:0.75rem 1.5rem; border-radius:8px; cursor:pointer; transition:all 0.3s; margin-right:0.5rem; }
+  .btn-primary { background-color: var(--maroon); color: var(--gold); }
+  .btn-primary:hover { background-color: var(--gold); color: var(--maroon); }
+  .btn-secondary { background-color:#e5e7eb; color:#4b5563; }
+  .btn-secondary:hover { background-color:#d1d5db; }
+  input { width:100%; padding:0.6rem; margin-top:0.3rem; border:1px solid #ccc; border-radius:6px; }
 </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-start pt-12">
+<body>
 
-<h1 class="text-4xl font-bold text-maroon mb-10">My Runner Profile</h1>
-
-<div id="profileContainer" class="w-full max-w-4xl px-4">
-  <div id="profileDetails" class="profile-card">
-    <div class="spinner"></div>
-  </div>
-
-  <div id="errorMessage" class="mt-4 text-center text-red-600 font-semibold"></div>
-
-  <div class="mt-8 flex flex-col items-center space-y-4">
-    <a href="index.html" class="nav-link px-4 py-2 rounded-lg border border-maroon hover:bg-maroon hover:text-gold transition">Home</a>
-    <button id="logoutBtn" class="px-4 py-2 rounded-lg bg-maroon text-gold font-bold hover:bg-gold hover:text-maroon transition">Logout</button>
-  </div>
+<div id="loading">
+  <div class="spinner"></div>
+  <p class="text-maroon" style="text-align:center;">Loading your profile...</p>
 </div>
 
+<div id="profileContent" class="profile-card" style="display:none;"></div>
+<div id="errorMessage" class="text-maroon" style="text-align:center; display:none;"></div>
+
 <script>
-const SUPABASE_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const SUPABASE_URL = 'https://zchofpncqskvnfrzbcww.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAkSopWR9-YXUI';
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const profileDiv = document.getElementById("profileDetails");
-const errorDiv = document.getElementById("errorMessage");
-const logoutBtn = document.getElementById("logoutBtn");
+  const profileDiv = document.getElementById('profileContent');
+  const loadingDiv = document.getElementById('loading');
+  const errorDiv = document.getElementById('errorMessage');
 
-function redirectToLogin(message) {
-  profileDiv.innerHTML = `<p class="text-center text-maroon text-lg font-semibold">${message}</p>`;
-  setTimeout(() => window.location.href = "index.html", 1500);
-}
+  async function loadProfile() {
+    const runnerEmail = localStorage.getItem('runner_email');
+    const clientEmail = localStorage.getItem('client_email');
 
-async function loadProfile() {
-  const email = localStorage.getItem('runner_email'); // this key stores logged-in runner email
-  if (!email) {
-    redirectToLogin("No runner session found. Redirecting to login...");
-    return;
-  }
-
-  profileDiv.innerHTML = `<div class="spinner"></div>`;
-  errorDiv.textContent = "";
-
-  try {
-    const { data: runner, error } = await supabase
-      .from('runners')
-      .select('name, email, phone')
-      .eq('email', email)
-      .single();
-
-    if (error || !runner) {
-      console.error("Runner fetch error:", error);
-      redirectToLogin("Runner not found. Redirecting to login...");
+    if (!runnerEmail && !clientEmail) {
+      redirectToLogin("User session not found. Redirecting to login...");
       return;
     }
 
-    displayProfile(runner);
-
-  } catch (err) {
-    console.error("Profile load error:", err);
-    errorDiv.textContent = "Unexpected error fetching profile.";
-  }
-}
-
-function displayProfile(runner) {
-  profileDiv.innerHTML = `
-    <div class="flex items-center space-x-6 mb-8 border-b-2 border-gray-200 pb-6">
-      <img src="https://via.placeholder.com/100/7B1E3A/FFD700?text=R" alt="Profile Picture" class="w-24 h-24 rounded-full border-4 border-gold object-cover">
-      <div>
-        <h2 class="text-3xl font-bold text-maroon">${runner.name || "Runner"}</h2>
-        <p class="text-lg text-gray-500">${runner.email}</p>
-      </div>
-      <div class="ml-auto">
-        <button id="editBtn" class="edit-btn">Edit Profile</button>
-      </div>
-    </div>
-    <div class="flex flex-col space-y-4">
-      <p><strong>Phone:</strong> ${runner.phone || "Not set"}</p>
-    </div>
-  `;
-
-  document.getElementById("editBtn").addEventListener("click", () => enableEdit(runner));
-}
-
-function enableEdit(runner) {
-  profileDiv.innerHTML = `
-    <div class="flex items-center space-x-6 mb-8 border-b-2 border-gray-200 pb-6">
-      <img src="https://via.placeholder.com/100/7B1E3A/FFD700?text=R" alt="Profile Picture" class="w-24 h-24 rounded-full border-4 border-gold object-cover">
-      <div>
-        <h2 class="text-3xl font-bold text-maroon">Edit Profile</h2>
-      </div>
-    </div>
-    <div class="flex flex-col space-y-4">
-      <label>
-        <span class="text-maroon font-semibold">Name:</span>
-        <input type="text" id="nameInput" class="mt-1 block w-full rounded-md border-gray-300 p-2" value="${runner.name || ''}">
-      </label>
-      <label>
-        <span class="text-maroon font-semibold">Phone:</span>
-        <input type="text" id="phoneInput" class="mt-1 block w-full rounded-md border-gray-300 p-2" value="${runner.phone || ''}">
-      </label>
-      <div class="mt-4 flex space-x-4">
-        <button id="saveBtn" class="save-btn">Save Changes</button>
-        <button id="cancelBtn" class="cancel-btn">Cancel</button>
-      </div>
-    </div>
-  `;
-
-  document.getElementById("cancelBtn").addEventListener("click", () => displayProfile(runner));
-
-  document.getElementById("saveBtn").addEventListener("click", async () => {
-    const updatedFields = {
-      name: document.getElementById("nameInput").value.trim(),
-      phone: document.getElementById("phoneInput").value.trim()
-    };
+    const email = runnerEmail || clientEmail;
+    const table = runnerEmail ? 'runners' : 'users';
 
     try {
-      const { data: updatedRunner, error } = await supabase
-        .from('runners')
-        .update(updatedFields)
-        .eq('email', runner.email)
-        .select('name, email, phone')
+      const { data: profile, error } = await supabase
+        .from(table)
+        .select('*')
+        .eq('email', email)
         .single();
 
-      if (error) throw error;
+      if (error || !profile) throw error || new Error("Profile not found");
 
-      displayProfile(updatedRunner);
-      errorDiv.textContent = "Profile updated successfully! ✅";
-      setTimeout(() => errorDiv.textContent = "", 3000);
+      displayProfile(profile, runnerEmail ? true : false);
 
     } catch (err) {
-      console.error("Update error:", err);
-      errorDiv.textContent = "Failed to update profile.";
+      console.error("Profile load error:", err);
+      loadingDiv.style.display = 'none';
+      errorDiv.textContent = 'Failed to load profile. Please login again.';
+      errorDiv.style.display = 'block';
+      setTimeout(() => window.location.href = 'login.html', 2000);
     }
-  });
-}
+  }
 
-// Logout button
-logoutBtn.addEventListener("click", () => {
-  localStorage.removeItem('runner_email');
-  window.location.href = "index.html";
-});
+  function displayProfile(profile, isRunner) {
+    loadingDiv.style.display = 'none';
+    profileDiv.style.display = 'block';
 
-// Load runner profile on page load
-loadProfile();
+    profileDiv.innerHTML = `
+      <h2 class="text-maroon" style="text-align:center; margin-bottom:1rem;">${profile.full_name || profile.email}</h2>
+      <p style="text-align:center; color:#555;">${profile.email}</p>
+      ${isRunner ? `<p style="text-align:center; color:#555;">Phone: ${profile.phone || 'N/A'}</p>` : ''}
+      <div style="margin-top:2rem; text-align:center;">
+        <button id="editBtn" class="btn-primary">Edit Profile</button>
+        <button id="logoutBtn" class="btn-secondary">Logout</button>
+      </div>
+    `;
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      if (isRunner) localStorage.removeItem('runner_email');
+      else localStorage.removeItem('client_email');
+      window.location.href = 'login.html';
+    });
+
+    document.getElementById('editBtn').addEventListener('click', () => enableEdit(profile, isRunner));
+  }
+
+  function enableEdit(profile, isRunner) {
+    profileDiv.innerHTML = `
+      <h2 class="text-maroon" style="text-align:center; margin-bottom:1rem;">Edit Profile</h2>
+      <label>Full Name: <input type="text" id="nameInput" value="${profile.full_name || ''}"></label>
+      ${isRunner ? `<label>Phone: <input type="text" id="phoneInput" value="${profile.phone || ''}"></label>` : ''}
+      <div style="margin-top:1rem; text-align:center;">
+        <button id="saveBtn" class="btn-primary">Save</button>
+        <button id="cancelBtn" class="btn-secondary">Cancel</button>
+      </div>
+    `;
+
+    document.getElementById('cancelBtn').addEventListener('click', () => displayProfile(profile, isRunner));
+
+    document.getElementById('saveBtn').addEventListener('click', async () => {
+      const updatedFields = { full_name: document.getElementById('nameInput').value.trim() };
+      if (isRunner) updatedFields.phone = document.getElementById('phoneInput').value.trim();
+
+      try {
+        const { data, error } = await supabase
+          .from(isRunner ? 'runners' : 'users')
+          .update(updatedFields)
+          .eq('email', profile.email)
+          .select('*')
+          .single();
+
+        if (error) throw error;
+
+        displayProfile(data, isRunner);
+      } catch (err) {
+        console.error("Update error:", err);
+        errorDiv.textContent = "Failed to update profile.";
+        errorDiv.style.display = 'block';
+        setTimeout(() => errorDiv.style.display = 'none', 3000);
+      }
+    });
+  }
+
+  function redirectToLogin(message) {
+    loadingDiv.style.display = 'none';
+    errorDiv.textContent = message;
+    errorDiv.style.display = 'block';
+    setTimeout(() => window.location.href = 'login.html', 2000);
+  }
+
+  loadProfile();
 </script>
 
 </body>
 </html>
+
+
+
+
