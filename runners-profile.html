@@ -3,291 +3,191 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Runner Dashboard</title>
-<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<title>Runner Profile - Run Me An Errand</title>
+<script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root { --maroon: #7B1E3A; --gold: #FFD700; }
-.bg-maroon { background-color: var(--maroon); }
-.text-maroon { color: var(--maroon); }
-.text-gold { color: var(--gold); }
-.bg-gold { background-color: var(--gold); }
-.bg-maroon-dark { background-color: #66182f; }
-.profile-card { background-color: #ffffff; border-radius: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 2rem; }
-.menu { display: none; }
-.menu.active { display: block; }
-.hamburger { cursor: pointer; font-size: 1.5rem; }
-.custom-btn { font-weight: bold; padding: 0.75rem 2rem; border-radius: 9999px; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 0.05em; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-.custom-btn-primary { background-color: var(--maroon); color: var(--gold); }
-.custom-btn-primary:hover { background-color: var(--gold); color: var(--maroon); box-shadow: 0 6px 8px rgba(0,0,0,0.15); }
-.custom-btn-secondary { background-color: #e5e7eb; color: #4b5563; }
-.custom-btn-secondary:hover { background-color: #d1d5db; }
-.spinner {
+  :root { --maroon:#7B1E3A; --gold:#FFD700; }
+  .bg-maroon{background-color:var(--maroon);} 
+  .text-maroon{color:var(--maroon);}
+  .text-gold{color:var(--gold);} 
+  .bg-gold{background-color:var(--gold);}
+  .spinner {
     border: 4px solid #f3f3f3;
     border-top: 4px solid var(--maroon);
     border-radius: 50%;
     width: 40px;
     height: 40px;
     animation: spin 1s linear infinite;
-    margin: 4rem auto;
-}
-@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    margin: auto;
+  }
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  a.nav-link { color: var(--maroon); font-weight: 600; transition: color 0.2s; }
+  a.nav-link:hover { color: var(--gold); }
+  .profile-card {
+    background-color: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: box-shadow 0.3s ease-in-out;
+  }
+  .profile-card:hover { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1),0 4px 6px -2px rgba(0,0,0,0.05);}
+  button.edit-btn, button.save-btn, button.cancel-btn {
+    font-weight: 600; padding: 0.5rem 1rem; border-radius: 8px; transition: all 0.2s;
+  }
+  button.edit-btn { background-color: var(--gold); color: var(--maroon);}
+  button.edit-btn:hover { background-color: var(--maroon); color: var(--gold);}
+  button.save-btn { background-color: var(--maroon); color: var(--gold);}
+  button.save-btn:hover { background-color: var(--gold); color: var(--maroon);}
+  button.cancel-btn { background-color: #ccc; color: #333;}
+  button.cancel-btn:hover { background-color: #999; color: #fff;}
 </style>
 </head>
-<body class="bg-gray-100 text-gray-800 font-sans min-h-screen flex flex-col">
+<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-start pt-12">
 
-<header class="bg-maroon shadow-lg sticky top-0 z-50">
-<div class="max-w-7xl mx-auto flex justify-between items-center py-5 px-6">
-    <a href="index.html" class="flex items-center space-x-2">
-        <img src="https://i.postimg.cc/d1z9KLkL/ei-1752053865516-removebg-preview.png" alt="Logo" class="h-16 w-auto">
-        <h1 class="text-2xl font-bold text-white">Run Me An Errand</h1>
-    </a>
-    <i class="fas fa-bars text-white hamburger" id="hamburgerBtn"></i>
+<h1 class="text-4xl font-bold text-maroon mb-10">My Runner Profile</h1>
+
+<div id="profileContainer" class="w-full max-w-4xl px-4">
+  <div id="profileDetails" class="profile-card">
+    <div class="spinner"></div>
+  </div>
+
+  <div id="errorMessage" class="mt-4 text-center text-red-600 font-semibold"></div>
+
+  <div class="mt-8 flex flex-col items-center space-y-4">
+    <a href="index.html" class="nav-link px-4 py-2 rounded-lg border border-maroon hover:bg-maroon hover:text-gold transition">Home</a>
+    <button id="logoutBtn" class="px-4 py-2 rounded-lg bg-maroon text-gold font-bold hover:bg-gold hover:text-maroon transition">Logout</button>
+  </div>
 </div>
-<div id="menu" class="menu bg-maroon text-white flex flex-col px-6 py-4 space-y-3">
-    <a href="index.html" class="hover:text-gold">Home</a>
-    <button id="logoutBtn" class="bg-gold text-maroon font-bold py-1 px-4 rounded hover:bg-maroon hover:text-gold">Logout</button>
-</div>
-</header>
-
-<main class="flex-grow flex justify-center items-start p-4 mt-4">
-    <div id="loading" class="text-center mt-12">
-        <div class="spinner"></div>
-        <p class="text-maroon text-xl font-bold">Loading your profile...</p>
-    </div>
-
-    <div id="profileContent" class="profile-card w-full max-w-4xl my-8 hidden">
-    </div>
-
-    <div id="errorMessage" class="text-center text-red-500 text-xl font-bold hidden mt-12">
-        Runner profile not found. Please login again.
-    </div>
-</main>
 
 <script>
-    // Supabase initialization
-    const SUPABASE_URL = 'https://zchofpncqskvnfrzbcww.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAkSopWR9-YXUI';
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const SUPABASE_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // DOM Elements
-    const loadingEl = document.getElementById('loading');
-    const profileContentEl = document.getElementById('profileContent');
-    const errorMessageEl = document.getElementById('errorMessage');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const hamburgerBtn = document.getElementById('hamburgerBtn');
-    const menuEl = document.getElementById('menu');
+const profileDiv = document.getElementById("profileDetails");
+const errorDiv = document.getElementById("errorMessage");
+const logoutBtn = document.getElementById("logoutBtn");
 
-    // Constants
-    const RUNNER_EMAIL_KEY = 'runner_email';
-    const RUNNER_TABLE = 'runners';
-    const PHONE_COLUMN = 'phone';
-    const NAME_COLUMN = 'name';
+function redirectToLogin(message) {
+  profileDiv.innerHTML = `<p class="text-center text-maroon text-lg font-semibold">${message}</p>`;
+  setTimeout(() => window.location.href = "index.html", 1500);
+}
 
-    // Hamburger toggle
-    if (hamburgerBtn) {
-        hamburgerBtn.addEventListener('click', () => {
-            menuEl.classList.toggle('active');
-        });
+async function loadProfile() {
+  const email = localStorage.getItem('runner_email'); // this key stores logged-in runner email
+  if (!email) {
+    redirectToLogin("No runner session found. Redirecting to login...");
+    return;
+  }
+
+  profileDiv.innerHTML = `<div class="spinner"></div>`;
+  errorDiv.textContent = "";
+
+  try {
+    const { data: runner, error } = await supabase
+      .from('runners')
+      .select('name, email, phone')
+      .eq('email', email)
+      .single();
+
+    if (error || !runner) {
+      console.error("Runner fetch error:", error);
+      redirectToLogin("Runner not found. Redirecting to login...");
+      return;
     }
 
-    // Logout
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', async () => {
-            localStorage.removeItem(RUNNER_EMAIL_KEY);
-            await supabase.auth.signOut();
-            window.location.href = 'index.html';
-        });
+    displayProfile(runner);
+
+  } catch (err) {
+    console.error("Profile load error:", err);
+    errorDiv.textContent = "Unexpected error fetching profile.";
+  }
+}
+
+function displayProfile(runner) {
+  profileDiv.innerHTML = `
+    <div class="flex items-center space-x-6 mb-8 border-b-2 border-gray-200 pb-6">
+      <img src="https://via.placeholder.com/100/7B1E3A/FFD700?text=R" alt="Profile Picture" class="w-24 h-24 rounded-full border-4 border-gold object-cover">
+      <div>
+        <h2 class="text-3xl font-bold text-maroon">${runner.name || "Runner"}</h2>
+        <p class="text-lg text-gray-500">${runner.email}</p>
+      </div>
+      <div class="ml-auto">
+        <button id="editBtn" class="edit-btn">Edit Profile</button>
+      </div>
+    </div>
+    <div class="flex flex-col space-y-4">
+      <p><strong>Phone:</strong> ${runner.phone || "Not set"}</p>
+    </div>
+  `;
+
+  document.getElementById("editBtn").addEventListener("click", () => enableEdit(runner));
+}
+
+function enableEdit(runner) {
+  profileDiv.innerHTML = `
+    <div class="flex items-center space-x-6 mb-8 border-b-2 border-gray-200 pb-6">
+      <img src="https://via.placeholder.com/100/7B1E3A/FFD700?text=R" alt="Profile Picture" class="w-24 h-24 rounded-full border-4 border-gold object-cover">
+      <div>
+        <h2 class="text-3xl font-bold text-maroon">Edit Profile</h2>
+      </div>
+    </div>
+    <div class="flex flex-col space-y-4">
+      <label>
+        <span class="text-maroon font-semibold">Name:</span>
+        <input type="text" id="nameInput" class="mt-1 block w-full rounded-md border-gray-300 p-2" value="${runner.name || ''}">
+      </label>
+      <label>
+        <span class="text-maroon font-semibold">Phone:</span>
+        <input type="text" id="phoneInput" class="mt-1 block w-full rounded-md border-gray-300 p-2" value="${runner.phone || ''}">
+      </label>
+      <div class="mt-4 flex space-x-4">
+        <button id="saveBtn" class="save-btn">Save Changes</button>
+        <button id="cancelBtn" class="cancel-btn">Cancel</button>
+      </div>
+    </div>
+  `;
+
+  document.getElementById("cancelBtn").addEventListener("click", () => displayProfile(runner));
+
+  document.getElementById("saveBtn").addEventListener("click", async () => {
+    const updatedFields = {
+      name: document.getElementById("nameInput").value.trim(),
+      phone: document.getElementById("phoneInput").value.trim()
+    };
+
+    try {
+      const { data: updatedRunner, error } = await supabase
+        .from('runners')
+        .update(updatedFields)
+        .eq('email', runner.email)
+        .select('name, email, phone')
+        .single();
+
+      if (error) throw error;
+
+      displayProfile(updatedRunner);
+      errorDiv.textContent = "Profile updated successfully! ✅";
+      setTimeout(() => errorDiv.textContent = "", 3000);
+
+    } catch (err) {
+      console.error("Update error:", err);
+      errorDiv.textContent = "Failed to update profile.";
     }
+  });
+}
 
-    // Redirect
-    function redirectToLogin(message) {
-        if (loadingEl) loadingEl.classList.add('hidden');
-        if (errorMessageEl) {
-            errorMessageEl.innerText = message;
-            errorMessageEl.classList.remove('hidden');
-        }
-        setTimeout(() => window.location.href = 'index.html', 1500);
-    }
+// Logout button
+logoutBtn.addEventListener("click", () => {
+  localStorage.removeItem('runner_email');
+  window.location.href = "index.html";
+});
 
-    // Create Profile Card
-    function createProfileCard(profile) {
-        const avatarUrl = profile.avatar_url || 'https://via.placeholder.com/150/7B1E3A/FFD700?text=R';
-        return `
-            <div class="flex flex-col md:flex-row gap-8">
-                <div class="md:w-1/3 flex flex-col items-center text-center">
-                    <img src="${avatarUrl}" alt="${profile[NAME_COLUMN]}'s Avatar" class="w-40 h-40 rounded-full object-cover border-4 border-gold mb-4 shadow-lg">
-                    <h2 class="text-3xl font-extrabold text-maroon">${profile[NAME_COLUMN] || 'Runner'}</h2>
-                    <p class="text-xl text-gray-600 mb-2">${profile.city || 'Set Location'}, ${profile.country || 'Set Country'}</p>
-                    <p class="text-gold text-2xl mb-4">
-                        <i class="fas fa-running"></i> Your Dashboard
-                    </p>
-                    <button id="editProfileBtn" class="custom-btn custom-btn-primary w-full max-w-xs mt-4">Edit Profile</button>
-                </div>
-
-                <div class="md:w-2/3">
-                    <h3 class="text-2xl font-bold text-maroon border-b-2 border-gold pb-2 mb-4">Performance & Stats</h3>
-                    <div class="grid grid-cols-2 gap-4 text-lg">
-                        <div class="flex flex-col p-3 bg-gray-50 rounded-lg">
-                            <span class="font-semibold text-gray-500">Total Deliveries</span>
-                            <span class="text-maroon text-2xl font-bold">${profile.total_deliveries || 0}</span>
-                        </div>
-                        <div class="flex flex-col p-3 bg-gray-50 rounded-lg">
-                            <span class="font-semibold text-gray-500">Average Rating</span>
-                            <span class="text-maroon text-2xl font-bold">${profile.average_rating ? profile.average_rating.toFixed(1) : 'N/A'} <i class="fas fa-star text-gold"></i></span>
-                        </div>
-                        <div class="flex flex-col p-3 bg-gray-50 rounded-lg col-span-2">
-                            <span class="font-semibold text-gray-500">Bio</span>
-                            <p class="text-gray-700 mt-1 italic">"${profile.bio || 'Tell clients about yourself!'}"</p>
-                        </div>
-                    </div>
-
-                    <h3 class="text-2xl font-bold text-maroon border-b-2 border-gold pb-2 mt-8 mb-4">Account Details</h3>
-                    <p class="text-lg mb-2"><i class="fas fa-envelope text-maroon w-6"></i> ${profile.email || 'N/A'}</p>
-                    <p class="text-lg mb-2"><i class="fas fa-phone text-maroon w-6"></i> ${profile[PHONE_COLUMN] || 'Not Set'}</p>
-                </div>
-            </div>
-        `;
-    }
-
-    // Enable Edit
-    function enableEdit(profile) {
-        profileContentEl.innerHTML = `
-            <div class="flex flex-col space-y-4">
-                <h3 class="text-2xl font-bold text-maroon border-b-2 border-gold pb-2 mb-4">Edit Profile</h3>
-                <label class="block">
-                    <span class="text-lg font-semibold text-maroon">Full Name:</span>
-                    <input type="text" id="nameInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50 p-2" value="${profile[NAME_COLUMN] || ''}">
-                </label>
-                <label class="block">
-                    <span class="text-lg font-semibold text-maroon">Phone:</span>
-                    <input type="text" id="phoneInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50 p-2" value="${profile[PHONE_COLUMN] || ''}">
-                </label>
-                <label class="block">
-                    <span class="text-lg font-semibold text-maroon">City:</span>
-                    <input type="text" id="cityInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50 p-2" value="${profile.city || ''}">
-                </label>
-                <label class="block">
-                    <span class="text-lg font-semibold text-maroon">Country:</span>
-                    <input type="text" id="countryInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50 p-2" value="${profile.country || ''}">
-                </label>
-                <label class="block">
-                    <span class="text-lg font-semibold text-maroon">Bio:</span>
-                    <textarea id="bioInput" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50 p-2">${profile.bio || ''}</textarea>
-                </label>
-                <div class="mt-6 flex space-x-4">
-                    <button id="saveBtn" class="custom-btn custom-btn-primary">Save Changes</button>
-                    <button id="cancelBtn" class="custom-btn custom-btn-secondary">Cancel</button>
-                </div>
-            </div>
-        `;
-
-        document.getElementById('cancelBtn').addEventListener('click', () => displayProfile(profile));
-        document.getElementById('saveBtn').addEventListener('click', () => handleSave(profile));
-    }
-
-    // Handle Save
-    async function handleSave(originalProfile) {
-        errorMessageEl.classList.add('hidden');
-
-        const updatedFields = {
-            [NAME_COLUMN]: document.getElementById('nameInput').value.trim(),
-            [PHONE_COLUMN]: document.getElementById('phoneInput').value.trim(),
-            city: document.getElementById('cityInput').value.trim(),
-            country: document.getElementById('countryInput').value.trim(),
-            bio: document.getElementById('bioInput').value.trim(),
-        };
-
-        if (!updatedFields[NAME_COLUMN]) {
-            errorMessageEl.innerText = "Full Name cannot be empty.";
-            errorMessageEl.classList.remove('hidden');
-            return;
-        }
-
-        try {
-            const { data: updatedData, error } = await supabase
-                .from(RUNNER_TABLE)
-                .update(updatedFields)
-                .eq('email', originalProfile.email)
-                .select('*')
-                .single();
-
-            if (error) throw error;
-
-            displayProfile(updatedData);
-
-            errorMessageEl.innerText = "Profile updated successfully! ✅";
-            errorMessageEl.classList.remove('hidden');
-            setTimeout(() => errorMessageEl.classList.add('hidden'), 3000);
-
-        } catch (err) {
-            console.error("Profile update error:", err);
-            errorMessageEl.innerText = `Failed to update profile: ${err.message}`;
-            errorMessageEl.classList.remove('hidden');
-        }
-    }
-
-    // Display profile
-    function displayProfile(profile) {
-        profileContentEl.innerHTML = createProfileCard(profile);
-        loadingEl.classList.add('hidden');
-        profileContentEl.classList.remove('hidden');
-
-        const editBtn = document.getElementById('editProfileBtn');
-        if (editBtn) editBtn.addEventListener('click', () => enableEdit(profile));
-    }
-
-    // Load profile
-    async function loadRunnerProfile() {
-        const runnerEmail = localStorage.getItem(RUNNER_EMAIL_KEY);
-        if (!runnerEmail) {
-            redirectToLogin("Runner session expired. Please log in.");
-            return;
-        }
-
-        profileContentEl.classList.add('hidden');
-        loadingEl.classList.remove('hidden');
-        errorMessageEl.classList.add('hidden');
-
-        try {
-            const { data: profile, error } = await supabase
-                .from(RUNNER_TABLE)
-                .select('*')
-                .eq('email', runnerEmail)
-                .single();
-
-            if (error) throw error;
-
-            if (!profile) {
-                loadingEl.classList.add('hidden');
-                errorMessageEl.innerText = 'Profile not found. Please contact support.';
-                errorMessageEl.classList.remove('hidden');
-                return;
-            }
-
-            displayProfile(profile);
-
-        } catch (error) {
-            console.error('Failed to load dashboard:', error);
-            loadingEl.classList.add('hidden');
-            errorMessageEl.innerText = 'Could not load your dashboard due to a network or database error.';
-            errorMessageEl.classList.remove('hidden');
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', loadRunnerProfile);
+// Load runner profile on page load
+loadProfile();
 </script>
+
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
