@@ -331,7 +331,6 @@
     const supabaseUrl = "https://zchofpncqskvnfrzbcww.supabase.co";
     const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
     const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-    // **CRUCIAL CHANGE: Using the bucket name you provided**
     const BUCKET_NAME = 'profiles'; 
 
     // DOM Elements
@@ -416,7 +415,8 @@
      * @param {object} data - The runner profile data.
      */
     function populateViewMode(data) {
-        document.getElementById("runnerName").textContent = data.full_name || "N/A";
+        // FIX APPLIED HERE: Use 'name' for the runner's name
+        document.getElementById("runnerName").textContent = data.name || "N/A";
         document.getElementById("runnerEmail").textContent = data.email;
         document.getElementById("runnerPhone").textContent = data.phone || "N/A";
         document.getElementById("runnerAbout").textContent = data.about || "N/A";
@@ -434,7 +434,8 @@
         }
 
         const imgEl = document.getElementById("runnerImage");
-        imgEl.src = data.profile_picture || "https://via.placeholder.com/130/7B1E3A/FFD700?text=R";
+        // FIX APPLIED HERE: Use 'profilepicture'
+        imgEl.src = data.profilepicture || "https://via.placeholder.com/130/7B1E3A/FFD700?text=R";
     }
 
     /**
@@ -442,7 +443,8 @@
      * @param {object} data - The runner profile data.
      */
     function populateEditForm(data) {
-        document.getElementById("editName").value = data.full_name || "";
+        // FIX APPLIED HERE: Use 'name' for the runner's name
+        document.getElementById("editName").value = data.name || "";
         document.getElementById("editPhone").value = data.phone || "";
         document.getElementById("editLocation").value = data.location || "";
         document.getElementById("editAvailability").value = data.availability || "";
@@ -456,12 +458,10 @@
      * @returns {Promise<string|null>} The public URL of the uploaded image or null on error.
      */
     async function uploadProfilePicture(file) {
-        // We use the runner's email to create a folder path for organization
         const fileExtension = file.name.split('.').pop();
         const filePath = `${email}/${Date.now()}.${fileExtension}`; 
 
         try {
-            // Upload the file to the 'profiles' bucket
             const { error: uploadError } = await supabase.storage
                 .from(BUCKET_NAME)
                 .upload(filePath, file, {
@@ -471,7 +471,6 @@
 
             if (uploadError) throw uploadError;
 
-            // Get the public URL
             const { data: publicUrlData } = supabase.storage
                 .from(BUCKET_NAME)
                 .getPublicUrl(filePath);
@@ -494,7 +493,8 @@
         saveBtn.disabled = true;
         showPopup("Saving changes...", "info");
 
-        let imageUrl = currentRunnerData.profile_picture; // Start with existing URL
+        // FIX APPLIED HERE: Use 'profilepicture'
+        let imageUrl = currentRunnerData.profilepicture; 
 
         // 1. Handle image upload if a new file is selected
         const file = profilePictureInput.files[0];
@@ -502,19 +502,21 @@
             imageUrl = await uploadProfilePicture(file);
             if (!imageUrl) {
                 saveBtn.disabled = false;
-                return; // Stop if image upload failed
+                return; 
             }
         }
 
         // 2. Prepare the update data
         const updatedProfile = {
-            full_name: document.getElementById("editName").value,
+            // FIX APPLIED HERE: Use 'name' for the runner's name
+            name: document.getElementById("editName").value, 
             phone: document.getElementById("editPhone").value,
             location: document.getElementById("editLocation").value,
             availability: document.getElementById("editAvailability").value,
             experience: document.getElementById("editExperience").value,
             about: document.getElementById("editAbout").value,
-            profile_picture: imageUrl, // New or existing URL
+            // FIX APPLIED HERE: Use 'profilepicture'
+            profilepicture: imageUrl, 
         };
 
         // 3. Update the database record
@@ -527,9 +529,8 @@
             if (updateError) throw updateError;
 
             showPopup("✅ Profile updated successfully!", "success");
-            // Reload the profile to show new data
             await loadRunnerProfile();
-            toggleEditMode(false); // Switch back to view mode
+            toggleEditMode(false); 
 
         } catch (error) {
             console.error("Update error:", error);
@@ -541,21 +542,17 @@
 
     // --- Event Listeners ---
 
-    // Edit button click
     editBtn.addEventListener("click", () => {
-        populateEditForm(currentRunnerData); // Ensure fields are current before editing
+        populateEditForm(currentRunnerData); 
         toggleEditMode(true);
     });
 
-    // Cancel button click
     cancelEditBtn.addEventListener("click", () => {
         toggleEditMode(false);
     });
 
-    // Form submission
     editForm.addEventListener("submit", handleUpdateProfile);
 
-    // Logout
     logoutBtn.addEventListener("click", () => {
       localStorage.removeItem("loggedInEmail");
       localStorage.removeItem("userType");
@@ -563,7 +560,6 @@
       setTimeout(() => window.location.href = "login.html", 1000);
     });
 
-    // Initial load
     loadRunnerProfile();
 
   </script>
