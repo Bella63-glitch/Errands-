@@ -3,99 +3,218 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - Run Me an Errand</title>
+  <title>Client Profile - Run Me an Errand</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root { --maroon:#7B1E3A; --gold:#FFD700; }
-    body { background-color: #f3f4f6; }
     .bg-maroon{background-color:var(--maroon);} 
     .text-maroon{color:var(--maroon);}
     .text-gold{color:var(--gold);} 
     .bg-gold{background-color:var(--gold);}
-    button { transition: all 0.2s; }
-    button:hover { opacity: 0.9; }
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid var(--maroon);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: auto;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    a.nav-link { color: var(--maroon); font-weight: 600; transition: color 0.2s; }
+    a.nav-link:hover { color: var(--gold); }
+    .profile-card {
+      background-color: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      transition: box-shadow 0.3s ease-in-out;
+    }
+    .profile-card:hover {
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    button.explore-btn, button.edit-btn, button.save-btn, button.cancel-btn {
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    button.explore-btn { background-color: var(--maroon); color: var(--gold); }
+    button.explore-btn:hover { background-color: var(--gold); color: var(--maroon); }
+    button.edit-btn { background-color: var(--gold); color: var(--maroon); }
+    button.edit-btn:hover { background-color: var(--maroon); color: var(--gold); }
+    button.save-btn { background-color: var(--maroon); color: var(--gold); }
+    button.save-btn:hover { background-color: var(--gold); color: var(--maroon); }
+    button.cancel-btn { background-color: #ccc; color: #333; }
+    button.cancel-btn:hover { background-color: #999; color: #fff; }
   </style>
 </head>
-<body class="min-h-screen flex items-center justify-center">
-  <div class="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
-    <h1 class="text-3xl font-bold text-maroon mb-6 text-center">Login</h1>
-    <div id="errorMessage" class="text-red-600 font-semibold mb-4 text-center"></div>
-    <form id="loginForm" class="space-y-4">
-      <div>
-        <label class="block text-maroon font-semibold">Email</label>
-        <input type="email" id="emailInput" class="w-full mt-1 p-2 border border-gray-300 rounded-md" required>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-start pt-12">
+
+  <h1 class="text-4xl font-bold text-maroon mb-10">My Profile</h1>
+
+  <div id="profileContainer" class="w-full max-w-4xl px-4">
+    <div id="profileDetails" class="profile-card">
+      <div class="spinner"></div>
+    </div>
+
+    <div id="errorMessage" class="mt-4 text-center text-red-600 font-semibold"></div>
+
+    <div class="mt-8 flex flex-col items-center space-y-4">
+      <button id="exploreRunnersBtn" class="explore-btn w-64">Explore Runners</button>
+      <div class="flex space-x-4">
+        <a href="index.html" class="nav-link px-4 py-2 rounded-lg border border-maroon hover:bg-maroon hover:text-gold transition">Home</a>
+        <button id="logoutBtn" class="px-4 py-2 rounded-lg bg-maroon text-gold font-bold hover:bg-gold hover:text-maroon transition">Logout</button>
       </div>
-      <div>
-        <label class="block text-maroon font-semibold">Password</label>
-        <input type="password" id="passwordInput" class="w-full mt-1 p-2 border border-gray-300 rounded-md" required>
-      </div>
-      <button type="submit" class="w-full bg-maroon text-gold font-bold py-2 rounded-md">Login</button>
-    </form>
+    </div>
   </div>
 
   <script>
-    // ---------- SUPABASE SETUP ----------
     const SUPABASE_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const loginForm = document.getElementById("loginForm");
+    const profileDiv = document.getElementById("profileDetails");
     const errorDiv = document.getElementById("errorMessage");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const exploreBtn = document.getElementById("exploreRunnersBtn");
 
-    loginForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      errorDiv.textContent = "";
+    function redirectToLogin(message) {
+      profileDiv.innerHTML = `<p class="text-center text-maroon text-lg font-semibold">${message}</p>`;
+      setTimeout(() => window.location.href = "login.html", 1500);
+    }
 
-      const email = document.getElementById("emailInput").value.trim();
-      const password = document.getElementById("passwordInput").value.trim();
-
-      if (!email || !password) {
-        errorDiv.textContent = "Please enter both email and password.";
+    async function loadProfile() {
+      const email = localStorage.getItem('client_email');
+      if (!email) {
+        redirectToLogin("No user info found. Redirecting to login...");
         return;
       }
 
+      profileDiv.innerHTML = `<div class="spinner"></div>`;
+      errorDiv.textContent = "";
+
       try {
-        // Check email and password in 'users' table
         const { data: user, error } = await supabase
           .from('users')
-          .select('id, full_name, email, phone, password') // Make sure 'password' exists in table
+          .select('id, full_name, email, phone')
           .eq('email', email)
           .single();
 
         if (error || !user) {
-          errorDiv.textContent = "User not found.";
+          console.error("User fetch error:", error);
+          redirectToLogin("User not found. Redirecting to login...");
           return;
         }
 
-        // Simple password check (replace with hashed password logic if needed)
-        if (user.password !== password) {
-          errorDiv.textContent = "Incorrect password.";
-          return;
-        }
-
-        // Save email in localStorage for profile page
-        localStorage.setItem('client_email', user.email);
-
-        // Redirect to profile page
-        window.location.href = "profile.html";
+        displayProfile(user);
 
       } catch (err) {
-        console.error("Login error:", err);
-        errorDiv.textContent = "An unexpected error occurred. Try again.";
+        console.error("Profile load error:", err);
+        errorDiv.textContent = "Unexpected error fetching profile.";
       }
+    }
+
+    function displayProfile(user) {
+      const displayName = user.full_name || user.email || "Client";
+
+      profileDiv.innerHTML = `
+        <div class="flex items-center space-x-6 mb-8 border-b-2 border-gray-200 pb-6">
+          <img src="https://i.postimg.cc/TPfbBM5Q/black-woman-icon-flat-user-avatar-vector-illustration-158483-1678.jpg" alt="Profile Picture" class="w-24 h-24 rounded-full border-4 border-gold object-cover">
+          <div>
+            <h2 class="text-3xl font-bold text-maroon">${displayName}</h2>
+            <p class="text-lg text-gray-500">${user.email || "N/A"}</p>
+          </div>
+        </div>
+        <div class="md:grid md:grid-cols-2 md:gap-8">
+          <div class="flex flex-col space-y-4">
+            <h3 class="text-xl font-bold text-maroon border-b pb-2">Personal Information</h3>
+            <p class="text-lg"><strong>Email:</strong> ${user.email || "N/A"}</p>
+            <p class="text-lg"><strong>Phone:</strong> ${user.phone || "N/A"}</p>
+            <div class="mt-4">
+              <button id="editBtn" class="edit-btn">Edit Profile</button>
+            </div>
+          </div>
+          <div class="mt-8 md:mt-0 flex flex-col space-y-4">
+            <h3 class="text-xl font-bold text-maroon border-b pb-2">My Activity</h3>
+            <div class="bg-gray-100 p-4 rounded-lg">
+              <p class="text-gray-600">Your recent errand history will appear here. Start by exploring our runners!</p>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById("editBtn").addEventListener("click", () => enableEdit(user));
+    }
+
+    function enableEdit(user) {
+      profileDiv.innerHTML = `
+        <div class="flex items-center space-x-6 mb-8 border-b-2 border-gray-200 pb-6">
+          <img src="https://i.postimg.cc/TPfbBM5Q/black-woman-icon-flat-user-avatar-vector-illustration-158483-1678.jpg" alt="Profile Picture" class="w-24 h-24 rounded-full border-4 border-gold object-cover">
+          <div>
+            <h2 class="text-3xl font-bold text-maroon">Edit Profile</h2>
+            <p class="text-lg text-gray-500">Update your details below.</p>
+          </div>
+        </div>
+        <div class="flex flex-col space-y-4">
+          <label class="block">
+            <span class="text-lg font-semibold text-maroon">Full Name:</span>
+            <input type="text" id="nameInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50" value="${user.full_name || ""}">
+          </label>
+          <label class="block">
+            <span class="text-lg font-semibold text-maroon">Phone:</span>
+            <input type="text" id="phoneInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50" value="${user.phone || ""}">
+          </label>
+          <div class="mt-6 flex space-x-4">
+            <button id="saveBtn" class="save-btn">Save Changes</button>
+            <button id="cancelBtn" class="cancel-btn">Cancel</button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById("cancelBtn").addEventListener("click", () => displayProfile(user));
+
+      document.getElementById("saveBtn").addEventListener("click", async () => {
+        const updatedFields = {
+          full_name: document.getElementById("nameInput").value.trim(),
+          phone: document.getElementById("phoneInput").value.trim()
+        };
+
+        try {
+          const { data: updatedData, error } = await supabase
+            .from('users')
+            .update(updatedFields)
+            .eq('email', user.email)
+            .select('id, full_name, email, phone')
+            .single();
+
+          if (error) throw error;
+
+          displayProfile(updatedData);
+          errorDiv.textContent = "Profile updated successfully! ✅";
+          setTimeout(() => errorDiv.textContent = "", 3000);
+
+        } catch (err) {
+          console.error("Update error:", err);
+          errorDiv.textContent = "Failed to update profile.";
+        }
+      });
+    }
+
+    logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem('client_email');
+      window.location.href = "login.html";
     });
+
+    exploreBtn.addEventListener("click", () => window.location.href = "runners.html");
+
+    // Load profile on page load
+    loadProfile();
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
 
 
 
