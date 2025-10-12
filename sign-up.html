@@ -4,7 +4,7 @@
   <meta charset="UTF-8"> 
   <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
   <title>Create Account - Sign Up</title> 
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> <!-- Bcrypt.js for browser hashing --> 
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script> 
   <style>
     :root { --maroon: #7B1E3A; --gold: #FFD700; }
@@ -18,6 +18,14 @@
     }
     .popup.success { background: green; }
     .popup.error { background: red; }
+    /* Spinner animation */
+    .animate-spin {
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
   </style> 
  </head> 
  <body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col"> 
@@ -33,13 +41,25 @@
      <input type="email" id="email" class="w-full border rounded-md py-2 px-3 mb-4" required> <label class="block font-semibold text-maroon mb-2">Phone</label> 
      <input id="phone" class="w-full border rounded-md py-2 px-3 mb-4" required> <label class="block font-semibold text-maroon mb-2">Password</label> 
      <input type="password" id="password" class="w-full border rounded-md py-2 px-3 mb-4" required> <label class="block font-semibold text-maroon mb-2">Location</label> 
-     <input id="location" class="w-full border rounded-md py-2 px-3 mb-4" required> <!-- Runner specific fields --> 
+     <input id="location" class="w-full border rounded-md py-2 px-3 mb-4" required> 
      <div id="runnerFields" style="display:none;"> <label class="block font-semibold text-maroon mb-2">About Me</label> <textarea id="about" class="w-full border rounded-md py-2 px-3 mb-4"></textarea> <label class="block font-semibold text-maroon mb-2">Experience</label> <textarea id="experience" class="w-full border rounded-md py-2 px-3 mb-4"></textarea> <label class="block font-semibold text-maroon mb-2">Availability</label> 
       <input id="availability" class="w-full border rounded-md py-2 px-3 mb-4"> <label class="block font-semibold text-maroon mb-2">ID Number</label> 
       <input id="idNumber" class="w-full border rounded-md py-2 px-3 mb-4"> <label class="block font-semibold text-maroon mb-2">Upload Profile Picture</label> 
-      <input type="file" id="profilePicture" accept="image/*" class="mb-4"> <label class="block font-semibold text-maroon mb-2">Upload ID Picture</label> 
+      <input type="file" id="profilePicture" accept="image/*" class="mb-4"> 
+      <div class="p-3 border border-gray-300 rounded-lg bg-gray-50 mb-3"> 
+       <p class="text-sm text-gray-700"> Please upload a picture of your ID. This is strictly for **Runner verification** to ensure the safety and trust of our service. Your ID information will be kept confidential and secure. </p> 
+      </div> <label class="block font-semibold text-maroon mb-2">Upload ID Picture</label> 
       <input type="file" id="idPicture" accept="image/*" class="mb-4"> 
-     </div> <button type="submit" class="w-full bg-maroon text-gold font-bold py-2 px-4 rounded-md hover:bg-maroon-dark"> Sign Up </button> 
+     </div> <button type="submit" id="signupButton" class="w-full bg-maroon text-gold font-bold py-2 px-4 rounded-md hover:bg-maroon-dark mt-6 flex justify-center items-center"> <span id="buttonText">Sign Up</span> <span id="loadingIndicator" class="hidden ml-2"> 
+       <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-gold" xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24"> <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle> <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path> 
+       </svg> </span> </button> 
+     <div id="paymentInstructions" class="mt-6 p-4 border border-green-300 rounded-lg bg-green-50" style="display:none;"> 
+      <h3 class="text-xl font-bold text-maroon mb-3">Runner Subscription Payment</h3> 
+      <p class="text-gray-700 mb-4"> To activate your Runner account and begin earning, please pay the monthly fee of **KES 100**. </p> 
+      <p class="font-semibold text-gray-800">Payment Method (M-Pesa):</p> 
+      <p class="text-lg font-mono text-green-700 mb-4"> <span class="font-bold">Pochi La Biashara:</span> 0115815194 </p> 
+      <p class="text-gray-700"> **Action Required:** After making the payment, please forward the confirmation details (e.g., M-Pesa message) to our verification number: **0797046378**. Your account will be activated shortly after verification. </p> 
+     </div> 
     </form> 
    </div> 
   </main> 
@@ -52,11 +72,20 @@
 
     const accountTypeSelect = document.getElementById("accountType");
     const runnerFields = document.getElementById("runnerFields");
+    const paymentInstructions = document.getElementById("paymentInstructions");
     const popup = document.getElementById("popup");
+    const signupButton = document.getElementById("signupButton");
+    const buttonText = document.getElementById("buttonText");
+    const loadingIndicator = document.getElementById("loadingIndicator");
 
+    // Toggle Runner fields and Payment instructions visibility
     accountTypeSelect.addEventListener("change", () => {
-      runnerFields.style.display = accountTypeSelect.value === "runner" ? "block" : "none";
+      const isRunner = accountTypeSelect.value === "runner";
+      runnerFields.style.display = isRunner ? "block" : "none";
+      paymentInstructions.style.display = isRunner ? "block" : "none";
     });
+    // Initial call to set state correctly on load
+    accountTypeSelect.dispatchEvent(new Event('change'));
 
     function showPopup(message, type) {
       popup.textContent = message;
@@ -74,8 +103,21 @@
       return data.publicUrl;
     }
 
+    // Function to set the loading state of the button
+    function setLoading(isLoading) {
+        signupButton.disabled = isLoading;
+        if (isLoading) {
+            buttonText.textContent = "Signing Up...";
+            loadingIndicator.classList.remove("hidden");
+        } else {
+            buttonText.textContent = "Sign Up";
+            loadingIndicator.classList.add("hidden");
+        }
+    }
+
     document.getElementById("signupForm").addEventListener("submit", async (e) => {
       e.preventDefault();
+      setLoading(true); // Start loading state
 
       const accountType = accountTypeSelect.value;
       const fullName = document.getElementById("fullName").value.trim();
@@ -86,17 +128,19 @@
 
       if (!fullName || !email || !phone || !password || !location) {
         showPopup("Please fill all required fields", "error");
+        setLoading(false); // Stop loading on validation error
         return;
       }
 
       try {
-        // Browser-safe bcrypt hashing
+        // Hashing for demonstration purposes, though server-side is preferred
         const hashedPassword = dcodeIO.bcrypt.hashSync(password, 10);
 
         if (accountType === "user") {
           const { error } = await supabaseClient
             .from("users")
             .insert([{ full_name: fullName, email, phone, location, password: hashedPassword }]);
+          
           if (error) throw error;
           showPopup("User account created successfully!", "success");
 
@@ -107,7 +151,15 @@
           const idNumber = document.getElementById("idNumber").value.trim();
           const profilePicture = document.getElementById("profilePicture").files[0];
           const idPicture = document.getElementById("idPicture").files[0];
-
+          
+          // Basic validation for runner-specific fields
+          if (!about || !experience || !availability || !idNumber || !profilePicture || !idPicture) {
+            showPopup("Please fill all required fields for a Runner account and upload both pictures.", "error");
+            setLoading(false);
+            return;
+          }
+          
+          // File uploads can take the most time - this is why a loading indicator is important
           const profilePicUrl = await uploadFile(profilePicture, "profiles");
           const idPicUrl = await uploadFile(idPicture, "ids");
 
@@ -127,31 +179,24 @@
               idimage: idPicUrl,
               subscription_status: "inactive"
             }]);
+          
           if (error) throw error;
 
-          showPopup("Runner account created successfully!", "success");
+          showPopup("Runner account created successfully! Please complete the payment steps to activate your account.", "success");
         }
 
-        setTimeout(() => window.location.href = "login.html", 2500);
+        // Navigate to login after successful sign up
+        setTimeout(() => window.location.href = "login.html", 4000); 
 
       } catch (err) {
         console.error("Signup error:", err);
         showPopup("Signup failed: " + err.message, "error");
+      } finally {
+        setLoading(false); // Stop loading state regardless of success or failure
       }
     });
   </script> 
  </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
 
 
