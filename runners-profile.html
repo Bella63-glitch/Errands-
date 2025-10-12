@@ -11,13 +11,14 @@
         :root {
             --maroon: #7B1E3A;
             --gold: #FFD700;
-            --light-bg: #e9eef2; /* Lighter, cooler background */
+            --light-bg: #e9eef2;
             --text-dark: #2c3e50;
             --border-light: #dadee3;
             --maroon-dark: #5c162b;
             --shadow-strong: 0 15px 40px rgba(0, 0, 0, 0.15);
         }
 
+        /* Base styles for all devices */
         body {
             font-family: 'Montserrat', sans-serif;
             margin: 0;
@@ -27,15 +28,15 @@
             align-items: center;
             min-height: 100vh;
             padding-bottom: 50px;
-            /* Subtle gradient background for depth */
             background-image: linear-gradient(135deg, var(--light-bg) 0%, #dcdfe3 100%);
+            box-sizing: border-box; /* Important for responsive layouts */
         }
 
         /* --- Header/Nav Bar --- */
         .top-header {
             width: 100%;
             background-color: var(--maroon);
-            padding: 1.2rem 3rem;
+            padding: 1rem 1.5rem; /* Reduced padding for mobile */
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
             display: flex;
             justify-content: space-between;
@@ -49,7 +50,7 @@
             color: var(--gold);
             text-decoration: none;
             font-weight: 700;
-            font-size: 1.15rem;
+            font-size: 1rem; /* Slightly smaller */
             transition: color 0.3s, transform 0.2s;
         }
 
@@ -57,24 +58,24 @@
             color: white;
             transform: scale(1.05);
         }
-        
+
         .header-title {
             color: white;
-            font-size: 1.6rem;
+            font-size: 1.4rem; /* Slightly smaller */
             font-weight: 800;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
 
         /* --- Profile Container (Floating Card) --- */
         .profile-container {
             background-color: #fff;
-            border-radius: 25px;
+            border-radius: 20px; /* Slightly smaller radius for mobile */
             box-shadow: var(--shadow-strong);
             padding: 0;
-            width: 90%;
+            width: 95%; /* More fluid width */
             max-width: 650px;
             text-align: center;
-            margin: 60px 0;
+            margin: 40px 0; /* Reduced margin */
             overflow: hidden;
             transition: all 0.5s ease;
         }
@@ -85,23 +86,21 @@
             flex-direction: column;
             align-items: center;
             background: var(--maroon);
-            padding: 40px 20px 60px 20px;
+            padding: 30px 20px 50px 20px; /* Reduced vertical padding */
             position: relative;
             color: white;
-            /* Subtle texture/gradient for high quality */
             background-image: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-dark) 100%);
         }
-        
+
         .profile-header h2 {
-            /* Removed since the text is to be removed */
-            display: none; 
+            display: none;
         }
 
         .profile-pic-wrapper {
             position: absolute;
-            bottom: -50px; /* Position below the header for the floating look */
-            width: 160px;
-            height: 160px;
+            bottom: -40px; /* Adjusted position */
+            width: 140px; /* Slightly smaller picture */
+            height: 140px;
             z-index: 100;
             border-radius: 50%;
         }
@@ -111,19 +110,19 @@
             height: 100%;
             border-radius: 50%;
             object-fit: cover;
-            border: 6px solid var(--gold); /* Key brand accent */
-            box-shadow: 0 0 0 8px #fff, 0 8px 20px rgba(0,0,0,0.3); /* Multi-layer shadow */
+            border: 5px solid var(--gold); /* Adjusted border size */
+            box-shadow: 0 0 0 6px #fff, 0 6px 15px rgba(0,0,0,0.3); /* Adjusted shadow */
         }
 
         /* --- Details Section --- */
         .details {
             text-align: left;
-            padding: 80px 30px 30px 30px; /* Top padding accounts for floating picture */
+            padding: 60px 20px 20px 20px; /* Adjusted padding */
         }
 
         .details .detail-item {
-            font-size: 1.05rem;
-            padding: 1rem 0;
+            font-size: 1rem;
+            padding: 0.8rem 0; /* Reduced vertical padding */
             border-bottom: 1px solid var(--border-light);
             display: flex;
             justify-content: space-between;
@@ -133,10 +132,10 @@
         }
 
         .details .detail-item:hover {
-            background-color: rgba(123, 30, 58, 0.05); /* Light maroon hover effect */
+            background-color: rgba(123, 30, 58, 0.05);
             border-radius: 5px;
-            padding-left: 10px;
-            padding-right: -10px;
+            padding-left: 5px;
+            padding-right: 0px;
         }
 
         .details .detail-item:last-child {
@@ -146,12 +145,13 @@
         .details strong {
             color: var(--maroon-dark);
             font-weight: 700;
-            min-width: 120px;
+            min-width: 100px; /* Reduced min-width */
+            font-size: 0.95rem;
         }
-        
+
         .details strong i {
-            margin-right: 10px;
-            color: var(--gold); /* Icon accent */
+            margin-right: 8px; /* Adjusted margin */
+            color: var(--gold);
         }
 
         .highlight {
@@ -159,21 +159,18 @@
             color: var(--text-dark);
             text-align: right;
             flex-grow: 1;
+            font-size: 0.95rem;
         }
-        
+
         .highlight.about-text {
             white-space: pre-wrap;
             word-break: break-word;
         }
 
         .status-badge {
-            padding: 0.5rem 1rem;
-            border-radius: 25px;
-            color: white;
-            font-weight: bold;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            padding: 0.4rem 0.8rem; /* Adjusted padding */
+            border-radius: 20px;
+            font-size: 0.8rem; /* Smaller font */
         }
 
         .active { background-color: #2ecc71; }
@@ -181,60 +178,90 @@
 
         /* --- Button Group --- */
         .button-group {
-            padding: 20px 30px 40px 30px;
+            padding: 20px 20px 30px 20px; /* Reduced padding */
             display: flex;
             justify-content: center;
         }
-        
+
         #logoutBtn {
             background-color: var(--maroon);
             color: white;
             border: 2px solid var(--maroon);
-            border-radius: 10px;
-            padding: 15px 35px;
-            cursor: pointer;
-            font-size: 1.1rem;
-            font-weight: 700;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 15px rgba(123, 30, 58, 0.4);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            border-radius: 8px;
+            padding: 12px 25px; /* Reduced padding */
+            font-size: 1rem; /* Adjusted font size */
         }
 
-        #logoutBtn:hover {
-            background-color: var(--maroon-dark);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(123, 30, 58, 0.5);
+        /* --- Mobile Responsiveness (Adjustments for screens <= 550px) --- */
+        @media (max-width: 550px) {
+            .top-header {
+                padding: 0.8rem 1rem;
+            }
+
+            .header-title {
+                font-size: 1.2rem;
+            }
+
+            .top-header a {
+                font-size: 0.9rem;
+            }
+
+            .profile-container {
+                margin: 30px 0;
+            }
+
+            .profile-pic-wrapper {
+                width: 120px;
+                height: 120px;
+                bottom: -30px;
+            }
+
+            .profile-pic {
+                border-width: 4px;
+                box-shadow: 0 0 0 4px #fff, 0 4px 10px rgba(0,0,0,0.2);
+            }
+
+            .details {
+                padding: 50px 15px 15px 15px; /* Tighter padding */
+            }
+
+            .details .detail-item {
+                flex-direction: column; /* Stack items vertically */
+                align-items: flex-start;
+                padding: 0.7rem 0;
+            }
+
+            .details strong {
+                width: 100%;
+                text-align: left;
+                margin-bottom: 5px; /* Space between label and value */
+                min-width: auto;
+                font-size: 1rem;
+            }
+
+            .highlight {
+                width: 100%;
+                text-align: left; /* Align value to the left under the label */
+                padding-left: 28px; /* Indent the value slightly for hierarchy */
+                box-sizing: border-box;
+                font-size: 1rem;
+            }
+
+            .status-badge {
+                margin-top: 5px;
+                margin-left: 28px;
+            }
+            
+            .button-group {
+                padding: 15px 15px 25px 15px;
+            }
+            
+            #logoutBtn {
+                width: 100%;
+                padding: 14px 0;
+            }
         }
 
-        /* --- Popup/Toast Notification --- */
-        .popup {
-            position: fixed;
-            top: 25px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #333;
-            color: #fff;
-            padding: 15px 30px;
-            border-radius: 10px;
-            font-weight: 600;
-            display: none;
-            z-index: 1000;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-            animation: fadeInOut 4s ease-in-out forwards;
-        }
-        
-        .popup.success { background: #2ecc71; }
-        .popup.error { background: #e74c3c; }
-        .popup.info { background: #3498db; }
-
-        @keyframes fadeInOut {
-            0% { opacity: 0; transform: translate(-50%, -10px); }
-            10% { opacity: 1; transform: translate(-50%, 0); }
-            90% { opacity: 1; transform: translate(-50%, 0); }
-            100% { opacity: 0; transform: translate(-50%, -10px); }
-        }
-        
         /* Edit Mode remains functionally hidden */
         #editMode { display: none; }
 
@@ -245,17 +272,17 @@
         <a href="index.html"><i class="fas fa-home"></i> Home</a>
         <span class="header-title">Runner Profile</span>
     </div>
-    
+
     <div id="popup" class="popup"></div>
-    
+
     <div class="profile-container">
         <div id="viewMode">
             <div class="profile-header">
                 <div class="profile-pic-wrapper">
-                    <img id="runnerImage" class="profile-pic" src="https://via.placeholder.com/160/7B1E3A/FFD700?text=RUN" alt="Profile Picture" />
+                    <img id="runnerImage" class="profile-pic" src="https://via.placeholder.com/140/7B1E3A/FFD700?text=RUN" alt="Profile Picture" />
                 </div>
             </div>
-            
+
             <div class="details" id="runnerDetails">
                 <div class="detail-item">
                     <strong><i class="fas fa-user"></i> Name:</strong> <span id="runnerName" class="highlight">Loading...</span>
@@ -282,12 +309,12 @@
                     <strong><i class="fas fa-check-circle"></i> Status:</strong> <span id="runnerStatus" class="status-badge">Loading...</span>
                 </div>
             </div>
-            
+
             <div class="button-group">
                 <button id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Secure Logout</button>
             </div>
         </div>
-        
+
         <div id="editMode">
             <form id="editForm">
                 <label for="profilePictureInput" id="imageUploadLabel"></label>
@@ -305,7 +332,7 @@
             </form>
         </div>
     </div>
-    
+
     <script>
         // Supabase Configuration
         const supabaseUrl = "https://zchofpncqskvnfrzbcww.supabase.co";
@@ -320,7 +347,7 @@
         // Current User State
         const email = localStorage.getItem("loggedInEmail");
         const userType = localStorage.getItem("userType");
-        let currentRunnerData = null; 
+        let currentRunnerData = null;
 
         /**
          * Displays a temporary notification popup.
@@ -379,7 +406,7 @@
          */
         function populateViewMode(data) {
             const runnerName = data.name || "N/A";
-            
+
             document.getElementById("runnerName").textContent = runnerName;
             document.getElementById("runnerEmail").textContent = data.email;
             document.getElementById("runnerPhone").textContent = data.phone || "N/A";
@@ -398,7 +425,8 @@
             }
 
             const imgEl = document.getElementById("runnerImage");
-            imgEl.src = data.profilepicture || "https://via.placeholder.com/160/7B1E3A/FFD700?text=RUN";
+            // Adjusted placeholder size to match CSS
+            imgEl.src = data.profilepicture || "https://via.placeholder.com/140/7B1E3A/FFD700?text=RUN";
         }
 
         // --- Event Listener ---
@@ -416,3 +444,4 @@
     </script>
 </body>
 </html>
+
