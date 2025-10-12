@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Run Me An Errand - Your Trusted Errand Partner in Kenya</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/forms"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-64SH312S1V"></script>
+  <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-64SH312S1V');
+    </script>
+  <style>
+        :root {
+            --maroon: #7B1E3A;
+            --gold: #FFD700;
+        }
+        .bg-maroon { background-color: var(--maroon); }
+        .text-gold { color: var(--gold); }
+        .bg-gold { background-color: var(--gold); }
+        .border-maroon { border-color: var(--maroon); }
+        .bg-maroon-dark { background-color: #66182f; }
+        .bg-maroon-light { background-color: #8a2241; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-down { animation: fadeDown 0.5s ease-out forwards; }
+        @keyframes slideInLeft { from { opacity: 0; transform: translateX(-50px); } to { opacity: 1; transform: translateX(0); } }
+        .animate-slide-in-left { animation: slideInLeft 0.7s ease-out forwards; }
+        @keyframes slideInRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+        .animate-slide-in-right { animation: slideInRight 0.7s ease-out forwards; }
+        .animate-fade-right { animation: slideInRight 0.7s ease-out forwards; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+        .animate-pulse-subtle { animation: pulse 2s infinite ease-in-out; }
+        @keyframes backgroundPan { 0% { background-position: 0% 0%; } 50% { background-position: 10% 10%; } 100% { background-position: 0% 0%; } }
+        .animate-bg-pan { animation: backgroundPan 30s infinite alternate ease-in-out; }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        @keyframes rotateIn { from { opacity: 0; transform: rotate(-90deg) scale(0.5); } to { opacity: 1; transform: rotate(0deg) scale(1); } }
+        .animate-rotate-in { animation: rotateIn 0.8s ease-out forwards; }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+        .animate-zoom-in { animation: zoomIn 0.6s ease-out forwards; }
+        @keyframes bounceIn { 0% { transform: scale(0.3); opacity: 0; } 50% { transform: scale(1.1); opacity: 1; } 70% { transform: scale(0.95); } 100% { transform: scale(1); } }
+
+        .animated-item { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+        .animated-item.is-visible { opacity: 1; transform: translateY(0); }
+        .animated-item.rotate-effect.is-visible { animation: rotateIn 0.8s ease-out forwards; opacity: 1; transform: none; }
+        .animated-item.zoom-effect.is-visible { animation: zoomIn 0.6s ease-out forwards; opacity: 1; transform: none; }
+        .step-icon, .trust-icon { opacity: 0; transform: scale(0.5); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+        .step-icon.is-visible, .trust-icon.is-visible { opacity: 1; transform: scale(1); animation: bounceIn 0.8s ease-out forwards; }
+        .hero-background-image {
+            background-image: url('https://i.postimg.cc/Xv93p8J1/file-00000000c624622fb8df816c050f7dea.png');
+            background-size: cover; background-position: center; background-repeat: no-repeat; position: relative; z-index: 1; overflow: hidden; min-height: 500px; height: auto; display: flex; align-items: center; justify-content: center; text-align: center;
+        }
+        .hero-background-image::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 0;
+        }
+        @media (max-width: 767px) {
+            .hero-background-image { min-height: 400px; padding-top: 4rem; padding-bottom: 4rem; }
+            .hero-background-image h2 { font-size: 2.5rem; }
+            .hero-background-image p { font-size: 1rem; }
+        }
+        .mobile-menu { transition: max-height 0.3s ease-in-out; overflow: hidden; max-height: 0; }
+        .mobile-menu.active { max-height: 500px; }
+        .hamburger span { display: block; width: 25px; height: 3px; background-color: white; transition: all 0.3s ease-in-out; }
+        .hamburger span:nth-child(2) { margin: 5px 0; }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+        .dropdown { position: relative; display: inline-block; }
+        .dropdown-content { display: none; position: absolute; right: 0; background-color: var(--maroon-dark); min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 10; border-radius: 0.5rem; padding: 0.5rem 0; }
+        .dropdown:hover .dropdown-content { display: block; }
+        .dropdown-content a, .dropdown-content button { color: white; padding: 0.75rem 1rem; text-decoration: none; display: block; transition: background-color 0.3s, color 0.3s; text-align: left; width: 100%; }
+        .dropdown-content a:hover, .dropdown-content button:hover { background-color: var(--gold); color: var(--maroon); }
+        .testimonial-slide { display: none; }
+        .testimonial-slide.active { display: block; animation: fadeIn 0.8s ease-in-out; }
+    </style>
+ </head>
+ <body class="bg-gray-100 text-gray-800 font-sans">
+  <header class="bg-maroon shadow-lg sticky top-0 z-50 transition-shadow duration-300">
+   <div class="max-w-7xl mx-auto flex justify-between items-center py-5 px-6"> <a href="index.html" class="flex items-center space-x-2 animate-fade-in"> <img src="https://i.postimg.cc/d1z9KLkL/ei-1752053865516-removebg-preview.png" alt="Errand Logo" class="h-20 md:h-24 w-auto"> <h1 class="text-xl md:text-3xl font-bold text-white transition-colors duration-300 hover:text-gold" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.4);">Run Me An Errand</h1> </a>
+    <nav class="hidden md:flex space-x-6 text-lg" id="desktop-nav"><div id="auth-buttons" class="flex items-center space-x-4"></div>
+</nav>
+    <div class="hidden md:flex space-x-4 items-center" id="desktop-auth-buttons"></div>
+    <div class="md:hidden"> <button id="mobile-menu-button" class="text-gray-300 hover:text-gold focus:outline-none focus:ring-2 focus:ring-gold animate-fade-in hamburger" style="animation-delay: 0.9s;" aria-label="Toggle mobile menu"> <span></span><span></span><span></span> </button>
+    </div>
+   </div>
+   <nav id="mobile-menu" class="mobile-menu md:hidden bg-gradient-to-r from-maroon-dark to-maroon pb-4 shadow-inner"><div id="auth-buttons" class="flex items-center space-x-4"></div>
+</nav>
+  </header>
+  <section class="hero-background-image animate-bg-pan">
+   <div class="max-w-6xl mx-auto px-6 text-center relative z-10">
+    <h2 class="text-4xl lg:text-5xl font-extrabold text-white mb-6 animate-slide-in-left" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.6);">Your Errand, Our Runners.</h2>
+    <p class="text-lg lg:text-xl text-white mb-8 animate-slide-in-right" style="animation-delay: 0.2s;">Access a network of reliable, verified runners across Kenya for all your to-do's. Get help with groceries, deliveries, and more - simply and affordably.</p>
+    <div class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-4"> <a href="login.html" id="hero-browse-btn" class="bg-gold text-maroon px-8 py-3 font-semibold rounded-full shadow-md hover:bg-maroon hover:text-white transition duration-300 animate-pulse-subtle">Browse Runners</a> <a href="sign-up.html" class="bg-white text-maroon px-8 py-3 font-semibold rounded-full shadow-md hover:bg-gold hover:text-maroon transition duration-300 animate-pulse-subtle">Become a Runner</a>
+    </div>
+   </div>
+  </section>
+    <section id="how-it-works" class="bg-white py-16 px-6">
+   <div class="max-w-6xl mx-auto text-center">
+    <h2 class="text-3xl font-bold text-maroon mb-12 animate-fade-down animated-item">How It Works</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10 items-start">
+     <div class="animated-item" style="animation-delay: 0.1s;">
+      <div class="bg-gold text-maroon rounded-full h-12 w-12 flex items-center justify-center text-xl font-bold mx-auto mb-4 shadow-md step-icon">
+        1
+      </div>
+      <h3 class="text-xl font-semibold text-maroon mb-3">Sign Up &amp; Explore</h3>
+      <p class="text-gray-700">Create a account in minutes. Then, explore our network of verified runners.</p>
+     </div>
+     <div class="animated-item" style="animation-delay: 0.2s;">
+      <div class="bg-gold text-maroon rounded-full h-12 w-12 flex items-center justify-center text-xl font-bold mx-auto mb-4 shadow-md step-icon">
+        2
+      </div>
+      <h3 class="text-xl font-semibold text-maroon mb-3">Find Your Perfect Match</h3>
+      <p class="text-gray-700">Browse detailed runner profiles, including skills, experience, and contact info.</p>
+     </div>
+     <div class="animated-item" style="animation-delay: 0.3s;">
+      <div class="bg-gold text-maroon rounded-full h-12 w-12 flex items-center justify-center text-xl font-bold mx-auto mb-4 shadow-md step-icon">
+        3
+      </div>
+      <h3 class="text-xl font-semibold text-maroon mb-3">Contact &amp; Get It Done</h3>
+      <p class="text-gray-700">Connect directly with a runner, agree on terms, and pay them securely after the errand is complete.</p>
+     </div>
+    </div>
+   </div>
+  </section>
+  <hr class="my-10 border-gray-300">
+  <section id="testimonials" class="max-w-4xl mx-auto py-16 px-6 bg-white rounded-xl shadow-md text-center">
+   <h2 class="text-3xl font-bold text-maroon mb-12 animate-fade-down animated-item">What Our Clients Say</h2>
+   <div class="relative overflow-hidden">
+    <div id="testimonial-container" class="relative">
+     <div class="testimonial-slide animated-item p-6">
+      <img src="https://i.postimg.cc/TPfbBM5Q/black-woman-icon-flat-user-avatar-vector-illustration-158483-1678.jpg" alt="Black woman icon" class="mx-auto mb-3 h-24 w-24 rounded-full">
+      <p class="text-gray-700 italic mb-4">"I needed groceries delivered quickly and Run Me An Errand saved my day! The runner was professional and fast. Highly recommended!"</p>
+      <p class="font-semibold text-maroon">- Jane Wanjiku, Nairobi</p>
+     </div>
+     <div class="testimonial-slide animated-item p-6">
+      <img src="https://i.postimg.cc/66gvtGG8/man3-512.png" alt="Black man icon" class="mx-auto mb-3 h-24 w-24 rounded-full">
+      <p class="text-gray-700 italic mb-4">"Booking a runner was so easy. I got my documents picked up and delivered without any hassle. The service is reliable and the prices are fair."</p>
+      <p class="font-semibold text-maroon">- Kevin Otieno, Mombasa</p>
+     </div>
+     <div class="testimonial-slide animated-item p-6">
+      <img src="https://i.postimg.cc/TPfbBM5Q/black-woman-icon-flat-user-avatar-vector-illustration-158483-1678.jpg" alt="Black woman icon" class="mx-auto mb-3 h-24 w-24 rounded-full">
+      <p class="text-gray-700 italic mb-4">"As a small business owner, I rely on timely deliveries. The runners on this platform are top-notch and always get the job done right."</p>
+      <p class="font-semibold text-maroon">- Sarah Akinyi, Kisumu</p>
+     </div>
+    </div> <button id="prev-testimonial" class="absolute top-1/2 left-0 transform -translate-y-1/2 bg-gray-200 p-2 rounded-full shadow-md hover:bg-gray-300 focus:outline-none transition-colors duration-300" aria-label="Previous testimonial">
+     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewbox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+     </svg> </button> <button id="next-testimonial" class="absolute top-1/2 right-0 transform -translate-y-1/2 bg-gray-200 p-2 rounded-full shadow-md hover:bg-gray-300 focus:outline-none transition-colors duration-300" aria-label="Next testimonial">
+     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewbox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+     </svg> </button>
+   </div>
+  </section>
+  <hr class="my-10 border-gray-300">
+  <section id="pricing" class="bg-gray-50 py-16 px-6">
+   <div class="max-w-6xl mx-auto text-center">
+    <h2 class="text-3xl font-bold text-maroon mb-12 animated-item">Simple, Fair Pricing</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+     <div class="bg-white rounded-xl shadow-md p-8 animated-item animate-float" style="animation-delay: 0.1s;">
+      <h3 class="text-2xl font-bold text-maroon mb-4">For Clients</h3>
+      <p class="text-4xl font-extrabold text-gold mb-4">Free<span class="text-lg text-maroon"></span></p>
+      <p class="text-gray-700 mb-6">Create a free account and connect with our network of verified runners.</p>
+      <ul class="text-left text-gray-700 mb-6 space-y-2">
+       <li><span class="text-gold font-bold">✔️</span> Unlimited access to runner profiles</li>
+       <li><span class="text-gold font-bold">✔️</span> Direct communication with runners</li>
+       <li><span class="text-gold font-bold">✔️</span> Pay the runner directly</li>
+       <li><span class="text-gold font-bold">✔️</span> No monthly subscription or fees</li>
+      </ul> <a href="sign-up.html" class="bg-maroon text-white px-6 py-3 rounded-full font-semibold hover:bg-maroon-dark transition-colors duration-300">Sign Up as a Client</a>
+     </div>
+     <div class="bg-white rounded-xl shadow-md p-8 animated-item animate-float" style="animation-delay: 0.2s;">
+      <h3 class="text-2xl font-bold text-maroon mb-4">For Runners</h3>
+      <p class="text-4xl font-extrabold text-gold mb-4">KES 100<span class="text-lg text-maroon">/month</span></p>
+      <p class="text-gray-700 mb-6">Join our platform and start earning by helping with errands.</p>
+      <ul class="text-left text-gray-700 mb-6 space-y-2">
+       <li><span class="text-gold font-bold">✔️</span> Get listed on our platform</li>
+       <li><span class="text-gold font-bold">✔️</span> Receive job bookings directly</li>
+       <li><span class="text-gold font-bold">✔️</span> Set your own rates and schedule</li>
+       <li><span class="text-gold font-bold">✔️</span> Keep 100% of your earnings</li>
+      </ul> <a href="sign-up.html" class="bg-maroon text-white px-6 py-3 rounded-full font-semibold hover:bg-maroon-dark transition-colors duration-300">Sign Up as a Runner</a>
+     </div>
+    </div>
+   </div>
+  </section>
+  <hr class="my-10 border-gray-300">
+  <section id="trust-section" class="py-16 bg-white px-6">
+   <div class="max-w-6xl mx-auto text-center">
+    <h2 class="text-3xl font-bold text-maroon mb-12 animate-fade-down animated-item">Why Run Me An Errand?</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+     <div class="bg-gray-50 rounded-xl shadow-md p-6 animated-item zoom-effect">
+      <img src="https://img.icons8.com/plasticine/100/null/good-quality--v1.png" alt="Verified &amp; Trusted" class="mx-auto mb-4 h-16 w-16 trust-icon">
+      <h3 class="text-xl font-semibold text-maroon mb-3">Verified Runners</h3>
+      <p class="text-gray-700">All our runners are vetted and background-checked for your safety and peace of mind.</p>
+     </div>
+     <div class="bg-gray-50 rounded-xl shadow-md p-6 animated-item zoom-effect" style="animation-delay: 0.2s;">
+      <img src="https://img.icons8.com/plasticine/100/null/customer-support--v1.png" alt="24/7 Support" class="mx-auto mb-4 h-16 w-16 trust-icon">
+      <h3 class="text-xl font-semibold text-maroon mb-3">24/7 Support</h3>
+      <p class="text-gray-700">Our dedicated support team is available around the clock to assist you with any issue.</p>
+     </div>
+     <div class="bg-gray-50 rounded-xl shadow-md p-6 animated-item zoom-effect" style="animation-delay: 0.4s;">
+      <img src="https://img.icons8.com/plasticine/100/null/speed.png" alt="Speed &amp; Efficiency" class="mx-auto mb-4 h-16 w-16 trust-icon">
+      <h3 class="text-xl font-semibold text-maroon mb-3">Safe &amp; Secure Payments</h3>
+      <p class="text-gray-700">We don’t hold your money. You pay the runner directly upon completion of the errand.</p>
+     </div>
+    </div>
+   </div>
+  </section>
+  <section id="become-a-runner" class="py-16 bg-maroon text-white overflow-hidden relative">
+   <div class="absolute bottom-0 left-0 w-1/2 md:w-1/3 opacity-60">
+    <img src="https://img.icons8.com/bubbles/500/ffffff/scooter.png" alt="Scooter" class="transform scale-x-[-1]">
+   </div>
+   <div class="max-w-6xl mx-auto px-6 relative z-10 grid md:grid-cols-2 gap-10 items-center">
+    <div class="animated-item" style="animation-delay: 0.1s;">
+     <h3 class="text-3xl font-bold text-gold mb-6 animate-fade-right">Become a Runner and Earn</h3>
+     <p class="text-lg mb-8 animate-fade-right delay-200">Join our growing network of runners across Kenya and start earning by helping people with their errands. Enjoy flexible hours and great earning potential in your local area.</p> <a href="sign-up.html" class="bg-gold text-maroon px-6 py-3 rounded-full font-semibold hover:bg-white hover:text-maroon transition duration-300 animate-pulse-subtle">Sign Up as a Runner Today!</a>
+    </div>
+   </div>
+  </section>
+  <footer id="contact" class="bg-gray-800 text-gray-300 py-12">
+   <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="animated-item" style="animation-delay: 0.1s;">
+     <h4 class="text-lg font-bold text-gold mb-4">Run Me An Errand</h4>
+     <p class="text-sm mb-2">Your reliable partner for errand services across Kenya.</p>
+     <p class="text-sm">© 2025 Run Me An Errand. All rights reserved.</p>
+    </div>
+    <div class="animated-item" style="animation-delay: 0.2s;">
+     <h4 class="text-lg font-bold text-gold mb-4">Quick Links</h4>
+     <ul class="space-y-2 text-sm">
+      <li><a href="index.html" class="hover:text-gold transition-colors duration-200">Home</a></li>
+      <li><a href="about-us.html" class="hover:text-gold transition-colors duration-200">About Us</a></li>
+      <li><a href="login.html" class="hover:text-gold transition-colors duration-200" id="footer-runners-link">Browse Runners</a></li>
+      <li><a href="sign-up.html" class="hover:text-gold transition-colors duration-200">Become a Runner</a></li>
+      <li><a href="#contact" class="hover:text-gold transition-colors duration-200">Contact Us</a></li>
+      <li><a href="#" class="hover:text-gold transition-colors duration-200">FAQ</a></li>
+      <li><a href="#" class="hover:text-gold transition-colors duration-200">Privacy Policy</a></li>
+      <li><a href="#" class="hover:text-gold transition-colors duration-200">Terms of Service</a></li>
+     </ul>
+    </div>
+    <div class="animated-item" style="animation-delay: 0.3s;">
+     <h4 class="text-lg font-bold text-gold mb-4">Contact Info</h4>
+     <p class="text-sm mb-2">Email: <a href="mailto:ranmeanerrand@gmail.com" class="hover:text-gold">ranmeanerrand@gmail.com</a></p>
+     <p class="text-sm mb-2">Phone: <a href="tel:+254797046378" class="hover:text-gold">+254 797 046378</a></p>
+     <div class="flex space-x-4 mt-4"> <a href="#" class="text-gray-300 hover:text-gold" aria-label="Twitter">
+       <svg class="h-5 w-5 fill-current" viewbox="0 0 24 24"> <path fill="currentColor" d="M22.46 6c-.77.67-1.72 1.13-2.77 1.33a4.76 4.76 0 002.07-2.62c-.82.48-1.75.83-2.79 1.02a4.78 4.78 0 00-8.13 4.3A13.54 13.54 0 013.57 4.3c.83 1.42 2.08 2.4 3.57 3.07a4.78 4.78 0 00-2.22-.61c.3-.08.59-.12.88-.12a4.78 4.78 0 004.46 3.31 9.5 9.5 0 01-5.78 1.98c-.34-.1-.68-.16-1.02-.18a4.75 4.75 0 004.88 3.3 9.5 9.5 0 01-7.64 3.27c-.36-.02-.72-.03-1.08-.03a13.57 13.57 0 006.94 2.16c4.16 0 7.67-3.46 7.67-7.67 0-.12 0-.23-.34-.69a4.66 4.66 0 001.53-1.3"></path>
+       </svg></a> <a href="#" class="text-gray-300 hover:text-gold" aria-label="Facebook">
+       <svg class="h-5 w-5 fill-current" viewbox="0 0 24 24"> <path fill="currentColor" d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.88V15H8v-3h2V9.5c0-2.17 1.34-3.34 3.27-3.34 1.83 0 2.93 1.5 2.93 3.34V12h2v3h-2v6.88c4.56-1.01 8-5.04 8-9.88z"></path>
+       </svg></a> <a href="#" class="text-gray-300 hover:text-gold" aria-label="Instagram">
+       <svg class="h-5 w-5 fill-current" viewbox="0 0 24 24"> <path fill="currentColor" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.148 3.252-1.691-4.771-4.919-4.919 1.265-.058 1.644-.07 4.849-.07zM12 6.893c-2.857 0-5.146 2.289-5.146 5.146 0 2.857 2.289 5.146 5.146 5.146 2.857 0 5.146-2.289 5.146-5.146 0-2.857-2.289-5.146-5.146-5.146zm0 8.469c-1.827 0-3.333-1.506-3.333-3.333 0-1.827 1.506-3.333 3.333-3.333 1.827 0 3.333 1.506 3.333 3.333 0 1.827-1.506 3.333-3.333 3.333z"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M12 3.998c-4.414 0-8 3.586-8 8 0 4.414 3.586 8 8 8 4.414 0 8-3.586 8-8 0-4.414-3.586-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-3.31 2.69-6 6-6 3.31 0 6 2.69 6 6 0 3.31-2.69 6-6 6z"></path>
+       </svg></a>
+     </div>
+    </div>
+   </div>
+  </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            const heroBrowseBtn = document.getElementById('hero-browse-btn');
+            const desktopNav = document.getElementById('desktop-nav');
+            const desktopAuthButtons = document.getElementById('desktop-auth-buttons');
+            const mobileMenuNav = document.getElementById('mobile-menu');
+
+            // --- AUTH CHECK: Uses localStorage to determine user status ---
+            function checkLoginStatusAndUpdateUI() {
+                // Read custom session data from localStorage
+                const userEmail = localStorage.getItem('loggedInEmail');
+                const userRole = localStorage.getItem('userType'); // 'runner' or 'client'
+
+                if (userEmail && userRole) {
+                    // Logged In UI
+                    const profilePage = userRole === 'runner' ? 'runners-profile.html' : 'client-profile.html';
+                    // Extracts name before the @
+                    const displayName = userEmail.split('@')[0]; 
+                    const profilePic = 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'; // Generic fallback
+
+                    // Update desktop nav
+                    desktopNav.innerHTML = `<a href="index.html" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.2s;">Home</a><a href="about-us.html" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.3s;">About Us</a><a href="runners.html" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.4s;">Browse Runners</a><a href="sign-up.html" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.5s;">Become a Runner</a><a href="#contact" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.6s;">Contact</a>`;
+
+                    // Update mobile nav
+                    mobileMenuNav.innerHTML = `<a href="index.html" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Home</a><a href="about-us.html" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">About Us</a><a href="runners.html" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Browse Runners</a><a href="sign-up.html" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Become a Runner</a><a href="#contact" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Contact</a><div class="px-6 pt-4 flex flex-col space-y-3"><a href="${profilePage}" class="bg-gold text-maroon px-4 py-2 rounded-full text-center hover:bg-white hover:text-maroon transition duration-300">My Profile</a><button id="logout-btn-mobile" class="bg-white text-maroon px-4 py-2 rounded-full text-center hover:bg-gold hover:text-maroon transition duration-300">Log Out</button></div>`;
+
+                    // Update desktop auth buttons
+                    desktopAuthButtons.innerHTML = `<div class="dropdown relative"><button class="flex items-center text-white space-x-2 p-2 rounded-full hover:bg-maroon-dark focus:outline-none transition duration-300"><img src="${profilePic}" alt="profile" class="w-8 h-8 rounded-full object-cover border-2 border-white"/><span class="text-sm">${displayName}</span></button><div class="dropdown-content"><a href="${profilePage}">My Profile</a><button id="logout-btn" class="w-full text-left">Log Out</button></div></div>`;
+
+                    heroBrowseBtn.href = "runners.html";
+
+                    // attach logout handlers
+                    document.getElementById('logout-btn').addEventListener('click', customLogout);
+                    document.getElementById('logout-btn-mobile').addEventListener('click', customLogout);
+                } else {
+                    // Logged Out UI (Original structure restored)
+                    desktopNav.innerHTML = `<a href="index.html" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.2s;">Home</a><a href="about-us.html" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.3s;">About Us</a><a href="login.html" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.4s;">Browse Runners</a><a href="sign-up.html" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.5s;">Become a Runner</a><a href="#contact" class="text-gray-300 hover:text-gold transition-colors duration-300 animate-fade-in" style="animation-delay: 0.6s;">Contact</a>`;
+                    mobileMenuNav.innerHTML = `<a href="index.html" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Home</a><a href="about-us.html" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">About Us</a><a href="login.html" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Browse Runners</a><a href="sign-up.html" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Become a Runner</a><a href="#contact" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Contact</a><div class="px-6 pt-4 flex flex-col space-y-3"><a href="login.html" class="bg-gold text-maroon px-4 py-2 rounded-full text-center hover:bg-white hover:text-maroon transition duration-300">Login</a><a href="sign-up.html" class="bg-white text-maroon px-4 py-2 rounded-full text-center hover:bg-gold hover:text-maroon transition duration-300">Sign Up</a></div>`;
+                    desktopAuthButtons.innerHTML = `<a href="login.html" class="bg-gold text-maroon px-4 py-2 rounded-full hover:bg-white hover:text-maroon transition duration-300 animate-zoom-in" style="animation-delay: 0.7s;">Login</a><a href="sign-up.html" class="bg-white text-maroon px-4 py-2 rounded-full hover:bg-gold hover:text-maroon transition duration-300 animate-zoom-in" style="animation-delay: 0.8s;">Sign Up</a>`;
+                    heroBrowseBtn.href = "login.html";
+                }
+            }
+
+            function customLogout() {
+                // Clear custom session data from localStorage
+                localStorage.removeItem('loggedInEmail');
+                localStorage.removeItem('userType');
+                
+                // Redirect to homepage after clearing local session
+                window.location.href = "index.html"; 
+            }
+
+            // Testimonials slideshow (preserved)
+            const slides = document.querySelectorAll('.testimonial-slide');
+            const prevButton = document.getElementById('prev-testimonial');
+            const nextButton = document.getElementById('next-testimonial');
+            let currentSlide = 0;
+            let slideInterval;
+            if (slides.length > 0) {
+                const showSlide = (n) => { slides.forEach(slide => slide.classList.remove('active')); slides[n].classList.add('active'); };
+                const nextSlide = () => { currentSlide = (currentSlide + 1) % slides.length; showSlide(currentSlide); };
+                const prevSlide = () => { currentSlide = (currentSlide - 1 + slides.length) % slides.length; showSlide(currentSlide); };
+                const startSlideShow = () => { slideInterval = setInterval(nextSlide, 5000); };
+                const stopSlideShow = () => { clearInterval(slideInterval); };
+                if (prevButton) prevButton.addEventListener('click', () => { stopSlideShow(); prevSlide(); startSlideShow(); });
+                if (nextButton) nextButton.addEventListener('click', () => { stopSlideShow(); nextSlide(); startSlideShow(); });
+                const testimonialSection = document.getElementById('testimonials');
+                if (testimonialSection) { testimonialSection.addEventListener('mouseenter', stopSlideShow); testimonialSection.addEventListener('mouseleave', startSlideShow); }
+                showSlide(currentSlide);
+                startSlideShow();
+            }
+
+            // animate on scroll (preserved)
+            const animateOnScroll = (selector, className, delayIncrement = 0.1) => {
+                const elements = document.querySelectorAll(selector);
+                const observerOptions = { root: null, rootMargin: '0px', threshold: 0.2 };
+                const observer = new IntersectionObserver((entries, obs) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add(className);
+                            obs.unobserve(entry.target);
+                        }
+                    });
+                }, observerOptions);
+                elements.forEach((el, index) => {
+                    if (!el.style.animationDelay) { el.style.animationDelay = `${index * delayIncrement}s`; }
+                    observer.observe(el);
+                });
+            };
+            animateOnScroll('.animated-item', 'is-visible');
+            animateOnScroll('.step-icon', 'is-visible', 0.15);
+            animateOnScroll('.trust-icon', 'is-visible', 0.15);
+
+            // mobile menu toggle (preserved)
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('active');
+                    mobileMenuButton.classList.toggle('active');
+                });
+                // close on click for links inside menu (delegated)
+                mobileMenu.addEventListener('click', (e) => {
+                    if (e.target.tagName === 'A') {
+                        mobileMenu.classList.remove('active');
+                        mobileMenuButton.classList.remove('active');
+                    }
+                });
+            }
+
+            // initial check
+            checkLoginStatusAndUpdateUI();
+        });
+    </script>
+
+
+      </body></html>
+      
