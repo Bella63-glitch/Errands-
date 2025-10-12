@@ -1,0 +1,1281 @@
+<!doctype html>
+<html lang="en"> 
+ <head> 
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <title>Run Me An Errand - Detailed Runners</title> 
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-64SH312S1V"></script> 
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-64SH312S1V');
+    </script> 
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
+  <style>
+        /* Custom CSS for colors */
+        :root {
+            --maroon: #7B1E3A;
+            --gold: #FFD700;
+            --light-gold: #FFEB80; /* A lighter shade for backgrounds */
+        }
+        .bg-maroon { background-color: var(--maroon); }
+        .text-gold { color: var(--gold); }
+        .bg-gold { background-color: var(--gold); }
+        .border-gold { border-color: var(--gold); }
+        .bg-light-gold { background-color: var(--light-gold); }
+        /* Animation for runner cards */
+    @keyframes fadeInSlideUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in-slide-up {
+        animation: fadeInSlideUp 0.6s ease-out forwards;
+    }
+
+    /* Loading spinner */
+    .loader {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid var(--maroon);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Mobile Menu Styles */
+    .mobile-menu {
+        transition: max-height 0.3s ease-in-out;
+        overflow: hidden;
+        max-height: 0;
+    }
+    .mobile-menu.active {
+        max-height: 500px; /* Sufficiently large to show all content */
+    }
+
+    /* Modal specific styles */
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1000; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+        justify-content: center;
+        align-items: center;
+    }
+    .modal-content {
+        background-color: #fefefe;
+        margin: auto;
+        padding: 0; 
+        border-radius: 12px;
+        width: 90%;
+        max-width: 800px;
+        position: relative;
+        animation: fadeInScale 0.3s ease-out forwards;
+        max-height: 90vh; 
+        overflow-y: auto; 
+        -webkit-overflow-scrolling: touch; 
+    }
+    @keyframes fadeInScale {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    .close-button {
+        color: #aaa;
+        position: absolute;
+        top: 15px;
+        right: 25px;
+        font-size: 36px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: color 0.3s;
+        z-index: 1010; 
+    }
+    .close-button:hover,
+    .close-button:focus {
+        color: var(--maroon);
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    /* Skeleton loader for cards */
+    .skeleton {
+        background-color: #e2e8f0; 
+        border-radius: 8-px;
+        animation: pulse 1.5s infinite ease-in-out;
+    }
+
+    .skeleton-circle {
+        width: 96px; 
+        height: 96px; 
+        border-radius: 50%;
+    }
+
+    .skeleton-text {
+        height: 1em;
+        width: 80%;
+        margin-bottom: 0.5em;
+    }
+    .skeleton-text.long {
+        width: 90%;
+    }
+    .skeleton-text.short {
+        width: 60%;
+    }
+    @keyframes pulse {
+        0% { opacity: 0.6; }
+        50% { opacity: 1; }
+        100% { opacity: 0.6; }
+    }
+
+/* Gold Shine Animation */
+@keyframes goldShine {
+  0% { background-position: -200% center; }
+  50% { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+.btn-gold-shine {
+  background: linear-gradient(110deg, #FFD700 0%, #FFEA70 40%, #FFD700 60%, #FFEA70 100%);
+  background-size: 200% auto;
+  color: #7B1E3A;
+  font-weight: 600;
+  animation: goldShine 3s linear infinite;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.btn-gold-shine:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+}
+</style> 
+ <style type="text/css" id="dcoder_stylesheet"><style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+    :root {
+        --maroon: #7B1E3A;
+        --gold: #FFD700;
+        --light-bg: #eef3f7; /* Very light, cool background */
+        --card-bg: #ffffff;
+        --text-dark: #2c3e50;
+        --text-subtle: #7f8c8d;
+        --border-color: #ecf0f1;
+        --shadow-elevation-1: 0 4px 10px rgba(0, 0, 0, 0.05);
+        --shadow-elevation-2: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        background: var(--light-bg);
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        color: var(--text-dark);
+        line-height: 1.6;
+    }
+
+    /* --- Header & Footer --- */
+    .app-header {
+        background-color: var(--maroon);
+        padding: 1rem 2rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .header-content {
+        max-width: 1000px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .logo-link {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: var(--gold);
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+    .nav-item {
+        color: white;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
+    .nav-item:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+    .app-footer {
+        background-color: var(--maroon);
+        color: rgba(255, 255, 255, 0.8);
+        text-align: center;
+        padding: 1.5rem;
+        font-size: 0.85rem;
+        margin-top: auto; /* Pushes footer to the bottom */
+    }
+
+    /* --- Main Layout & Card --- */
+    .main-layout {
+        flex-grow: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 3rem 1rem;
+    }
+    .profile-card {
+        background-color: var(--card-bg);
+        border-radius: 16px;
+        box-shadow: var(--shadow-elevation-2);
+        padding: 2.5rem;
+        width: 100%;
+        max-width: 550px;
+        transition: all 0.4s ease-in-out;
+    }
+    h2, h3 {
+        color: var(--maroon);
+        font-weight: 700;
+        margin-top: 0;
+    }
+    .form-title {
+        border-bottom: 2px solid var(--border-color);
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    /* --- View Mode Styles --- */
+    .profile-summary {
+        text-align: center;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 2rem;
+    }
+    .profile-pic-area {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 1rem;
+        border-radius: 50%;
+        box-shadow: 0 0 0 5px var(--gold), 0 0 0 8px var(--maroon);
+    }
+    .profile-pic {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    .email-text {
+        color: var(--text-subtle);
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+    }
+    .status-tag {
+        padding: 0.3rem 1rem;
+        border-radius: 20px;
+        color: white;
+        font-weight: 600;
+        font-size: 0.8rem;
+        display: inline-block;
+        margin-top: 0.5rem;
+    }
+    .active { background-color: #27ae60; } 
+    .inactive { background-color: #e74c3c; } 
+
+    /* Details Grid */
+    .details-grid {
+        display: grid;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    .detail-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px dashed var(--border-color);
+        font-size: 0.95rem;
+    }
+    .detail-item:last-child {
+        border-bottom: none;
+    }
+    .detail-item strong {
+        color: var(--maroon);
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+    }
+    .detail-icon {
+        color: var(--gold);
+        margin-right: 8px;
+        width: 18px;
+        text-align: center;
+    }
+    .highlight {
+        color: var(--text-dark);
+        font-weight: 400;
+        text-align: right;
+    }
+
+    /* About Section */
+    .about-section {
+        margin-top: 1rem;
+        padding: 1rem 0;
+        border-top: 1px solid var(--border-color);
+        margin-bottom: 2rem;
+    }
+    .about-section h3 {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
+    .about-section p {
+        color: var(--text-dark);
+        font-size: 0.95rem;
+        text-align: justify;
+    }
+
+    /* --- Buttons --- */
+    .button-group {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+    }
+    .btn-primary, .btn-secondary, .btn-save, .btn-cancel {
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-size: 0.95rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow-elevation-1);
+    }
+    .btn-primary {
+        background-color: var(--maroon);
+        color: white;
+    }
+    .btn-primary:hover {
+        background-color: #66182f;
+        transform: translateY(-2px);
+    }
+    .btn-secondary {
+        background-color: var(--gold);
+        color: var(--maroon);
+    }
+    .btn-secondary:hover {
+        background-color: #e6c500;
+        transform: translateY(-2px);
+    }
+
+    /* --- Edit Mode Styles --- */
+    #editMode {
+        display: none;
+        text-align: left;
+    }
+    #editForm label {
+        display: block;
+        margin-top: 1rem;
+        margin-bottom: 0.3rem;
+        font-weight: 600;
+        color: var(--maroon);
+        font-size: 0.9rem;
+    }
+    #editForm input[type="text"],
+    #editForm textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        font-size: 0.95rem;
+        box-sizing: border-box;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    #editForm input:focus, #editForm textarea:focus {
+        border-color: var(--gold);
+        box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
+        outline: none;
+    }
+    .upload-note {
+        font-size: 0.8rem;
+        color: var(--text-subtle);
+        display: block;
+        margin-top: -10px;
+        margin-bottom: 10px;
+    }
+    #imageUploadLabel {
+        background-color: var(--maroon);
+        color: white;
+        text-align: center;
+        padding: 10px;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-top: 0.5rem;
+        transition: background-color 0.3s;
+        box-shadow: var(--shadow-elevation-1);
+    }
+    #imageUploadLabel:hover {
+        background-color: #66182f;
+    }
+    #profilePictureInput {
+        display: none;
+    }
+    .edit-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 2rem;
+    }
+    .btn-save {
+        background-color: #27ae60;
+        color: white;
+    }
+    .btn-save:hover {
+        background-color: #219653;
+    }
+    .btn-cancel {
+        background-color: var(--border-color);
+        color: var(--text-dark);
+    }
+    .btn-cancel:hover {
+        background-color: #d8e0e6;
+    }
+
+    /* --- Popup/Toast Notification --- */
+    .popup {
+        /* (Popup styles from previous version remain effective) */
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #333;
+        color: #fff;
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+        display: none;
+        z-index: 1000;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        animation: fadeInOut 4s ease-in-out forwards;
+    }
+    /* ... rest of popup and media query styles ... */
+    .popup.success { background: #27ae60; }
+    .popup.error { background: #e74c3c; }
+    .popup.info { background: #3498db; }
+
+    @keyframes fadeInOut {
+        0% { opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { opacity: 0; }
+    }
+
+    @media (max-width: 600px) {
+        .profile-card {
+            padding: 1.5rem;
+        }
+        .button-group {
+            flex-direction: column;
+        }
+        .button-group button {
+            width: 100%;
+        }
+    }</style></head> 
+ <body class="bg-gray-50 text-gray-800 font-sans"> 
+  <header class="bg-maroon shadow-md sticky top-0 z-50"> 
+   <div class="max-w-7xl mx-auto flex justify-between items-center py-5 px-6"> <a href="index.html" class="flex items-center space-x-2"> <img src="https://i.postimg.cc/yW47TyMj/ei-1752053865516-removebg-preview.png" alt="Run Me An Errand Logo" class="h-10 w-auto"> <h1 class="text-2xl font-bold text-white transition-colors duration-300 hover:text-gold">Run Me An Errand</h1> </a> 
+    <nav class="hidden md:flex space-x-6 text-lg"> <a href="index.html" class="text-gray-300 hover:text-gold transition-colors duration-300">Home</a> <a href="index.html#how-it-works" class="text-gray-300 hover:text-gold transition-colors duration-300">How It Works</a> <a href="index.html#why-choose-us" class="text-gray-300 hover:text-gold transition-colors duration-300">Why Choose Us</a> <a href="index.html#testimonials" class="text-gray-300 hover:text-gold transition-colors duration-300">Reviews</a> <a href="index.html#contact" class="text-gray-300 hover:text-gold transition-colors duration-300">Contact</a> <a href="#" class="text-gray-300 hover:text-gold transition-colors duration-300">Become a Runner</a> 
+    </nav> 
+    <div class="hidden md:flex space-x-4"> <a href="#" class="bg-gold text-maroon px-4 py-2 rounded-full hover:bg-white hover:text-maroon transition duration-300">Login</a> <a href="#" class="bg-white text-maroon px-4 py-2 rounded-full hover:bg-gold hover:text-maroon transition duration-300">Sign Up</a> 
+    </div> 
+    <div class="md:hidden"> <button id="mobile-menu-button" class="text-gray-300 hover:text-gold focus:outline-none focus:ring-2 focus:ring-gold"> 
+      <svg class="h-6 w-6 fill-current" viewbox="0 0 24 24"> <path fill-rule="evenodd" clip-rule="evenodd" d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h16v2H4v-2z"></path> 
+      </svg> </button> 
+    </div> 
+   </div> 
+   <nav id="mobile-menu" class="mobile-menu md:hidden bg-maroon pb-4"> <a href="index.html" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Home</a> <a href="index.html#how-it-works" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Why Choose Us</a> <a href="index.html#testimonials" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Reviews</a> <a href="index.html#contact" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Contact</a> <a href="#" class="block px-6 py-2 text-white hover:bg-maroon-dark hover:text-gold transition-colors duration-300">Become a Runner</a> 
+    <div class="px-6 pt-4 flex flex-col space-y-3"> <a href="#" class="bg-gold text-maroon px-4 py-2 rounded-full text-center hover:bg-white hover:text-maroon transition duration-300">Login</a> <a href="#" class="bg-white text-maroon px-4 py-2 rounded-full text-center hover:bg-gold hover:text-maroon transition duration-300">Sign Up</a> 
+    </div> 
+   </nav> 
+  </header> 
+  <main class="py-12 px-6"> 
+   <div class="max-w-7xl mx-auto"> 
+    <h2 class="text-4xl font-extrabold text-maroon text-center mb-4">Discover Your Ideal Runner</h2> 
+    <p class="text-xl text-gray-700 text-center mb-10">Browse through our trusted runners and call them to book with confidence.</p> 
+    <div class="bg-white p-6 rounded-lg shadow-md mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"> 
+     <div> <label for="location-filter" class="block text-sm font-medium text-gray-700 mb-2">Your Location:</label> <select id="location-filter" class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-maroon focus:border-maroon"> <option value="all">All Locations</option> <option value="Nairobi">Nairobi</option> <option value="Mombasa">Mombasa</option> <option value="Kisumu">Kisumu</option> <option value="Eldoret">Eldoret</option> <option value="Nakuru">Nakuru</option> <option value="Thika">Thika</option> <option value="Kakamega">Kakamega</option> <option value="Machakos">Machakos</option> <option value="Kitale">Kitale</option> <option value="Meru">Meru</option> <option value="Bungoma">Bungoma</option> <option value="Homa Bay">Homa Bay</option> <option value="Nyeri">Nyeri</option> <option value="Kisii">Kisii</option> </select> 
+     </div> 
+     <div> <label for="availability-filter" class="block text-sm font-medium text-gray-700 mb-2">Availability:</label> <select id="availability-filter" class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-maroon focus:border-maroon"> <option value="all">All</option> <option value="Available">Available Now</option> </select> 
+     </div> 
+     <div> <label for="sort-by" class="block text-sm font-medium text-gray-700 mb-2">Sort By:</label> <select id="sort-by" class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-maroon focus:border-maroon"> <option value="rating">Rating (Highest First)</option> <option value="tasksCompleted">Tasks Completed (Most First)</option> <option value="distance">Closest to Me</option> </select> 
+     </div> 
+     <div class="md:col-span-2 lg:col-span-3 text-center"> <button id="apply-filters" class="w-full md:w-auto bg-maroon text-white px-8 py-3 rounded-md hover:bg-gold hover:text-maroon transition duration-300 font-semibold shadow-lg">Apply Filters &amp; Find Runners</button> 
+     </div> 
+    </div> 
+    <div id="status-container" class="mb-8 min-h-[80px] flex items-center justify-center"> 
+     <div id="no-runners-found" class="text-center p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded-lg hidden"> 
+      <p class="text-lg font-semibold mb-2">No runners match your criteria.</p> 
+      <p class="text-md">Try adjusting your filters.</p> 
+     </div> 
+     <div id="fetch-error" class="text-center p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded-lg hidden"> 
+      <p class="text-lg font-semibold mb-2">Failed to load runners data.</p> 
+      <p class="text-md">There was a problem connecting to the server. Please check your Supabase configuration or **Row Level Security (RLS)** policy on the 'runners' table.</p> 
+     </div> 
+    </div> 
+    <div id="runners-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"> 
+     <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-200"> 
+      <div class="skeleton-circle mb-4 skeleton"></div> 
+      <div class="skeleton-text long skeleton"></div> 
+      <div class="skeleton-text short skeleton"></div> 
+      <div class="skeleton-text skeleton w-full mt-3"></div> 
+      <div class="skeleton-text skeleton w-1/2 mt-2"></div> 
+      <div class="skeleton-text skeleton w-full h-8 mt-4"></div> 
+     </div> 
+     <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-200"> 
+      <div class="skeleton-circle mb-4 skeleton"></div> 
+      <div class="skeleton-text long skeleton"></div> 
+      <div class="skeleton-text short skeleton"></div> 
+      <div class="skeleton-text skeleton w-full mt-3"></div> 
+      <div class="skeleton-text skeleton w-1/2 mt-2"></div> 
+      <div class="skeleton-text skeleton w-full h-8 mt-4"></div> 
+     </div> 
+     <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-200 hidden lg:flex"> 
+      <div class="skeleton-circle mb-4 skeleton"></div> 
+      <div class="skeleton-text long skeleton"></div> 
+      <div class="skeleton-text short skeleton"></div> 
+      <div class="skeleton-text skeleton w-full mt-3"></div> 
+      <div class="skeleton-text skeleton w-1/2 mt-2"></div> 
+      <div class="skeleton-text skeleton w-full h-8 mt-4"></div> 
+     </div> 
+     <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-200 hidden xl:flex"> 
+      <div class="skeleton-circle mb-4 skeleton"></div> 
+      <div class="skeleton-text long skeleton"></div> 
+      <div class="skeleton-text short skeleton"></div> 
+      <div class="skeleton-text skeleton w-full mt-3"></div> 
+      <div class="skeleton-text skeleton w-1/2 mt-2"></div> 
+      <div class="skeleton-text skeleton w-full h-8 mt-4"></div> 
+     </div> 
+    </div> 
+   </div> 
+  </main> 
+  <div id="runner-modal" class="modal"> 
+   <div class="modal-content"> <span class="close-button">×</span> 
+    <div id="modal-content-area"> 
+     <div class="bg-maroon text-white p-6 rounded-t-lg text-center relative overflow-hidden"> 
+      <img id="modal-runner-photo" src="" alt="Runner Photo" class="w-32 h-32 rounded-full object-cover mx-auto mb-4 border-4 border-gold shadow-lg transform translate-y-8 relative z-10"> 
+      <div class="pt-8 pb-4"> 
+       <h3 id="modal-runner-name" class="text-3xl font-extrabold mb-1"></h3> 
+       <div class="flex items-center justify-center mb-2"> 
+        <div id="modal-runner-rating-stars" class="flex"></div> <span id="modal-runner-rating-value" class="font-semibold ml-2"></span> <span id="modal-runner-tasks" class="text-gray-300 text-sm ml-2"></span> 
+       </div> 
+       <p id="modal-runner-availability" class="text-md font-bold px-4 py-1 rounded-full inline-block mt-2"></p> 
+      </div> 
+     </div> 
+     <div class="bg-white p-6 pb-2 grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8 -mt-8 relative z-0 rounded-b-lg"> 
+      <div> 
+       <h4 class="text-xl font-bold text-maroon mb-3 border-b pb-2 border-gray-200">About <span id="modal-about-runner-name"></span></h4> 
+       <p id="modal-runner-bio" class="text-gray-700 leading-relaxed text-sm"></p> 
+      </div> 
+      <div> 
+       <h4 class="text-xl font-bold text-maroon mb-3 border-b pb-2 border-gray-200">Key Details</h4> 
+       <ul class="space-y-2 text-gray-700 text-sm"> 
+        <li><strong class="text-maroon">Current Location:</strong> <span id="modal-runner-location"></span></li> 
+        <li><strong class="text-maroon">Hourly Rate:</strong> <span id="modal-runner-rate"></span></li> 
+        <li><strong class="text-maroon">Vehicle Type:</strong> <span id="modal-runner-vehicle"></span></li> 
+        <li><strong class="text-maroon">Experience:</strong> <span id="modal-runner-experience"></span></li> 
+        <li><strong class="text-maroon">Avg. Response Time:</strong> <span id="modal-runner-response-time"></span></li> 
+        <li><strong class="text-maroon">Languages Spoken:</strong> <span id="modal-runner-languages"></span></li> 
+       </ul> <a id="modal-runner-map-link" href="#" target="_blank" class="text-blue-600 hover:underline text-sm mt-4 flex items-center hidden"> 
+        <svg class="w-4 h-4 mr-1" fill="currentColor" viewbox="0 0 20 20"> <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path> 
+        </svg> View Runner's Base on Map </a> 
+      </div> 
+      <div> 
+       <h4 class="text-xl font-bold text-maroon mb-3 border-b pb-2 border-gray-200">Recent Reviews</h4> 
+       <div id="modal-runner-reviews" class="space-y-4 text-sm"></div> 
+      </div> 
+     </div> 
+     <div class="bg-gray-50 p-6 pt-4 text-center rounded-b-lg border-t border-gray-200"> <button id="modal-call-now-btn" class="bg-gold text-maroon px-8 py-3 rounded-full font-bold text-lg hover:bg-maroon hover:text-white transition duration-300 shadow-xl w-full md:w-2/3">Contact Runner</button> 
+      <p id="contact-status-message" class="text-gray-600 text-xs mt-3">We'll connect you directly to the runner to discuss your errand.</p> 
+     </div> 
+    </div> 
+   </div> 
+  </div> 
+  <footer class="bg-gray-800 text-gray-300 py-12"> 
+   <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8"> 
+    <div> 
+     <h4 class="text-lg font-bold text-gold mb-4">Run Me An Errand</h4> 
+     <p class="text-sm mb-2">Your reliable partner for errand services across Kenya.</p> 
+     <p class="text-sm">© 2025 Run Me An Errand. All rights reserved.</p> 
+    </div> 
+    <div> 
+     <h4 class="text-lg font-bold text-gold mb-4">Quick Links</h4> 
+     <ul class="space-y-2 text-sm"> 
+      <li><a href="index.html" class="hover:text-gold transition-colors duration-200">Home</a></li> 
+      <li><a href="#" class="hover:text-gold transition-colors duration-200">Services</a></li> 
+      <li><a href="index.html#how-it-works" class="hover:text-gold transition-colors duration-200">How It Works</a></li> 
+      <li><a href="index.html#why-choose-us" class="hover:text-gold transition-colors duration-200">Why Choose Us</a></li> 
+      <li><a href="index.html#testimonials" class="hover:text-gold transition-colors duration-200">Reviews</a></li> 
+      <li><a href="index.html#contact" class="hover:text-gold transition-colors duration-200">Contact Us</a></li> 
+      <li><a href="#" class="hover:text-gold transition-colors duration-200">Become a Runner</a></li> 
+      <li><a href="#" class="hover:text-gold transition-colors duration-200">FAQ</a></li> 
+      <li><a href="#" class="hover:text-gold transition-colors duration-200">Privacy Policy</a></li> 
+      <li><a href="#" class="hover:text-gold transition-colors duration-200">Terms of Service</a></li> 
+     </ul> 
+    </div> 
+    <div> 
+     <h4 class="text-lg font-bold text-gold mb-4">Contact Info</h4> 
+     <p class="text-sm mb-2">Email: <a href="mailto:ranmeanerrand@gmail.com" class="hover:text-gold">ranmeanerrand@gmail.com</a></p> 
+     <p class="text-sm mb-2">Phone: <a href="tel:+254797046378" class="hover:text-gold">+254 797 046378</a></p> 
+     <div class="flex space-x-4 mt-4"> <a href="#" class="text-gray-300 hover:text-gold" aria-label="Twitter"> 
+       <svg class="h-5 w-5 fill-current" viewbox="0 0 24 24"> <path fill="currentColor" d="M22.46 6c-.77.67-1.72 1.13-2.77 1.33a4.76 4.76 0 002.07-2.62c-.82.48-1.75.83-2.79 1.02a4.78 4.78 0 00-8.13 4.3A13.54 13.54 0 013.57 4.3c.83 1.42 2.08 2.4 3.57 3.07a4.78 4.78 0 00-2.22-.61c.3-.08.59-.12.88-.12a4.78 4.78 0 004.46 3.31 9.5 9.5 0 01-5.78 1.98c-.34-.1-.68-.16-1.02-.18a4.75 4.75 0 004.88 3.3 9.5 9.5 0 01-7.64 3.27c-.36-.02-.72-.03-1.08-.03a13.57 13.57 0 006.94 2.16c4.16 0 7.67-3.46 7.67-7.67 0-.12 0-.23-.34-.69a4.66 4.66 0 001.53-1.3"></path> 
+       </svg> </a> <a href="#" class="text-gray-300 hover:text-gold" aria-label="Facebook"> 
+       <svg class="h-5 w-5 fill-current" viewbox="0 0 24 24"> <path fill="currentColor" d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.88V15H8v-3h2V9.5c0-2.17 1.34-3.34 3.27-3.34 1.83 0 2.93 1.5 2.93 3.34V12h2v3h-2v6.88c4.56-1.01 8-5.04 8-9.88z"></path> 
+       </svg> </a> <a href="#" class="text-gray-300 hover:text-gold" aria-label="Instagram"> 
+       <svg class="h-5 w-5 fill=" currentcolor" viewbox="0 0 24 24"> <path fill="currentColor" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.148 3.252-1.691 4.771-4.919 4.919-1.265-.058-1.644-.07-4.849-.07zM12 6.893c-2.857 0-5.146 2.289-5.146 5.146 0 2.857 2.289 5.146 5.146 5.146 2.857 0 5.146-2.289 5.146-5.146 0-2.857-2.289-5.146-5.146-5.146zm0 8.469c-1.827 0-3.333-1.506-3.333-3.333 0-1.827 1.506-3.333 3.333-3.333 1.827 0 3.333 1.506 3.333 3.333 0 1.827-1.506 3.333-3.333 3.333z"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M12 3.998c-4.414 0-8 3.586-8 8 0 4.414 3.586 8 8 8 4.414 0 8-3.586 8-8 0-4.414-3.586-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-3.31 2.69-6 6-6 3.31 0 6 2.69 6 6 0 3.31-2.69 6-6 6z"></path> 
+       </svg> </a> 
+     </div> 
+    </div> 
+   </div> 
+  </footer> <button id="back-to-top" class="fixed bottom-6 right-6 bg-maroon text-white p-3 rounded-full shadow-lg hover:bg-gold hover:text-maroon transition duration-300 hidden"> 
+   <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path> 
+   </svg> </button> 
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // ----------------------------------------------------------------------
+        // 🚨 CRITICAL: Replace these placeholders with your actual Supabase Keys
+        // ----------------------------------------------------------------------
+        const SUPABASE_URL = "https://zchofpncqskvnfrzbcww.supabase.co"; // Replace with your URL
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI"; // Replace with your Public Anon Key
+
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let runnersData = [];
+        
+        // ----------------------------------------------------------------------
+        // DUMMY RUNNERS GENERATOR: Generates 17 high-quality placeholder runners
+        // ----------------------------------------------------------------------
+        const DUMMY_LOCATIONS = ['Nairobi', 'Mombasa', 'Kisumu', 'Eldoret', 'Nakuru', 'Thika', 'Kakamega', 'Machakos', 'Kitale', 'Meru', 'Bungoma', 'Homa Bay', 'Nyeri', 'Kisii', 'Malindi', 'Naivasha', 'Kericho'];
+        const DUMMY_NAMES = [
+            'Cynthia Njeri', 'Kevin Wafula', 'Aisha Mohamed', 'Benard Kimani', 'Grace Wanjiku',
+            'Daniel Omondi', 'Faith Chebet', 'George Kiptoo', 'Hellen Adhiambo', 'Ian Mwangi',
+            'Jane Akinyi', 'Michael Okoth', 'Nancy Wangui', 'Oscar Masika', 'Purity Nzilani',
+            'Quincy Baraka', 'Rita Wambui'
+        ];
+        // Updated human-sounding bios
+        const DUMMY_BIOS = [
+            'I love helping people with their to-do lists! Always smiling, always moving. Let me know how I can make your day easier.',
+            "Quick and trustworthy, that's my motto. I know the shortcuts around here like the back of my hand. Give me a call!",
+            'I’m saving up for school and running errands is the perfect gig. I promise efficiency and care with all your items.',
+            'Been running tasks for the last few years and I really enjoy the hustle. Happy to tackle anything from documents to groceries.',
+            'Need a hand? I’m reliable and super fast on my feet. I treat every errand like it’s my own personal mission.',
+            'I pride myself on my punctuality. Never late and always keep you updated. Looking forward to running for you!',
+            'I grew up in this area, so I know where everything is. Excellent local knowledge means speedy service!',
+            'I’m a morning person and love getting a head start on the day. Available for early pickups and rush deliveries.',
+            "I believe in clear communication and honest work. When you book me, you get transparency every step of the way.",
+            'Just trying to keep busy and earn some money on the side. I guarantee an effort you’ll be happy with.',
+            'Passionate about great service. I’m meticulous and handle fragile items with extreme caution. Give me a try!',
+            'Flexible and eager to serve. Tell me your need, and I will find a way to get it done efficiently.',
+            'I’ve built my reputation on trust and speed. Check my ratings—my clients love my commitment!',
+            "Making errands simple is what I do best. Book me and focus on your priorities while I handle the rest.",
+            'A dependable runner with a clean service history. Safety and speed are equally important to me.',
+            "New to the platform but ready to prove myself. Highly motivated to earn your 5-star review!",
+            'I treat my errands like a sport—I aim for the fastest, most efficient route every time. Let’s connect!'
+        ];
+        
+        /**
+         * Generates a single, realistic dummy runner object.
+         * The phone number is set to '555-BUSY' to trigger the custom message.
+         */
+        function generateDummyRunner(index) {
+            const nameIndex = index % DUMMY_NAMES.length;
+            const locationIndex = index % DUMMY_LOCATIONS.length;
+            const bioIndex = index % DUMMY_BIOS.length;
+            const tasks = 50 + index * 5 + (index % 10);
+            const rating = (4.0 + (index % 10) * 0.05).toFixed(1);
+
+            // Varied experience (1-4 years)
+            const years = (index % 4) + 1; 
+            
+            return {
+                id: `dummy-${index + 1}`,
+                name: DUMMY_NAMES[nameIndex],
+                location: DUMMY_LOCATIONS[locationIndex],
+                rating: parseFloat(rating),
+                taskscompleted: tasks,
+                isavailable: (index % 3) !== 0,
+                about: DUMMY_BIOS[bioIndex], // Human-sounding bio
+                hourlyrate: null, // FIX: Set to null to display as 'N/A'
+                vehicle: null, // Set to null to display as 'N/A'
+                experience: `${years} Year(s)`, // Varied experience
+                responsetime: null, // Set to null to display as 'N/A'
+                languages: ['English', 'Swahili'],
+                phone: '555-BUSY', // CRUCIAL: Triggers the "Runner is Busy" message
+                subscription_status: 'active',
+                profilepicture: null, // Corrected field name
+            };
+        }
+
+        // Generate 17 dummy runners
+        const DUMMY_RUNNERS = Array.from({ length: 17 }, (_, i) => generateDummyRunner(i));
+        // ----------------------------------------------------------------------
+
+
+        // --- DOM Elements ---
+        const runnersList = document.getElementById('runners-list');
+        const applyFiltersButton = document.getElementById('apply-filters');
+        const locationFilter = document.getElementById('location-filter');
+        const availabilityFilter = document.getElementById('availability-filter');
+        const sortBy = document.getElementById('sort-by');
+        const noRunnersFound = document.getElementById('no-runners-found');
+        const fetchError = document.getElementById('fetch-error');
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const backToTopButton = document.getElementById('back-to-top');
+
+        // Modal Elements (Declarations omitted for brevity, but exist in the HTML structure)
+        const runnerModal = document.getElementById('runner-modal');
+        const closeModalButton = runnerModal.querySelector('.close-button');
+        const modalRunnerPhoto = document.getElementById('modal-runner-photo');
+        const modalRunnerName = document.getElementById('modal-runner-name');
+        const modalAboutRunnerName = document.getElementById('modal-about-runner-name');
+        const modalRunnerRatingStars = document.getElementById('modal-runner-rating-stars');
+        const modalRunnerRatingValue = document.getElementById('modal-runner-rating-value');
+        const modalRunnerTasks = document.getElementById('modal-runner-tasks');
+        const modalRunnerAvailability = document.getElementById('modal-runner-availability');
+        const modalRunnerLocation = document.getElementById('modal-runner-location');
+        const modalRunnerMapLink = document.getElementById('modal-runner-map-link');
+        const modalRunnerBio = document.getElementById('modal-runner-bio');
+        const modalRunnerRate = document.getElementById('modal-runner-rate');
+        const modalRunnerVehicle = document.getElementById('modal-runner-vehicle');
+        const modalRunnerExperience = document.getElementById('modal-runner-experience');
+        const modalRunnerResponseTime = document.getElementById('modal-runner-response-time');
+        const modalRunnerLanguages = document.getElementById('modal-runner-languages');
+        const modalRunnerReviews = document.getElementById('modal-runner-reviews');
+        const modalCallNowBtn = document.getElementById('modal-call-now-btn');
+        const contactStatusMessage = document.getElementById('contact-status-message');
+
+        // --- Helper Functions ---
+
+        // Function to handle status messages (loading, empty, error)
+        function setStatusMessage(status) {
+            [noRunnersFound, fetchError].forEach(el => el.classList.add('hidden'));
+            runnersList.innerHTML = ''; // Clear list content
+
+            // 4 skeleton loaders
+            const skeletonHTML = `
+                <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-200 animate-pulse"><div class="skeleton-circle mb-4 skeleton"></div><div class="skeleton-text long skeleton"></div><div class="skeleton-text short skeleton"></div><div class="skeleton-text skeleton w-full mt-3"></div><div class="skeleton-text skeleton w-1/2 mt-2"></div><div class="skeleton-text skeleton w-full h-8 mt-4"></div></div>
+                <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-200 animate-pulse"><div class="skeleton-circle mb-4 skeleton"></div><div class="skeleton-text long skeleton"></div><div class="skeleton-text short skeleton"></div><div class="skeleton-text skeleton w-full mt-3"></div><div class="skeleton-text skeleton w-1/2 mt-2"></div><div class="skeleton-text skeleton w-full h-8 mt-4"></div></div>
+                <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-200 animate-pulse hidden lg:flex"><div class="skeleton-circle mb-4 skeleton"></div><div class="skeleton-text long skeleton"></div><div class="skeleton-text short skeleton"></div><div class="skeleton-text skeleton w-full mt-3"></div><div class="skeleton-text skeleton w-1/2 mt-2"></div><div class="skeleton-text skeleton w-full h-8 mt-4"></div></div>
+                <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-200 animate-pulse hidden xl:flex"><div class="skeleton-circle mb-4 skeleton"></div><div class="skeleton-text long skeleton"></div><div class="skeleton-text short skeleton"></div><div class="skeleton-text skeleton w-full mt-3"></div><div class="skeleton-text skeleton w-1/2 mt-2"></div><div class="skeleton-text skeleton w-full h-8 mt-4"></div></div>
+            `;
+
+            if (status === 'loading') {
+                runnersList.innerHTML = skeletonHTML;
+            } else if (status === 'empty') {
+                noRunnersFound.classList.remove('hidden');
+            } else if (status === 'error') {
+                fetchError.classList.remove('hidden');
+            }
+        }
+        
+        function getRunnerImageUrl(url, name) {
+            // FIX: Use the provided URL if it exists, otherwise generate initials.
+            if (url) return url;
+            const seed = name.replace(/\s+/g, '-').toLowerCase();
+            return `https://api.dicebear.com/8.x/initials/svg?seed=${seed}&backgroundColor=7B1E3A,FFD700&size=150`;
+        }
+
+        function generateStarRating(rating) {
+            const fullStar = '<svg class="w-4 h-4 text-gold fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.487 7.21l6.572-.955L10 1l2.941 5.255 6.572.955-4.758 4.635 1.123 6.545z"/></svg>';
+            const halfStar = '<svg class="w-4 h-4 text-gold fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.487 7.21l6.572-.955L10 1v14z" fill-rule="evenodd" clip-rule="evenodd"/></svg>';
+            const emptyStar = '<svg class="w-4 h-4 text-gray-300 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.487 7.21l6.572-.955L10 1l2.941 5.255 6.572.955-4.758 4.635 1.123 6.545L10 15zm0 2.247l4.372-2.308.835 4.871-3.238-3.153-4.372 2.308 1.123-6.545L.487 7.21l6.572-.955L10 1l2.941 5.255 6.572.955-4.758 4.635 1.123 6.545-5.878-3.09z" fill-rule="evenodd" clip-rule="evenodd"/></svg>';
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                if (rating >= i) { stars += fullStar; } 
+                else if (rating > i - 1 && rating < i) { stars += halfStar; } 
+                else { stars += emptyStar; }
+            }
+            return stars;
+        }
+
+        function createRunnerCard(runner) {
+            // FIX: Use corrected property name 'profilepicture'
+            const photoUrl = getRunnerImageUrl(runner.profilepicture, runner.name);
+            const isAvailable = runner.isavailable;
+            
+            const availabilityClass = isAvailable ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
+            const availabilityText = isAvailable ? 'Available Now' : 'Currently Unavailable';
+            const buttonClass = 'bg-gold text-maroon btn-gold-shine';
+            
+            const card = document.createElement('div');
+            card.className = `bg-white rounded-xl shadow-lg p-6 flex flex-col items-center text-center border border-gray-200 transform hover:shadow-xl transition duration-300 animate-fade-in-slide-up`;
+            card.setAttribute('data-runner-id', runner.id); 
+
+            // Card button must always say "View Runner"
+            const buttonText = 'View Runner';
+
+            card.innerHTML = `
+                <img src="${photoUrl}" alt="${runner.name}" class="w-24 h-24 rounded-full object-cover mb-4 border-4 border-maroon shadow-md">
+                <h3 class="text-xl font-bold text-maroon mb-1">${runner.name}</h3>
+                <p class="text-gray-600 text-sm mb-2">${runner.location || 'N/A'}</p>
+                <div class="flex items-center mb-3">
+                    <div class="flex mr-2">${generateStarRating(runner.rating || 0)}</div>
+                    <span class="text-md font-semibold text-gray-800">${(runner.rating || 0).toFixed(1)}</span>
+                    <span class="text-gray-500 text-sm ml-2">(${runner.taskscompleted || 0} tasks)</span>
+                </div>
+                <span class="text-xs font-semibold px-3 py-1 rounded-full ${availabilityClass} mb-4">${availabilityText}</span>
+                <p class="text-gray-700 text-sm italic line-clamp-2 mb-2">${runner.about || 'No bio provided.'}</p>
+                <p class="text-gray-800 text-sm font-medium mb-4">Experience: ${runner.experience || 'Not specified'}</p>
+                <button 
+                    class="w-full mt-auto ${buttonClass} font-semibold py-2 rounded-lg transition duration-300 shadow-md view-runner-btn"
+                    data-runner-id="${runner.id}"
+                >
+                    ${buttonText}
+                </button>
+            `;
+
+            card.querySelector('.view-runner-btn').addEventListener('click', () => openRunnerModal(runner.id));
+            return card;
+        }
+
+        function renderRunners(runners) {
+            runnersList.innerHTML = '';
+            if (runners.length === 0) {
+                setStatusMessage('empty');
+                return;
+            }
+
+            setStatusMessage('success');
+            runners.forEach(runner => {
+                runnersList.appendChild(createRunnerCard(runner));
+            });
+        }
+                // --- Filtering and Sorting ---
+        function applyFiltersAndSort() {
+            let filtered = [...runnersData];
+
+            // Filter by Location
+            const location = locationFilter.value;
+            if (location !== 'all') {
+                filtered = filtered.filter(runner => runner.location && runner.location.toLowerCase().includes(location.toLowerCase()));
+            }
+
+            // Filter by Availability
+            const availability = availabilityFilter.value;
+            if (availability === 'Available') {
+                filtered = filtered.filter(runner => runner.isavailable);
+            }
+
+            // Separate real runners from dummy runners
+            const realRunners = filtered.filter(r => !r.id.toString().startsWith('dummy'));
+            const dummyRunners = filtered.filter(r => r.id.toString().startsWith('dummy'));
+            
+            // Sort real runners
+            if (sortBy.value === 'rating') {
+                realRunners.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+                dummyRunners.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+            } else if (sortBy.value === 'tasksCompleted') {
+                realRunners.sort((a, b) => (b.taskscompleted || 0) - (a.taskscompleted || 0));
+                dummyRunners.sort((a, b) => (b.taskscompleted || 0) - (a.taskscompleted || 0));
+            }
+            
+            // Recombine: Real runners FIRST, then dummy runners (maintaining the requested order)
+            filtered = [...realRunners, ...dummyRunners];
+
+            renderRunners(filtered);
+        }
+
+
+        // --- Supabase Data Fetching ---
+        async function fetchRunnersData() {
+            setStatusMessage('loading');
+            
+            let fetchedRealRunners = [];
+
+            try {
+                // Assuming the correct database column name is 'profilepicture' or the client handles the field naming
+                const { data, error } = await supabaseClient
+                    .from('runners') // Table name MUST be 'runners'
+                    .select('*')
+                    .eq('subscription_status', 'active'); 
+                
+                if (error) {
+                    throw error;
+                }
+                
+                // Process real data
+                fetchedRealRunners = data.map(runner => ({
+                    ...runner,
+                    // Normalize data and handle nulls
+                    rating: runner.rating || 4.5,
+                    taskscompleted: runner.taskscompleted || Math.floor(Math.random() * 100) + 1,
+                    isavailable: runner.isavailable === null ? true : runner.isavailable,
+                    // IMPORTANT: Use the corrected field name
+                    profilepicture: runner.profilepicture || null 
+                }));
+                
+            } catch (err) {
+                console.error("Supabase fetch failed (likely RLS or wrong keys). Falling back to DUMMY data.", err);
+                const errorDetailElement = document.getElementById('fetch-error').querySelector('.text-md');
+                errorDetailElement.textContent = "Supabase connection failed. Displaying a mixed list of real (if any) and placeholder runners. Please check RLS or keys.";
+                setTimeout(() => { fetchError.classList.remove('hidden'); }, 100);
+            }
+            
+            // Combine real runners (on top) with the 17 dummy runners
+            runnersData = [...fetchedRealRunners, ...DUMMY_RUNNERS];
+            
+            applyFiltersAndSort(); 
+        }
+
+
+        // --- Modal Functions ---
+        function openRunnerModal(runnerId) {
+            const runner = runnersData.find(r => r.id === runnerId); 
+            if (!runner) return;
+
+            // FIX: Use corrected property name
+            const photoUrl = getRunnerImageUrl(runner.profilepicture, runner.name);
+            modalRunnerPhoto.src = photoUrl;
+            modalRunnerName.textContent = runner.name;
+            modalAboutRunnerName.textContent = runner.name;
+            modalRunnerRatingStars.innerHTML = generateStarRating(runner.rating || 0);
+            modalRunnerRatingValue.textContent = (runner.rating || 0).toFixed(1);
+            modalRunnerTasks.textContent = `(${runner.taskscompleted || 0} tasks completed)`;
+            
+            // Availability Status
+            modalRunnerAvailability.textContent = runner.isavailable ? 'Available Now' : 'Currently Unavailable';
+            const availabilityClass = runner.isavailable ? 'bg-green-50 text-green-700 border border-green-300' : 'bg-red-50 text-red-700 border border-red-300';
+            modalRunnerAvailability.className = `text-md font-bold px-4 py-1 rounded-full inline-block mt-2 ${availabilityClass}`;
+
+            modalRunnerLocation.textContent = runner.location || 'Not specified';
+            modalRunnerBio.textContent = runner.about || 'This runner has not provided a bio yet.';
+            
+            // FIX: Hourly rate now falls back to 'N/A' for consistency (since it is null for dummies)
+            modalRunnerRate.textContent = runner.hourlyrate || 'N/A'; 
+            
+            modalRunnerVehicle.textContent = runner.vehicle || 'N/A';
+            modalRunnerExperience.textContent = runner.experience || 'Not specified';
+            modalRunnerResponseTime.textContent = runner.responsetime || 'N/A';
+            modalRunnerLanguages.textContent = (runner.languages || []).join(', ') || 'N/A';
+
+            // Contact button logic: '555-BUSY' means show the busy message
+            const isBusy = runner.phone === '555-BUSY'; 
+            
+            if (!isBusy) {
+                modalCallNowBtn.textContent = 'Call Now';
+                contactStatusMessage.textContent = "We'll connect you directly to the runner to discuss your errand.";
+                modalCallNowBtn.onclick = () => {
+                    alert(`To contact ${runner.name}, please call this number: ${runner.phone}`);
+                    window.location.href = `tel:${runner.phone}`;
+                    closeRunnerModal();
+                };
+                modalCallNowBtn.classList.remove('bg-gray-400', 'cursor-not-allowed');
+                modalCallNowBtn.classList.add('bg-gold', 'hover:bg-maroon');
+                modalCallNowBtn.disabled = false;
+            } else {
+                // This is the requested "Runner is Busy" status inside the modal
+                modalCallNowBtn.textContent = 'Runner is Busy';
+                contactStatusMessage.textContent = 'Runner is busy. Please choose another available runner or check back later.';
+                modalCallNowBtn.onclick = () => {
+                    alert('The runner is currently on another errand or busy. Please check back later.');
+                };
+                modalCallNowBtn.classList.remove('bg-gold', 'hover:bg-maroon');
+                modalCallNowBtn.classList.add('bg-gray-400', 'cursor-not-allowed');
+                modalCallNowBtn.disabled = true;
+            }
+            
+            // Placeholder reviews for dummy runners
+            modalRunnerReviews.innerHTML = isBusy ? 
+                '<div class="text-center py-4 text-gray-500 italic">No public reviews available for this runner yet.</div>' : 
+                ''; 
+
+            runnerModal.style.display = 'flex';
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function closeRunnerModal() {
+            runnerModal.style.display = 'none';
+            document.body.classList.remove('overflow-hidden');
+            modalCallNowBtn.onclick = null;
+        }
+
+        // --- Event Listeners ---
+        applyFiltersButton.addEventListener('click', applyFiltersAndSort);
+        locationFilter.addEventListener('change', applyFiltersAndSort);
+        availabilityFilter.addEventListener('change', applyFiltersAndSort);
+        sortBy.addEventListener('change', applyFiltersAndSort);
+
+        // Modal close listeners
+        closeModalButton.addEventListener('click', closeRunnerModal);
+        runnerModal.addEventListener('click', (event) => {
+            if (event.target === runnerModal) {
+                closeRunnerModal();
+            }
+        });
+
+        // Mobile menu toggle
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+        });
+
+        // Back to Top button logic
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopButton.classList.remove('hidden');
+            } else {
+                backToTopButton.classList.add('hidden');
+            }
+        });
+
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // --- Initial Page Load ---
+        fetchRunnersData();
+    });
+
+</script> 
+ 
+<script type="text/javascript" id="dcoder_script"><script>
+    // Supabase Configuration
+    const supabaseUrl = "https://zchofpncqskvnfrzbcww.supabase.co";
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+    const BUCKET_NAME = 'profiles';
+
+    // DOM Elements
+    const popup = document.getElementById("popup");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const editBtn = document.getElementById("editBtn");
+    const cancelEditBtn = document.getElementById("cancelEditBtn");
+    const saveBtn = document.getElementById("saveBtn");
+    const viewMode = document.getElementById("viewMode");
+    const editMode = document.getElementById("editMode");
+    const editForm = document.getElementById("editForm");
+    const profilePictureInput = document.getElementById("profilePictureInput");
+
+    // Current User State
+    const email = localStorage.getItem("loggedInEmail");
+    const userType = localStorage.getItem("userType");
+    let currentRunnerData = null; 
+
+    /**
+     * Toggles the view between the profile details and the edit form.
+     */
+    function toggleEditMode(isEditing) {
+        viewMode.style.display = isEditing ? "none" : "block";
+        editMode.style.display = isEditing ? "block" : "none";
+    }
+
+    /**
+     * Displays a temporary notification popup.
+     */
+    function showPopup(message, type = "info") {
+        popup.textContent = message;
+        popup.className = "popup " + type;
+        popup.style.display = "block";
+        setTimeout(() => (popup.style.display = "none"), 4000);
+    }
+
+    /**
+     * Authenticates the user session.
+     */
+    function checkLogin() {
+        if (!email || userType !== "runner") {
+            alert("Session expired or unauthorized access. Please log in again.");
+            window.location.href = "login.html";
+        }
+    }
+
+    /**
+     * Loads the runner profile details from Supabase.
+     */
+    async function loadRunnerProfile() {
+        checkLogin();
+        // Clear placeholders
+        document.querySelectorAll('.highlight').forEach(el => el.textContent = "Loading...");
+        document.getElementById("runnerName").textContent = "Loading Runner...";
+        document.getElementById("runnerEmail").textContent = "Loading...";
+        document.getElementById("runnerStatus").textContent = "Loading...";
+
+        try {
+            const { data, error } = await supabase
+                .from("runners")
+                .select("*")
+                .eq("email", email)
+                .maybeSingle();
+
+            if (error || !data) {
+                console.error("Profile load error:", error);
+                showPopup("❌ Failed to load profile. Please log in again.", "error");
+                setTimeout(() => window.location.href = "login.html", 2000);
+                return;
+            }
+
+            currentRunnerData = data;
+            populateViewMode(data);
+            populateEditForm(data); 
+
+        } catch (err) {
+            console.error("Error fetching profile:", err);
+            showPopup("❌ Error loading profile", "error");
+        }
+    }
+
+    /**
+     * Populates the read-only view mode with runner data.
+     */
+    function populateViewMode(data) {
+        document.getElementById("runnerName").textContent = data.name || "Runner";
+        document.getElementById("runnerEmail").textContent = data.email;
+        document.getElementById("runnerPhone").textContent = data.phone || "N/A";
+        document.getElementById("runnerAbout").textContent = data.about || "This runner has not yet provided a personal description.";
+        document.getElementById("runnerExperience").textContent = data.experience || "N/A";
+        document.getElementById("runnerAvailability").textContent = data.availability || "N/A";
+        document.getElementById("runnerLocation").textContent = data.location || "N/A";
+
+        const statusSpan = document.getElementById("runnerStatus");
+        if (data.subscription_status === "active") {
+            statusSpan.textContent = "Active";
+            statusSpan.className = "status-tag active";
+        } else {
+            statusSpan.textContent = "Inactive";
+            statusSpan.className = "status-tag inactive";
+        }
+
+        const imgEl = document.getElementById("runnerImage");
+        imgEl.src = data.profilepicture || "https://via.placeholder.com/130/7B1E3A/FFD700?text=R";
+    }
+
+    /**
+     * Populates the edit form fields with runner data.
+     */
+    function populateEditForm(data) {
+        document.getElementById("editName").value = data.name || "";
+        document.getElementById("editPhone").value = data.phone || "";
+        document.getElementById("editLocation").value = data.location || "";
+        document.getElementById("editAvailability").value = data.availability || "";
+        document.getElementById("editExperience").value = data.experience || "";
+        document.getElementById("editAbout").value = data.about || "";
+        profilePictureInput.value = "";
+    }
+
+    /**
+     * Handles the file upload to Supabase Storage.
+     */
+    async function uploadProfilePicture(file) {
+        const fileExtension = file.name.split('.').pop();
+        const filePath = `${email}/profile_pic_${Date.now()}.${fileExtension}`; 
+
+        try {
+            const { error: uploadError } = await supabase.storage
+                .from(BUCKET_NAME)
+                .upload(filePath, file, {
+                    cacheControl: '3600',
+                    upsert: true,
+                });
+
+            if (uploadError) throw uploadError;
+
+            const { data: publicUrlData } = supabase.storage
+                .from(BUCKET_NAME)
+                .getPublicUrl(filePath);
+
+            return publicUrlData.publicUrl;
+
+        } catch (error) {
+            console.error('Error uploading file:', error);
+            showPopup(`❌ File upload failed: ${error.message}`, 'error');
+            return null;
+        }
+    }
+
+    /**
+     * Handles the form submission for updating the runner profile.
+     */
+    async function handleUpdateProfile(e) {
+        e.preventDefault();
+        saveBtn.disabled = true;
+        showPopup("Saving changes...", "info");
+
+        let imageUrl = currentRunnerData.profilepicture;
+
+        const file = profilePictureInput.files[0];
+        if (file) {
+            const newImageUrl = await uploadProfilePicture(file);
+            if (!newImageUrl) {
+                saveBtn.disabled = false;
+                return;
+            }
+            imageUrl = newImageUrl;
+        }
+
+        const updatedProfile = {
+            name: document.getElementById("editName").value,
+            phone: document.getElementById("editPhone").value,
+            location: document.getElementById("editLocation").value,
+            availability: document.getElementById("editAvailability").value,
+            experience: document.getElementById("editExperience").value,
+            about: document.getElementById("editAbout").value,
+            profilepicture: imageUrl, 
+        };
+
+        try {
+            const { error: updateError } = await supabase
+                .from('runners')
+                .update(updatedProfile)
+                .eq('email', email);
+
+            if (updateError) throw updateError;
+
+            showPopup("✅ Profile updated successfully!", "success");
+            await loadRunnerProfile();
+            toggleEditMode(false);
+
+        } catch (error) {
+            console.error("Update error:", error);
+            showPopup(`❌ Failed to save profile: ${error.message}`, "error");
+        } finally {
+            saveBtn.disabled = false;
+        }
+    }
+
+    // --- Event Listeners ---
+
+    editBtn.addEventListener("click", () => {
+        if (currentRunnerData) {
+            populateEditForm(currentRunnerData);
+            toggleEditMode(true);
+        } else {
+            showPopup("Profile data not loaded yet. Please wait.", "info");
+        }
+    });
+
+    cancelEditBtn.addEventListener("click", () => {
+        toggleEditMode(false);
+        if (currentRunnerData) {
+            populateEditForm(currentRunnerData);
+        }
+    });
+
+    editForm.addEventListener("submit", handleUpdateProfile);
+
+    logoutBtn.addEventListener("click", () => {
+        localStorage.removeItem("loggedInEmail");
+        localStorage.removeItem("userType");
+        showPopup("Logging out...", "info");
+        setTimeout(() => window.location.href = "login.html", 1000);
+    });
+
+    // Initialize
+    loadRunnerProfile();</script></body></html>
