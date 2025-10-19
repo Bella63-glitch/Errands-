@@ -49,6 +49,22 @@
     button.save-btn:hover { background-color: var(--gold); color: var(--maroon); }
     button.cancel-btn { background-color: #ccc; color: #333; }
     button.cancel-btn:hover { background-color: #999; color: #fff; }
+
+    /* New style for Initials Avatar */
+    .initials-avatar {
+      width: 6rem; /* w-24 */
+      height: 6rem; /* h-24 */
+      border-radius: 50%;
+      border: 4px solid var(--gold);
+      background-color: var(--maroon); /* Background for the initials */
+      color: var(--gold); /* Text color for the initials */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem; /* Large text size for initials */
+      font-weight: bold;
+      flex-shrink: 0; /* Prevents it from shrinking in a flex container */
+    }
   </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col items-center justify-start pt-12">
@@ -86,6 +102,35 @@
       setTimeout(() => window.location.href = "login.html", 1500);
     }
 
+    /**
+     * Helper function to generate initials from a full name or email.
+     * @param {string} name - The user's full name.
+     * @param {string} email - The user's email (used as fallback).
+     * @returns {string} The capitalized initials (e.g., 'JD' for 'John Doe') or first two letters of the email.
+     */
+    function getInitials(name, email) {
+      if (name) {
+        const parts = name.trim().split(/\s+/);
+        // Take the first letter of the first part and the first letter of the last part
+        if (parts.length > 1) {
+          return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+        }
+        // If only one part (e.g., a single name), take the first two letters
+        if (parts.length === 1 && parts[0].length >= 2) {
+            return parts[0].substring(0, 2).toUpperCase();
+        }
+        // If a single letter name
+        if (parts.length === 1 && parts[0].length === 1) {
+            return parts[0].toUpperCase();
+        }
+      }
+      // Fallback: use the first two letters of the email
+      if (email && email.length >= 2) {
+        return email.substring(0, 2).toUpperCase();
+      }
+      return "?"; // Default fallback
+    }
+
     async function loadProfile() {
       const email = localStorage.getItem('loggedInEmail');
       const userType = localStorage.getItem('userType');
@@ -121,10 +166,13 @@
 
     function displayProfile(user) {
       const displayName = user.full_name || user.email || "Client";
+      const initials = getInitials(user.full_name, user.email); // Get the initials
 
       profileDiv.innerHTML = `
         <div class="flex items-center space-x-6 mb-8 border-b-2 border-gray-200 pb-6">
-          <img src="https://i.postimg.cc/TPfbBM5Q/black-woman-icon-flat-user-avatar-vector-illustration-158483-1678.jpg" alt="Profile Picture" class="w-24 h-24 rounded-full border-4 border-gold object-cover">
+          <div class="initials-avatar">
+            ${initials}
+          </div>
           <div>
             <h2 class="text-3xl font-bold text-maroon">${displayName}</h2>
             <p class="text-lg text-gray-500">${user.email || "N/A"}</p>
@@ -152,9 +200,13 @@
     }
 
     function enableEdit(user) {
+        const initials = getInitials(user.full_name, user.email); // Get the initials for the edit view too
+
       profileDiv.innerHTML = `
         <div class="flex items-center space-x-6 mb-8 border-b-2 border-gray-200 pb-6">
-          <img src="https://i.postimg.cc/TPfbBM5Q/black-woman-icon-flat-user-avatar-vector-illustration-158483-1678.jpg" alt="Profile Picture" class="w-24 h-24 rounded-full border-4 border-gold object-cover">
+          <div class="initials-avatar">
+            ${initials}
+          </div>
           <div>
             <h2 class="text-3xl font-bold text-maroon">Edit Profile</h2>
             <p class="text-lg text-gray-500">Update your details below.</p>
@@ -218,13 +270,5 @@
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
 
 
