@@ -115,6 +115,36 @@
         }
     }
 
+    /**
+     * Checks if the given email exists in either the 'users' or 'runners' table.
+     * @param {string} email The email address to check.
+     * @returns {Promise<boolean>} True if the email exists in any table, false otherwise.
+     */
+    async function checkEmailExists(email) {
+        // Check 'users' table
+        const { data: userData, error: userError } = await supabaseClient
+            .from('users')
+            .select('email')
+            .eq('email', email)
+            .limit(1);
+
+        if (userError) throw userError;
+        if (userData && userData.length > 0) return true;
+
+        // Check 'runners' table
+        const { data: runnerData, error: runnerError } = await supabaseClient
+            .from('runners')
+            .select('email')
+            .eq('email', email)
+            .limit(1);
+
+        if (runnerError) throw runnerError;
+        if (runnerData && runnerData.length > 0) return true;
+        
+        return false;
+    }
+
+
     document.getElementById("signupForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       setLoading(true); // Start loading state
@@ -131,8 +161,16 @@
         setLoading(false); // Stop loading on validation error
         return;
       }
-
+      
       try {
+        // 🚨 CRITICAL: Check for existing email in both tables before proceeding
+        const emailExists = await checkEmailExists(email);
+        if (emailExists) {
+            showPopup("This email address is already registered.", "error");
+            setLoading(false);
+            return;
+        }
+
         // Hashing for demonstration purposes, though server-side is preferred
         const hashedPassword = dcodeIO.bcrypt.hashSync(password, 10);
 
@@ -200,3 +238,13 @@
 </html>
 
 
+
+
+
+
+
+
+
+
+
+    
