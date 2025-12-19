@@ -3,445 +3,384 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Runner Profile - Run Me An Errand</title>
+    <title>Runner Dashboard - Run Me An Errand</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --maroon: #7B1E3A;
+            --maroon-light: #a32a4d;
             --gold: #FFD700;
-            --light-bg: #e9eef2;
-            --text-dark: #2c3e50;
-            --border-light: #dadee3;
-            --maroon-dark: #5c162b;
-            --shadow-strong: 0 15px 40px rgba(0, 0, 0, 0.15);
+            --white: #ffffff;
+            --bg-gray: #f4f7f6;
+            --text-main: #2d3436;
+            --text-muted: #636e72;
+            --success: #00b894;
         }
 
-        /* Base styles for all devices */
         body {
             font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-gray);
             margin: 0;
-            background: var(--light-bg);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            padding-bottom: 50px;
-            background-image: linear-gradient(135deg, var(--light-bg) 0%, #dcdfe3 100%);
-            box-sizing: border-box; /* Important for responsive layouts */
+            color: var(--text-main);
+            padding-bottom: 40px;
         }
 
-        /* --- Header/Nav Bar --- */
-        .top-header {
+        /* --- Header --- */
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--maroon) 0%, #4a1022 100%);
+            height: 220px;
             width: 100%;
-            background-color: var(--maroon);
-            padding: 1rem 1.5rem; /* Reduced padding for mobile */
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 500;
-        }
-
-        .top-header a {
-            color: var(--gold);
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 1rem; /* Slightly smaller */
-            transition: color 0.3s, transform 0.2s;
-        }
-
-        .top-header a:hover {
-            color: white;
-            transform: scale(1.05);
-        }
-
-        .header-title {
-            color: white;
-            font-size: 1.4rem; /* Slightly smaller */
-            font-weight: 800;
-            letter-spacing: 0.5px;
-        }
-
-        /* --- Profile Container (Floating Card) --- */
-        .profile-container {
-            background-color: #fff;
-            border-radius: 20px; /* Slightly smaller radius for mobile */
-            box-shadow: var(--shadow-strong);
-            padding: 0;
-            width: 95%; /* More fluid width */
-            max-width: 650px;
-            text-align: center;
-            margin: 40px 0; /* Reduced margin */
-            overflow: hidden;
-            transition: all 0.5s ease;
-        }
-
-        /* --- Profile Header Section (Maroon Banner) --- */
-        .profile-header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background: var(--maroon);
-            padding: 30px 20px 50px 20px; /* Reduced vertical padding */
             position: relative;
-            color: white;
-            background-image: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-dark) 100%);
-        }
-
-        .profile-header h2 {
-            display: none;
-        }
-
-        .profile-pic-wrapper {
-            position: absolute;
-            bottom: -40px; /* Adjusted position */
-            width: 140px; /* Slightly smaller picture */
-            height: 140px;
-            z-index: 100;
-            border-radius: 50%;
-        }
-
-        .profile-pic {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 5px solid var(--gold); /* Adjusted border size */
-            box-shadow: 0 0 0 6px #fff, 0 6px 15px rgba(0,0,0,0.3); /* Adjusted shadow */
-        }
-
-        /* --- Details Section --- */
-        .details {
-            text-align: left;
-            padding: 60px 20px 20px 20px; /* Adjusted padding */
-        }
-
-        .details .detail-item {
-            font-size: 1rem;
-            padding: 0.8rem 0; /* Reduced vertical padding */
-            border-bottom: 1px solid var(--border-light);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: var(--text-dark);
-            transition: background-color 0.2s, padding 0.2s;
-        }
-
-        .details .detail-item:hover {
-            background-color: rgba(123, 30, 58, 0.05);
-            border-radius: 5px;
-            padding-left: 5px;
-            padding-right: 0px;
-        }
-
-        .details .detail-item:last-child {
-            border-bottom: none;
-        }
-
-        .details strong {
-            color: var(--maroon-dark);
-            font-weight: 700;
-            min-width: 100px; /* Reduced min-width */
-            font-size: 0.95rem;
-        }
-
-        .details strong i {
-            margin-right: 8px; /* Adjusted margin */
-            color: var(--gold);
-        }
-
-        .highlight {
-            font-weight: 600;
-            color: var(--text-dark);
-            text-align: right;
-            flex-grow: 1;
-            font-size: 0.95rem;
-        }
-
-        .highlight.about-text {
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
-
-        .status-badge {
-            padding: 0.4rem 0.8rem; /* Adjusted padding */
-            border-radius: 20px;
-            font-size: 0.8rem; /* Smaller font */
-        }
-
-        .active { background-color: #2ecc71; }
-        .inactive { background-color: #e74c3c; }
-
-        /* --- Button Group --- */
-        .button-group {
-            padding: 20px 20px 30px 20px; /* Reduced padding */
             display: flex;
             justify-content: center;
         }
 
-        #logoutBtn {
-            background-color: var(--maroon);
-            color: white;
-            border: 2px solid var(--maroon);
-            border-radius: 8px;
-            padding: 12px 25px; /* Reduced padding */
-            font-size: 1rem; /* Adjusted font size */
+        .nav-bar {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            position: absolute;
+            top: 0;
         }
 
-        /* --- Mobile Responsiveness (Adjustments for screens <= 550px) --- */
-        @media (max-width: 550px) {
-            .top-header {
-                padding: 0.8rem 1rem;
-            }
-
-            .header-title {
-                font-size: 1.2rem;
-            }
-
-            .top-header a {
-                font-size: 0.9rem;
-            }
-
-            .profile-container {
-                margin: 30px 0;
-            }
-
-            .profile-pic-wrapper {
-                width: 120px;
-                height: 120px;
-                bottom: -30px;
-            }
-
-            .profile-pic {
-                border-width: 4px;
-                box-shadow: 0 0 0 4px #fff, 0 4px 10px rgba(0,0,0,0.2);
-            }
-
-            .details {
-                padding: 50px 15px 15px 15px; /* Tighter padding */
-            }
-
-            .details .detail-item {
-                flex-direction: column; /* Stack items vertically */
-                align-items: flex-start;
-                padding: 0.7rem 0;
-            }
-
-            .details strong {
-                width: 100%;
-                text-align: left;
-                margin-bottom: 5px; /* Space between label and value */
-                min-width: auto;
-                font-size: 1rem;
-            }
-
-            .highlight {
-                width: 100%;
-                text-align: left; /* Align value to the left under the label */
-                padding-left: 28px; /* Indent the value slightly for hierarchy */
-                box-sizing: border-box;
-                font-size: 1rem;
-            }
-
-            .status-badge {
-                margin-top: 5px;
-                margin-left: 28px;
-            }
-            
-            .button-group {
-                padding: 15px 15px 25px 15px;
-            }
-            
-            #logoutBtn {
-                width: 100%;
-                padding: 14px 0;
-            }
+        .nav-bar a {
+            color: var(--gold);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
         }
 
-        /* Edit Mode remains functionally hidden */
-        #editMode { display: none; }
+        /* --- Main Layout --- */
+        .container {
+            max-width: 1000px;
+            margin: -100px auto 0;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 25px;
+        }
 
+        /* --- Sidebar Card --- */
+        .profile-sidebar {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 20px;
+        }
+
+        .avatar-container img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid var(--white);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .verified-badge {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: var(--gold);
+            color: var(--maroon);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            border: 3px solid var(--white);
+        }
+
+        .runner-name {
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+            color: var(--maroon);
+        }
+
+        .status-pill {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: #dfe6e9;
+        }
+
+        .status-pill.active { background: #e3f9eb; color: var(--success); }
+
+        .sidebar-menu {
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .menu-item {
+            padding: 12px 15px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: 0.3s;
+            margin-bottom: 5px;
+            text-decoration: none;
+        }
+
+        .menu-item i { margin-right: 12px; width: 20px; }
+
+        .menu-item:hover, .menu-item.active {
+            background: var(--maroon);
+            color: var(--white);
+        }
+
+        /* --- Main Content --- */
+        .content-area {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .stat-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .stat-val { font-size: 1.3rem; font-weight: 800; display: block; }
+        .stat-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
+
+        .info-card {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 35px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .card-header h3 { margin: 0; font-size: 1.2rem; color: var(--maroon); }
+
+        .btn-preview {
+            background: var(--gold);
+            color: var(--maroon);
+            padding: 8px 18px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .grid-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .detail-group label {
+            display: block;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 800;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-group p {
+            margin: 0;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .about-section {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px dashed #eee;
+        }
+
+        /* --- Mobile --- */
+        @media (max-width: 850px) {
+            .container { grid-template-columns: 1fr; }
+            .dashboard-header { height: 180px; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
-    <div class="top-header">
-        <a href="index.html"><i class="fas fa-home"></i> Home</a>
-        <span class="header-title">Runner Profile</span>
+
+    <div class="dashboard-header">
+        <div class="nav-bar">
+            <a href="index.html"><i class="fas fa-arrow-left"></i> Home</a>
+            <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
     </div>
 
-    <div id="popup" class="popup"></div>
+    <div class="container">
+        <aside class="profile-sidebar">
+            <div class="avatar-container">
+                <img id="sideImage" src="https://via.placeholder.com/150" alt="Runner">
+                <div class="verified-badge"><i class="fas fa-check"></i></div>
+            </div>
+            <h2 class="runner-name" id="sideName">Loading...</h2>
+            <div id="sideStatus" class="status-pill">Status...</div>
 
-    <div class="profile-container">
-        <div id="viewMode">
-            <div class="profile-header">
-                <div class="profile-pic-wrapper">
-                    <img id="runnerImage" class="profile-pic" src="https://via.placeholder.com/140/7B1E3A/FFD700?text=RUN" alt="Profile Picture" />
+            <nav class="sidebar-menu">
+                <a href="#" class="menu-item active"><i class="fas fa-th-large"></i> Overview</a>
+                <a href="#" class="menu-item"><i class="fas fa-tasks"></i> Active Errands</a>
+                <a href="#" class="menu-item"><i class="fas fa-wallet"></i> Earnings</a>
+                <a href="#" class="menu-item"><i class="fas fa-cog"></i> Edit Profile</a>
+            </nav>
+        </aside>
+
+        <div class="content-area">
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #fff9db; color: #f0932b;"><i class="fas fa-star"></i></div>
+                    <div>
+                        <span class="stat-val">4.9</span>
+                        <span class="stat-label">Rating</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #e3f9eb; color: #00b894;"><i class="fas fa-check-double"></i></div>
+                    <div>
+                        <span class="stat-val">124</span>
+                        <span class="stat-label">Errands</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #e8f4fd; color: #0984e3;"><i class="fas fa-calendar-alt"></i></div>
+                    <div>
+                        <span class="stat-val">98%</span>
+                        <span class="stat-label">On-Time</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="details" id="runnerDetails">
-                <div class="detail-item">
-                    <strong><i class="fas fa-user"></i> Name:</strong> <span id="runnerName" class="highlight">Loading...</span>
+            <div class="info-card">
+                <div class="card-header">
+                    <h3>Runner Details</h3>
+                    <a href="public-view.html" class="btn-preview"><i class="fas fa-eye"></i> View Public Profile</a>
                 </div>
-                <div class="detail-item">
-                    <strong><i class="fas fa-envelope"></i> Email:</strong> <span id="runnerEmail" class="highlight">Loading...</span>
+
+                <div class="grid-details">
+                    <div class="detail-group">
+                        <label>Location</label>
+                        <p id="mainLocation">---</p>
+                    </div>
+                    <div class="detail-group">
+                        <label>Phone Number</label>
+                        <p id="mainPhone">---</p>
+                    </div>
+                    <div class="detail-group">
+                        <label>Email Address</label>
+                        <p id="mainEmail">---</p>
+                    </div>
+                    <div class="detail-group">
+                        <label>Experience</label>
+                        <p id="mainExperience">---</p>
+                    </div>
+                    <div class="detail-group">
+                        <label>Daily Availability</label>
+                        <p id="mainAvailability">---</p>
+                    </div>
                 </div>
-                <div class="detail-item">
-                    <strong><i class="fas fa-phone-alt"></i> Phone:</strong> <span id="runnerPhone" class="highlight">Loading...</span>
-                </div>
-                <div class="detail-item">
-                    <strong><i class="fas fa-map-marker-alt"></i> Location:</strong> <span id="runnerLocation" class="highlight">Loading...</span>
-                </div>
-                <div class="detail-item">
-                    <strong><i class="fas fa-clock"></i> Availability:</strong> <span id="runnerAvailability" class="highlight">Loading...</span>
-                </div>
-                <div class="detail-item">
-                    <strong><i class="fas fa-medal"></i> Experience:</strong> <span id="runnerExperience" class="highlight">Loading...</span>
-                </div>
-                <div class="detail-item">
-                    <strong><i class="fas fa-user-tag"></i> About Me:</strong> <span id="runnerAbout" class="highlight about-text">Loading...</span>
-                </div>
-                <div class="detail-item">
-                    <strong><i class="fas fa-check-circle"></i> Status:</strong> <span id="runnerStatus" class="status-badge">Loading...</span>
+
+                <div class="about-section">
+                    <label style="font-size: 0.7rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted); display: block; margin-bottom: 10px;">About Me</label>
+                    <p id="mainAbout" style="line-height: 1.6; color: var(--text-muted);">Loading bio...</p>
                 </div>
             </div>
 
-            <div class="button-group">
-                <button id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Secure Logout</button>
-            </div>
-        </div>
-
-        <div id="editMode">
-            <form id="editForm">
-                <label for="profilePictureInput" id="imageUploadLabel"></label>
-                <input type="file" id="profilePictureInput" accept="image/*">
-                <input type="text" id="editName">
-                <input type="text" id="editPhone">
-                <input type="text" id="editLocation">
-                <input type="text" id="editAvailability">
-                <input type="text" id="editExperience">
-                <textarea id="editAbout"></textarea>
-                <div class="edit-actions">
-                    <button type="button" id="cancelEditBtn">Cancel</button>
-                    <button type="submit" id="saveBtn">Save Changes</button>
-                </div>
-            </form>
         </div>
     </div>
 
     <script>
-        // Supabase Configuration
         const supabaseUrl = "https://zchofpncqskvnfrzbcww.supabase.co";
         const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
         const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-        const BUCKET_NAME = 'profiles';
 
-        // DOM Elements
-        const popup = document.getElementById("popup");
-        const logoutBtn = document.getElementById("logoutBtn");
-
-        // Current User State
         const email = localStorage.getItem("loggedInEmail");
-        const userType = localStorage.getItem("userType");
-        let currentRunnerData = null;
 
-        /**
-         * Displays a temporary notification popup.
-         * @param {string} message - The message to display.
-         * @param {string} type - The type of popup ('success', 'error', 'info').
-         */
-        function showPopup(message, type = "info") {
-            popup.textContent = message;
-            popup.className = "popup " + type;
-            popup.style.display = "block";
-            setTimeout(() => (popup.style.display = "none"), 4000);
-        }
+        async function init() {
+            if (!email) {
+                window.location.href = "login.html";
+                return;
+            }
 
-        /**
-         * Authenticates the user session.
-         */
-        function checkLogin() {
-            if (!email || userType !== "runner") {
-                showPopup("Session expired. Please log in again.", "error");
-                setTimeout(() => window.location.href = "login.html", 1500);
+            const { data, error } = await supabase
+                .from("runners")
+                .select("*")
+                .eq("email", email)
+                .maybeSingle();
+
+            if (data) {
+                // Sidebar
+                document.getElementById("sideName").textContent = data.name;
+                document.getElementById("sideImage").src = data.profilepicture || "https://via.placeholder.com/150";
+                const status = document.getElementById("sideStatus");
+                status.textContent = data.subscription_status;
+                if(data.subscription_status === 'active') status.classList.add('active');
+
+                // Main Info
+                document.getElementById("mainLocation").textContent = data.location || "Not specified";
+                document.getElementById("mainPhone").textContent = data.phone || "---";
+                document.getElementById("mainEmail").textContent = data.email;
+                document.getElementById("mainExperience").textContent = data.experience || "Beginner";
+                document.getElementById("mainAvailability").textContent = data.availability || "Not set";
+                document.getElementById("mainAbout").textContent = data.about || "No bio provided.";
             }
         }
 
-        /**
-         * Loads the runner profile details from Supabase and populates the view mode.
-         */
-        async function loadRunnerProfile() {
-            checkLogin();
-
-            try {
-                const { data, error } = await supabase
-                    .from("runners")
-                    .select("*")
-                    .eq("email", email)
-                    .maybeSingle();
-
-                if (error || !data) {
-                    console.error("Profile load error:", error);
-                    showPopup("❌ Failed to load profile. Please log in again.", "error");
-                    setTimeout(() => window.location.href = "login.html", 2000);
-                    return;
-                }
-
-                currentRunnerData = data;
-                populateViewMode(data);
-
-            } catch (err) {
-                console.error("Error fetching profile:", err);
-                showPopup("❌ Error loading profile", "error");
-            }
+        function logout() {
+            localStorage.clear();
+            window.location.href = "login.html";
         }
 
-        /**
-         * Populates the read-only view mode with runner data.
-         * @param {object} data - The runner profile data.
-         */
-        function populateViewMode(data) {
-            const runnerName = data.name || "N/A";
-
-            document.getElementById("runnerName").textContent = runnerName;
-            document.getElementById("runnerEmail").textContent = data.email;
-            document.getElementById("runnerPhone").textContent = data.phone || "N/A";
-            document.getElementById("runnerAbout").textContent = data.about || "N/A";
-            document.getElementById("runnerExperience").textContent = data.experience || "N/A";
-            document.getElementById("runnerAvailability").textContent = data.availability || "N/A";
-            document.getElementById("runnerLocation").textContent = data.location || "N/A";
-
-            const statusSpan = document.getElementById("runnerStatus");
-            if (data.subscription_status === "active") {
-                statusSpan.textContent = "Active";
-                statusSpan.className = "status-badge active";
-            } else {
-                statusSpan.textContent = "Inactive";
-                statusSpan.className = "status-badge inactive";
-            }
-
-            const imgEl = document.getElementById("runnerImage");
-            // Adjusted placeholder size to match CSS
-            imgEl.src = data.profilepicture || "https://via.placeholder.com/140/7B1E3A/FFD700?text=RUN";
-        }
-
-        // --- Event Listener ---
-
-        logoutBtn.addEventListener("click", () => {
-            localStorage.removeItem("loggedInEmail");
-            localStorage.removeItem("userType");
-            showPopup("Logging out...", "info");
-            setTimeout(() => window.location.href = "login.html", 1000);
-        });
-
-        // Initial load
-        loadRunnerProfile();
-
+        init();
     </script>
 </body>
 </html>
-
