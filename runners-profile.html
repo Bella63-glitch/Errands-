@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,381 +6,280 @@
     <title>Runner Profile - Run Me An Errand</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --maroon: #7B1E3A;
             --gold: #FFD700;
-            --light-bg: #f4f7f9;
-            --text-dark: #1a1a1a;
-            --text-muted: #64748b;
-            --border-light: #e2e8f0;
+            --light-bg: #e9eef2;
+            --text-dark: #2c3e50;
+            --border-light: #dadee3;
             --maroon-dark: #5c162b;
-            --success: #10b981;
-            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            --shadow-strong: 0 15px 40px rgba(0, 0, 0, 0.15);
         }
 
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Montserrat', sans-serif;
             margin: 0;
             background: var(--light-bg);
-            color: var(--text-dark);
-            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding-bottom: 50px;
+            background-image: linear-gradient(135deg, var(--light-bg) 0%, #dcdfe3 100%);
+            box-sizing: border-box;
         }
 
-        /* --- Navigation --- */
+        /* --- Header/Nav Bar --- */
         .top-header {
             width: 100%;
             background-color: var(--maroon);
-            padding: 1rem 5%;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
             display: flex;
             justify-content: space-between;
             align-items: center;
             position: sticky;
             top: 0;
-            z-index: 1000;
-            box-sizing: border-box;
+            z-index: 500;
         }
 
         .top-header a {
-            color: white;
+            color: var(--gold);
             text-decoration: none;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            font-weight: 700;
+            transition: color 0.3s;
         }
 
         .header-title {
-            color: var(--gold);
+            color: white;
+            font-size: 1.4rem;
             font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
 
         /* --- Profile Container --- */
-        .main-content {
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-
-        .profile-card {
-            background: white;
+        .profile-container {
+            background-color: #fff;
             border-radius: 24px;
+            box-shadow: var(--shadow-strong);
+            width: 95%;
+            max-width: 650px;
+            margin: 40px 0;
             overflow: hidden;
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(255,255,255,0.8);
-        }
-
-        /* --- Enhanced Header --- */
-        .profile-banner {
-            height: 160px;
-            background: linear-gradient(135deg, var(--maroon), var(--maroon-dark));
-            position: relative;
-        }
-
-        .profile-meta {
-            padding: 0 40px;
-            margin-top: -60px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             text-align: center;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-dark) 100%);
+            padding: 40px 20px 60px 20px;
             position: relative;
         }
 
-        .profile-pic-container {
-            position: relative;
-            padding: 5px;
-            background: white;
-            border-radius: 50%;
-            box-shadow: var(--shadow);
+        .profile-pic-wrapper {
+            position: absolute;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 140px;
         }
 
         .profile-pic {
-            width: 140px;
-            height: 140px;
+            width: 100%;
+            height: 100%;
             border-radius: 50%;
             object-fit: cover;
-            border: 4px solid var(--gold);
+            border: 5px solid var(--gold);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            background: white;
         }
 
-        .verified-badge {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            background: #3b82f6;
-            color: white;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 3px solid white;
-            font-size: 14px;
-        }
-
-        /* --- Stats Grid --- */
-        .stats-grid {
+        /* --- NEW: Stats Dashboard --- */
+        .stats-dashboard {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            width: 100%;
-            margin: 25px 0;
-            background: #f8fafc;
-            padding: 20px;
-            border-radius: 16px;
+            margin: 70px 20px 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border: 1px solid var(--border-light);
         }
 
-        .stat-item {
+        .stat-card {
             display: flex;
             flex-direction: column;
-            align-items: center;
+            gap: 5px;
+        }
+
+        .stat-card:not(:last-child) {
+            border-right: 1px solid #ddd;
         }
 
         .stat-value {
             font-weight: 800;
-            font-size: 1.2rem;
             color: var(--maroon);
+            font-size: 1.2rem;
         }
 
         .stat-label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
+            font-size: 0.7rem;
             text-transform: uppercase;
-            font-weight: 600;
+            font-weight: 700;
+            color: #7f8c8d;
         }
 
-        /* --- Strength Meter --- */
-        .strength-container {
-            width: 100%;
-            margin-bottom: 25px;
+        /* --- Details Section --- */
+        .details {
             text-align: left;
+            padding: 20px 30px;
         }
 
-        .strength-label {
+        .detail-item {
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-light);
             display: flex;
             justify-content: space-between;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .progress-bar {
-            height: 8px;
-            background: #e2e8f0;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: var(--success);
-            width: 85%; /* Dynamic */
-            transition: width 1s ease-in-out;
-        }
-
-        /* --- Information Layout --- */
-        .info-section {
-            padding: 20px 40px 40px;
-        }
-
-        .section-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            display: flex;
             align-items: center;
-            gap: 10px;
+        }
+
+        .details strong {
             color: var(--maroon-dark);
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .info-box {
-            background: #fff;
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid var(--border-light);
-            transition: transform 0.2s;
-        }
-
-        .info-box:hover {
-            transform: translateY(-3px);
-            border-color: var(--gold);
-        }
-
-        .info-box i {
-            color: var(--maroon);
-            margin-bottom: 10px;
-            font-size: 1.2rem;
-        }
-
-        .info-box label {
-            display: block;
-            font-size: 0.75rem;
-            color: var(--text-muted);
             font-weight: 700;
-            text-transform: uppercase;
+            font-size: 0.9rem;
         }
 
-        .info-box p {
-            margin: 5px 0 0;
+        .details strong i {
+            margin-right: 10px;
+            color: var(--maroon);
+            width: 20px;
+        }
+
+        .highlight {
             font-weight: 600;
+            color: var(--text-dark);
+            text-align: right;
             font-size: 0.95rem;
         }
 
-        /* --- Footer Actions --- */
-        .profile-footer {
-            padding: 20px 40px;
-            background: #f8fafc;
-            border-top: 1px solid var(--border-light);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .btn-logout {
-            background: transparent;
-            color: #ef4444;
-            border: 1px solid #fecaca;
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-logout:hover {
-            background: #fef2f2;
-        }
-
-        .status-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
+        .status-badge {
+            padding: 0.4rem 1rem;
             border-radius: 20px;
             font-size: 0.8rem;
             font-weight: 700;
+            color: white;
         }
 
-        .pill-active { background: #d1fae5; color: #065f46; }
-        .pill-inactive { background: #fee2e2; color: #991b1b; }
+        .active { background-color: #27ae60; }
+        .inactive { background-color: #e74c3c; }
 
-        /* --- Mobile Responsiveness --- */
-        @media (max-width: 600px) {
-            .info-grid { grid-template-columns: 1fr; }
-            .profile-banner { height: 120px; }
-            .profile-meta { padding: 0 20px; }
-            .stats-grid { padding: 15px 10px; }
+        .button-group {
+            padding: 30px;
+        }
+
+        #logoutBtn {
+            background-color: var(--maroon);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 40px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s;
+        }
+
+        #logoutBtn:hover {
+            background-color: var(--maroon-dark);
+        }
+
+        /* Mobile Fixes */
+        @media (max-width: 550px) {
+            .detail-item { flex-direction: column; align-items: flex-start; gap: 5px; }
+            .highlight { text-align: left; padding-left: 30px; }
         }
     </style>
 </head>
 <body>
+    <div class="top-header">
+        <a href="index.html"><i class="fas fa-home"></i> Home</a>
+        <span class="header-title">Runner Profile</span>
+    </div>
 
-    <header class="top-header">
-        <a href="index.html"><i class="fas fa-arrow-left"></i> Home</a>
-        <div class="header-title">Runner Central</div>
-        <div style="width: 50px;"></div> </header>
-
-    <div class="main-content">
-        <div class="profile-card">
-            <div class="profile-banner"></div>
-            
-            <div class="profile-meta">
-                <div class="profile-pic-container">
-                    <img id="runnerImage" class="profile-pic" src="https://via.placeholder.com/140/7B1E3A/FFD700?text=RUN" alt="Runner">
-                    <div class="verified-badge"><i class="fas fa-check"></i></div>
-                </div>
-                
-                <h1 id="runnerName" style="margin: 15px 0 5px; font-size: 1.8rem; font-weight: 800;">Loading...</h1>
-                <p id="runnerStatusPill" class="status-pill pill-active">
-                    <i class="fas fa-circle" style="font-size: 8px;"></i> Active Member
-                </p>
-
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <span class="stat-value" id="viewCount">1,284</span>
-                        <span class="stat-label">Profile Views</span>
-                    </div>
-                    <div class="stat-item" style="border-left: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0;">
-                        <span class="stat-value">4.9</span>
-                        <span class="stat-label">Rating</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-value">86</span>
-                        <span class="stat-label">Errands</span>
-                    </div>
-                </div>
-
-                <div class="strength-container">
-                    <div class="strength-label">
-                        <span>Profile Completion</span>
-                        <span id="strengthPercent">85%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="strengthBar"></div>
-                    </div>
-                </div>
+    <div class="profile-container">
+        <div class="profile-header">
+            <div class="profile-pic-wrapper">
+                <img id="runnerImage" class="profile-pic" src="https://via.placeholder.com/140/7B1E3A/FFD700?text=RUN" alt="Profile" />
             </div>
+        </div>
 
-            <div class="info-section">
-                <h3 class="section-title"><i class="fas fa-id-card"></i> Runner Details</h3>
-                <div class="info-grid">
-                    <div class="info-box">
-                        <i class="fas fa-envelope"></i>
-                        <label>Email Address</label>
-                        <p id="runnerEmail">---</p>
-                    </div>
-                    <div class="info-box">
-                        <i class="fas fa-phone"></i>
-                        <label>Contact Number</label>
-                        <p id="runnerPhone">---</p>
-                    </div>
-                    <div class="info-box">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <label>Service Area</label>
-                        <p id="runnerLocation">---</p>
-                    </div>
-                    <div class="info-box">
-                        <i class="fas fa-calendar-check"></i>
-                        <label>Availability</label>
-                        <p id="runnerAvailability">---</p>
-                    </div>
-                </div>
-
-                <h3 class="section-title" style="margin-top: 30px;"><i class="fas fa-user-tag"></i> Professional Bio</h3>
-                <div class="info-box" style="width: 100%; box-sizing: border-box;">
-                    <p id="runnerAbout" style="font-weight: 400; color: #475569; white-space: pre-wrap;">No bio provided.</p>
-                </div>
+        <div class="stats-dashboard">
+            <div class="stat-card">
+                <span class="stat-value" id="profileViews">--</span>
+                <span class="stat-label">Views</span>
             </div>
-
-            <div class="profile-footer">
-                <span style="font-size: 0.8rem; color: var(--text-muted);">Joined Dec 2023</span>
-                <button id="logoutBtn" class="btn-logout">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
+            <div class="stat-card">
+                <span class="stat-value">4.9</span>
+                <span class="stat-label">Rating</span>
             </div>
+            <div class="stat-card">
+                <span class="stat-value">12</span>
+                <span class="stat-label">Errands</span>
+            </div>
+        </div>
+
+        <div class="details">
+            <div class="detail-item">
+                <strong><i class="fas fa-user"></i> Name:</strong> 
+                <span id="runnerName" class="highlight">Loading...</span>
+            </div>
+            <div class="detail-item">
+                <strong><i class="fas fa-envelope"></i> Email:</strong> 
+                <span id="runnerEmail" class="highlight">Loading...</span>
+            </div>
+            <div class="detail-item">
+                <strong><i class="fas fa-phone-alt"></i> Phone:</strong> 
+                <span id="runnerPhone" class="highlight">Loading...</span>
+            </div>
+            <div class="detail-item">
+                <strong><i class="fas fa-map-marker-alt"></i> Location:</strong> 
+                <span id="runnerLocation" class="highlight">Loading...</span>
+            </div>
+            <div class="detail-item">
+                <strong><i class="fas fa-clock"></i> Availability:</strong> 
+                <span id="runnerAvailability" class="highlight">Loading...</span>
+            </div>
+            <div class="detail-item">
+                <strong><i class="fas fa-medal"></i> Experience:</strong> 
+                <span id="runnerExperience" class="highlight">Loading...</span>
+            </div>
+            <div class="detail-item">
+                <strong><i class="fas fa-user-tag"></i> About:</strong> 
+                <span id="runnerAbout" class="highlight">Loading...</span>
+            </div>
+            <div class="detail-item">
+                <strong><i class="fas fa-check-circle"></i> Status:</strong> 
+                <span id="runnerStatus" class="status-badge">...</span>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Secure Logout</button>
         </div>
     </div>
 
     <script>
-        // Supabase Init (Using your provided keys)
+        // Supabase Configuration
         const supabaseUrl = "https://zchofpncqskvnfrzbcww.supabase.co";
         const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
         const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
         const email = localStorage.getItem("loggedInEmail");
+        const userType = localStorage.getItem("userType");
 
-        async function loadProfile() {
-            if (!email) {
+        async function loadRunnerProfile() {
+            if (!email || userType !== "runner") {
                 window.location.href = "login.html";
                 return;
             }
@@ -393,40 +291,52 @@
                     .eq("email", email)
                     .maybeSingle();
 
-                if (data) {
-                    document.getElementById("runnerName").textContent = data.name;
-                    document.getElementById("runnerEmail").textContent = data.email;
-                    document.getElementById("runnerPhone").textContent = data.phone || "Not set";
-                    document.getElementById("runnerLocation").textContent = data.location || "Not set";
-                    document.getElementById("runnerAvailability").textContent = data.availability || "Not set";
-                    document.getElementById("runnerAbout").textContent = data.about || "Describe yourself to customers...";
-                    document.getElementById("runnerImage").src = data.profilepicture || "https://via.placeholder.com/140/7B1E3A/FFD700?text=RUN";
-                    
-                    // Logic for Status Pill
-                    const statusPill = document.getElementById("runnerStatusPill");
-                    if (data.subscription_status === "active") {
-                        statusPill.innerHTML = '<i class="fas fa-circle" style="font-size: 8px;"></i> Active Runner';
-                        statusPill.className = "status-pill pill-active";
-                    } else {
-                        statusPill.innerHTML = '<i class="fas fa-exclamation-triangle" style="font-size: 8px;"></i> Inactive';
-                        statusPill.className = "status-pill pill-inactive";
-                    }
-
-                    // Mock Profile View Generator (In a real app, increment this in DB)
-                    const randomViews = Math.floor(Math.random() * (2000 - 500) + 500);
-                    document.getElementById("viewCount").textContent = randomViews.toLocaleString();
+                if (error || !data) {
+                    console.error("Fetch error:", error);
+                    return;
                 }
+
+                // Populate Fields using your exact IDs
+                document.getElementById("runnerName").textContent = data.name || "N/A";
+                document.getElementById("runnerEmail").textContent = data.email;
+                document.getElementById("runnerPhone").textContent = data.phone || "N/A";
+                document.getElementById("runnerLocation").textContent = data.location || "N/A";
+                document.getElementById("runnerAvailability").textContent = data.availability || "N/A";
+                document.getElementById("runnerExperience").textContent = data.experience || "N/A";
+                document.getElementById("runnerAbout").textContent = data.about || "N/A";
+                
+                // Image
+                const imgEl = document.getElementById("runnerImage");
+                imgEl.src = data.profilepicture || "https://via.placeholder.com/140/7B1E3A/FFD700?text=RUN";
+
+                // Status
+                const statusSpan = document.getElementById("runnerStatus");
+                if (data.subscription_status === "active") {
+                    statusSpan.textContent = "Active";
+                    statusSpan.className = "status-badge active";
+                } else {
+                    statusSpan.textContent = "Inactive";
+                    statusSpan.className = "status-badge inactive";
+                }
+
+                // NEW: Dynamic Profile Views (Simulated)
+                document.getElementById("profileViews").textContent = Math.floor(Math.random() * 500) + 120;
+
             } catch (err) {
-                console.error("Error:", err);
+                console.error("Load error:", err);
             }
         }
 
+        // Logout
         document.getElementById("logoutBtn").addEventListener("click", () => {
-            localStorage.clear();
+            localStorage.removeItem("loggedInEmail");
+            localStorage.removeItem("userType");
             window.location.href = "login.html";
         });
 
-        loadProfile();
+        loadRunnerProfile();
     </script>
 </body>
- </html>
+</html>
+
+
