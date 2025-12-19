@@ -49,7 +49,8 @@
             color: var(--gold);
             text-decoration: none;
             font-weight: 700;
-            transition: color 0.3s;
+            font-size: 1rem;
+            transition: color 0.3s, transform 0.2s;
         }
 
         .header-title {
@@ -62,28 +63,36 @@
         /* --- Profile Container --- */
         .profile-container {
             background-color: #fff;
-            border-radius: 24px;
+            border-radius: 20px;
             box-shadow: var(--shadow-strong);
+            padding: 0;
             width: 95%;
             max-width: 650px;
+            text-align: center;
             margin: 40px 0;
             overflow: hidden;
-            text-align: center;
+            transition: all 0.5s ease;
         }
 
+        /* --- Banner Area --- */
         .profile-header {
-            background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-dark) 100%);
-            padding: 40px 20px 60px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: var(--maroon);
+            padding: 30px 20px 50px 20px;
             position: relative;
+            color: white;
+            background-image: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-dark) 100%);
         }
 
         .profile-pic-wrapper {
             position: absolute;
-            bottom: -50px;
-            left: 50%;
-            transform: translateX(-50%);
+            bottom: -40px;
             width: 140px;
             height: 140px;
+            z-index: 100;
+            border-radius: 50%;
         }
 
         .profile-pic {
@@ -92,56 +101,52 @@
             border-radius: 50%;
             object-fit: cover;
             border: 5px solid var(--gold);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            background: white;
+            box-shadow: 0 0 0 6px #fff, 0 6px 15px rgba(0,0,0,0.3);
+            background-color: white;
         }
 
-        /* --- NEW: Stats Dashboard --- */
-        .stats-dashboard {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            margin: 70px 20px 20px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 15px;
-            border: 1px solid var(--border-light);
-        }
-
-        .stat-card {
+        /* --- Stats Row (The "Advanced" look) --- */
+        .stats-row {
             display: flex;
-            flex-direction: column;
-            gap: 5px;
+            justify-content: space-around;
+            margin-top: 60px;
+            padding: 15px;
+            background: #fdfdfd;
+            border-bottom: 1px solid var(--border-light);
         }
 
-        .stat-card:not(:last-child) {
-            border-right: 1px solid #ddd;
+        .stat-box {
+            text-align: center;
         }
 
         .stat-value {
+            display: block;
             font-weight: 800;
-            color: var(--maroon);
             font-size: 1.2rem;
+            color: var(--maroon);
         }
 
         .stat-label {
             font-size: 0.7rem;
             text-transform: uppercase;
-            font-weight: 700;
-            color: #7f8c8d;
+            color: var(--text-muted);
+            font-weight: 600;
         }
 
         /* --- Details Section --- */
         .details {
             text-align: left;
-            padding: 20px 30px;
+            padding: 20px 25px;
         }
 
-        .detail-item {
-            padding: 1rem 0;
+        .details .detail-item {
+            font-size: 1rem;
+            padding: 0.9rem 0;
             border-bottom: 1px solid var(--border-light);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            color: var(--text-dark);
         }
 
         .details strong {
@@ -153,51 +158,61 @@
         .details strong i {
             margin-right: 10px;
             color: var(--maroon);
-            width: 20px;
+            width: 18px;
         }
 
         .highlight {
             font-weight: 600;
             color: var(--text-dark);
             text-align: right;
-            font-size: 0.95rem;
         }
 
         .status-badge {
-            padding: 0.4rem 1rem;
+            padding: 0.4rem 0.8rem;
             border-radius: 20px;
             font-size: 0.8rem;
             font-weight: 700;
             color: white;
         }
 
-        .active { background-color: #27ae60; }
+        .active { background-color: #2ecc71; }
         .inactive { background-color: #e74c3c; }
 
         .button-group {
-            padding: 30px;
+            padding: 25px;
         }
 
         #logoutBtn {
             background-color: var(--maroon);
             color: white;
             border: none;
-            border-radius: 12px;
-            padding: 14px 40px;
+            border-radius: 8px;
+            padding: 15px 30px;
+            font-size: 1rem;
             font-weight: 700;
             cursor: pointer;
             width: 100%;
-            transition: background 0.3s;
         }
 
-        #logoutBtn:hover {
-            background-color: var(--maroon-dark);
+        /* Popup Styles */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            color: white;
+            z-index: 1000;
+            font-weight: 600;
         }
+        .success { background: #2ecc71; }
+        .error { background: #e74c3c; }
+        .info { background: #3498db; }
 
-        /* Mobile Fixes */
         @media (max-width: 550px) {
-            .detail-item { flex-direction: column; align-items: flex-start; gap: 5px; }
-            .highlight { text-align: left; padding-left: 30px; }
+            .details .detail-item { flex-direction: column; align-items: flex-start; }
+            .highlight { text-align: left; padding-left: 28px; width: 100%; }
         }
     </style>
 </head>
@@ -207,76 +222,81 @@
         <span class="header-title">Runner Profile</span>
     </div>
 
+    <div id="popup" class="popup"></div>
+
     <div class="profile-container">
-        <div class="profile-header">
-            <div class="profile-pic-wrapper">
-                <img id="runnerImage" class="profile-pic" src="https://via.placeholder.com/140/7B1E3A/FFD700?text=RUN" alt="Profile" />
+        <div id="viewMode">
+            <div class="profile-header">
+                <div class="profile-pic-wrapper">
+                    <img id="runnerImage" class="profile-pic" src="https://via.placeholder.com/140/7B1E3A/FFD700?text=RUN" alt="Profile Picture" />
+                </div>
             </div>
-        </div>
 
-        <div class="stats-dashboard">
-            <div class="stat-card">
-                <span class="stat-value" id="profileViews">--</span>
-                <span class="stat-label">Views</span>
+            <div class="stats-row">
+                <div class="stat-box">
+                    <span class="stat-value" id="viewCountDisplay">124</span>
+                    <span class="stat-label">Profile Views</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-value">4.8</span>
+                    <span class="stat-label">Rating</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-value">Active</span>
+                    <span class="stat-label">Status</span>
+                </div>
             </div>
-            <div class="stat-card">
-                <span class="stat-value">4.9</span>
-                <span class="stat-label">Rating</span>
-            </div>
-            <div class="stat-card">
-                <span class="stat-value">12</span>
-                <span class="stat-label">Errands</span>
-            </div>
-        </div>
 
-        <div class="details">
-            <div class="detail-item">
-                <strong><i class="fas fa-user"></i> Name:</strong> 
-                <span id="runnerName" class="highlight">Loading...</span>
+            <div class="details" id="runnerDetails">
+                <div class="detail-item">
+                    <strong><i class="fas fa-user"></i> Name:</strong> <span id="runnerName" class="highlight">Loading...</span>
+                </div>
+                <div class="detail-item">
+                    <strong><i class="fas fa-envelope"></i> Email:</strong> <span id="runnerEmail" class="highlight">Loading...</span>
+                </div>
+                <div class="detail-item">
+                    <strong><i class="fas fa-phone-alt"></i> Phone:</strong> <span id="runnerPhone" class="highlight">Loading...</span>
+                </div>
+                <div class="detail-item">
+                    <strong><i class="fas fa-map-marker-alt"></i> Location:</strong> <span id="runnerLocation" class="highlight">Loading...</span>
+                </div>
+                <div class="detail-item">
+                    <strong><i class="fas fa-clock"></i> Availability:</strong> <span id="runnerAvailability" class="highlight">Loading...</span>
+                </div>
+                <div class="detail-item">
+                    <strong><i class="fas fa-medal"></i> Experience:</strong> <span id="runnerExperience" class="highlight">Loading...</span>
+                </div>
+                <div class="detail-item">
+                    <strong><i class="fas fa-user-tag"></i> About Me:</strong> <span id="runnerAbout" class="highlight about-text">Loading...</span>
+                </div>
+                <div class="detail-item">
+                    <strong><i class="fas fa-check-circle"></i> Account Status:</strong> <span id="runnerStatus" class="status-badge">Loading...</span>
+                </div>
             </div>
-            <div class="detail-item">
-                <strong><i class="fas fa-envelope"></i> Email:</strong> 
-                <span id="runnerEmail" class="highlight">Loading...</span>
-            </div>
-            <div class="detail-item">
-                <strong><i class="fas fa-phone-alt"></i> Phone:</strong> 
-                <span id="runnerPhone" class="highlight">Loading...</span>
-            </div>
-            <div class="detail-item">
-                <strong><i class="fas fa-map-marker-alt"></i> Location:</strong> 
-                <span id="runnerLocation" class="highlight">Loading...</span>
-            </div>
-            <div class="detail-item">
-                <strong><i class="fas fa-clock"></i> Availability:</strong> 
-                <span id="runnerAvailability" class="highlight">Loading...</span>
-            </div>
-            <div class="detail-item">
-                <strong><i class="fas fa-medal"></i> Experience:</strong> 
-                <span id="runnerExperience" class="highlight">Loading...</span>
-            </div>
-            <div class="detail-item">
-                <strong><i class="fas fa-user-tag"></i> About:</strong> 
-                <span id="runnerAbout" class="highlight">Loading...</span>
-            </div>
-            <div class="detail-item">
-                <strong><i class="fas fa-check-circle"></i> Status:</strong> 
-                <span id="runnerStatus" class="status-badge">...</span>
-            </div>
-        </div>
 
-        <div class="button-group">
-            <button id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Secure Logout</button>
+            <div class="button-group">
+                <button id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Secure Logout</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // Supabase Configuration
         const supabaseUrl = "https://zchofpncqskvnfrzbcww.supabase.co";
         const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
         const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
+        const popup = document.getElementById("popup");
+        const logoutBtn = document.getElementById("logoutBtn");
+
         const email = localStorage.getItem("loggedInEmail");
         const userType = localStorage.getItem("userType");
+
+        function showPopup(message, type = "info") {
+            popup.textContent = message;
+            popup.className = "popup " + type;
+            popup.style.display = "block";
+            setTimeout(() => (popup.style.display = "none"), 4000);
+        }
 
         async function loadRunnerProfile() {
             if (!email || userType !== "runner") {
@@ -292,24 +312,19 @@
                     .maybeSingle();
 
                 if (error || !data) {
-                    console.error("Fetch error:", error);
+                    showPopup("❌ Failed to load profile.", "error");
                     return;
                 }
 
-                // Populate Fields using your exact IDs
+                // Populate fields using YOUR original IDs
                 document.getElementById("runnerName").textContent = data.name || "N/A";
                 document.getElementById("runnerEmail").textContent = data.email;
                 document.getElementById("runnerPhone").textContent = data.phone || "N/A";
-                document.getElementById("runnerLocation").textContent = data.location || "N/A";
-                document.getElementById("runnerAvailability").textContent = data.availability || "N/A";
-                document.getElementById("runnerExperience").textContent = data.experience || "N/A";
                 document.getElementById("runnerAbout").textContent = data.about || "N/A";
-                
-                // Image
-                const imgEl = document.getElementById("runnerImage");
-                imgEl.src = data.profilepicture || "https://via.placeholder.com/140/7B1E3A/FFD700?text=RUN";
+                document.getElementById("runnerExperience").textContent = data.experience || "N/A";
+                document.getElementById("runnerAvailability").textContent = data.availability || "N/A";
+                document.getElementById("runnerLocation").textContent = data.location || "N/A";
 
-                // Status
                 const statusSpan = document.getElementById("runnerStatus");
                 if (data.subscription_status === "active") {
                     statusSpan.textContent = "Active";
@@ -319,16 +334,18 @@
                     statusSpan.className = "status-badge inactive";
                 }
 
-                // NEW: Dynamic Profile Views (Simulated)
-                document.getElementById("profileViews").textContent = Math.floor(Math.random() * 500) + 120;
+                const imgEl = document.getElementById("runnerImage");
+                imgEl.src = data.profilepicture || "https://via.placeholder.com/140/7B1E3A/FFD700?text=RUN";
+
+                // Update the "Profile Views" stat (Simulated for now)
+                document.getElementById("viewCountDisplay").textContent = Math.floor(Math.random() * 200) + 45;
 
             } catch (err) {
-                console.error("Load error:", err);
+                console.error("Error fetching profile:", err);
             }
         }
 
-        // Logout
-        document.getElementById("logoutBtn").addEventListener("click", () => {
+        logoutBtn.addEventListener("click", () => {
             localStorage.removeItem("loggedInEmail");
             localStorage.removeItem("userType");
             window.location.href = "login.html";
@@ -338,5 +355,7 @@
     </script>
 </body>
 </html>
+
+
 
 
