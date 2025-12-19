@@ -5,229 +5,121 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Profile | Run Me An Errand</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
-        
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #f8fafc;
-            background-image: radial-gradient(#7B1E3A05 2px, transparent 2px);
-            background-size: 30px 30px;
-        }
-
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
         .bg-maroon { background-color: #7B1E3A; }
         .text-maroon { color: #7B1E3A; }
-        .border-maroon { border-color: #7B1E3A; }
-
-        .profile-card {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-        }
-
-        .status-active { background-color: #ecfdf5; color: #059669; border: 1px solid #10b98130; }
-        .status-inactive { background-color: #fef2f2; color: #dc2626; border: 1px solid #ef444430; }
-
-        .shimmer {
-            background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-        }
-        @keyframes loading { to { background-position: -200% 0; } }
     </style>
 </head>
 <body class="min-h-screen pb-12">
 
-    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 mb-8">
+    <nav class="bg-white border-b border-gray-100 mb-8">
         <div class="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center space-x-2">
-                <div class="w-8 h-8 bg-maroon rounded-lg flex items-center justify-center text-white font-bold italic shadow-lg">R</div>
-                <span class="text-lg font-extrabold text-gray-900 tracking-tight">Runner<span class="text-maroon">Portal</span></span>
-            </div>
-            <div class="flex items-center space-x-4">
-                <a href="index.html" class="text-sm font-semibold text-gray-600 hover:text-maroon transition-colors">Home</a>
-                <button onclick="logout()" class="text-sm font-bold text-red-600 bg-red-50 px-4 py-2 rounded-full hover:bg-red-100 transition-all">Logout</button>
-            </div>
+            <span class="text-xl font-extrabold tracking-tight">Runner<span class="text-maroon">Portal</span></span>
+            <button onclick="logout()" class="text-sm font-bold text-red-600 bg-red-50 px-4 py-2 rounded-full">Logout</button>
         </div>
     </nav>
 
     <main class="max-w-4xl mx-auto px-6">
         
-        <div class="profile-card rounded-[2.5rem] shadow-2xl overflow-hidden mb-8">
-            <div class="h-32 bg-maroon relative">
-                <div class="absolute inset-0 opacity-10" style="background-image: url('https://www.transparenttextures.com/patterns/cubes.png');"></div>
-            </div>
-            
+        <div class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden mb-8 border border-gray-100">
+            <div class="h-24 bg-maroon"></div>
             <div class="px-8 pb-10">
-                <div class="relative flex flex-col md:flex-row md:items-end -mt-16 mb-8 gap-6">
-                    <div class="relative">
-                        <img id="runnerImage" src="https://via.placeholder.com/150" class="w-40 h-40 rounded-3xl object-cover border-8 border-white shadow-xl bg-gray-200" alt="Profile">
-                        <div id="statusIndicator" class="absolute -bottom-2 -right-2 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest shadow-lg">
-                            Loading...
-                        </div>
+                <div class="flex flex-col md:flex-row md:items-end -mt-12 mb-8 gap-6">
+                    <img id="runnerImage" src="https://via.placeholder.com/150" class="w-32 h-32 rounded-3xl border-4 border-white shadow-lg bg-gray-100">
+                    <div class="flex-1">
+                        <h1 id="runnerName" class="text-3xl font-black text-gray-900">Loading...</h1>
+                        <p id="runnerLocation" class="text-gray-500 font-medium">Location: ---</p>
                     </div>
-                    
-                    <div class="flex-1 pb-2">
-                        <h1 id="runnerName" class="text-4xl font-black text-gray-900 leading-tight">Loading...</h1>
-                        <p class="text-gray-500 font-medium flex items-center gap-2">
-                            <i class="fas fa-map-marker-alt text-maroon"></i>
-                            <span id="runnerLocation">Detecting location...</span>
-                        </p>
-                    </div>
-                    
-                    <div class="flex gap-2">
-                        <button class="bg-maroon text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-maroon/20 hover:scale-105 active:scale-95 transition-all">
-                            <i class="fas fa-edit mr-2"></i>Edit Profile
-                        </button>
+                    <div id="statusIndicator" class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest bg-gray-100">
+                        Checking Status...
                     </div>
                 </div>
 
-                <hr class="border-gray-100 mb-8">
-
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    
-                    <div class="space-y-6">
-                        <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest">Personal Information</h3>
-                        
-                        <div class="flex items-start space-x-4">
-                            <div class="w-10 h-10 rounded-xl bg-maroon/5 flex items-center justify-center text-maroon">
-                                <i class="fas fa-envelope"></i>
-                            </div>
-                            <div>
-                                <p class="text-xs font-bold text-gray-400 uppercase">Email Address</p>
-                                <p id="runnerEmail" class="text-gray-900 font-semibold">---</p>
-                            </div>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-gray-50 rounded-2xl">
+                            <p class="text-[10px] font-bold text-gray-400 uppercase">Email Address</p>
+                            <p id="runnerEmail" class="font-semibold text-gray-800 tracking-tight">---</p>
                         </div>
-
-                        <div class="flex items-start space-x-4">
-                            <div class="w-10 h-10 rounded-xl bg-maroon/5 flex items-center justify-center text-maroon">
-                                <i class="fas fa-phone"></i>
-                            </div>
-                            <div>
-                                <p class="text-xs font-bold text-gray-400 uppercase">Phone Number</p>
-                                <p id="runnerPhone" class="text-gray-900 font-semibold">---</p>
-                            </div>
-                        </div>
-
-                        <div class="flex items-start space-x-4">
-                            <div class="w-10 h-10 rounded-xl bg-maroon/5 flex items-center justify-center text-maroon">
-                                <i class="fas fa-clock"></i>
-                            </div>
-                            <div>
-                                <p class="text-xs font-bold text-gray-400 uppercase">Availability</p>
-                                <p id="runnerAvailability" class="text-gray-900 font-semibold">---</p>
-                            </div>
+                        <div class="p-4 bg-gray-50 rounded-2xl">
+                            <p class="text-[10px] font-bold text-gray-400 uppercase">Phone Number</p>
+                            <p id="runnerPhone" class="font-semibold text-gray-800">---</p>
                         </div>
                     </div>
-
-                    <div class="space-y-6">
-                        <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest">Professional Summary</h3>
-                        
-                        <div class="bg-gray-50 rounded-3xl p-6 border border-gray-100">
-                            <p class="text-xs font-bold text-maroon uppercase mb-3">Experience Level</p>
-                            <p id="runnerExperience" class="text-gray-900 font-bold text-lg mb-4">---</p>
-                            
-                            <p class="text-xs font-bold text-gray-400 uppercase mb-2">About Me</p>
-                            <p id="runnerAbout" class="text-gray-600 leading-relaxed text-sm italic">
-                                Loading bio content...
-                            </p>
-                        </div>
+                    <div class="p-6 bg-maroon/5 rounded-3xl border border-maroon/10">
+                        <p class="text-[10px] font-bold text-maroon uppercase mb-2">About Me</p>
+                        <p id="runnerAbout" class="text-gray-600 text-sm leading-relaxed italic">No bio available.</p>
                     </div>
-
                 </div>
             </div>
         </div>
 
-        <p class="text-center text-gray-400 text-xs font-medium italic">© 2025 Run Me An Errand. All rights reserved.</p>
-
+        <div id="debugBox" class="p-4 bg-black text-green-400 rounded-xl font-mono text-xs opacity-50 hover:opacity-100 transition-opacity">
+            System: Waiting for initialization...
+        </div>
     </main>
 
     <script>
-        // Supabase Init
         const SUPABASE_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        // Initialize Supabase Client globally
+        const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const debug = document.getElementById("debugBox");
 
-        async function fetchProfile() {
+        async function loadProfile() {
             const email = localStorage.getItem("loggedInEmail");
-            
+            debug.innerText = `Searching for: ${email}`;
+
             if (!email) {
-                window.location.href = "login.html";
+                debug.innerText = "Error: No email found in local storage. Please login again.";
                 return;
             }
 
             try {
-                const { data, error } = await supabase
+                // IMPORTANT: Ensure your table name is exactly 'runners' (lowercase)
+                const { data, error } = await sb
                     .from("runners")
                     .select("*")
                     .eq("email", email)
-                    .maybeSingle();
+                    .single();
 
-                if (error) throw error;
-                if (data) {
-                    renderData(data);
+                if (error) {
+                    debug.innerText = `Supabase Error: ${error.message}`;
+                    console.error(error);
+                    return;
+                }
+
+                if (!data) {
+                    debug.innerText = `Result: Connected, but no row found for ${email}`;
+                    return;
+                }
+
+                debug.innerText = "Result: Profile Loaded Successfully.";
+                
+                // Map Data to UI
+                document.getElementById("runnerName").innerText = data.name || "Unnamed Runner";
+                document.getElementById("runnerEmail").innerText = data.email || "N/A";
+                document.getElementById("runnerPhone").innerText = data.phone || "---";
+                document.getElementById("runnerLocation").innerText = data.location || "Location not set";
+                document.getElementById("runnerAbout").innerText = data.about || "This runner hasn't added a bio yet.";
+                document.getElementById("runnerImage").src = data.profilepicture || "https://via.placeholder.com/150/7B1E3A/FFFFFF?text=Runner";
+
+                const status = document.getElementById("statusIndicator");
+                if (data.subscription_status === 'active') {
+                    status.innerText = "Active Member";
+                    status.className = "px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest bg-green-100 text-green-700";
                 } else {
-                    console.error("No data found for this email.");
+                    status.innerText = "Inactive / Unpaid";
+                    status.className = "px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest bg-red-100 text-red-700";
                 }
 
             } catch (err) {
-                console.error("Fetch Error:", err.message);
-                document.body.innerHTML += `<div class="fixed bottom-4 right-4 bg-red-600 text-white p-4 rounded-xl shadow-xl">Error: ${err.message}</div>`;
-            }
-        }
-
-        function renderData(user) {
-            // Text Elements
-            document.getElementById("runnerName").textContent = user.name || "Anonymous Runner";
-            document.getElementById("runnerEmail").textContent = user.email || "No email linked";
-            document.getElementById("runnerPhone").textContent = user.phone || "No phone added";
-            document.getElementById("runnerLocation").textContent = user.location || "Location not set";
-            document.getElementById("runnerAvailability").textContent = user.availability || "Not specified";
-            document.getElementById("runnerExperience").textContent = user.experience || "Entry Level";
-            document.getElementById("runnerAbout").textContent = user.about || "No biography provided yet. Edit your profile to add one!";
-            
-            // Image
-            const img = document.getElementById("runnerImage");
-            img.src = user.profilepicture || "https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=400&h=400&fit=crop";
-            
-            // Status Badge
-            const statusBox = document.getElementById("statusIndicator");
-            const isActive = user.subscription_statusblock;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-        .grid-details {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .detail-group label {
-            display: block;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            font-weight: 800;
-            color: var(--text-muted);
-            margin-bottom: 5px;
-            letter-spacing: 0.5px;
-        }
-
-        .detail-group p {
-            margin: 0;
-            font-weight: 600;
-            color: var(--text-main);
-        }
-
-        .about-section {
-            margin-top: 25px;
-            padding-top: 25px;
-            border-top: 1px dashed #eee;
-        }
-
-        /* --- Mobile --- */("mainAbout").textContent = data.about || "No bio provided.";
+                debug.innerText = `Fatal Crash: ${err.message}`;
             }
         }
 
@@ -236,7 +128,14 @@
             window.location.href = "login.html";
         }
 
-        init();
-    </script> 
- </body>
-         </html>
+        // Run when page is ready
+        window.onload = loadProfile;
+    </script>
+</body>
+</html>
+
+
+
+
+
+
