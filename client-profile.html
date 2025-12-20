@@ -1,274 +1,294 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Client Profile - Run Me an Errand</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    :root { --maroon:#7B1E3A; --gold:#FFD700; }
-    .bg-maroon{background-color:var(--maroon);} 
-    .text-maroon{color:var(--maroon);}
-    .text-gold{color:var(--gold);} 
-    .bg-gold{background-color:var(--gold);}
-    .spinner {
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid var(--maroon);
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-      margin: auto;
-    }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    a.nav-link { color: var(--maroon); font-weight: 600; transition: color 0.2s; }
-    a.nav-link:hover { color: var(--gold); }
-    .profile-card {
-      background-color: #fff;
-      border: 1px solid #e5e7eb;
-      border-radius: 1rem;
-      padding: 2rem;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      transition: box-shadow 0.3s ease-in-out;
-    }
-    .profile-card:hover {
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    }
-    button.explore-btn, button.edit-btn, button.save-btn, button.cancel-btn {
-      font-weight: 600;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      transition: all 0.2s;
-    }
-    button.explore-btn { background-color: var(--maroon); color: var(--gold); }
-    button.explore-btn:hover { background-color: var(--gold); color: var(--maroon); }
-    button.edit-btn { background-color: var(--gold); color: var(--maroon); }
-    button.edit-btn:hover { background-color: var(--maroon); color: var(--gold); }
-    button.save-btn { background-color: var(--maroon); color: var(--gold); }
-    button.save-btn:hover { background-color: var(--gold); color: var(--maroon); }
-    button.cancel-btn { background-color: #ccc; color: #333; }
-    button.cancel-btn:hover { background-color: #999; color: #fff; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Profile - Run Me An Errand</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --maroon: #7B1E3A;
+            --maroon-dark: #5c162b;
+            --gold: #FFD700;
+            --bg: #f4f7f9;
+            --card: #ffffff;
+            --text: #2c3e50;
+            --border: #e1e8ed;
+        }
 
-    /* New style for Initials Avatar */
-    .initials-avatar {
-      width: 6rem; /* w-24 */
-      height: 6rem; /* h-24 */
-      border-radius: 50%;
-      border: 4px solid var(--gold);
-      background-color: var(--maroon); /* Background for the initials */
-      color: var(--gold); /* Text color for the initials */
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem; /* Large text size for initials */
-      font-weight: bold;
-      flex-shrink: 0; /* Prevents it from shrinking in a flex container */
-    }
-  </style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Nav Bar */
+        .nav-bar {
+            width: 100%;
+            background-color: var(--maroon);
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-logo { color: white; font-weight: 800; font-size: 1.2rem; text-transform: uppercase; letter-spacing: -1px; }
+        .nav-links a { color: var(--gold); text-decoration: none; font-weight: 700; font-size: 0.9rem; margin-left: 15px; }
+
+        /* Profile Card */
+        .container { width: 95%; max-width: 850px; margin: 30px 0; }
+        
+        .profile-card {
+            background: var(--card);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .profile-header {
+            padding: 40px;
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .initials-avatar {
+            width: 90px; height: 90px;
+            background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-dark) 100%);
+            color: var(--gold);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; font-weight: 800;
+            border: 4px solid var(--gold);
+            flex-shrink: 0;
+        }
+
+        .user-info h2 { margin: 0; font-size: 1.8rem; font-weight: 800; color: var(--maroon); }
+        .user-info p { margin: 5px 0 0; color: #7f8c8d; font-weight: 500; }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            padding: 40px;
+            gap: 40px;
+        }
+
+        .section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #95a5a6;
+            margin-bottom: 20px;
+            font-weight: 800;
+        }
+
+        .data-row { margin-bottom: 15px; font-size: 1rem; }
+        .data-row strong { color: var(--maroon); font-weight: 700; display: block; font-size: 0.8rem; margin-bottom: 3px; }
+
+        /* Recommended Runners */
+        .rec-section { padding: 0 40px 40px; }
+        .runner-scroll {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            scrollbar-width: none;
+        }
+        .runner-card {
+            min-width: 180px;
+            background: #fdfdfd;
+            border: 1px solid var(--border);
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        .runner-card:hover { transform: translateY(-5px); border-color: var(--gold); }
+        .runner-card img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-bottom: 10px; border: 2px solid var(--gold); }
+        .runner-card h4 { margin: 5px 0; font-size: 0.9rem; color: var(--maroon); }
+        .runner-card p { margin: 0; font-size: 0.7rem; color: #7f8c8d; font-weight: 600; }
+
+        /* Buttons */
+        .btn-edit {
+            background: none; border: 1px solid var(--maroon);
+            color: var(--maroon); padding: 8px 15px; border-radius: 8px;
+            font-weight: 700; cursor: pointer; font-size: 0.8rem; transition: all 0.2s;
+        }
+        .btn-edit:hover { background: var(--maroon); color: white; }
+
+        .logout-btn {
+            background: var(--maroon); color: white; border: none;
+            padding: 10px 20px; border-radius: 8px; font-weight: 700; cursor: pointer;
+        }
+
+        /* Mobile */
+        @media (max-width: 600px) {
+            .content-grid { grid-template-columns: 1fr; padding: 25px; }
+            .profile-header { flex-direction: column; text-align: center; padding: 25px; }
+        }
+
+        .spinner { border: 3px solid #f3f3f3; border-top: 3px solid var(--maroon); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-start pt-12">
+<body>
 
-  <h1 class="text-4xl font-bold text-maroon mb-10">My Profile</h1>
+    <nav class="nav-bar">
+        <div class="nav-logo">Run Me An Errand</div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="#" id="logoutLink">Logout</a>
+        </div>
+    </nav>
 
-  <div id="profileContainer" class="w-full max-w-4xl px-4">
-    <div id="profileDetails" class="profile-card">
-      <div class="spinner"></div>
+    <div class="container">
+        <div class="profile-card" id="profileContent">
+            <div class="spinner"></div>
+        </div>
+
+        <div class="rec-section">
+            <h3 class="section-title">Runners Near Your Area</h3>
+            <div class="runner-scroll" id="runnerList">
+                <p style="font-size: 0.8rem; color: #999;">Searching for local runners...</p>
+            </div>
+        </div>
     </div>
 
-    <div id="errorMessage" class="mt-4 text-center text-red-600 font-semibold"></div>
+    <script>
+        // Use a unique name for the config to avoid redeclaration errors
+        const clientSupabaseUrl = "https://zchofpncqskvnfrzbcww.supabase.co";
+        const clientSupabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
+        const clientSupabase = window.supabase.createClient(clientSupabaseUrl, clientSupabaseKey);
 
-    <div class="mt-8 flex flex-col items-center space-y-4">
-      <button id="exploreRunnersBtn" class="explore-btn w-64">Explore Runners</button>
-      <div class="flex space-x-4">
-        <a href="index.html" class="nav-link px-4 py-2 rounded-lg border border-maroon hover:bg-maroon hover:text-gold transition">Home</a>
-        <button id="logoutBtn" class="px-4 py-2 rounded-lg bg-maroon text-gold font-bold hover:bg-gold hover:text-maroon transition">Logout</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    const SUPABASE_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    const profileDiv = document.getElementById("profileDetails");
-    const errorDiv = document.getElementById("errorMessage");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const exploreBtn = document.getElementById("exploreRunnersBtn");
-
-    function redirectToLogin(message) {
-      profileDiv.innerHTML = `<p class="text-center text-maroon text-lg font-semibold">${message}</p>`;
-      setTimeout(() => window.location.href = "login.html", 1500);
-    }
-
-    /**
-     * Helper function to generate initials from a full name or email.
-     * @param {string} name - The user's full name.
-     * @param {string} email - The user's email (used as fallback).
-     * @returns {string} The capitalized initials (e.g., 'JD' for 'John Doe') or first two letters of the email.
-     */
-    function getInitials(name, email) {
-      if (name) {
-        const parts = name.trim().split(/\s+/);
-        // Take the first letter of the first part and the first letter of the last part
-        if (parts.length > 1) {
-          return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-        }
-        // If only one part (e.g., a single name), take the first two letters
-        if (parts.length === 1 && parts[0].length >= 2) {
-            return parts[0].substring(0, 2).toUpperCase();
-        }
-        // If a single letter name
-        if (parts.length === 1 && parts[0].length === 1) {
-            return parts[0].toUpperCase();
-        }
-      }
-      // Fallback: use the first two letters of the email
-      if (email && email.length >= 2) {
-        return email.substring(0, 2).toUpperCase();
-      }
-      return "?"; // Default fallback
-    }
-
-    async function loadProfile() {
-      const email = localStorage.getItem('loggedInEmail');
-      const userType = localStorage.getItem('userType');
-
-      if (!email || userType !== "client") {
-        redirectToLogin("Session expired. Redirecting to login...");
-        return;
-      }
-
-      profileDiv.innerHTML = `<div class="spinner"></div>`;
-      errorDiv.textContent = "";
-
-      try {
-        const { data: user, error } = await supabase
-          .from('users')
-          .select('id, full_name, email, phone')
-          .eq('email', email)
-          .maybeSingle();
-
-        if (error || !user) {
-          console.error("User fetch error:", error);
-          redirectToLogin("User not found. Redirecting to login...");
-          return;
+        function getInitials(name, email) {
+            if (name) {
+                const p = name.trim().split(/\s+/);
+                return p.length > 1 ? (p[0][0] + p[p.length-1][0]).toUpperCase() : p[0].substring(0,2).toUpperCase();
+            }
+            return email ? email.substring(0,2).toUpperCase() : "??";
         }
 
-        displayProfile(user);
+        async function loadClientData() {
+            const email = localStorage.getItem('loggedInEmail');
+            if (!email) { window.location.href = "login.html"; return; }
 
-      } catch (err) {
-        console.error("Profile load error:", err);
-        errorDiv.textContent = "Unexpected error fetching profile.";
-      }
-    }
+            try {
+                const { data: user, error } = await clientSupabase
+                    .from('users')
+                    .select('*')
+                    .eq('email', email)
+                    .single();
 
-    function displayProfile(user) {
-      const displayName = user.full_name || user.email || "Client";
-      const initials = getInitials(user.full_name, user.email); // Get the initials
+                if (user) {
+                    renderUI(user);
+                    fetchRunners(user.location);
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
 
-      profileDiv.innerHTML = `
-        <div class="flex items-center space-x-6 mb-8 border-b-2 border-gray-200 pb-6">
-          <div class="initials-avatar">
-            ${initials}
-          </div>
-          <div>
-            <h2 class="text-3xl font-bold text-maroon">${displayName}</h2>
-            <p class="text-lg text-gray-500">${user.email || "N/A"}</p>
-          </div>
-        </div>
-        <div class="md:grid md:grid-cols-2 md:gap-8">
-          <div class="flex flex-col space-y-4">
-            <h3 class="text-xl font-bold text-maroon border-b pb-2">Personal Information</h3>
-            <p class="text-lg"><strong>Email:</strong> ${user.email || "N/A"}</p>
-            <p class="text-lg"><strong>Phone:</strong> ${user.phone || "N/A"}</p>
-            <div class="mt-4">
-              <button id="editBtn" class="edit-btn">Edit Profile</button>
-            </div>
-          </div>
-          <div class="mt-8 md:mt-0 flex flex-col space-y-4">
-            <h3 class="text-xl font-bold text-maroon border-b pb-2">My Activity</h3>
-            <div class="bg-gray-100 p-4 rounded-lg">
-              <p class="text-gray-600">Your recent errand history will appear here. Start by exploring our runners!</p>
-            </div>
-          </div>
-        </div>
-      `;
+        function renderUI(user) {
+            const initials = getInitials(user.full_name, user.email);
+            document.getElementById('profileContent').innerHTML = `
+                <div class="profile-header">
+                    <div class="initials-avatar">${initials}</div>
+                    <div class="user-info">
+                        <h2>${user.full_name || 'Client'}</h2>
+                        <p>${user.email}</p>
+                    </div>
+                </div>
+                <div class="content-grid">
+                    <div>
+                        <h3 class="section-title">Account Info</h3>
+                        <div class="data-row"><strong>Phone Number</strong> ${user.phone || 'Not set'}</div>
+                        <div class="data-row"><strong>Primary Location</strong> ${user.location || 'Not set'}</div>
+                        <button class="btn-edit" id="editBtn">Edit Profile</button>
+                    </div>
+                    <div>
+                        <h3 class="section-title">Recent Activity</h3>
+                        <div style="background: #f9f9f9; padding: 15px; border-radius: 12px; border: 1px dashed #ddd; text-align: center;">
+                            <p style="font-size: 0.8rem; color: #7f8c8d;">No recent errand history found.</p>
+                        </div>
+                    </div>
+                </div>
+            `;
 
-      document.getElementById("editBtn").addEventListener("click", () => enableEdit(user));
-    }
+            document.getElementById('editBtn').onclick = () => renderEdit(user);
+        }
 
-    function enableEdit(user) {
-        const initials = getInitials(user.full_name, user.email); // Get the initials for the edit view too
+        function renderEdit(user) {
+            document.getElementById('profileContent').innerHTML = `
+                <div style="padding: 40px;">
+                    <h2 style="color: var(--maroon); margin-bottom: 20px;">Update Details</h2>
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        <input type="text" id="upName" value="${user.full_name || ''}" placeholder="Full Name" style="padding: 12px; border: 1px solid var(--border); border-radius: 8px;">
+                        <input type="text" id="upPhone" value="${user.phone || ''}" placeholder="Phone" style="padding: 12px; border: 1px solid var(--border); border-radius: 8px;">
+                        <input type="text" id="upLoc" value="${user.location || ''}" placeholder="Location (e.g. Nairobi)" style="padding: 12px; border: 1px solid var(--border); border-radius: 8px;">
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button id="saveEdit" style="background: var(--maroon); color: white; border: none; padding: 12px 25px; border-radius: 8px; font-weight: 700; cursor: pointer; flex: 1;">Save</button>
+                            <button onclick="loadClientData()" style="background: #eee; border: none; padding: 12px 25px; border-radius: 8px; font-weight: 700; cursor: pointer;">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            `;
 
-      profileDiv.innerHTML = `
-        <div class="flex items-center space-x-6 mb-8 border-b-2 border-gray-200 pb-6">
-          <div class="initials-avatar">
-            ${initials}
-          </div>
-          <div>
-            <h2 class="text-3xl font-bold text-maroon">Edit Profile</h2>
-            <p class="text-lg text-gray-500">Update your details below.</p>
-          </div>
-        </div>
-        <div class="flex flex-col space-y-4">
-          <label class="block">
-            <span class="text-lg font-semibold text-maroon">Full Name:</span>
-            <input type="text" id="nameInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50" value="${user.full_name || ""}">
-          </label>
-          <label class="block">
-            <span class="text-lg font-semibold text-maroon">Phone:</span>
-            <input type="text" id="phoneInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50" value="${user.phone || ""}">
-          </label>
-          <div class="mt-6 flex space-x-4">
-            <button id="saveBtn" class="save-btn">Save Changes</button>
-            <button id="cancelBtn" class="cancel-btn">Cancel</button>
-          </div>
-        </div>
-      `;
+            document.getElementById('saveEdit').onclick = async () => {
+                const updates = {
+                    full_name: document.getElementById('upName').value,
+                    phone: document.getElementById('upPhone').value,
+                    location: document.getElementById('upLoc').value
+                };
+                await clientSupabase.from('users').update(updates).eq('email', user.email);
+                loadClientData();
+            };
+        }
 
-      document.getElementById("cancelBtn").addEventListener("click", () => displayProfile(user));
+        async function fetchRunners(loc) {
+            let query = clientSupabase.from('runners').select('*').limit(6);
+            if (loc) query = query.ilike('location', `%${loc}%`);
+            
+            const { data: runners } = await query;
+            const list = document.getElementById('runnerList');
+            
+            if (runners && runners.length > 0) {
+                list.innerHTML = runners.map(r => `
+                    <div class="runner-card">
+                        <img src="${r.profilepicture || 'https://via.placeholder.com/50'}">
+                        <h4>${r.name}</h4>
+                        <p>${r.location || 'Available'}</p>
+                    </div>
+                `).join('');
+            } else {
+                list.innerHTML = "<p style='font-size: 0.8rem; color: #999;'>No runners found in your area yet.</p>";
+            }
+        }
 
-      document.getElementById("saveBtn").addEventListener("click", async () => {
-        const updatedFields = {
-          full_name: document.getElementById("nameInput").value.trim(),
-          phone: document.getElementById("phoneInput").value.trim()
+        document.getElementById('logoutLink').onclick = () => {
+            localStorage.clear();
+            window.location.href = "login.html";
         };
 
-        try {
-          const { data: updatedData, error } = await supabase
-            .from('users')
-            .update(updatedFields)
-            .eq('email', user.email)
-            .select('id, full_name, email, phone')
-            .maybeSingle();
-
-          if (error) throw error;
-
-          displayProfile(updatedData);
-          errorDiv.textContent = "Profile updated successfully! ✅";
-          setTimeout(() => errorDiv.textContent = "", 3000);
-
-        } catch (err) {
-          console.error("Update error:", err);
-          errorDiv.textContent = "Failed to update profile.";
-        }
-      });
-    }
-
-    logoutBtn.addEventListener("click", () => {
-      localStorage.removeItem('loggedInEmail');
-      localStorage.removeItem('userType');
-      window.location.href = "login.html";
-    });
-
-    exploreBtn.addEventListener("click", () => window.location.href = "runners.html");
-
-    // Load profile on page load
-    loadProfile();
-  </script>
+        loadClientData();
+    </script>
 </body>
 </html>
+
+
+
+
+
+
 
 
