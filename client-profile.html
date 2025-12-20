@@ -28,7 +28,6 @@
             align-items: center;
         }
 
-        /* Nav Bar */
         .nav-bar {
             width: 100%;
             background-color: var(--maroon);
@@ -41,9 +40,8 @@
         }
 
         .nav-logo { color: white; font-weight: 800; font-size: 1.2rem; text-transform: uppercase; letter-spacing: -1px; }
-        .nav-links a { color: var(--gold); text-decoration: none; font-weight: 700; font-size: 0.9rem; margin-left: 15px; }
+        .nav-links a { color: var(--gold); text-decoration: none; font-weight: 700; font-size: 0.8rem; margin-left: 15px; text-transform: uppercase; }
 
-        /* Profile Card */
         .container { width: 95%; max-width: 850px; margin: 30px 0; }
         
         .profile-card {
@@ -51,8 +49,7 @@
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
+            margin-bottom: 30px;
         }
 
         .profile-header {
@@ -64,82 +61,81 @@
         }
 
         .initials-avatar {
-            width: 90px; height: 90px;
+            width: 80px; height: 80px;
             background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-dark) 100%);
             color: var(--gold);
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            font-size: 2rem; font-weight: 800;
-            border: 4px solid var(--gold);
+            font-size: 1.8rem; font-weight: 800;
+            border: 3px solid var(--gold);
             flex-shrink: 0;
         }
 
-        .user-info h2 { margin: 0; font-size: 1.8rem; font-weight: 800; color: var(--maroon); }
-        .user-info p { margin: 5px 0 0; color: #7f8c8d; font-weight: 500; }
+        .user-info h2 { margin: 0; font-size: 1.6rem; font-weight: 800; color: var(--maroon); }
+        .user-info p { margin: 5px 0 0; color: #7f8c8d; font-weight: 600; font-size: 0.9rem; }
 
         .content-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            padding: 40px;
+            padding: 30px 40px;
             gap: 40px;
         }
 
         .section-title {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 1.5px;
             color: #95a5a6;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             font-weight: 800;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .data-row { margin-bottom: 15px; font-size: 1rem; }
-        .data-row strong { color: var(--maroon); font-weight: 700; display: block; font-size: 0.8rem; margin-bottom: 3px; }
+        .data-row { margin-bottom: 15px; }
+        .data-row strong { color: var(--maroon); font-weight: 700; display: block; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 2px; }
+        .data-row span { font-weight: 500; font-size: 1rem; }
 
-        /* Recommended Runners */
-        .rec-section { padding: 0 40px 40px; }
+        /* Runners Horizontal List */
         .runner-scroll {
             display: flex;
             gap: 15px;
             overflow-x: auto;
-            padding-bottom: 10px;
-            scrollbar-width: none;
+            padding: 10px 5px;
+            scrollbar-width: none; /* Firefox */
         }
+        .runner-scroll::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+
         .runner-card {
-            min-width: 180px;
-            background: #fdfdfd;
+            min-width: 160px;
+            background: white;
             border: 1px solid var(--border);
-            padding: 15px;
+            padding: 20px 15px;
             border-radius: 15px;
             text-align: center;
-            transition: transform 0.2s;
+            transition: all 0.3s ease;
+            cursor: pointer;
         }
-        .runner-card:hover { transform: translateY(-5px); border-color: var(--gold); }
-        .runner-card img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-bottom: 10px; border: 2px solid var(--gold); }
-        .runner-card h4 { margin: 5px 0; font-size: 0.9rem; color: var(--maroon); }
-        .runner-card p { margin: 0; font-size: 0.7rem; color: #7f8c8d; font-weight: 600; }
+        .runner-card:hover { border-color: var(--gold); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .runner-card img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; margin-bottom: 10px; border: 2px solid var(--gold); }
+        .runner-card h4 { margin: 5px 0; font-size: 0.85rem; font-weight: 800; color: var(--maroon); }
+        .runner-card p { margin: 0; font-size: 0.7rem; color: #95a5a6; font-weight: 700; }
 
-        /* Buttons */
         .btn-edit {
-            background: none; border: 1px solid var(--maroon);
+            background: none; border: 1.5px solid var(--maroon);
             color: var(--maroon); padding: 8px 15px; border-radius: 8px;
-            font-weight: 700; cursor: pointer; font-size: 0.8rem; transition: all 0.2s;
+            font-weight: 800; cursor: pointer; font-size: 0.7rem; text-transform: uppercase; transition: all 0.2s;
         }
         .btn-edit:hover { background: var(--maroon); color: white; }
 
-        .logout-btn {
-            background: var(--maroon); color: white; border: none;
-            padding: 10px 20px; border-radius: 8px; font-weight: 700; cursor: pointer;
-        }
-
-        /* Mobile */
-        @media (max-width: 600px) {
-            .content-grid { grid-template-columns: 1fr; padding: 25px; }
-            .profile-header { flex-direction: column; text-align: center; padding: 25px; }
-        }
-
-        .spinner { border: 3px solid #f3f3f3; border-top: 3px solid var(--maroon); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 20px auto; }
+        .spinner { border: 3px solid #f3f3f3; border-top: 3px solid var(--maroon); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 40px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        @media (max-width: 600px) {
+            .content-grid { grid-template-columns: 1fr; padding: 25px; gap: 30px; }
+            .profile-header { flex-direction: column; text-align: center; }
+        }
     </style>
 </head>
 <body>
@@ -148,60 +144,47 @@
         <div class="nav-logo">Run Me An Errand</div>
         <div class="nav-links">
             <a href="index.html">Home</a>
-            <a href="#" id="logoutLink">Logout</a>
+            <a href="#" id="logoutBtn">Logout</a>
         </div>
     </nav>
 
     <div class="container">
-        <div class="profile-card" id="profileContent">
+        <div class="profile-card" id="mainContent">
             <div class="spinner"></div>
         </div>
 
-        <div class="rec-section">
-            <h3 class="section-title">Runners Near Your Area</h3>
-            <div class="runner-scroll" id="runnerList">
-                <p style="font-size: 0.8rem; color: #999;">Searching for local runners...</p>
-            </div>
+        <h3 class="section-title">Recommended Runners Near You</h3>
+        <div class="runner-scroll" id="runnerContainer">
+            <p style="color: #ccc; font-size: 0.8rem; margin-left: 5px;">Finding local help...</p>
         </div>
     </div>
 
     <script>
-        // Use a unique name for the config to avoid redeclaration errors
-        const clientSupabaseUrl = "https://zchofpncqskvnfrzbcww.supabase.co";
-        const clientSupabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
-        const clientSupabase = window.supabase.createClient(clientSupabaseUrl, clientSupabaseKey);
+        const profileSupabaseUrl = "https://zchofpncqskvnfrzbcww.supabase.co";
+        const profileSupabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
+        const sb = window.supabase.createClient(profileSupabaseUrl, profileSupabaseKey);
 
-        function getInitials(name, email) {
-            if (name) {
-                const p = name.trim().split(/\s+/);
-                return p.length > 1 ? (p[0][0] + p[p.length-1][0]).toUpperCase() : p[0].substring(0,2).toUpperCase();
-            }
-            return email ? email.substring(0,2).toUpperCase() : "??";
-        }
-
-        async function loadClientData() {
+        async function initDashboard() {
             const email = localStorage.getItem('loggedInEmail');
             if (!email) { window.location.href = "login.html"; return; }
 
             try {
-                const { data: user, error } = await clientSupabase
+                const { data: client, error } = await sb
                     .from('users')
                     .select('*')
                     .eq('email', email)
                     .single();
 
-                if (user) {
-                    renderUI(user);
-                    fetchRunners(user.location);
+                if (client) {
+                    renderClientUI(client);
+                    loadNearbyRunners(client.location);
                 }
-            } catch (e) {
-                console.error(e);
-            }
+            } catch (e) { console.error("Error loading profile", e); }
         }
 
-        function renderUI(user) {
-            const initials = getInitials(user.full_name, user.email);
-            document.getElementById('profileContent').innerHTML = `
+        function renderClientUI(user) {
+            const initials = (user.full_name || user.email).substring(0,2).toUpperCase();
+            document.getElementById('mainContent').innerHTML = `
                 <div class="profile-header">
                     <div class="initials-avatar">${initials}</div>
                     <div class="user-info">
@@ -211,79 +194,102 @@
                 </div>
                 <div class="content-grid">
                     <div>
-                        <h3 class="section-title">Account Info</h3>
-                        <div class="data-row"><strong>Phone Number</strong> ${user.phone || 'Not set'}</div>
-                        <div class="data-row"><strong>Primary Location</strong> ${user.location || 'Not set'}</div>
-                        <button class="btn-edit" id="editBtn">Edit Profile</button>
+                        <h3 class="section-title">Your Details <button class="btn-edit" onclick='showEditForm(${JSON.stringify(user)})'>Edit</button></h3>
+                        <div class="data-row"><strong>Phone</strong> <span>${user.phone || 'None'}</span></div>
+                        <div class="data-row"><strong>Current Location</strong> <span>${user.location || 'Not set'}</span></div>
                     </div>
                     <div>
-                        <h3 class="section-title">Recent Activity</h3>
-                        <div style="background: #f9f9f9; padding: 15px; border-radius: 12px; border: 1px dashed #ddd; text-align: center;">
-                            <p style="font-size: 0.8rem; color: #7f8c8d;">No recent errand history found.</p>
+                        <h3 class="section-title">Errand Stats</h3>
+                        <div style="background: #fdfdfd; padding: 15px; border-radius: 12px; border: 1px solid #eee; display: flex; justify-content: space-around; text-align: center;">
+                            <div><strong style="display:block; font-size: 1.2rem; color: var(--maroon);">0</strong><small style="color: #999; font-weight:700; text-transform:uppercase; font-size:0.6rem;">Completed</small></div>
+                            <div><strong style="display:block; font-size: 1.2rem; color: var(--maroon);">0</strong><small style="color: #999; font-weight:700; text-transform:uppercase; font-size:0.6rem;">Pending</small></div>
                         </div>
                     </div>
                 </div>
             `;
-
-            document.getElementById('editBtn').onclick = () => renderEdit(user);
         }
 
-        function renderEdit(user) {
-            document.getElementById('profileContent').innerHTML = `
+        window.showEditForm = function(user) {
+            document.getElementById('mainContent').innerHTML = `
                 <div style="padding: 40px;">
-                    <h2 style="color: var(--maroon); margin-bottom: 20px;">Update Details</h2>
-                    <div style="display: flex; flex-direction: column; gap: 15px;">
-                        <input type="text" id="upName" value="${user.full_name || ''}" placeholder="Full Name" style="padding: 12px; border: 1px solid var(--border); border-radius: 8px;">
-                        <input type="text" id="upPhone" value="${user.phone || ''}" placeholder="Phone" style="padding: 12px; border: 1px solid var(--border); border-radius: 8px;">
-                        <input type="text" id="upLoc" value="${user.location || ''}" placeholder="Location (e.g. Nairobi)" style="padding: 12px; border: 1px solid var(--border); border-radius: 8px;">
-                        <div style="display: flex; gap: 10px; margin-top: 10px;">
-                            <button id="saveEdit" style="background: var(--maroon); color: white; border: none; padding: 12px 25px; border-radius: 8px; font-weight: 700; cursor: pointer; flex: 1;">Save</button>
-                            <button onclick="loadClientData()" style="background: #eee; border: none; padding: 12px 25px; border-radius: 8px; font-weight: 700; cursor: pointer;">Cancel</button>
-                        </div>
+                    <h3 class="section-title">Edit Your Profile</h3>
+                    <input type="text" id="editName" value="${user.full_name || ''}" placeholder="Name" style="width:100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                    <input type="text" id="editPhone" value="${user.phone || ''}" placeholder="Phone" style="width:100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                    <input type="text" id="editLoc" value="${user.location || ''}" placeholder="City (e.g. Nairobi)" style="width:100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 8px;">
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="saveProfile('${user.email}')" style="background: var(--maroon); color: white; border: none; padding: 12px; border-radius: 8px; flex: 1; font-weight: 700; cursor: pointer;">Save Changes</button>
+                        <button onclick="initDashboard()" style="background: #eee; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer;">Cancel</button>
                     </div>
                 </div>
             `;
+        };
 
-            document.getElementById('saveEdit').onclick = async () => {
-                const updates = {
-                    full_name: document.getElementById('upName').value,
-                    phone: document.getElementById('upPhone').value,
-                    location: document.getElementById('upLoc').value
-                };
-                await clientSupabase.from('users').update(updates).eq('email', user.email);
-                loadClientData();
+        async function saveProfile(email) {
+            const up = {
+                full_name: document.getElementById('editName').value,
+                phone: document.getElementById('editPhone').value,
+                location: document.getElementById('editLoc').value
             };
+            await sb.from('users').update(up).eq('email', email);
+            initDashboard();
         }
 
-        async function fetchRunners(loc) {
-            let query = clientSupabase.from('runners').select('*').limit(6);
-            if (loc) query = query.ilike('location', `%${loc}%`);
+        async function loadNearbyRunners(location) {
+            const container = document.getElementById('runnerContainer');
             
-            const { data: runners } = await query;
-            const list = document.getElementById('runnerList');
+            // Extract just the first word of the location (e.g., "Nairobi" from "Nairobi, Kenya")
+            const city = location ? location.split(',')[0].trim() : "";
+
+            let query = sb.from('runners').select('*');
             
-            if (runners && runners.length > 0) {
-                list.innerHTML = runners.map(r => `
-                    <div class="runner-card">
-                        <img src="${r.profilepicture || 'https://via.placeholder.com/50'}">
-                        <h4>${r.name}</h4>
-                        <p>${r.location || 'Available'}</p>
-                    </div>
-                `).join('');
+            if (city) {
+                query = query.ilike('location', `%${city}%`);
+            }
+            
+            const { data: runners, error } = await query.limit(6);
+
+            // If no runners found in city, fetch general top runners
+            if (!runners || runners.length === 0) {
+                const { data: allRunners } = await sb.from('runners').select('*').limit(6);
+                renderRunners(allRunners || [], "Recommended Runners (All Areas)");
             } else {
-                list.innerHTML = "<p style='font-size: 0.8rem; color: #999;'>No runners found in your area yet.</p>";
+                renderRunners(runners, "Runners in " + city);
             }
         }
 
-        document.getElementById('logoutLink').onclick = () => {
+        function renderRunners(list, label) {
+            const container = document.getElementById('runnerContainer');
+            if (list.length === 0) {
+                container.innerHTML = "<p style='font-size:0.75rem; color:#999;'>No runners available yet.</p>";
+                return;
+            }
+            container.innerHTML = list.map(r => `
+                <div class="runner-card">
+                    <img src="${r.profilepicture || 'https://via.placeholder.com/60/7B1E3A/FFD700?text=Run'}" alt="Runner">
+                    <h4>${r.name}</h4>
+                    <p><i class="fas fa-map-marker-alt"></i> ${r.location || 'Available'}</p>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('logoutBtn').onclick = () => {
             localStorage.clear();
             window.location.href = "login.html";
         };
 
-        loadClientData();
+        initDashboard();
     </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
 
 
 
