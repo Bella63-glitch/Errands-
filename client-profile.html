@@ -1,184 +1,270 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Run Me An Errand</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --maroon: #7B1E3A;
-            --maroon-dark: #5c162b;
-            --gold: #FFD700;
-            --bg: #f4f7f9;
-            --card: #ffffff;
-            --text: #2c3e50;
-            --border: #e1e8ed;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client Profile - Run Me an Errand</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root { --maroon:#7B1E3A; --gold:#FFD700; --maroon-light: #922b4a; }
+    .bg-maroon{background-color:var(--maroon);} 
+    .text-maroon{color:var(--maroon);}
+    .text-gold{color:var(--gold);} 
+    .bg-gold{background-color:var(--gold);}
+    
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid var(--maroon);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 40px auto;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    
+    .profile-card {
+      background: white;
+      border-radius: 1.5rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
 
-        body { font-family: 'Montserrat', sans-serif; margin: 0; background-color: var(--bg); color: var(--text); }
-        
-        /* Layout & Nav */
-        .nav-bar { width: 100%; background: var(--maroon); padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; }
-        .nav-logo { color: white; font-weight: 800; text-transform: uppercase; letter-spacing: -1px; }
-        .nav-links a { color: var(--gold); text-decoration: none; font-weight: 700; font-size: 0.8rem; margin-left: 15px; text-transform: uppercase; }
+    .initials-avatar {
+      width: 5rem; height: 5rem;
+      border-radius: 50%;
+      border: 4px solid var(--gold);
+      background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-light) 100%);
+      color: var(--gold);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.75rem; font-weight: 800;
+      box-shadow: 0 4px 10px rgba(123, 30, 58, 0.3);
+    }
 
-        .container { width: 95%; max-width: 900px; margin: 30px auto; }
-
-        /* Profile Card */
-        .profile-card { background: var(--card); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 40px; overflow: hidden; }
-        .profile-header { padding: 40px; display: flex; align-items: center; gap: 25px; border-bottom: 1px solid var(--border); }
-        .avatar { width: 80px; height: 80px; background: linear-gradient(135deg, var(--maroon), var(--maroon-dark)); color: var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 800; border: 3px solid var(--gold); }
-        .user-info h2 { margin: 0; font-size: 1.6rem; color: var(--maroon); }
-        .user-info p { margin: 5px 0 0; color: #7f8c8d; font-weight: 600; }
-
-        /* Runner Grid */
-        .section-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; color: #95a5a6; margin-bottom: 20px; font-weight: 800; }
-        .runner-scroll { display: flex; gap: 20px; overflow-x: auto; padding: 10px 5px; scrollbar-width: none; }
-        .runner-card { min-width: 180px; background: white; border: 1px solid var(--border); padding: 25px 15px; border-radius: 15px; text-align: center; transition: 0.3s; cursor: pointer; }
-        .runner-card:hover { border-color: var(--gold); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-        .runner-card img { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; margin-bottom: 12px; border: 2px solid var(--gold); }
-        .runner-card h4 { margin: 5px 0; font-size: 0.9rem; color: var(--maroon); font-weight: 800; }
-        .runner-card p { margin: 0; font-size: 0.75rem; color: #95a5a6; font-weight: 600; }
-
-        /* Modal / Detail View */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(4px); }
-        .modal-content { background: white; width: 90%; max-width: 500px; border-radius: 25px; padding: 40px; position: relative; text-align: center; animation: slideUp 0.3s ease-out; }
-        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .close-modal { position: absolute; top: 20px; right: 25px; font-size: 1.5rem; cursor: pointer; color: #ccc; }
-        .modal-img { width: 120px; height: 120px; border-radius: 50%; border: 4px solid var(--gold); margin-bottom: 20px; object-fit: cover; }
-        .modal-name { font-size: 1.8rem; font-weight: 800; color: var(--maroon); margin: 0; }
-        .modal-loc { color: #95a5a6; font-weight: 700; font-size: 0.9rem; margin-top: 5px; }
-        .modal-bio { margin: 20px 0; line-height: 1.6; color: #555; font-size: 0.95rem; }
-        .hire-btn { background: var(--maroon); color: white; border: none; width: 100%; padding: 15px; border-radius: 12px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.2s; }
-        .hire-btn:hover { background: var(--maroon-dark); transform: scale(1.02); }
-
-        .spinner { border: 3px solid #f3f3f3; border-top: 3px solid var(--maroon); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 40px auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    </style>
+    /* Runner Card Styles */
+    .runner-pill {
+      min-width: 200px;
+      transition: transform 0.2s;
+    }
+    .runner-pill:hover { transform: translateY(-5px); }
+    
+    /* Custom Scrollbar for recommendations */
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
 </head>
-<body>
+<body class="bg-slate-50 min-h-screen pb-12">
 
-    <nav class="nav-bar">
-        <div class="nav-logo">Run Me An Errand</div>
-        <div class="nav-links">
-            <a href="#" id="logoutBtn">Logout</a>
-        </div>
-    </nav>
+  <nav class="w-full bg-maroon p-4 text-gold flex justify-between items-center shadow-lg mb-8">
+    <span class="font-black text-xl tracking-tighter uppercase">Run Me An Errand</span>
+    <div class="space-x-4 flex items-center">
+      <a href="index.html" class="text-sm font-bold hover:text-white transition">Home</a>
+      <button id="logoutBtnTop" class="text-xs bg-gold text-maroon px-3 py-1 rounded font-bold uppercase">Logout</button>
+    </div>
+  </nav>
 
-    <div class="container">
-        <div class="profile-card" id="mainContent">
-            <div class="spinner"></div>
-        </div>
-
-        <h3 class="section-title">Available Runners Near You</h3>
-        <div class="runner-scroll" id="runnerContainer">
-             <p style="color: #ccc; font-size: 0.8rem;">Searching for local help...</p>
-        </div>
+  <div id="profileContainer" class="max-w-5xl mx-auto px-4">
+    
+    <div id="profileContent">
+        <div class="spinner"></div>
     </div>
 
-    <div class="modal-overlay" id="runnerModal">
-        <div class="modal-content">
-            <span class="close-modal" id="closeModal">&times;</span>
-            <img id="mImg" src="" class="modal-img">
-            <h2 id="mName" class="modal-name"></h2>
-            <p id="mLoc" class="modal-loc"></p>
-            <div style="display: flex; justify-content: center; gap: 15px; margin: 15px 0;">
-                <span id="mRate" style="background: #fff9db; color: #f59f00; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 800;"></span>
-                <span id="mRating" style="background: #e7f5ff; color: #1c7ed6; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 800;"></span>
+    <div class="mt-12">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-2xl font-bold text-maroon">Runners Near You</h3>
+        <a href="runners.html" class="text-maroon font-bold text-sm hover:underline">View All <i class="fas fa-arrow-right ml-1"></i></a>
+      </div>
+      
+      <div id="recommendationsList" class="flex space-x-4 overflow-x-auto pb-4 hide-scrollbar">
+        <p class="text-gray-400 italic">Finding local runners...</p>
+      </div>
+    </div>
+
+    <div id="statusMessage" class="mt-6 text-center font-bold"></div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const contentDiv = document.getElementById("profileContent");
+    const statusMessage = document.getElementById("statusMessage");
+
+    function getInitials(name, email) {
+      if (name) {
+        const parts = name.trim().split(/\s+/);
+        if (parts.length > 1) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+        return parts[0].substring(0, 2).toUpperCase();
+      }
+      return email ? email.substring(0, 2).toUpperCase() : "?";
+    }
+
+    async function loadProfile() {
+      const email = localStorage.getItem('loggedInEmail');
+      const userType = localStorage.getItem('userType');
+
+      if (!email || userType !== "client") {
+        window.location.href = "login.html";
+        return;
+      }
+
+      try {
+        const { data: user, error } = await supabase
+          .from('users')
+          .select('*')
+          .eq('email', email)
+          .maybeSingle();
+
+        if (user) {
+          renderProfile(user);
+          loadRecommendations(user.location || "General");
+        }
+      } catch (err) {
+        statusMessage.className = "text-red-500";
+        statusMessage.textContent = "Error loading dashboard.";
+      }
+    }
+
+    function renderProfile(user) {
+      const initials = getInitials(user.full_name, user.email);
+      contentDiv.innerHTML = `
+        <div class="profile-card p-8">
+          <div class="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-8 mb-10 border-b pb-8">
+            <div class="initials-avatar">${initials}</div>
+            <div class="text-center md:text-left">
+              <h2 class="text-4xl font-black text-maroon">${user.full_name || 'Valued Client'}</h2>
+              <p class="text-gray-500 font-medium">${user.email}</p>
+              <div class="mt-3 flex flex-wrap justify-center md:justify-start gap-2">
+                <span class="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest">Client Account</span>
+                <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest">Verified</span>
+              </div>
             </div>
-            <p id="mBio" class="modal-bio"></p>
-            <button class="hire-btn" id="hireBtn">Request This Runner</button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div>
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-maroon uppercase tracking-wider">Account Details</h3>
+                <button onclick='renderEditMode(${JSON.stringify(user)})' class="text-xs text-maroon font-bold hover:underline">Edit Info</button>
+              </div>
+              <div class="space-y-4">
+                <div class="flex items-center space-x-3 text-gray-700">
+                  <i class="fas fa-phone w-5 text-maroon"></i>
+                  <span>${user.phone || 'No phone added'}</span>
+                </div>
+                <div class="flex items-center space-x-3 text-gray-700">
+                  <i class="fas fa-map-marker-alt w-5 text-maroon"></i>
+                  <span>${user.location || 'Location not set'}</span>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-bold text-maroon uppercase tracking-wider mb-4">Recent Activity</h3>
+              <div class="bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl p-6 text-center">
+                <i class="fas fa-receipt text-slate-300 text-3xl mb-2"></i>
+                <p class="text-sm text-slate-500">You haven't requested any errands yet.</p>
+                <button onclick="window.location.href='runners.html'" class="mt-4 text-xs bg-maroon text-gold px-4 py-2 rounded-lg font-bold uppercase">Book First Errand</button>
+              </div>
+            </div>
+          </div>
         </div>
-    </div>
+      `;
+    }
 
-    <script>
-        const sbUrl = "https://zchofpncqskvnfrzbcww.supabase.co";
-        const sbKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
-        const sb = window.supabase.createClient(sbUrl, sbKey);
+    window.renderEditMode = function(user) {
+      contentDiv.innerHTML = `
+        <div class="profile-card p-8">
+          <h2 class="text-2xl font-bold text-maroon mb-6">Update Profile</h2>
+          <div class="space-y-6">
+            <div>
+              <label class="block text-xs font-bold text-maroon uppercase mb-1">Full Name</label>
+              <input type="text" id="editName" value="${user.full_name || ''}" class="w-full border-2 border-slate-100 rounded-xl p-3 focus:border-maroon outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-maroon uppercase mb-1">Phone Number</label>
+              <input type="text" id="editPhone" value="${user.phone || ''}" class="w-full border-2 border-slate-100 rounded-xl p-3 focus:border-maroon outline-none">
+            </div>
+             <div>
+              <label class="block text-xs font-bold text-maroon uppercase mb-1">Location (City/Area)</label>
+              <input type="text" id="editLocation" value="${user.location || ''}" class="w-full border-2 border-slate-100 rounded-xl p-3 focus:border-maroon outline-none" placeholder="e.g. Nairobi, Kenya">
+            </div>
+            <div class="flex space-x-3">
+              <button id="saveChanges" class="bg-maroon text-gold px-6 py-3 rounded-xl font-bold flex-1">Save Changes</button>
+              <button onclick="loadProfile()" class="bg-slate-200 text-slate-600 px-6 py-3 rounded-xl font-bold">Cancel</button>
+            </div>
+          </div>
+        </div>
+      `;
 
-        async function init() {
-            const email = localStorage.getItem('loggedInEmail');
-            if (!email) { window.location.href = "login.html"; return; }
+      document.getElementById('saveChanges').addEventListener('click', async () => {
+        const name = document.getElementById('editName').value;
+        const phone = document.getElementById('editPhone').value;
+        const location = document.getElementById('editLocation').value;
 
-            const { data: user } = await sb.from('users').select('*').eq('email', email).single();
-            if (user) {
-                renderUser(user);
-                loadRunners(user.location);
-            }
+        const { error } = await supabase
+          .from('users')
+          .update({ full_name: name, phone: phone, location: location })
+          .eq('email', user.email);
+
+        if (!error) {
+          statusMessage.innerHTML = "<span class='text-green-600'>Profile updated!</span>";
+          setTimeout(() => { statusMessage.innerHTML = ""; loadProfile(); }, 1500);
+        }
+      });
+    };
+
+    async function loadRecommendations(userLocation) {
+      const recList = document.getElementById("recommendationsList");
+      
+      try {
+        // Fetching runners - prioritizing those in the same location
+        let query = supabase.from('runners').select('*').eq('subscription_status', 'active');
+        
+        if (userLocation && userLocation !== "General") {
+            // Try to find matches in the same city
+            query = query.ilike('location', `%${userLocation}%`);
+        }
+        
+        const { data: runners, error } = await query.limit(5);
+
+        if (error || !runners || runners.length === 0) {
+          recList.innerHTML = "<p class='text-gray-400 text-sm italic'>No local runners found right now. Check back later!</p>";
+          return;
         }
 
-        function renderUser(u) {
-            const init = (u.full_name || u.email).substring(0,2).toUpperCase();
-            document.getElementById('mainContent').innerHTML = `
-                <div class="profile-header">
-                    <div class="avatar">${init}</div>
-                    <div class="user-info">
-                        <h2>Welcome, ${u.full_name || 'Client'}</h2>
-                        <p>${u.email}</p>
-                    </div>
-                </div>
-            `;
-        }
+        recList.innerHTML = runners.map(runner => `
+          <div class="runner-pill bg-white border border-slate-200 p-4 rounded-2xl shadow-sm flex items-center space-x-4">
+            <img src="${runner.profilepicture || 'https://via.placeholder.com/50'}" class="w-12 h-12 rounded-full object-cover border-2 border-gold">
+            <div>
+              <h4 class="font-bold text-maroon text-sm">${runner.name}</h4>
+              <p class="text-[10px] text-gray-500 uppercase font-bold">${runner.location || 'Available'}</p>
+              <div class="flex text-gold text-[10px] mt-1">
+                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+              </div>
+            </div>
+          </div>
+        `).join('');
 
-        async function loadRunners(loc) {
-            const city = loc ? loc.split(',')[0].trim() : "";
-            let { data: runners } = await sb.from('runners').select('*').ilike('location', `%${city}%`).limit(6);
-            
-            // Fallback if no local runners
-            if (!runners || runners.length === 0) {
-                let { data: all } = await sb.from('runners').select('*').limit(6);
-                runners = all;
-            }
-            renderRunnerList(runners || []);
-        }
+      } catch (err) {
+        recList.innerHTML = "";
+      }
+    }
 
-        function renderRunnerList(list) {
-            const container = document.getElementById('runnerContainer');
-            container.innerHTML = list.map(r => `
-                <div class="runner-card" onclick='viewRunner(${JSON.stringify(r)})'>
-                    <img src="${r.profilepicture || 'https://via.placeholder.com/150'}">
-                    <h4>${r.name}</h4>
-                    <p><i class="fas fa-map-marker-alt"></i> ${r.location || 'Available'}</p>
-                </div>
-            `).join('');
-        }
+    document.getElementById('logoutBtnTop').addEventListener('click', () => {
+      localStorage.clear();
+      window.location.href = "login.html";
+    });
 
-        // View Detail Function
-        window.viewRunner = function(r) {
-            document.getElementById('mImg').src = r.profilepicture || 'https://via.placeholder.com/150';
-            document.getElementById('mName').innerText = r.name;
-            document.getElementById('mLoc').innerText = r.location || 'Unknown Location';
-            document.getElementById('mBio').innerText = r.bio || "This runner hasn't added a bio yet, but they are ready to help you with your errands!";
-            document.getElementById('mRate').innerText = r.rate ? `$${r.rate}/hr` : 'Fair Rates';
-            document.getElementById('mRating').innerText = `⭐ ${r.rating || 'New'}`;
-            
-            document.getElementById('runnerModal').style.display = 'flex';
-            
-            document.getElementById('hireBtn').onclick = () => {
-                alert(`Request sent to ${r.name}! They will contact you shortly.`);
-                document.getElementById('runnerModal').style.display = 'none';
-            };
-        };
-
-        // Close Modal
-        document.getElementById('closeModal').onclick = () => {
-            document.getElementById('runnerModal').style.display = 'none';
-        };
-        window.onclick = (e) => {
-            if(e.target == document.getElementById('runnerModal')) {
-                document.getElementById('runnerModal').style.display = 'none';
-            }
-        };
-
-        document.getElementById('logoutBtn').onclick = () => { localStorage.clear(); window.location.href="login.html"; };
-
-        init();
-    </script>
+    loadProfile();
+  </script>
 </body>
 </html>
+
+
+
 
 
 
