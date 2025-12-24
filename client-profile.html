@@ -6,14 +6,12 @@
   <title>Client Profile - Run Me an Errand</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    :root { --maroon:#7B1E3A; --gold:#FFD700; --maroon-light: #922b4a; }
+    :root { --maroon:#7B1E3A; --gold:#FFD700; }
     .bg-maroon{background-color:var(--maroon);} 
     .text-maroon{color:var(--maroon);}
     .text-gold{color:var(--gold);} 
     .bg-gold{background-color:var(--gold);}
-    
     .spinner {
       border: 4px solid #f3f3f3;
       border-top: 4px solid var(--maroon);
@@ -21,67 +19,72 @@
       width: 40px;
       height: 40px;
       animation: spin 1s linear infinite;
-      margin: 40px auto;
+      margin: auto;
     }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    
+    a.nav-link { color: var(--maroon); font-weight: 600; transition: color 0.2s; }
+    a.nav-link:hover { color: var(--gold); }
     .profile-card {
-      background: white;
-      border-radius: 1.5rem;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+      background-color: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      transition: box-shadow 0.3s ease-in-out;
     }
+    .profile-card:hover {
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    button.explore-btn, button.edit-btn, button.save-btn, button.cancel-btn {
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    button.explore-btn { background-color: var(--maroon); color: var(--gold); }
+    button.explore-btn:hover { background-color: var(--gold); color: var(--maroon); }
+    button.edit-btn { background-color: var(--gold); color: var(--maroon); }
+    button.edit-btn:hover { background-color: var(--maroon); color: var(--gold); }
+    button.save-btn { background-color: var(--maroon); color: var(--gold); }
+    button.save-btn:hover { background-color: var(--gold); color: var(--maroon); }
+    button.cancel-btn { background-color: #ccc; color: #333; }
+    button.cancel-btn:hover { background-color: #999; color: #fff; }
 
+    /* New style for Initials Avatar */
     .initials-avatar {
-      width: 5rem; height: 5rem;
+      width: 6rem; /* w-24 */
+      height: 6rem; /* h-24 */
       border-radius: 50%;
       border: 4px solid var(--gold);
-      background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-light) 100%);
-      color: var(--gold);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.75rem; font-weight: 800;
-      box-shadow: 0 4px 10px rgba(123, 30, 58, 0.3);
+      background-color: var(--maroon); /* Background for the initials */
+      color: var(--gold); /* Text color for the initials */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem; /* Large text size for initials */
+      font-weight: bold;
+      flex-shrink: 0; /* Prevents it from shrinking in a flex container */
     }
-
-    /* Runner Card Styles */
-    .runner-pill {
-      min-width: 200px;
-      transition: transform 0.2s;
-    }
-    .runner-pill:hover { transform: translateY(-5px); }
-    
-    /* Custom Scrollbar for recommendations */
-    .hide-scrollbar::-webkit-scrollbar { display: none; }
-    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="bg-slate-50 min-h-screen pb-12">
+<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-start pt-12">
 
-  <nav class="w-full bg-maroon p-4 text-gold flex justify-between items-center shadow-lg mb-8">
-    <span class="font-black text-xl tracking-tighter uppercase">Run Me An Errand</span>
-    <div class="space-x-4 flex items-center">
-      <a href="index.html" class="text-sm font-bold hover:text-white transition">Home</a>
-      <button id="logoutBtnTop" class="text-xs bg-gold text-maroon px-3 py-1 rounded font-bold uppercase">Logout</button>
-    </div>
-  </nav>
+  <h1 class="text-4xl font-bold text-maroon mb-10">My Profile</h1>
 
-  <div id="profileContainer" class="max-w-5xl mx-auto px-4">
-    
-    <div id="profileContent">
-        <div class="spinner"></div>
+  <div id="profileContainer" class="w-full max-w-4xl px-4">
+    <div id="profileDetails" class="profile-card">
+      <div class="spinner"></div>
     </div>
 
-    <div class="mt-12">
-      <div class="flex justify-between items-center mb-6">
-        <h3 class="text-2xl font-bold text-maroon">Runners Near You</h3>
-        <a href="runners.html" class="text-maroon font-bold text-sm hover:underline">View All <i class="fas fa-arrow-right ml-1"></i></a>
-      </div>
-      
-      <div id="recommendationsList" class="flex space-x-4 overflow-x-auto pb-4 hide-scrollbar">
-        <p class="text-gray-400 italic">Finding local runners...</p>
+    <div id="errorMessage" class="mt-4 text-center text-red-600 font-semibold"></div>
+
+    <div class="mt-8 flex flex-col items-center space-y-4">
+      <button id="exploreRunnersBtn" class="explore-btn w-64">Explore Runners</button>
+      <div class="flex space-x-4">
+        <a href="index.html" class="nav-link px-4 py-2 rounded-lg border border-maroon hover:bg-maroon hover:text-gold transition">Home</a>
+        <button id="logoutBtn" class="px-4 py-2 rounded-lg bg-maroon text-gold font-bold hover:bg-gold hover:text-maroon transition">Logout</button>
       </div>
     </div>
-
-    <div id="statusMessage" class="mt-6 text-center font-bold"></div>
   </div>
 
   <script>
@@ -89,16 +92,43 @@
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const contentDiv = document.getElementById("profileContent");
-    const statusMessage = document.getElementById("statusMessage");
+    const profileDiv = document.getElementById("profileDetails");
+    const errorDiv = document.getElementById("errorMessage");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const exploreBtn = document.getElementById("exploreRunnersBtn");
 
+    function redirectToLogin(message) {
+      profileDiv.innerHTML = `<p class="text-center text-maroon text-lg font-semibold">${message}</p>`;
+      setTimeout(() => window.location.href = "login.html", 1500);
+    }
+
+    /**
+     * Helper function to generate initials from a full name or email.
+     * @param {string} name - The user's full name.
+     * @param {string} email - The user's email (used as fallback).
+     * @returns {string} The capitalized initials (e.g., 'JD' for 'John Doe') or first two letters of the email.
+     */
     function getInitials(name, email) {
       if (name) {
         const parts = name.trim().split(/\s+/);
-        if (parts.length > 1) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-        return parts[0].substring(0, 2).toUpperCase();
+        // Take the first letter of the first part and the first letter of the last part
+        if (parts.length > 1) {
+          return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+        }
+        // If only one part (e.g., a single name), take the first two letters
+        if (parts.length === 1 && parts[0].length >= 2) {
+            return parts[0].substring(0, 2).toUpperCase();
+        }
+        // If a single letter name
+        if (parts.length === 1 && parts[0].length === 1) {
+            return parts[0].toUpperCase();
+        }
       }
-      return email ? email.substring(0, 2).toUpperCase() : "?";
+      // Fallback: use the first two letters of the email
+      if (email && email.length >= 2) {
+        return email.substring(0, 2).toUpperCase();
+      }
+      return "?"; // Default fallback
     }
 
     async function loadProfile() {
@@ -106,158 +136,136 @@
       const userType = localStorage.getItem('userType');
 
       if (!email || userType !== "client") {
-        window.location.href = "login.html";
+        redirectToLogin("Session expired. Redirecting to login...");
         return;
       }
+
+      profileDiv.innerHTML = `<div class="spinner"></div>`;
+      errorDiv.textContent = "";
 
       try {
         const { data: user, error } = await supabase
           .from('users')
-          .select('*')
+          .select('id, full_name, email, phone')
           .eq('email', email)
           .maybeSingle();
 
-        if (user) {
-          renderProfile(user);
-          loadRecommendations(user.location || "General");
-        }
-      } catch (err) {
-        statusMessage.className = "text-red-500";
-        statusMessage.textContent = "Error loading dashboard.";
-      }
-    }
-
-    function renderProfile(user) {
-      const initials = getInitials(user.full_name, user.email);
-      contentDiv.innerHTML = `
-        <div class="profile-card p-8">
-          <div class="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-8 mb-10 border-b pb-8">
-            <div class="initials-avatar">${initials}</div>
-            <div class="text-center md:text-left">
-              <h2 class="text-4xl font-black text-maroon">${user.full_name || 'Valued Client'}</h2>
-              <p class="text-gray-500 font-medium">${user.email}</p>
-              <div class="mt-3 flex flex-wrap justify-center md:justify-start gap-2">
-                <span class="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest">Client Account</span>
-                <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest">Verified</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-            <div>
-              <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-maroon uppercase tracking-wider">Account Details</h3>
-                <button onclick='renderEditMode(${JSON.stringify(user)})' class="text-xs text-maroon font-bold hover:underline">Edit Info</button>
-              </div>
-              <div class="space-y-4">
-                <div class="flex items-center space-x-3 text-gray-700">
-                  <i class="fas fa-phone w-5 text-maroon"></i>
-                  <span>${user.phone || 'No phone added'}</span>
-                </div>
-                <div class="flex items-center space-x-3 text-gray-700">
-                  <i class="fas fa-map-marker-alt w-5 text-maroon"></i>
-                  <span>${user.location || 'Location not set'}</span>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h3 class="text-lg font-bold text-maroon uppercase tracking-wider mb-4">Recent Activity</h3>
-              <div class="bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl p-6 text-center">
-                <i class="fas fa-receipt text-slate-300 text-3xl mb-2"></i>
-                <p class="text-sm text-slate-500">You haven't requested any errands yet.</p>
-                <button onclick="window.location.href='runners.html'" class="mt-4 text-xs bg-maroon text-gold px-4 py-2 rounded-lg font-bold uppercase">Book First Errand</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
-    window.renderEditMode = function(user) {
-      contentDiv.innerHTML = `
-        <div class="profile-card p-8">
-          <h2 class="text-2xl font-bold text-maroon mb-6">Update Profile</h2>
-          <div class="space-y-6">
-            <div>
-              <label class="block text-xs font-bold text-maroon uppercase mb-1">Full Name</label>
-              <input type="text" id="editName" value="${user.full_name || ''}" class="w-full border-2 border-slate-100 rounded-xl p-3 focus:border-maroon outline-none">
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-maroon uppercase mb-1">Phone Number</label>
-              <input type="text" id="editPhone" value="${user.phone || ''}" class="w-full border-2 border-slate-100 rounded-xl p-3 focus:border-maroon outline-none">
-            </div>
-             <div>
-              <label class="block text-xs font-bold text-maroon uppercase mb-1">Location (City/Area)</label>
-              <input type="text" id="editLocation" value="${user.location || ''}" class="w-full border-2 border-slate-100 rounded-xl p-3 focus:border-maroon outline-none" placeholder="e.g. Nairobi, Kenya">
-            </div>
-            <div class="flex space-x-3">
-              <button id="saveChanges" class="bg-maroon text-gold px-6 py-3 rounded-xl font-bold flex-1">Save Changes</button>
-              <button onclick="loadProfile()" class="bg-slate-200 text-slate-600 px-6 py-3 rounded-xl font-bold">Cancel</button>
-            </div>
-          </div>
-        </div>
-      `;
-
-      document.getElementById('saveChanges').addEventListener('click', async () => {
-        const name = document.getElementById('editName').value;
-        const phone = document.getElementById('editPhone').value;
-        const location = document.getElementById('editLocation').value;
-
-        const { error } = await supabase
-          .from('users')
-          .update({ full_name: name, phone: phone, location: location })
-          .eq('email', user.email);
-
-        if (!error) {
-          statusMessage.innerHTML = "<span class='text-green-600'>Profile updated!</span>";
-          setTimeout(() => { statusMessage.innerHTML = ""; loadProfile(); }, 1500);
-        }
-      });
-    };
-
-    async function loadRecommendations(userLocation) {
-      const recList = document.getElementById("recommendationsList");
-      
-      try {
-        // Fetching runners - prioritizing those in the same location
-        let query = supabase.from('runners').select('*').eq('subscription_status', 'active');
-        
-        if (userLocation && userLocation !== "General") {
-            // Try to find matches in the same city
-            query = query.ilike('location', `%${userLocation}%`);
-        }
-        
-        const { data: runners, error } = await query.limit(5);
-
-        if (error || !runners || runners.length === 0) {
-          recList.innerHTML = "<p class='text-gray-400 text-sm italic'>No local runners found right now. Check back later!</p>";
+        if (error || !user) {
+          console.error("User fetch error:", error);
+          redirectToLogin("User not found. Redirecting to login...");
           return;
         }
 
-        recList.innerHTML = runners.map(runner => `
-          <div class="runner-pill bg-white border border-slate-200 p-4 rounded-2xl shadow-sm flex items-center space-x-4">
-            <img src="${runner.profilepicture || 'https://via.placeholder.com/50'}" class="w-12 h-12 rounded-full object-cover border-2 border-gold">
-            <div>
-              <h4 class="font-bold text-maroon text-sm">${runner.name}</h4>
-              <p class="text-[10px] text-gray-500 uppercase font-bold">${runner.location || 'Available'}</p>
-              <div class="flex text-gold text-[10px] mt-1">
-                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-              </div>
-            </div>
-          </div>
-        `).join('');
+        displayProfile(user);
 
       } catch (err) {
-        recList.innerHTML = "";
+        console.error("Profile load error:", err);
+        errorDiv.textContent = "Unexpected error fetching profile.";
       }
     }
 
-    document.getElementById('logoutBtnTop').addEventListener('click', () => {
-      localStorage.clear();
+    function displayProfile(user) {
+      const displayName = user.full_name || user.email || "Client";
+      const initials = getInitials(user.full_name, user.email); // Get the initials
+
+      profileDiv.innerHTML = `
+        <div class="flex items-center space-x-6 mb-8 border-b-2 border-gray-200 pb-6">
+          <div class="initials-avatar">
+            ${initials}
+          </div>
+          <div>
+            <h2 class="text-3xl font-bold text-maroon">${displayName}</h2>
+            <p class="text-lg text-gray-500">${user.email || "N/A"}</p>
+          </div>
+        </div>
+        <div class="md:grid md:grid-cols-2 md:gap-8">
+          <div class="flex flex-col space-y-4">
+            <h3 class="text-xl font-bold text-maroon border-b pb-2">Personal Information</h3>
+            <p class="text-lg"><strong>Email:</strong> ${user.email || "N/A"}</p>
+            <p class="text-lg"><strong>Phone:</strong> ${user.phone || "N/A"}</p>
+            <div class="mt-4">
+              <button id="editBtn" class="edit-btn">Edit Profile</button>
+            </div>
+          </div>
+          <div class="mt-8 md:mt-0 flex flex-col space-y-4">
+            <h3 class="text-xl font-bold text-maroon border-b pb-2">My Activity</h3>
+            <div class="bg-gray-100 p-4 rounded-lg">
+              <p class="text-gray-600">Your recent errand history will appear here. Start by exploring our runners!</p>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById("editBtn").addEventListener("click", () => enableEdit(user));
+    }
+
+    function enableEdit(user) {
+        const initials = getInitials(user.full_name, user.email); // Get the initials for the edit view too
+
+      profileDiv.innerHTML = `
+        <div class="flex items-center space-x-6 mb-8 border-b-2 border-gray-200 pb-6">
+          <div class="initials-avatar">
+            ${initials}
+          </div>
+          <div>
+            <h2 class="text-3xl font-bold text-maroon">Edit Profile</h2>
+            <p class="text-lg text-gray-500">Update your details below.</p>
+          </div>
+        </div>
+        <div class="flex flex-col space-y-4">
+          <label class="block">
+            <span class="text-lg font-semibold text-maroon">Full Name:</span>
+            <input type="text" id="nameInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50" value="${user.full_name || ""}">
+          </label>
+          <label class="block">
+            <span class="text-lg font-semibold text-maroon">Phone:</span>
+            <input type="text" id="phoneInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-maroon focus:ring focus:ring-maroon focus:ring-opacity-50" value="${user.phone || ""}">
+          </label>
+          <div class="mt-6 flex space-x-4">
+            <button id="saveBtn" class="save-btn">Save Changes</button>
+            <button id="cancelBtn" class="cancel-btn">Cancel</button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById("cancelBtn").addEventListener("click", () => displayProfile(user));
+
+      document.getElementById("saveBtn").addEventListener("click", async () => {
+        const updatedFields = {
+          full_name: document.getElementById("nameInput").value.trim(),
+          phone: document.getElementById("phoneInput").value.trim()
+        };
+
+        try {
+          const { data: updatedData, error } = await supabase
+            .from('users')
+            .update(updatedFields)
+            .eq('email', user.email)
+            .select('id, full_name, email, phone')
+            .maybeSingle();
+
+          if (error) throw error;
+
+          displayProfile(updatedData);
+          errorDiv.textContent = "Profile updated successfully! ✅";
+          setTimeout(() => errorDiv.textContent = "", 3000);
+
+        } catch (err) {
+          console.error("Update error:", err);
+          errorDiv.textContent = "Failed to update profile.";
+        }
+      });
+    }
+
+    logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem('loggedInEmail');
+      localStorage.removeItem('userType');
       window.location.href = "login.html";
     });
 
+    exploreBtn.addEventListener("click", () => window.location.href = "runners.html");
+
+    // Load profile on page load
     loadProfile();
   </script>
 </body>
@@ -265,11 +273,4 @@
 
 
 
-
-
-
-
-
-
-
-
+                
