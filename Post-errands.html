@@ -4,132 +4,236 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Post an Errand | Run Me an Errand</title>
-
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Raleway:wght@300;500;700&display=swap" rel="stylesheet">
+  
   <style>
+    :root {
+      --maroon: #600000;
+      --gold: #D4AF37;
+      --dark-gold: #aa8a2e;
+      --white: #ffffff;
+      --off-white: #fcfaf7;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background: #f9f9f9;
+      font-family: 'Raleway', sans-serif;
+      background: linear-gradient(rgba(74, 0, 0, 0.9), rgba(128, 0, 0, 0.9)), 
+                  url('https://www.transparenttextures.com/patterns/cubes.png');
+      background-color: var(--maroon);
       margin: 0;
-      padding: 0;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .container {
       max-width: 500px;
-      margin: 40px auto;
-      background: #ffffff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      width: 100%;
+      background: var(--white);
+      padding: 50px 40px;
+      border-radius: 4px; /* Sharper edges for a more professional, "boxed" luxury feel */
+      box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+      border-top: 8px solid var(--gold);
+      position: relative;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    /* Perfectly Circular Logo */
+    .logo-frame {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      border: 2px solid var(--gold);
+      padding: 5px;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .logo-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
     }
 
     h1 {
-      text-align: center;
-      margin-bottom: 10px;
+      font-family: 'Libre Baskerville', serif;
+      color: var(--maroon);
+      font-size: 26px;
+      margin: 0 0 10px 0;
+      font-weight: 700;
     }
 
-    p {
-      text-align: center;
-      color: #555;
-      font-size: 14px;
-      margin-bottom: 20px;
+    .header p {
+      color: var(--gold);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .form-group {
+      margin-bottom: 25px;
     }
 
     label {
-      font-weight: bold;
+      font-family: 'Raleway', sans-serif;
+      font-weight: 700;
       display: block;
-      margin-top: 15px;
+      margin-bottom: 10px;
+      font-size: 11px;
+      color: #333;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
     }
 
     input, textarea {
       width: 100%;
-      padding: 12px;
-      margin-top: 5px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 14px;
+      padding: 15px;
+      box-sizing: border-box;
+      border: 1px solid #ddd;
+      font-size: 15px;
+      font-family: 'Libre Baskerville', serif; /* Input text looks more formal */
+      transition: all 0.3s ease;
+      background: var(--off-white);
+      border-radius: 0; /* Minimalist aesthetic */
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--maroon);
+      background: #fff;
+      box-shadow: 5px 5px 0px rgba(212, 175, 55, 0.2);
     }
 
     textarea {
-      resize: vertical;
-      min-height: 80px;
+      resize: none;
+      min-height: 100px;
+    }
+
+    .row {
+      display: flex;
+      gap: 20px;
+    }
+
+    .row > div {
+      flex: 1;
     }
 
     button {
       width: 100%;
-      background: #25D366;
-      color: #fff;
-      border: none;
-      padding: 14px;
-      font-size: 16px;
-      border-radius: 6px;
+      background: var(--maroon);
+      color: var(--white);
+      border: 1px solid var(--maroon);
+      padding: 20px;
+      font-family: 'Raleway', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
       cursor: pointer;
-      margin-top: 20px;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      margin-top: 10px;
     }
 
     button:hover {
-      background: #1ebe5b;
+      background: var(--white);
+      color: var(--maroon);
+      border-color: var(--maroon);
     }
 
-    .note {
-      font-size: 12px;
-      color: #777;
+    .disclaimer-text {
+      font-family: 'Raleway', sans-serif;
+      font-size: 11px;
+      color: #888;
       text-align: center;
-      margin-top: 15px;
+      margin-top: 35px;
+      line-height: 1.8;
+      border-top: 1px solid #eee;
+      padding-top: 20px;
+    }
+
+    @media (max-width: 480px) {
+      .container { padding: 40px 20px; }
+      .row { flex-direction: column; gap: 0; }
     }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <h1>Post an Errand</h1>
-    <p>Tell us what you need done and we’ll connect you to a trusted runner.</p>
+    <div class="header">
+      <div class="logo-frame">
+        <img src="https://i.postimg.cc/YSKsLg9p/IMG-20251220-WA0009.jpg" alt="Logo">
+      </div>
+      <h1>Run Me an Errand</h1>
+      <p>Elite Concierge</p>
+    </div>
 
     <form id="errandForm">
-      <label>What do you need done?</label>
-      <textarea id="task" placeholder="e.g. Pick groceries from Naivas and deliver to Imara Daima" required></textarea>
+      <div class="form-group">
+        <label>The Errand Details</label>
+        <textarea id="task" placeholder="Example: Purchase gift from Village Market and deliver to Muthaiga..." required></textarea>
+      </div>
 
-      <label>Location</label>
-      <input type="text" id="location" placeholder="e.g. Imara Daima, Nairobi" required />
+      <div class="form-group">
+        <label>Location</label>
+        <input type="text" id="location" placeholder="Specific Building or Area" required />
+      </div>
 
-      <label>Budget (optional)</label>
-      <input type="number" id="budget" placeholder="e.g. 800" />
+      <div class="row">
+        <div class="form-group">
+          <label>Budget (KES)</label>
+          <input type="number" id="budget" placeholder="e.g. 1500" />
+        </div>
+        <div class="form-group">
+          <label>Your Phone</label>
+          <input type="tel" id="phone" placeholder="07XX XXX XXX" required />
+        </div>
+      </div>
 
-      <label>Your phone number</label>
-      <input type="tel" id="phone" placeholder="07XXXXXXXX" required />
-
-      <button type="submit">Post Errand via WhatsApp</button>
+      <button type="submit">Submit Request</button>
     </form>
 
-    <div class="note">
-      By submitting, you agree to be contacted directly by a runner.  
-      Run Me an Errand connects clients with independent runners.
+    <div class="disclaimer-text">
+      <strong>Terms of Service:</strong> By submitting this request, you agree to be contacted directly by an independent runner. <em>Run Me an Errand</em> acts as a connecting platform for independent service providers. Please verify all details with your runner before service begins.
     </div>
   </div>
 
   <script>
     document.getElementById("errandForm").addEventListener("submit", function(e) {
       e.preventDefault();
-
       const task = document.getElementById("task").value;
       const location = document.getElementById("location").value;
-      const budget = document.getElementById("budget").value || "Not specified";
+      const budget = document.getElementById("budget").value || "To be discussed";
       const phone = document.getElementById("phone").value;
 
-      // Run Me an Errand WhatsApp number (Kenya format, no +)
       const whatsappNumber = "254797046378";
-
       const message =
-        "Hello, I’d like to post an errand.%0A%0A" +
-        "*Task:* " + task + "%0A" +
-        "*Location:* " + location + "%0A" +
-        "*Budget:* " + budget + "%0A" +
-        "*Contact:* " + phone;
+        "🏆 *NEW CONCIERGE REQUEST* 🏆%0A" +
+        "━━━━━━━━━━━━━━━━━━━━%0A" +
+        "*TASK:* " + task + "%0A" +
+        "*WHERE:* " + location + "%0A" +
+        "*BUDGET:* KES " + budget + "%0A" +
+        "*CLIENT:* " + phone + "%0A" +
+        "━━━━━━━━━━━━━━━━━━━━";
 
-      const whatsappURL = "https://wa.me/" + whatsappNumber + "?text=" + message;
-
-      window.open(whatsappURL, "_blank");
+      window.open("https://wa.me/" + whatsappNumber + "?text=" + message, "_blank");
     });
   </script>
 
 </body>
 </html>
+
+      
