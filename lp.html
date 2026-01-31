@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Run Me An Errand - Your Trusted Errand Partner in Kenya</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/forms"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-64SH312S1V"></script>
+  <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-64SH312S1V');
+    </script>
+  <style>
+        :root { --maroon: #7B1E3A; --gold: #FFD700; }
+        .bg-maroon { background-color: var(--maroon); }
+        .text-gold { color: var(--gold); }
+        .bg-gold { background-color: var(--gold); }
+        .border-maroon { border-color: var(--maroon); }
+        .bg-maroon-dark { background-color: #66182f; }
+        .bg-maroon-light { background-color: #8a2241; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes slideInLeft { from { opacity: 0; transform: translateX(-50px); } to { opacity: 1; transform: translateX(0); } }
+        .animate-slide-in-left { animation: slideInLeft 0.7s ease-out forwards; }
+        @keyframes slideInRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+        .animate-slide-in-right { animation: slideInRight 0.7s ease-out forwards; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+        .animate-pulse-subtle { animation: pulse 2s infinite ease-in-out; }
+        @keyframes backgroundPan { 0% { background-position: 0% 0%; } 50% { background-position: 10% 10%; } 100% { background-position: 0% 0%; } }
+        .animate-bg-pan { animation: backgroundPan 30s infinite alternate ease-in-out; }
+        
+        .animated-item { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+        .animated-item.is-visible { opacity: 1; transform: translateY(0); }
+        
+        .hero-background-image { background-image: url('https://i.postimg.cc/Xv93p8J1/file-00000000c624622fb8df816c050f7dea.png'); background-size: cover; background-position: center; background-repeat: no-repeat; position: relative; z-index: 1; overflow: hidden; min-height: 500px; height: auto; display: flex; align-items: center; justify-content: center; text-align: center; }
+        .hero-background-image::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 0; }
+        
+        .mobile-menu { transition: max-height 0.3s ease-in-out; overflow: hidden; max-height: 0; }
+        .mobile-menu.active { max-height: 600px; }
+        .hamburger span { display: block; width: 25px; height: 3px; background-color: white; transition: all 0.3s ease-in-out; }
+        .hamburger span:nth-child(2) { margin: 5px 0; }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+        
+        .dropdown { position: relative; display: inline-block; }
+        .dropdown-content { display: none; position: absolute; right: 0; background-color: var(--maroon-dark); min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 10; border-radius: 0.5rem; padding: 0.5rem 0; }
+        .dropdown:hover .dropdown-content { display: block; }
+        .dropdown-content a, .dropdown-content button { color: white; padding: 0.75rem 1rem; text-decoration: none; display: block; transition: background-color 0.3s, color 0.3s; text-align: left; width: 100%; }
+        
+        .testimonial-card { background: white; border-radius: 1rem; padding: 2rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); border-top: 4px solid var(--gold); transition: transform 0.3s ease; position: relative; }
+        .testimonial-card:hover { transform: translateY(-5px); }
+        .quote-icon { color: var(--gold); opacity: 0.3; font-size: 3rem; line-height: 1; font-family: serif; position: absolute; top: 1rem; left: 1.5rem; }
+    </style>
+ </head>
+ <body class="bg-gray-100 text-gray-800 font-sans">
+  <header class="bg-maroon shadow-lg sticky top-0 z-50 transition-shadow duration-300">
+   <div class="max-w-7xl mx-auto flex justify-between items-center py-5 px-6"> 
+    <a href="index.html" class="flex items-center space-x-2 animate-fade-in"> 
+        <img src="https://i.postimg.cc/d1z9KLkL/ei-1752053865516-removebg-preview.png" alt="Errand Logo" class="h-20 md:h-24 w-auto"> 
+        <h1 class="text-xl md:text-3xl font-bold text-white transition-colors duration-300 hover:text-gold" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.4);">Run Me An Errand</h1> 
+    </a>
+    <nav class="hidden md:flex space-x-6 text-lg items-center" id="desktop-nav"></nav>
+    <div class="hidden md:flex space-x-4 items-center" id="desktop-auth-buttons"></div>
+    <div class="md:hidden"> 
+        <button id="mobile-menu-button" class="text-gray-300 hover:text-gold focus:outline-none focus:ring-2 focus:ring-gold animate-fade-in hamburger" aria-label="Toggle mobile menu"> <span></span><span></span><span></span> </button>
+    </div>
+   </div>
+   <nav id="mobile-menu" class="mobile-menu md:hidden bg-gradient-to-r from-maroon-dark to-maroon pb-4 shadow-inner"></nav>
+  </header>
+
+  <section class="hero-background-image animate-bg-pan">
+   <div class="max-w-6xl mx-auto px-6 text-center relative z-10">
+    <h2 class="text-4xl lg:text-5xl font-extrabold text-white mb-6 animate-slide-in-left" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.6);">Your Errand, Our Runners.</h2>
+    <p class="text-lg lg:text-xl text-white mb-8 animate-slide-in-right" style="animation-delay: 0.2s;">Access a network of reliable, verified runners across Kenya for all your to-do's. Get help with groceries, deliveries, and more - simply and affordably.</p>
+    <div class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-4"> 
+        <a href="Post-errands.html" class="bg-gold text-maroon px-10 py-4 font-bold rounded-full shadow-lg hover:bg-white transition duration-300 animate-pulse-subtle text-xl">Post an Errand</a> 
+        <a href="runners.html" class="bg-white text-maroon px-10 py-4 font-semibold rounded-full shadow-md hover:bg-gold transition duration-300 text-xl">Browse Runners</a> 
+    </div>
+   </div>
+  </section>
+    <section id="how-it-works" class="bg-white py-16 px-6">
+   <div class="max-w-6xl mx-auto text-center">
+    <h2 class="text-3xl font-bold text-maroon mb-12 animated-item">How It Works</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+     <div class="animated-item">
+      <div class="bg-gold text-maroon rounded-full h-12 w-12 flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+      <h3 class="text-xl font-semibold text-maroon mb-3">Explore Runners</h3>
+      <p class="text-gray-700">Browse our network of verified runners without needing to sign up first.</p>
+     </div>
+     <div class="animated-item">
+      <div class="bg-gold text-maroon rounded-full h-12 w-12 flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+      <h3 class="text-xl font-semibold text-maroon mb-3">Post or Connect</h3>
+      <p class="text-gray-700">Found someone? Sign up to post your errand or contact them directly.</p>
+     </div>
+     <div class="animated-item">
+      <div class="bg-gold text-maroon rounded-full h-12 w-12 flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+      <h3 class="text-xl font-semibold text-maroon mb-3">Get It Done</h3>
+      <p class="text-gray-700">Agree on terms and pay the runner securely once the job is finished.</p>
+     </div>
+    </div>
+   </div>
+  </section>
+
+  <section id="testimonials" class="bg-gray-50 py-20 px-6">
+   <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold text-maroon animated-item">Trusted by Kenyans Everywhere</h2>
+        <div class="w-24 h-1 bg-gold mx-auto mt-4"></div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+     <div class="testimonial-card animated-item">
+      <span class="quote-icon">“</span>
+      <p class="text-gray-700 italic mb-6 relative z-10">"I used the service for my grocery shopping. The runner was very fast and I got my delivery in good shape. Very helpful if you are busy."</p>
+      <div class="flex items-center">
+       <img src="https://i.postimg.cc/15RvRrXS/IMG-20260131-125412.png" alt="Client" class="h-12 w-12 rounded-full mr-4 object-cover">
+       <div><p class="font-bold text-maroon">Faith Mutua</p><p class="text-sm text-gray-500">Nairobi</p></div>
+      </div>
+     </div>
+     <div class="testimonial-card animated-item">
+      <span class="quote-icon">“</span>
+      <p class="text-gray-700 italic mb-6 relative z-10">"Needed someone to deliver some documents across town. The process was simple, no stress at all. The guy was professional."</p>
+      <div class="flex items-center">
+       <img src="https://i.postimg.cc/gk0KbcS5/IMG-20260131-125206.png" alt="Client" class="h-12 w-12 rounded-full mr-4 object-cover">
+       <div><p class="font-bold text-maroon">Kevin Omondi</p><p class="text-sm text-gray-500">Mombasa</p></div>
+      </div>
+     </div>
+     <div class="testimonial-card animated-item">
+      <span class="quote-icon">“</span>
+      <p class="text-gray-700 italic mb-6 relative z-10">"The best part is I can browse for a runner before even signing up. Found a reliable person for my house move errands easily."</p>
+      <div class="flex items-center">
+       <img src="https://i.postimg.cc/15RvRrXS/IMG-20260131-125412.png" alt="Runner" class="h-12 w-12 rounded-full mr-4 object-cover">
+       <div><p class="font-bold text-maroon">Sarah J.</p><p class="text-sm text-gray-500">Kisumu</p></div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </section>
+    <section id="trust-section" class="py-16 bg-white px-6">
+   <div class="max-w-6xl mx-auto text-center">
+    <h2 class="text-3xl font-bold text-maroon mb-12 animated-item">Why Run Me An Errand?</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+     <div class="bg-gray-50 rounded-xl shadow-md p-6 animated-item">
+      <img src="https://img.icons8.com/plasticine/100/null/good-quality--v1.png" alt="Verified" class="mx-auto mb-4 h-16 w-16">
+      <h3 class="text-xl font-semibold text-maroon mb-3">Verified Runners</h3>
+      <p class="text-gray-700">All our runners are vetted for your safety and peace of mind.</p>
+     </div>
+     <div class="bg-gray-50 rounded-xl shadow-md p-6 animated-item">
+      <img src="https://img.icons8.com/plasticine/100/null/customer-support--v1.png" alt="Support" class="mx-auto mb-4 h-16 w-16">
+      <h3 class="text-xl font-semibold text-maroon mb-3">Reliable Support</h3>
+      <p class="text-gray-700">Our team is available to assist you via email whenever you need help.</p>
+     </div>
+     <div class="bg-gray-50 rounded-xl shadow-md p-6 animated-item">
+      <img src="https://img.icons8.com/plasticine/100/null/speed.png" alt="Secure" class="mx-auto mb-4 h-16 w-16">
+      <h3 class="text-xl font-semibold text-maroon mb-3">Direct Payments</h3>
+      <p class="text-gray-700">Pay the runner directly. No hidden fees or middleman holding your cash.</p>
+     </div>
+    </div>
+   </div>
+  </section>
+
+  <section id="become-a-runner" class="py-16 bg-maroon text-white overflow-hidden relative">
+   <div class="absolute bottom-0 left-0 w-1/2 md:w-1/3 opacity-60">
+    <img src="https://img.icons8.com/bubbles/500/ffffff/scooter.png" alt="Scooter" class="transform scale-x-[-1]">
+   </div>
+   <div class="max-w-6xl mx-auto px-6 relative z-10 grid md:grid-cols-2 gap-10 items-center">
+    <div class="animated-item">
+     <h3 class="text-3xl font-bold text-gold mb-6">Become a Runner and Earn</h3>
+     <p class="text-lg mb-8">Join our growing network across Kenya and enjoy flexible hours and great earning potential.</p> 
+     <a href="sign-up.html" class="bg-gold text-maroon px-6 py-3 rounded-full font-semibold hover:bg-white transition duration-300">Sign Up as a Runner Today!</a>
+    </div>
+   </div>
+  </section>
+
+  <footer id="contact" class="bg-gray-800 text-gray-300 py-12">
+   <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="animated-item">
+     <h4 class="text-lg font-bold text-gold mb-4">Run Me An Errand</h4>
+     <p class="text-sm">Your reliable partner for errand services across Kenya.</p>
+     <p class="text-sm mt-4">© 2025 Run Me An Errand. All rights reserved.</p>
+    </div>
+    <div class="animated-item">
+     <h4 class="text-lg font-bold text-gold mb-4">Quick Links</h4>
+     <ul class="space-y-2 text-sm">
+      <li><a href="index.html" class="hover:text-gold">Home</a></li>
+      <li><a href="about-us.html" class="hover:text-gold">About Us</a></li>
+      <li><a href="runners.html" class="hover:text-gold">Browse Runners</a></li>
+      <li><a href="sign-up.html" class="hover:text-gold">Become a Runner</a></li>
+     </ul>
+    </div>
+    <div class="animated-item">
+     <h4 class="text-lg font-bold text-gold mb-4">Contact Info</h4>
+     <p class="text-sm">Email: ranmeanerrand@gmail.com</p>
+    </div>
+   </div>
+  </footer>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const desktopNav = document.getElementById('desktop-nav');
+        const desktopAuthButtons = document.getElementById('desktop-auth-buttons');
+        const mobileMenuNav = document.getElementById('mobile-menu');
+
+        function checkLoginStatusAndUpdateUI() {
+            const userEmail = localStorage.getItem('loggedInEmail');
+            const userRole = localStorage.getItem('userType');
+
+            const navHtml = `
+                <a href="index.html" class="text-gray-300 hover:text-gold transition-colors">Home</a>
+                <a href="about-us.html" class="text-gray-300 hover:text-gold transition-colors">About Us</a>
+                <a href="runners.html" class="text-gray-300 hover:text-gold transition-colors">Runners</a>
+                <a href="Post-errands.html" class="bg-gold text-maroon px-4 py-1.5 rounded-full font-bold hover:bg-white transition-colors">Post Errand</a>
+            `;
+
+            if (userEmail && userRole) {
+                const profilePage = userRole === 'runner' ? 'runners-profile.html' : 'client-profile.html';
+                const displayName = userEmail.split('@')[0];
+                desktopNav.innerHTML = navHtml;
+                desktopAuthButtons.innerHTML = `
+                    <div class="dropdown">
+                        <button class="flex items-center text-white space-x-2 p-2 rounded-full hover:bg-maroon-dark">
+                            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="w-8 h-8 rounded-full border-2 border-white"/>
+                            <span class="text-sm">${displayName}</span>
+                        </button>
+                        <div class="dropdown-content">
+                            <a href="${profilePage}">My Profile</a>
+                            <button id="logout-btn">Log Out</button>
+                        </div>
+                    </div>`;
+                mobileMenuNav.innerHTML = `<div class="flex flex-col space-y-3 p-6"><a href="index.html" class="text-white">Home</a><a href="about-us.html" class="text-white">About Us</a><a href="runners.html" class="text-white">Browse Runners</a><a href="Post-errands.html" class="text-gold font-bold">Post Errand</a><hr class="border-maroon-light"><a href="${profilePage}" class="bg-gold text-maroon p-2 rounded-full text-center">My Profile</a><button id="logout-btn-mobile" class="bg-white text-maroon p-2 rounded-full">Log Out</button></div>`;
+                document.getElementById('logout-btn').addEventListener('click', customLogout);
+                document.getElementById('logout-btn-mobile').addEventListener('click', customLogout);
+            } else {
+                desktopNav.innerHTML = navHtml;
+                desktopAuthButtons.innerHTML = `<a href="login.html" class="bg-gold text-maroon px-6 py-2 rounded-full hover:bg-white transition">Login</a>`;
+                mobileMenuNav.innerHTML = `<div class="flex flex-col space-y-3 p-6"><a href="index.html" class="text-white">Home</a><a href="about-us.html" class="text-white">About Us</a><a href="runners.html" class="text-white">Browse Runners</a><a href="Post-errands.html" class="text-gold font-bold">Post Errand</a><hr class="border-maroon-light"><a href="login.html" class="bg-gold text-maroon p-2 rounded-full text-center">Login</a></div>`;
+            }
+        }
+
+        function customLogout() {
+            localStorage.removeItem('loggedInEmail');
+            localStorage.removeItem('userType');
+            window.location.href = "index.html"; 
+        }
+
+        const btn = document.getElementById('mobile-menu-button');
+        const menu = document.getElementById('mobile-menu');
+        if(btn && menu) {
+            btn.addEventListener('click', () => { menu.classList.toggle('active'); btn.classList.toggle('active'); });
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('is-visible'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.animated-item').forEach(el => observer.observe(el));
+
+        checkLoginStatusAndUpdateUI();
+    });
+  </script>
+
+</body></html>
+    
