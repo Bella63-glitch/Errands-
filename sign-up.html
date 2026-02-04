@@ -3,67 +3,164 @@
  <head> 
   <meta charset="UTF-8"> 
   <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-  <title>Create Account - Sign Up</title> 
+  <title>Create Account | Run Me An Errand</title> 
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script> 
   <style>
     :root { --maroon: #7B1E3A; --gold: #FFD700; }
+    body { font-family: 'Inter', sans-serif; background-color: #f9f9f9; }
     .bg-maroon { background-color: var(--maroon); }
-    .text-gold { color: var(--gold); }
-    .bg-maroon-dark { background-color: #66182f; }
+    .text-maroon { color: var(--maroon); }
+    
+    .input-style {
+        width: 100%; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; outline: none; transition: all 0.3s;
+    }
+    .input-style:focus { border-color: var(--maroon); box-shadow: 0 0 0 2px rgba(123, 30, 58, 0.1); }
+    
+    .label-style { display: block; font-weight: 700; font-size: 11px; text-transform: uppercase; color: #64748b; margin-bottom: 6px; margin-left: 4px; letter-spacing: 0.05em; }
+
     .popup {
-      position: fixed; top: 20px; right: 20px;
-      padding: 15px; border-radius: 5px;
-      display: none; color: white; font-weight: bold; z-index: 1000;
+      position: fixed; top: 20px; right: 20px; padding: 20px; border-radius: 15px;
+      display: none; color: white; font-weight: bold; z-index: 1000; box-shadow: 0 10px 15px rgba(0,0,0,0.1);
     }
-    .popup.success { background: green; }
-    .popup.error { background: red; }
-    /* Spinner animation */
-    .animate-spin {
-        animation: spin 1s linear infinite;
+    .popup.success { background: var(--maroon); border: 2px solid var(--gold); }
+    .popup.error { background: #ef4444; }
+    
+    .animate-spin { animation: spin 1s linear infinite; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .hidden { display: none; }
+
+    .errand-grid label {
+        display: flex; align-items: center; padding: 10px; background: white; border-radius: 12px; border: 1px solid #f0f0f0; cursor: pointer; transition: 0.2s;
     }
-    @keyframes spin {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
+    .errand-grid label:hover { border-color: var(--maroon); background: #fff9fa; }
+    .errand-grid input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--maroon); margin-right: 10px; }
   </style> 
  </head> 
- <body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col"> 
-  <header class="bg-maroon shadow-lg sticky top-0 z-50"> 
-   <div class="max-w-7xl mx-auto flex justify-between items-center py-5 px-6"> <a href="/" class="flex items-center space-x-2"> <img src="https://i.postimg.cc/d1z9KLkL/ei-1752053865516-removebg-preview.png" alt="Logo" class="h-20 w-auto"> <h1 class="text-3xl font-bold text-white hover:text-gold">Run Me An Errand</h1> </a> 
+ <body> 
+  <header class="bg-maroon shadow-md sticky top-0 z-50"> 
+   <div class="max-w-7xl mx-auto flex justify-between items-center py-4 px-6"> 
+    <a href="index.html" class="flex items-center space-x-2"> 
+        <img src="https://i.postimg.cc/d1z9KLkL/ei-1752053865516-removebg-preview.png" alt="Logo" class="h-12 w-auto"> 
+        <h1 class="text-xl font-black text-white uppercase tracking-tighter">Run Me An Errand</h1> 
+    </a> 
    </div> 
   </header> 
-  <main class="flex-grow flex justify-center items-center p-4"> 
-   <div class="signup-container w-full max-w-lg bg-white p-8 rounded-xl shadow-md my-8"> 
-    <h2 class="text-3xl text-center font-bold text-maroon mb-6">Sign Up</h2> 
-    <form id="signupForm"> <label class="block font-semibold text-maroon mb-2">Account Type</label> <select id="accountType" class="w-full border rounded-md py-2 px-3 mb-4"> <option value="user">User (Free)</option> <option value="runner">Runner (KES 100/month)</option> </select> <label class="block font-semibold text-maroon mb-2">Full Name</label> 
-     <input id="fullName" class="w-full border rounded-md py-2 px-3 mb-4" required> <label class="block font-semibold text-maroon mb-2">Email</label> 
-     <input type="email" id="email" class="w-full border rounded-md py-2 px-3 mb-4" required> <label class="block font-semibold text-maroon mb-2">Phone</label> 
-     <input id="phone" class="w-full border rounded-md py-2 px-3 mb-4" required> <label class="block font-semibold text-maroon mb-2">Password</label> 
-     <input type="password" id="password" class="w-full border rounded-md py-2 px-3 mb-4" required> <label class="block font-semibold text-maroon mb-2">Location</label> 
-     <input id="location" class="w-full border rounded-md py-2 px-3 mb-4" required> 
-     <div id="runnerFields" style="display:none;"> <label class="block font-semibold text-maroon mb-2">About Me</label> <textarea id="about" class="w-full border rounded-md py-2 px-3 mb-4"></textarea> <label class="block font-semibold text-maroon mb-2">Experience</label> <textarea id="experience" class="w-full border rounded-md py-2 px-3 mb-4"></textarea> <label class="block font-semibold text-maroon mb-2">Availability</label> 
-      <input id="availability" class="w-full border rounded-md py-2 px-3 mb-4"> <label class="block font-semibold text-maroon mb-2">ID Number</label> 
-      <input id="idNumber" class="w-full border rounded-md py-2 px-3 mb-4"> <label class="block font-semibold text-maroon mb-2">Upload Profile Picture</label> 
-      <input type="file" id="profilePicture" accept="image/*" class="mb-4"> 
-      <div class="p-3 border border-gray-300 rounded-lg bg-gray-50 mb-3"> 
-       <p class="text-sm text-gray-700"> Please upload a picture of your ID. This is strictly for **Runner verification** to ensure the safety and trust of our service. Your ID information will be kept confidential and secure. </p> 
-      </div> <label class="block font-semibold text-maroon mb-2">Upload ID Picture</label> 
-      <input type="file" id="idPicture" accept="image/*" class="mb-4"> 
-     </div> <button type="submit" id="signupButton" class="w-full bg-maroon text-gold font-bold py-2 px-4 rounded-md hover:bg-maroon-dark mt-6 flex justify-center items-center"> <span id="buttonText">Sign Up</span> <span id="loadingIndicator" class="hidden ml-2"> 
-       <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-gold" xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24"> <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle> <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path> 
-       </svg> </span> </button> 
-     <div id="paymentInstructions" class="mt-6 p-4 border border-green-300 rounded-lg bg-green-50" style="display:none;"> 
-      <h3 class="text-xl font-bold text-maroon mb-3">Runner Subscription Payment</h3> 
-      <p class="text-gray-700 mb-4"> To activate your Runner account and begin earning, please pay the monthly fee of **KES 100**. </p> 
-      <p class="font-semibold text-gray-800">Payment Method (M-Pesa):</p> 
-      <p class="text-lg font-mono text-green-700 mb-4"> <span class="font-bold">Pochi La Biashara:</span> 0115815194 </p> 
-      <p class="text-gray-700"> **Action Required:** After making the payment, please forward the confirmation details (e.g., M-Pesa message) to our verification number: **0797046378**. Your account will be activated shortly after verification. </p> 
+
+  <main class="min-h-screen flex justify-center items-center p-6"> 
+   <div id="formContainer" class="w-full max-w-2xl bg-white p-8 md:p-12 rounded-3xl shadow-xl border border-gray-100"> 
+    <h2 class="text-3xl text-center font-black text-maroon mb-2">Create Account</h2> 
+    <p class="text-center text-gray-400 text-sm mb-10">Sign up as a user or a professional runner.</p>
+
+    <form id="signupForm"> 
+     <label class="label-style">Account Type</label> 
+     <select id="accountType" class="input-style font-bold text-maroon"> 
+        <option value="user">I want to hire a Runner (User)</option> 
+        <option value="runner">I want to work as a Runner (KES 100/mo)</option> 
+     </select> 
+
+     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">
+        <div>
+            <label class="label-style">Full Name</label> 
+            <input id="fullName" class="input-style" placeholder="John Doe" required> 
+        </div>
+        <div>
+            <label class="label-style">Phone Number</label> 
+            <input id="phone" class="input-style" placeholder="0712345678" required> 
+        </div>
+     </div>
+
+     <label class="label-style">Email Address</label> 
+     <input type="email" id="email" class="input-style" placeholder="email@example.com" required> 
+     
+     <label class="label-style">Password</label> 
+     <input type="password" id="password" class="input-style" placeholder="••••••••" required> 
+
+     <label class="label-style">Your Base Location</label> 
+     <input id="location" class="input-style" placeholder="e.g. Westlands, CBD, Mombasa Road" required> 
+
+     <div id="runnerFields" class="hidden border-t border-gray-100 pt-6 mt-4"> 
+        <label class="label-style">Errands You Can Perform (Select all that apply)</label>
+        <div class="errand-grid grid grid-cols-1 md:grid-cols-2 gap-2 mb-6 bg-gray-50 p-4 rounded-2xl">
+            <label><input type="checkbox" name="errandType" value="Shop Verification"> <span class="text-xs font-bold">Shop Verification</span></label>
+            <label><input type="checkbox" name="errandType" value="Document Pick-up"> <span class="text-xs font-bold">Document Pick-up</span></label>
+            <label><input type="checkbox" name="errandType" value="General Shopping"> <span class="text-xs font-bold">General Shopping</span></label>
+            <label><input type="checkbox" name="errandType" value="Beauty & Cosmetics Shopping"> <span class="text-xs font-bold">Beauty & Cosmetics</span></label>
+            <label><input type="checkbox" name="errandType" value="Gikomba Personal Sourcing"> <span class="text-xs font-bold">Gikomba Sourcing/Escort</span></label>
+            <label><input type="checkbox" name="errandType" value="House Hunting"> <span class="text-xs font-bold">House Hunting</span></label>
+            <label><input type="checkbox" name="errandType" value="Grocery (Mama Mboga)"> <span class="text-xs font-bold">Grocery (Mama Mboga)</span></label>
+            <label><input type="checkbox" name="errandType" value="Laundry Pick-up/Drop"> <span class="text-xs font-bold">Laundry & Dry Cleaning</span></label>
+            <label><input type="checkbox" name="errandType" value="Parcel/Gift Delivery"> <span class="text-xs font-bold">Parcel & Gift Delivery</span></label>
+            <label><input type="checkbox" name="errandType" value="Event/Party Supplies"> <span class="text-xs font-bold">Event/Party Supplies</span></label>
+            <label><input type="checkbox" name="errandType" value="Pharmacy/Medication"> <span class="text-xs font-bold">Pharmacy Pickup</span></label>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">
+            <div>
+                <label class="label-style">Transport Mode</label> 
+                <select id="transportMode" class="input-style font-medium">
+                    <option value="On Foot">On Foot</option>
+                    <option value="Bicycle">Bicycle</option>
+                    <option value="Motorcycle" selected>Motorcycle</option>
+                    <option value="Car / Van">Car / Van</option>
+                </select>
+            </div>
+            <div>
+                <label class="label-style">Starting Rate (KES)</label> 
+                <input type="number" id="baseRate" class="input-style" value="150">
+            </div>
+        </div>
+
+        <label class="label-style">Professional Bio</label> 
+        <textarea id="about" class="input-style h-24" placeholder="Briefly describe your reliability..."></textarea> 
+        
+        <label class="label-style">ID Number</label> 
+        <input id="idNumber" class="input-style" placeholder="National ID Number"> 
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+            <div>
+                <label class="label-style">Profile Picture</label>
+                <input type="file" id="profilePicture" accept="image/*" class="text-xs">
+            </div>
+            <div>
+                <label class="label-style">ID Copy</label>
+                <input type="file" id="idPicture" accept="image/*" class="text-xs">
+            </div>
+        </div>
+        <p class="text-[10px] text-gray-400 mb-6 italic">* ID copies are for verification only to ensure platform safety.</p>
      </div> 
+
+     <div class="flex items-center space-x-3 mb-6 p-2">
+        <input type="checkbox" id="terms" class="w-4 h-4 accent-maroon" required>
+        <label for="terms" class="text-xs text-gray-600 font-medium">
+            I agree to the <a href="javascript:void(0)" onclick="toggleTerms()" class="text-maroon underline">Terms and Conditions</a> and Privacy Policy.
+        </label>
+     </div>
+
+     <button type="submit" id="signupButton" class="w-full bg-maroon text-white font-black py-4 rounded-2xl hover:bg-black transition-all shadow-lg flex justify-center items-center uppercase tracking-widest text-sm"> 
+        <span id="buttonText">Create Account</span> 
+        <span id="loadingIndicator" class="hidden ml-3"> 
+            <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"> 
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle> 
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path> 
+            </svg> 
+        </span> 
+     </button> 
     </form> 
    </div> 
-  </main> 
+  </main>
+
+  <div id="termsModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black bg-opacity-50">
+    <div class="bg-white w-full max-w-lg rounded-3xl p-8 max-h-[80vh] overflow-y-auto shadow-2xl">
+        <h3 id="termsTitle" class="text-2xl font-black text-maroon mb-4 uppercase">Terms & Conditions</h3>
+        <div id="termsContent" class="text-sm text-gray-600 space-y-4 font-medium">
+            </div>
+        <button onclick="toggleTerms()" class="mt-8 w-full bg-maroon text-white font-black py-3 rounded-xl uppercase tracking-widest text-xs">Close</button>
+    </div>
+  </div>
+
   <div class="popup" id="popup"></div> 
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
   <script>
     const SUPABASE_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
@@ -72,26 +169,44 @@
 
     const accountTypeSelect = document.getElementById("accountType");
     const runnerFields = document.getElementById("runnerFields");
-    const paymentInstructions = document.getElementById("paymentInstructions");
-    const popup = document.getElementById("popup");
     const signupButton = document.getElementById("signupButton");
     const buttonText = document.getElementById("buttonText");
     const loadingIndicator = document.getElementById("loadingIndicator");
 
-    // Toggle Runner fields and Payment instructions visibility
+    const termsContent = {
+        user: `
+            <p>1. <strong>Direct Hiring:</strong> You are hiring runners directly. "Run Me An Errand" provides a directory and is not responsible for the performance of the runner.</p>
+            <p>2. <strong>Payment:</strong> All errand fees are negotiated and paid directly to the runner. Do not send payment until the service is verified.</p>
+            <p>3. <strong>Safety First:</strong> For new sellers, always use our "Shop Verification" service before making large purchases.</p>
+            <p>4. <strong>Prohibited Conduct:</strong> Users found soliciting illegal services or harassing runners will be permanently banned.</p>
+        `,
+        runner: `
+            <p>1. <strong>Professionalism:</strong> Runners must be punctual and honest. Fraudulent activity leads to immediate account termination.</p>
+            <p>2. <strong>Listing Fee:</strong> A monthly KES 100 fee is required to remain active on the platform. This fee is non-refundable.</p>
+            <p>3. <strong>Verification:</strong> You must provide a valid National ID copy. Your profile will only be visible once our team verifies your documents.</p>
+            <p>4. <strong>Illegal Items:</strong> You are strictly prohibited from transporting illegal substances, weapons, or unauthorized drugs.</p>
+        `
+    };
+
     accountTypeSelect.addEventListener("change", () => {
       const isRunner = accountTypeSelect.value === "runner";
-      runnerFields.style.display = isRunner ? "block" : "none";
-      paymentInstructions.style.display = isRunner ? "block" : "none";
+      runnerFields.classList.toggle("hidden", !isRunner);
     });
-    // Initial call to set state correctly on load
-    accountTypeSelect.dispatchEvent(new Event('change'));
+
+    function toggleTerms() {
+        const modal = document.getElementById('termsModal');
+        const type = accountTypeSelect.value;
+        document.getElementById('termsTitle').innerText = `${type} Terms & Conditions`;
+        document.getElementById('termsContent').innerHTML = termsContent[type];
+        modal.classList.toggle('hidden');
+    }
 
     function showPopup(message, type) {
+      const popup = document.getElementById("popup");
       popup.textContent = message;
       popup.className = "popup " + type;
       popup.style.display = "block";
-      setTimeout(() => popup.style.display = "none", 4000);
+      setTimeout(() => popup.style.display = "none", 5000);
     }
 
     async function uploadFile(file, bucket) {
@@ -103,134 +218,80 @@
       return data.publicUrl;
     }
 
-    // Function to set the loading state of the button
-    function setLoading(isLoading) {
-        signupButton.disabled = isLoading;
-        if (isLoading) {
-            buttonText.textContent = "Signing Up...";
-            loadingIndicator.classList.remove("hidden");
-        } else {
-            buttonText.textContent = "Sign Up";
-            loadingIndicator.classList.add("hidden");
-        }
-    }
-
-    /**
-     * Checks if the given email exists in either the 'users' or 'runners' table.
-     * @param {string} email The email address to check.
-     * @returns {Promise<boolean>} True if the email exists in any table, false otherwise.
-     */
-    async function checkEmailExists(email) {
-        // Check 'users' table
-        const { data: userData, error: userError } = await supabaseClient
-            .from('users')
-            .select('email')
-            .eq('email', email)
-            .limit(1);
-
-        if (userError) throw userError;
-        if (userData && userData.length > 0) return true;
-
-        // Check 'runners' table
-        const { data: runnerData, error: runnerError } = await supabaseClient
-            .from('runners')
-            .select('email')
-            .eq('email', email)
-            .limit(1);
-
-        if (runnerError) throw runnerError;
-        if (runnerData && runnerData.length > 0) return true;
-        
-        return false;
-    }
-
-
     document.getElementById("signupForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-      setLoading(true); // Start loading state
+      signupButton.disabled = true;
+      buttonText.textContent = "Processing...";
+      loadingIndicator.classList.remove("hidden");
 
       const accountType = accountTypeSelect.value;
-      const fullName = document.getElementById("fullName").value.trim();
       const email = document.getElementById("email").value.trim();
-      const phone = document.getElementById("phone").value.trim();
       const password = document.getElementById("password").value.trim();
+      const fullName = document.getElementById("fullName").value.trim();
+      const phone = document.getElementById("phone").value.trim();
       const location = document.getElementById("location").value.trim();
 
-      if (!fullName || !email || !phone || !password || !location) {
-        showPopup("Please fill all required fields", "error");
-        setLoading(false); // Stop loading on validation error
-        return;
-      }
-      
       try {
-        // 🚨 CRITICAL: Check for existing email in both tables before proceeding
-        const emailExists = await checkEmailExists(email);
-        if (emailExists) {
-            showPopup("This email address is already registered.", "error");
-            setLoading(false);
-            return;
-        }
-
-        // Hashing for demonstration purposes, though server-side is preferred
         const hashedPassword = dcodeIO.bcrypt.hashSync(password, 10);
 
         if (accountType === "user") {
-          const { error } = await supabaseClient
-            .from("users")
-            .insert([{ full_name: fullName, email, phone, location, password: hashedPassword }]);
-          
+          const { error } = await supabaseClient.from("users").insert([{ 
+              full_name: fullName, email, phone, location, password: hashedPassword 
+          }]);
           if (error) throw error;
-          showPopup("User account created successfully!", "success");
-
-        } else if (accountType === "runner") {
-          const about = document.getElementById("about").value.trim();
-          const experience = document.getElementById("experience").value.trim();
-          const availability = document.getElementById("availability").value.trim();
-          const idNumber = document.getElementById("idNumber").value.trim();
+          showPopup("User account created! Redirecting...", "success");
+          setTimeout(() => window.location.href = "login.html", 3000);
+        } 
+        else {
           const profilePicture = document.getElementById("profilePicture").files[0];
           const idPicture = document.getElementById("idPicture").files[0];
-          
-          // Basic validation for runner-specific fields
-          if (!about || !experience || !availability || !idNumber || !profilePicture || !idPicture) {
-            showPopup("Please fill all required fields for a Runner account and upload both pictures.", "error");
-            setLoading(false);
-            return;
-          }
-          
-          // File uploads can take the most time - this is why a loading indicator is important
+          const checkedBoxes = document.querySelectorAll('input[name="errandType"]:checked');
+          const selectedCategories = Array.from(checkedBoxes).map(cb => cb.value).join(", ");
+
+          if (selectedCategories.length === 0) throw new Error("Select at least one errand.");
+          if (!profilePicture || !idPicture) throw new Error("Upload Profile and ID pictures.");
+
           const profilePicUrl = await uploadFile(profilePicture, "profiles");
           const idPicUrl = await uploadFile(idPicture, "ids");
 
-          const { error } = await supabaseClient
-            .from("runners")
-            .insert([{
-              name: fullName,
-              email,
-              phone,
-              password: hashedPassword,
-              location,
-              about,
-              experience,
-              availability,
-              idnumber: idNumber,
-              profilepicture: profilePicUrl,
-              idimage: idPicUrl,
-              subscription_status: "inactive"
-            }]);
+          const { error } = await supabaseClient.from("runners").insert([{
+              name: fullName, email, phone, password: hashedPassword, location,
+              about: document.getElementById("about").value.trim(),
+              category: selectedCategories,
+              transport_mode: document.getElementById("transportMode").value,
+              base_rate: parseInt(document.getElementById("baseRate").value),
+              idnumber: document.getElementById("idNumber").value.trim(),
+              profilepicture: profilePicUrl, idimage: idPicUrl,
+              subscription_status: "inactive", id_verified: false
+          }]);
           
           if (error) throw error;
+          showPopup("Account Created! Finalize verification below.", "success");
 
-          showPopup("Runner account created successfully! Please complete the payment steps to activate your account.", "success");
+          document.getElementById("formContainer").innerHTML = `
+            <div class="text-center py-4">
+                <div class="w-20 h-20 bg-maroon text-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <h3 class="text-2xl font-black text-maroon mb-2">Registration Received!</h3>
+                <p class="text-gray-500 font-bold mb-8 italic text-sm">Your account is currently <span class="text-maroon">PENDING VERIFICATION</span>.</p>
+                <div class="bg-gray-50 p-6 rounded-2xl text-left mb-8 border border-gray-100">
+                    <p class="text-xs font-black text-gray-400 uppercase tracking-widest mb-4 text-center">Final Steps to Activate</p>
+                    <div class="space-y-4 text-sm text-gray-700">
+                        <p>1. Pay <b>KES 100</b> monthly fee to <b>0115 815 194</b> (Pochi).</p>
+                        <p>2. Forward M-Pesa message to <b>0797046378</b>.</p>
+                        <p>3. Wait for ID verification (usually within 2 hours).</p>
+                    </div>
+                </div>
+                <a href="login.html" class="block w-full bg-maroon text-white font-black py-4 rounded-xl uppercase tracking-widest text-sm">Finish & Go to Login</a>
+            </div>
+          `;
         }
-
-        // Navigate to login after successful sign up
-        setTimeout(() => window.location.href = "login.html", 4000); 
-
       } catch (err) {
-        console.error("Signup error:", err);
-        showPopup("Signup failed: " + err.message, "error");
-      } finally {
-        setLoading(false); // Stop loading state regardless of success or failure
+        showPopup(err.message, "error");
+        signupButton.disabled = false;
+        buttonText.textContent = "Create Account";
+        loadingIndicator.classList.add("hidden");
       }
     });
   </script> 
@@ -247,4 +308,3 @@
 
 
 
-    
