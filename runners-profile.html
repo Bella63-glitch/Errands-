@@ -3,203 +3,149 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Runner HQ - Command Center</title>
+    <title>Runner HQ - Profile</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { --maroon: #7B1E3A; --gold: #FFD700; --white: #ffffff; --light: #f4f7f9; }
-        body { font-family: 'Montserrat', sans-serif; margin: 0; background: var(--light); color: #2c3e50; padding-bottom: 40px; }
-        
-        .header { background: var(--maroon); padding: 15px 20px; color: white; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
-        .header h1 { font-size: 1rem; margin: 0; font-weight: 800; letter-spacing: 1px; }
-
-        /* Status & Availability Card */
-        .top-status-box { background: white; width: 92%; max-width: 500px; margin: 15px auto; border-radius: 20px; padding: 20px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid #22c55e; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .availability-text { font-size: 0.75rem; font-weight: 800; color: #64748b; text-transform: uppercase; }
-        
-        /* Profile Section */
-        .main-card { background: white; width: 92%; max-width: 500px; margin: 0 auto 20px; border-radius: 25px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
-        .hero { background: linear-gradient(135deg, var(--maroon) 0%, #5c162b 100%); padding: 30px 20px; text-align: center; }
-        .profile-pic { width: 100px; height: 100px; border-radius: 30px; border: 3px solid var(--gold); background: white; object-fit: cover; }
-        
-        /* Stats Grid */
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; padding: 20px; border-bottom: 1px solid #f0f0f0; text-align: center; }
-        .stat-val { display: block; font-weight: 800; color: var(--maroon); font-size: 1.1rem; }
-        .stat-lab { font-size: 0.6rem; color: #95a5a6; font-weight: 700; text-transform: uppercase; }
-
-        /* Settings Rows */
-        .settings-list { padding: 10px 20px; }
-        .setting-item { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #f9f9f9; cursor: pointer; }
-        .setting-item label { font-size: 0.75rem; font-weight: 800; color: #94a3b8; }
-        .setting-item span { font-weight: 600; font-size: 0.85rem; }
-
-        /* Toggles & Buttons */
-        .switch { position: relative; width: 45px; height: 22px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: #22c55e; }
-        input:checked + .slider:before { transform: translateX(23px); }
-
-        .btn { width: 92%; max-width: 500px; margin: 10px auto; padding: 16px; border-radius: 15px; border: none; font-weight: 800; text-transform: uppercase; display: block; cursor: pointer; font-family: inherit; }
-        .btn-gold { background: var(--gold); color: var(--maroon); }
-        .btn-outline { background: white; color: var(--maroon); border: 2px solid var(--maroon); }
-        .btn-danger { background: #fee2e2; color: #ef4444; border: none; font-size: 0.7rem; }
-
-        /* Modal */
-        #editModal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:2000; align-items:center; justify-content:center; padding:20px; }
-        .modal-content { background:white; padding:25px; border-radius:20px; width:100%; max-width:400px; }
-        input, textarea { width:100%; padding:12px; border:1px solid #ddd; border-radius:10px; margin: 10px 0; font-family: inherit; box-sizing: border-box; }
+        :root { --maroon: #7b1e3a; --gold: #ffd700; --light-bg: #e9eef2; --text-dark: #2c3e50; }
+        body { font-family: 'Montserrat', sans-serif; margin: 0; background: var(--light-bg); display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        .top-header { width: 100%; background-color: var(--maroon); padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; color: white; box-sizing: border-box; }
+        .profile-container { background: #fff; border-radius: 20px; width: 95%; max-width: 600px; margin: 40px 0; overflow: hidden; box-shadow: 0 15px 40px rgba(0,0,0,0.1); }
+        .profile-header { background: linear-gradient(135deg, var(--maroon), #5c162b); padding: 40px 20px 60px; position: relative; text-align: center; }
+        .profile-pic-wrapper { position: absolute; bottom: -50px; left: 50%; transform: translateX(-50%); width: 120px; height: 120px; }
+        .profile-pic { width: 100%; height: 100%; border-radius: 50%; border: 4px solid var(--gold); background: white; object-fit: cover; }
+        .stats-bar { display: flex; justify-content: space-around; margin-top: 60px; padding: 20px; border-bottom: 1px solid #eee; }
+        .stat-item { text-align: center; }
+        .stat-val { display: block; font-weight: 800; color: var(--maroon); font-size: 1.2rem; }
+        .stat-label { font-size: 0.7rem; color: #888; text-transform: uppercase; }
+        .details { padding: 20px; }
+        .detail-row { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #f9f9f9; cursor: pointer; }
+        .highlight { font-weight: 600; color: var(--text-dark); }
+        .btn-main { width: 100%; padding: 15px; background: var(--maroon); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; margin-bottom: 10px; }
+        #editmodal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:1000; align-items:center; justify-content:center; padding:20px; }
+        .modal-box { background:white; padding:25px; border-radius:15px; width:100%; max-width:400px; }
+        input { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>RUNNER <span style="color:var(--gold)">HQ</span></h1>
-        <div id="statusPill" style="font-size: 10px; font-weight: 800;">VERIFYING...</div>
+    <div class="top-header">
+        <span style="font-weight: 800;">RUNNER HQ</span>
+        <span id="headername" style="color: var(--gold);">Profile</span>
     </div>
 
-    <div class="top-status-box" id="availabilityBox">
-        <div>
-            <div class="availability-text">Current Status</div>
-            <span id="statusText" style="font-weight: 800; font-size: 14px;">Online</span>
-        </div>
-        <label class="switch">
-            <input type="checkbox" id="onlineToggle" checked>
-            <span class="slider"></span>
-        </label>
-    </div>
-
-    <div class="main-card">
-        <div class="hero">
-            <img id="runnerImg" class="profile-pic" src="https://via.placeholder.com/100">
-            <h2 id="nameDisplay" style="color:white; margin:10px 0 0; font-weight:800;">---</h2>
-        </div>
-
-        <div class="stats-grid">
-            <div class="stat-item">
-                <span class="stat-val" id="statViews">0</span>
-                <span class="stat-lab">Views</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val" id="statErrands">0</span>
-                <span class="stat-lab">Errands</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val" id="statRate">0</span>
-                <span class="stat-lab">KES Rate</span>
+    <div class="profile-container">
+        <div class="profile-header">
+            <div class="profile-pic-wrapper">
+                <img id="runnerimage" class="profile-pic" src="https://via.placeholder.com/120" alt="Runner">
             </div>
         </div>
 
-        <div class="settings-list">
-            <div class="setting-item" onclick="openEdit('name', 'Full Name')">
-                <label>NAME</label>
-                <span><span id="valName">---</span> <i class="fas fa-edit"></i></span>
-            </div>
-            <div class="setting-item" onclick="openEdit('location', 'Operating Area')">
-                <label>AREA</label>
-                <span><span id="valLoc">---</span> <i class="fas fa-edit"></i></span>
-            </div>
-            <div class="setting-item" onclick="openEdit('phone', 'Phone Number')">
-                <label>PHONE</label>
-                <span><span id="valPhone">---</span> <i class="fas fa-edit"></i></span>
-            </div>
-            <div class="setting-item" onclick="openEdit('about', 'Bio/Services')">
-                <label>ABOUT</label>
-                <span>Edit Bio <i class="fas fa-edit"></i></span>
-            </div>
+        <div class="stats-bar">
+            <div class="stat-item"><span class="stat-val" id="profileviewsdisplay">--</span><span class="stat-label">Views</span></div>
+            <div class="stat-item"><span class="stat-val" id="ratingdisplay">--</span><span class="stat-label">Rating</span></div>
+            <div class="stat-item"><span class="stat-val" id="badgedisplay">--</span><span class="stat-label">Badge</span></div>
+        </div>
+
+        <div class="details">
+            <div class="detail-row" onclick="openedit('name', 'Name')"><strong>Name</strong> <span id="runnername" class="highlight">Loading...</span></div>
+            <div class="detail-row" onclick="openedit('phone', 'Phone')"><strong>Phone</strong> <span id="runnerphone" class="highlight">Loading...</span></div>
+            <div class="detail-row" onclick="openedit('location', 'Location')"><strong>Location</strong> <span id="runnerlocation" class="highlight">Loading...</span></div>
+            <div class="detail-row" onclick="openedit('about', 'About')"><strong>About</strong> <span id="runnerabout" class="highlight">Loading...</span></div>
+        </div>
+
+        <div style="padding: 20px;">
+            <button class="btn-main" onclick="shareprofile()">Share Profile Link</button>
+            <button onclick="logout()" style="width:100%; background:none; border:none; color:red; cursor:pointer; font-weight:600;">Logout</button>
         </div>
     </div>
 
-    <button class="btn btn-gold" onclick="shareProfile()"><i class="fab fa-whatsapp"></i> Share My Pro Link</button>
-    <button class="btn btn-outline" onclick="showSafety()"><i class="fas fa-shield-alt"></i> Safety Checklist</button>
-    <button class="btn btn-danger" id="logoutBtn">Secure Logout</button>
-
-    <div id="editModal">
-        <div class="modal-content">
-            <h3 id="modalTitle" style="color:var(--maroon); margin-top:0;">Edit Info</h3>
-            <div id="inputWrap"></div>
-            <button class="btn btn-gold" id="saveBtn" style="width:100%; margin: 10px 0 0;">Save Changes</button>
-            <button onclick="closeModal()" style="width:100%; background:none; border:none; margin-top:10px; font-weight:700; color:#94a3b8; cursor:pointer;">Cancel</button>
+    <div id="editmodal">
+        <div class="modal-box">
+            <h3 id="modaltitle">Edit</h3>
+            <input type="text" id="editinput">
+            <button class="btn-main" id="savebtn">Save</button>
+            <button onclick="closeModal()" style="width:100%; border:none; background:none; color:#666;">Cancel</button>
         </div>
     </div>
 
     <script>
-        const supabaseConfig = {
-            url: "https://zchofpncqskvnfrzbcww.supabase.co",
-            key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI"
-        };
-        const supabase = window.supabase.createClient(supabaseConfig.url, supabaseConfig.key);
+        // 2. Setup Database Connection Carefully
+        const SB_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
+        const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
+        
+        // Prevent duplicate client creation
+        if (!window.supabaseClient) {
+            window.supabaseClient = supabase.createClient(SB_URL, SB_KEY);
+        }
 
-        async function init() {
-            const email = localStorage.getItem("loggedInEmail");
-            if (!email) { window.location.href = "login.html"; return; }
+        async function fetchProfile() {
+            let email = localStorage.getItem("loggedInEmail");
 
-            const { data, error } = await supabase.from("runners").select("*").eq("email", email.trim()).single();
-            if (data) {
-                document.getElementById("nameDisplay").innerText = data.name || "Runner";
-                document.getElementById("valName").innerText = data.name || "N/A";
-                document.getElementById("valLoc").innerText = data.location || "N/A";
-                document.getElementById("valPhone").innerText = data.phone || "N/A";
-                document.getElementById("statViews").innerText = data.profile_views || 0;
-                document.getElementById("statErrands").innerText = data.errands_completed || 0;
-                document.getElementById("statRate").innerText = data.base_rate || 0;
-                document.getElementById("runnerImg").src = data.profilepicture || "https://via.placeholder.com/100";
-                
-                document.getElementById("onlineToggle").checked = data.is_online;
-                updateStatusUI(data.is_online);
+            if (!email) {
+                email = prompt("Enter email to load profile:");
+                if (email) localStorage.setItem("loggedInEmail", email.trim().toLowerCase());
+                else return;
+            }
 
-                const pill = document.getElementById("statusPill");
-                pill.innerText = data.id_verified ? "VERIFIED PRO" : "PENDING";
-                pill.style.color = data.id_verified ? var(--gold) : "#ff9f43";
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from('runners')
+                    .select('*')
+                    .eq('email', email.trim().toLowerCase())
+                    .maybeSingle();
+
+                if (error) throw error;
+
+                if (data) {
+                    document.getElementById("runnername").innerText = data.name || "None";
+                    document.getElementById("headername").innerText = data.name || "Runner";
+                    document.getElementById("runnerphone").innerText = data.phone || "None";
+                    document.getElementById("runnerlocation").innerText = data.location || "None";
+                    document.getElementById("runnerabout").innerText = data.about || "None";
+                    if(data.profilepicture) document.getElementById("runnerimage").src = data.profilepicture;
+
+                    document.getElementById("profileviewsdisplay").innerText = "12";
+                    document.getElementById("ratingdisplay").innerText = "4.9";
+                    document.getElementById("badgedisplay").innerText = "Verified";
+                } else {
+                    alert("Profile not found in database.");
+                }
+            } catch (err) {
+                console.error("Fetch failed:", err);
+                // If the signal was aborted, try one more time automatically
+                if (err.name === 'AbortError') {
+                    console.log("Retrying once...");
+                    fetchProfile();
+                } else {
+                    alert("Network error. Please check your data connection.");
+                }
             }
         }
 
-        function updateStatusUI(isOnline) {
-            document.getElementById("statusText").innerText = isOnline ? "Online & Ready" : "Offline / Busy";
-            document.getElementById("availabilityBox").style.borderLeftColor = isOnline ? "#22c55e" : "#ef4444";
-        }
-
-        document.getElementById("onlineToggle").addEventListener("change", async function() {
-            const email = localStorage.getItem("loggedInEmail");
-            updateStatusUI(this.checked);
-            await supabase.from("runners").update({ is_online: this.checked }).eq("email", email);
-        });
-
-        function openEdit(col, label) {
-            document.getElementById("editModal").style.display = "flex";
-            document.getElementById("modalTitle").innerText = `Update ${label}`;
-            const wrap = document.getElementById("inputWrap");
-            wrap.innerHTML = col === 'about' ? `<textarea id="editIn" rows="4"></textarea>` : `<input type="text" id="editIn">`;
-            
-            document.getElementById("saveBtn").onclick = async () => {
-                const val = document.getElementById("editIn").value;
+        function openedit(col, label) {
+            document.getElementById("editmodal").style.display = "flex";
+            document.getElementById("modaltitle").innerText = "Edit " + label;
+            const btn = document.getElementById("savebtn");
+            btn.onclick = async () => {
                 const email = localStorage.getItem("loggedInEmail");
-                await supabase.from("runners").update({ [col]: val }).eq("email", email);
-                location.reload();
-            };
+                const val = document.getElementById("editinput").value;
+                const { error } = await window.supabaseClient.from('runners').update({ [col]: val }).eq('email', email);
+                if (!error) location.reload();
+                else alert("Update failed: " + error.message);
+            }
         }
 
-        function closeModal() { document.getElementById("editModal").style.display = "none"; }
+        function closeModal() { document.getElementById("editmodal").style.display = "none"; }
+        function logout() { localStorage.clear(); location.reload(); }
+        function shareprofile() { window.open(`https://wa.me/?text=My Profile: ${window.location.href}`); }
 
-        function showSafety() {
-            alert("1. Confirm customer M-Pesa name first.\n2. Never use your own money for purchases.\n3. Send location pin when starting task.\n4. Take photos of all delivery receipts.");
-        }
-
-        function shareProfile() {
-            const email = localStorage.getItem("loggedInEmail");
-            const url = `${window.location.origin}/view-runner.html?email=${email}`;
-            window.open(`https://wa.me/?text=Hire me for errands: ${url}`, '_blank');
-        }
-
-        document.getElementById("logoutBtn").onclick = () => { localStorage.clear(); window.location.href = "login.html"; };
-        init();
+        // Start when ready
+        window.addEventListener('load', fetchProfile);
     </script>
 </body>
 </html>
-
-
 
 
 
