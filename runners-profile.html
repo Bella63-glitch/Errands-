@@ -8,50 +8,44 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { --maroon: #7B1E3A; --gold: #FFD700; --white: #ffffff; --light: #f4f7f9; }
+        :root { --maroon: #7B1E3A; --gold: #FFD700; --white: #ffffff; --light: #f4f7f9; --green: #22c55e; }
         body { font-family: 'Montserrat', sans-serif; margin: 0; background: var(--light); color: #2c3e50; padding-bottom: 40px; }
         
         .header { background: var(--maroon); padding: 15px 20px; color: white; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
         .header h1 { font-size: 1rem; margin: 0; font-weight: 800; letter-spacing: 1px; }
 
-        /* Status & Availability Card */
-        .top-status-box { background: white; width: 92%; max-width: 500px; margin: 15px auto; border-radius: 20px; padding: 20px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid #22c55e; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: 0.3s; }
+        .top-status-box { background: white; width: 92%; max-width: 500px; margin: 15px auto; border-radius: 20px; padding: 20px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--green); box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: 0.3s; }
         .availability-text { font-size: 0.75rem; font-weight: 800; color: #64748b; text-transform: uppercase; }
         
-        /* Profile Section */
         .main-card { background: white; width: 92%; max-width: 500px; margin: 0 auto 20px; border-radius: 25px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
         .hero { background: linear-gradient(135deg, var(--maroon) 0%, #5c162b 100%); padding: 30px 20px; text-align: center; }
         .profile-pic { width: 100px; height: 100px; border-radius: 30px; border: 3px solid var(--gold); background: white; object-fit: cover; }
         
-        /* Stats Grid */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; padding: 20px; border-bottom: 1px solid #f0f0f0; text-align: center; }
         .stat-item { border-right: 1px solid #eee; }
         .stat-item:last-child { border-right: none; }
         .stat-val { display: block; font-weight: 800; color: var(--maroon); font-size: 1.1rem; }
         .stat-lab { font-size: 0.6rem; color: #95a5a6; font-weight: 700; text-transform: uppercase; }
 
-        /* Settings Rows */
         .settings-list { padding: 10px 20px; }
         .setting-item { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #f9f9f9; cursor: pointer; align-items: center; }
         .setting-item label { font-size: 0.75rem; font-weight: 800; color: #94a3b8; }
         .setting-item span { font-weight: 600; font-size: 0.85rem; color: #334155; }
         .setting-item i { color: #cbd5e1; margin-left: 8px; font-size: 0.8rem; }
 
-        /* Toggles & Buttons */
         .switch { position: relative; width: 45px; height: 22px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
         .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: #22c55e; }
+        input:checked + .slider { background-color: var(--green); }
         input:checked + .slider:before { transform: translateX(23px); }
 
-        .btn { width: 92%; max-width: 500px; margin: 10px auto; padding: 16px; border-radius: 15px; border: none; font-weight: 800; text-transform: uppercase; display: block; cursor: pointer; font-family: inherit; font-size: 0.85rem; }
-        .btn-gold { background: var(--gold); color: var(--maroon); transition: 0.2s; }
-        .btn-gold:active { transform: scale(0.98); }
+        .btn { width: 92%; max-width: 500px; margin: 10px auto; padding: 16px; border-radius: 15px; border: none; font-weight: 800; text-transform: uppercase; display: block; cursor: pointer; font-family: inherit; font-size: 0.85rem; text-align: center; text-decoration: none; }
+        .btn-gold { background: var(--gold); color: var(--maroon); }
         .btn-outline { background: white; color: var(--maroon); border: 2px solid var(--maroon); }
+        .btn-copy { background: #e2e8f0; color: #475569; padding: 10px; font-size: 0.7rem; }
         .btn-danger { background: #fee2e2; color: #ef4444; border: none; font-size: 0.7rem; margin-top: 20px; }
 
-        /* Modal */
         #editModal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:2000; align-items:center; justify-content:center; padding:20px; }
         .modal-content { background:white; padding:25px; border-radius:20px; width:100%; max-width:400px; box-sizing: border-box; }
         input, textarea { width:100%; padding:12px; border:1px solid #ddd; border-radius:10px; margin: 10px 0; font-family: inherit; box-sizing: border-box; font-size: 1rem; }
@@ -61,16 +55,16 @@
 
     <div class="header">
         <h1>RUNNER <span style="color:var(--gold)">HQ</span></h1>
-        <div id="statusPill" style="font-size: 10px; font-weight: 800;">VERIFYING...</div>
+        <div id="statusPill" style="font-size: 10px; font-weight: 800; color: #22c55e;">ACCOUNT ACTIVE</div>
     </div>
 
     <div class="top-status-box" id="availabilityBox">
         <div>
             <div class="availability-text">Current Status</div>
-            <span id="statusText" style="font-weight: 800; font-size: 14px;">Offline</span>
+            <span id="statusText" style="font-weight: 800; font-size: 14px;">Online & Ready</span>
         </div>
         <label class="switch">
-            <input type="checkbox" id="onlineToggle">
+            <input type="checkbox" id="onlineToggle" checked>
             <span class="slider"></span>
         </label>
     </div>
@@ -82,18 +76,9 @@
         </div>
 
         <div class="stats-grid">
-            <div class="stat-item">
-                <span class="stat-val" id="statViews">0</span>
-                <span class="stat-lab">Views</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val" id="statErrands">0</span>
-                <span class="stat-lab">Errands</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val" id="statRate">0</span>
-                <span class="stat-lab">KES Rate</span>
-            </div>
+            <div class="stat-item"><span class="stat-val" id="statViews">0</span><span class="stat-lab">Views</span></div>
+            <div class="stat-item"><span class="stat-val" id="statErrands">0</span><span class="stat-lab">Errands</span></div>
+            <div class="stat-item"><span class="stat-val" id="statRate">0</span><span class="stat-lab">KES Rate</span></div>
         </div>
 
         <div class="settings-list">
@@ -117,6 +102,7 @@
     </div>
 
     <button class="btn btn-gold" onclick="shareProfile()"><i class="fab fa-whatsapp"></i> Share My Pro Link</button>
+    <button class="btn btn-copy" onclick="copyProfileLink()"><i class="fas fa-link"></i> Copy Link to Clipboard</button>
     <button class="btn btn-outline" onclick="showSafety()"><i class="fas fa-shield-alt"></i> Safety Checklist</button>
     <button class="btn btn-danger" id="logoutBtn">Secure Logout</button>
 
@@ -130,7 +116,6 @@
     </div>
 
     <script>
-        // Use unique global client to avoid declaration errors
         if (!window.runnerClient) {
             const config = {
                 url: "https://zchofpncqskvnfrzbcww.supabase.co",
@@ -150,31 +135,30 @@
                     .eq("email", email.trim().toLowerCase())
                     .maybeSingle();
 
-                if (error) throw error;
-
                 if (data) {
                     document.getElementById("nameDisplay").innerText = data.name || "Runner";
-                    document.getElementById("valName").innerText = data.name || "N/A";
-                    document.getElementById("valLoc").innerText = data.location || "N/A";
-                    document.getElementById("valPhone").innerText = data.phone || "N/A";
+                    document.getElementById("valName").innerText = data.name || "---";
+                    document.getElementById("valLoc").innerText = data.location || "---";
+                    document.getElementById("valPhone").innerText = data.phone || "---";
                     document.getElementById("statViews").innerText = data.profile_views || 0;
                     document.getElementById("statErrands").innerText = data.errands_completed || 0;
                     document.getElementById("statRate").innerText = data.base_rate || 0;
-                    
-                    if (data.profilepicture) {
-                        document.getElementById("runnerImg").src = data.profilepicture;
-                    }
+                    if (data.profilepicture) document.getElementById("runnerImg").src = data.profilepicture;
                     
                     document.getElementById("onlineToggle").checked = data.is_online;
                     updateStatusUI(data.is_online);
 
                     const pill = document.getElementById("statusPill");
-                    pill.innerText = data.id_verified ? "VERIFIED PRO" : "PENDING";
-                    pill.style.color = data.id_verified ? "#FFD700" : "#ff9f43";
+                    // If you manually set id_verified to true in Supabase, they get the gold badge
+                    if (data.id_verified) {
+                        pill.innerText = "VERIFIED PRO";
+                        pill.style.color = "#FFD700";
+                    } else {
+                        pill.innerText = "ACCOUNT ACTIVE";
+                        pill.style.color = "#22c55e";
+                    }
                 }
-            } catch (err) {
-                console.error("Initialization failed:", err.message);
-            }
+            } catch (err) { console.error(err); }
         }
 
         function updateStatusUI(isOnline) {
@@ -184,15 +168,8 @@
 
         document.getElementById("onlineToggle").addEventListener("change", async function() {
             const email = localStorage.getItem("loggedInEmail");
-            const status = this.checked;
-            updateStatusUI(status);
-            
-            const { error } = await window.runnerClient
-                .from("runners")
-                .update({ is_online: status })
-                .eq("email", email.trim().toLowerCase());
-                
-            if (error) console.error("Toggle update failed:", error.message);
+            updateStatusUI(this.checked);
+            await window.runnerClient.from("runners").update({ is_online: this.checked }).eq("email", email.trim().toLowerCase());
         });
 
         function openEdit(col, label) {
@@ -200,55 +177,51 @@
             document.getElementById("modalTitle").innerText = `Update ${label}`;
             const wrap = document.getElementById("inputWrap");
             
-            // Get current value to pre-fill
-            const currentVal = (col === 'about') ? "" : document.getElementById(`val${col.charAt(0).toUpperCase() + col.slice(1,3)}`)?.innerText || "";
-            
+            let currentVal = "";
+            if (col === 'name') currentVal = document.getElementById("valName").innerText;
+            if (col === 'location') currentVal = document.getElementById("valLoc").innerText;
+            if (col === 'phone') currentVal = document.getElementById("valPhone").innerText;
+
             wrap.innerHTML = col === 'about' 
-                ? `<textarea id="editIn" rows="4" placeholder="Describe your services..."></textarea>` 
+                ? `<textarea id="editIn" rows="4" placeholder="What services do you offer?"></textarea>` 
                 : `<input type="text" id="editIn" value="${currentVal === '---' ? '' : currentVal}">`;
-            
+
             document.getElementById("saveBtn").onclick = async () => {
-                const saveBtn = document.getElementById("saveBtn");
-                saveBtn.innerText = "Saving...";
                 const val = document.getElementById("editIn").value;
                 const email = localStorage.getItem("loggedInEmail");
-                
-                const { error } = await window.runnerClient
-                    .from("runners")
-                    .update({ [col]: val })
-                    .eq("email", email.trim().toLowerCase());
-                
-                if (!error) location.reload();
-                else alert("Update failed: " + error.message);
+                await window.runnerClient.from("runners").update({ [col]: val }).eq("email", email.trim().toLowerCase());
+                location.reload();
             };
         }
 
         function closeModal() { document.getElementById("editModal").style.display = "none"; }
 
+        function generatePrettyURL() {
+            const email = localStorage.getItem("loggedInEmail");
+            const name = document.getElementById("valName").innerText.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '');
+            const shortId = btoa(email.trim().toLowerCase()); 
+            return `${window.location.origin}/view.html?runner=${name}&id=${shortId}`;
+        }
+
+        function shareProfile() {
+            const url = generatePrettyURL();
+            const text = encodeURIComponent(`🏃 My Runner HQ Profile is live! Hire me here: ${url}`);
+            window.open(`https://wa.me/?text=${text}`, '_blank');
+        }
+
+        function copyProfileLink() {
+            const url = generatePrettyURL();
+            navigator.clipboard.writeText(url).then(() => {
+                alert("Link copied! Now paste it in your Instagram bio.");
+            });
+        }
+
         function showSafety() {
             alert("SAFETY CHECKLIST:\n1. Confirm customer M-Pesa name first.\n2. Never use your own money for purchases.\n3. Send location pin when starting task.\n4. Take photos of all delivery receipts.");
         }
 
-        function shareProfile() {
-            const email = localStorage.getItem("loggedInEmail");
-            const url = `${window.location.origin}/view.html?email=${email}`;
-            const text = encodeURIComponent(`Hire me for errands! View my profile here: ${url}`);
-            window.open(`https://wa.me/?text=${text}`, '_blank');
-        }
-
-        document.getElementById("logoutBtn").onclick = () => { 
-            localStorage.clear(); 
-            window.location.href = "login.html"; 
-        };
-
-        // Start when ready
+        document.getElementById("logoutBtn").onclick = () => { localStorage.clear(); window.location.href = "login.html"; };
         window.addEventListener('load', init);
     </script>
 </body>
 </html>
-
-
-
-
-
-
