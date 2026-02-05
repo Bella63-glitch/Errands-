@@ -3,13 +3,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
     <title id="pageTitle">Runner Profile | Runner HQ</title>
-    <meta id="metaTitle" property="og:title" content="Verified Runner Profile">
-    <meta id="metaDesc" property="og:description" content="View services, reviews, and rates on Runner HQ.">
-    <meta id="metaImg" property="og:image" content="https://yourdomain.com/logo.png">
-    <meta property="og:type" content="website">
-
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -17,156 +12,72 @@
     <style>
         :root { --maroon: #7B1E3A; --gold: #FFD700; --white: #FFFFFF; --light: #F4F7F9; }
         
-        /* Entrance Animations */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes scaleIn {
-            from { opacity: 0; transform: scale(0.8); }
-            to { opacity: 1; transform: scale(1); }
-        }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        body { font-family: 'Montserrat', sans-serif; margin: 0; background: var(--light); color: #333; padding-bottom: 120px; overflow-x: hidden; }
+        body { font-family: 'Montserrat', sans-serif; margin: 0; background: var(--light); color: #333; padding-bottom: 120px; }
         
         /* Hero Section */
-        .hero { 
-            background: var(--maroon); 
-            padding: 70px 20px 60px; 
-            text-align: center; 
-            border-radius: 0 0 50px 50px; 
-            animation: fadeInUp 0.8s ease-out;
-        }
-        .profile-container { position: relative; display: inline-block; animation: scaleIn 1s ease-out; }
-        .profile-pic { 
-            width: 130px; height: 130px; 
-            border-radius: 35px; 
-            border: 4px solid var(--gold); 
-            background: white; 
-            object-fit: cover; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3); 
-        }
-        .runner-name { color: var(--white); margin: 20px 0 5px; font-weight: 800; font-size: 1.8rem; }
-        .verified-badge { color: var(--gold); font-size: 0.75rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
+        .hero { background: var(--maroon); padding: 60px 20px; text-align: center; border-radius: 0 0 40px 40px; animation: fadeInUp 0.6s ease-out; }
+        .profile-pic { width: 120px; height: 120px; border-radius: 30px; border: 4px solid var(--gold); background: white; object-fit: cover; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        .runner-name { color: var(--white); margin: 15px 0 5px; font-weight: 800; font-size: 1.6rem; }
 
-        /* Container & Cards */
-        .container { width: 92%; max-width: 500px; margin: -40px auto 0; }
-        .card { 
-            background: var(--white); 
-            border-radius: 30px; 
-            padding: 25px; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.06); 
-            margin-bottom: 20px; 
-            animation: fadeInUp 1s ease-out both;
-            border: 1px solid rgba(123, 30, 58, 0.05);
-        }
-        .card:nth-child(2) { animation-delay: 0.2s; }
-        .card:nth-child(3) { animation-delay: 0.4s; }
+        .container { width: 92%; max-width: 500px; margin: -30px auto 0; }
+        .card { background: var(--white); border-radius: 25px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid rgba(123, 30, 58, 0.05); animation: fadeInUp 0.8s ease-out both; }
 
-        /* Stats Section */
-        .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
-        .stat-box { background: #FFFDF5; padding: 18px; border-radius: 20px; text-align: center; border: 1px solid #FDF2D5; transition: 0.3s; }
-        .stat-box:hover { transform: translateY(-5px); border-color: var(--gold); }
-        .stat-val { display: block; font-weight: 800; font-size: 1.3rem; color: var(--maroon); }
-        .stat-lab { font-size: 0.6rem; font-weight: 800; color: #999; text-transform: uppercase; margin-top: 4px; }
+        .section-title { font-size: 0.75rem; font-weight: 800; color: var(--maroon); text-transform: uppercase; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
 
-        /* Service Tags */
-        .section-title { font-size: 0.8rem; font-weight: 800; color: var(--maroon); text-transform: uppercase; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
-        .tag-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
-        .tag { background: #f0f2f5; color: #444; padding: 8px 16px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; transition: 0.3s; }
-        .tag:hover { background: var(--maroon); color: white; }
+        /* PORTFOLIO GRID */
+        .portfolio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
+        .portfolio-item { background: white; border-radius: 15px; overflow: hidden; border: 1px solid #eee; transition: 0.3s; }
+        .portfolio-item:hover { transform: scale(1.03); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .portfolio-item img { width: 100%; height: 110px; object-fit: cover; display: block; }
+        .portfolio-item p { padding: 8px; margin: 0; font-size: 0.7rem; font-weight: 600; color: #555; line-height: 1.2; }
 
-        /* Reviews Section */
-        .review-item { border-bottom: 1px solid #f1f1f1; padding: 15px 0; transition: 0.3s; }
-        .rev-header { display: flex; justify-content: space-between; align-items: center; }
-        .rev-name { font-weight: 800; font-size: 0.9rem; color: var(--maroon); }
-        .rev-stars { color: var(--gold); font-size: 0.75rem; }
-        .rev-text { font-size: 0.85rem; color: #555; line-height: 1.5; margin-top: 5px; }
+        /* REVIEWS */
+        .review-item { border-bottom: 1px solid #eee; padding: 12px 0; }
+        .rev-name { font-weight: 800; font-size: 0.85rem; color: var(--maroon); }
+        .rev-stars { color: var(--gold); font-size: 0.7rem; }
+        .rev-text { font-size: 0.8rem; color: #666; font-style: italic; margin-top: 4px; }
 
-        /* Floating Action Bar */
-        .action-bar { 
-            position: fixed; bottom: 30px; left: 5%; right: 5%; 
-            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; 
-            z-index: 2000;
-            animation: fadeInUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .btn { text-decoration: none; padding: 18px; border-radius: 20px; text-align: center; font-weight: 800; font-size: 0.9rem; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+        /* ACTION BUTTONS */
+        .footer-actions { position: fixed; bottom: 20px; left: 5%; right: 5%; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; z-index: 1000; }
+        .btn { text-decoration: none; padding: 18px; border-radius: 18px; text-align: center; font-weight: 800; font-size: 0.9rem; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
         .btn-call { background: #222; color: white; }
         .btn-wa { background: #25D366; color: white; }
-        .btn:active { transform: scale(0.95); }
-
-        /* Review Inputs */
-        .review-input { width: 100%; padding: 15px; border-radius: 15px; border: 1px solid #ddd; font-family: inherit; margin-bottom: 10px; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
 <div class="hero">
-    <div class="profile-container">
-        <img id="runnerImg" class="profile-pic" src="https://via.placeholder.com/150">
-    </div>
-    <div class="runner-name" id="runnerName">Loading...</div>
-    <div class="verified-badge"><i class="fas fa-check-circle"></i> Runner HQ Partner</div>
+    <img id="runnerImg" class="profile-pic" src="https://via.placeholder.com/150">
+    <div class="runner-name" id="runnerName">---</div>
+    <div style="color:var(--gold); font-size: 0.7rem; font-weight: 700; text-transform: uppercase;"><i class="fas fa-check-circle"></i> Runner HQ Verified</div>
 </div>
 
 <div class="container">
     <div class="card">
-        <div class="stats-row">
-            <div class="stat-box">
-                <span class="stat-lab">Global Rating</span>
-                <span class="stat-val" id="displayRating">⭐ 5.0</span>
-            </div>
-            <div class="stat-box">
-                <span class="stat-lab">Starting From</span>
-                <span class="stat-val" id="statRate">KES 0</span>
-            </div>
-        </div>
+        <div class="section-title"><i class="fas fa-info-circle"></i> About Me</div>
+        <div id="runnerAbout" style="font-size: 0.9rem; line-height: 1.5; color: #444;">---</div>
+        <div id="statRate" style="margin-top: 15px; font-weight: 800; color: var(--maroon);">Base Rate: KES ---</div>
+    </div>
 
-        <div class="section-title"><i class="fas fa-shipping-fast"></i> Errands I Cover</div>
-        <div class="tag-container" id="tagList">
-            <span class="tag">Grocery Shopping</span>
-            <span class="tag">Document Delivery</span>
-            <span class="tag">Pharmacy Pickups</span>
-            <span class="tag">Home Supplies</span>
-        </div>
-
-        <div class="section-title"><i class="fas fa-info-circle"></i> Service Bio</div>
-        <div class="rev-text" id="runnerAbout" style="font-size: 0.95rem; color: #444; border-left: 3px solid var(--gold); padding-left: 15px;">
-            Loading runner services...
-        </div>
+    <div class="card" id="portfolioCard" style="display:none;">
+        <div class="section-title"><i class="fas fa-camera"></i> Recent Errands & Proof</div>
+        <div class="portfolio-grid" id="portfolioGrid">
+            </div>
     </div>
 
     <div class="card">
-        <div class="section-title"><i class="fas fa-star"></i> Recent Reviews</div>
+        <div class="section-title"><i class="fas fa-star"></i> Client Reviews</div>
         <div id="reviewsList">
-            <p style="font-size: 0.8rem; color: #999; text-align: center; padding: 20px;">Fetching reviews...</p>
-        </div>
-
-        <hr style="border:0; border-top: 1px solid #f1f1f1; margin: 20px 0;">
-
-        <div id="writeReviewCard" style="display:none;">
-            <div class="section-title">Leave a Review</div>
-            <select id="ratingScore" class="review-input">
-                <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
-                <option value="4">⭐⭐⭐⭐ Good</option>
-                <option value="3">⭐⭐⭐ Average</option>
-                <option value="2">⭐⭐ Poor</option>
-                <option value="1">⭐ Terrible</option>
-            </select>
-            <textarea id="reviewComment" class="review-input" placeholder="Share your experience with this runner..." rows="3"></textarea>
-            <button onclick="submitReview()" class="btn-wa" style="width:100%; border:none; cursor:pointer;">POST REVIEW</button>
-        </div>
-
-        <div id="loginToReview" style="text-align:center;">
-            <p style="font-size: 0.8rem; font-weight: 600;">Log in as a User to rate this runner</p>
-            <a href="login.html" style="color: var(--maroon); font-weight: 800; text-decoration: none; font-size: 0.85rem;">Login / Sign Up</a>
+            <p style="text-align:center; color:#999; font-size:0.8rem;">Loading reviews...</p>
         </div>
     </div>
 </div>
 
-<div class="action-bar">
-    <a id="callBtn" class="btn btn-call" href="#"><i class="fas fa-phone-alt"></i> CALL</a>
-    <a id="waBtn" class="btn btn-wa" href="#"><i class="fab fa-whatsapp"></i> WHATSAPP</a>
+<div class="footer-actions">
+    <a id="callBtn" class="btn btn-call" href="#">CALL</a>
+    <a id="waBtn" class="btn btn-wa" href="#">WHATSAPP</a>
 </div>
 
 <script>
@@ -174,50 +85,53 @@
     const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
     const db = supabase.createClient(SB_URL, SB_KEY);
 
-    async function load() {
+    async function loadProfile() {
         const params = new URLSearchParams(window.location.search);
-        const encodedId = params.get('id');
-        if(!encodedId) return;
+        let id = params.get('id');
+        if(!id) return;
 
-        const email = atob(encodedId).trim().toLowerCase();
+        const email = atob(id).trim().toLowerCase();
 
-        // Load Runner Profile
+        // 1. Fetch Runner
         const { data: runner } = await db.from('runners').select('*').eq('email', email).maybeSingle();
 
         if(runner) {
             document.getElementById("runnerName").innerText = runner.name;
-            document.getElementById("runnerAbout").innerText = runner.about || "Verified Runner HQ professional.";
-            document.getElementById("statRate").innerText = `KES ${runner.base_rate || 250}`;
-            document.getElementById("displayRating").innerText = `⭐ ${runner.avg_rating || '5.0'}`;
+            document.getElementById("runnerAbout").innerText = runner.about || "Reliable professional runner.";
+            document.getElementById("statRate").innerText = `Base Rate: KES ${runner.base_rate || 200}`;
             if(runner.profilepicture) document.getElementById("runnerImg").src = runner.profilepicture;
 
-            // Contact Links
             document.getElementById("callBtn").href = `tel:${runner.phone}`;
-            document.getElementById("waBtn").href = `https://wa.me/${runner.phone}?text=Hello ${runner.name}, I'm interested in hiring you via Runner HQ.`;
+            document.getElementById("waBtn").href = `https://wa.me/${runner.phone}?text=Hi ${runner.name}, I saw your portfolio on Runner HQ and want to hire you!`;
 
-            // WhatsApp Share Tags
-            document.title = `${runner.name} | Runner HQ`;
-            
-            // Load Real Reviews
-            fetchReviews(runner.id);
-            
-            // Show/Hide Review Input based on Role
-            const role = localStorage.getItem("userRole");
-            if(role === 'user') {
-                document.getElementById("writeReviewCard").style.display = "block";
-                document.getElementById("loginToReview").style.display = "none";
-            }
+            // 2. Fetch Portfolio (Recent Errands)
+            loadPortfolio(runner.id);
+
+            // 3. Fetch Reviews
+            loadReviews(runner.id);
         }
     }
 
-    async function fetchReviews(runnerId) {
-        const { data } = await db.from('reviews').select('rating, comment, users(name)').eq('runner_id', runnerId).order('created_at', {ascending: false});
+    async function loadPortfolio(runnerId) {
+        const { data } = await db.from('portfolio').select('*').eq('runner_id', runnerId).order('created_at', {ascending: false});
+        if(data && data.length > 0) {
+            document.getElementById("portfolioCard").style.display = "block";
+            document.getElementById("portfolioGrid").innerHTML = data.map(item => `
+                <div class="portfolio-item">
+                    <img src="${item.image_url}" alt="Errand Proof">
+                    <p>${item.description}</p>
+                </div>
+            `).join('');
+        }
+    }
+
+    async function loadReviews(runnerId) {
+        const { data } = await db.from('reviews').select('rating, comment, users(name)').eq('runner_id', runnerId);
         const container = document.getElementById("reviewsList");
-        
         if(data && data.length > 0) {
             container.innerHTML = data.map(r => `
                 <div class="review-item">
-                    <div class="rev-header">
+                    <div style="display:flex; justify-content:space-between;">
                         <span class="rev-name">${r.users.name}</span>
                         <span class="rev-stars">${"⭐".repeat(r.rating)}</span>
                     </div>
@@ -225,38 +139,25 @@
                 </div>
             `).join('');
         } else {
-            container.innerHTML = `<p style="text-align:center; font-size:0.8rem; color:#999;">No reviews yet.</p>`;
+            container.innerHTML = `<p style="text-align:center; color:#999; font-size:0.8rem;">No reviews yet.</p>`;
         }
     }
 
-    async function submitReview() {
-        const userEmail = localStorage.getItem("loggedInEmail");
-        const rating = document.getElementById("ratingScore").value;
-        const comment = document.getElementById("reviewComment").value;
-        
-        if(!comment) return alert("Please add a comment.");
-
-        const { data: userData } = await db.from('users').select('id').eq('email', userEmail).single();
-        const params = new URLSearchParams(window.location.search);
-        const runnerEmail = atob(params.get('id'));
-        const { data: runnerData } = await db.from('runners').select('id').eq('email', runnerEmail).single();
-
-        if(userData && runnerData) {
-            const { error } = await db.from('reviews').insert([{ 
-                runner_id: runnerData.id, 
-                user_id: userData.id, 
-                rating: parseInt(rating), 
-                comment: comment 
-            }]);
-            
-            if(error) alert("You've already rated this runner.");
-            else location.reload();
-        }
-    }
-
-    window.onload = load;
+    window.onload = loadProfile;
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
