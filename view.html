@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Runner Profile - Runner HQ</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --maroon: #7B1E3A; --gold: #FFD700; --light: #f4f7f9; --green: #22c55e; }
+        body { font-family: 'Montserrat', sans-serif; margin: 0; background: var(--light); padding-bottom: 100px; }
+        
+        /* Header & Hero */
+        .hero { background: linear-gradient(135deg, var(--maroon), #5c162b); padding: 50px 20px; text-align: center; color: white; border-radius: 0 0 40px 40px; }
+        .profile-pic { width: 120px; height: 120px; border-radius: 35px; border: 4px solid var(--gold); background: white; object-fit: cover; margin-bottom: 15px; }
+        
+        /* Status Badge */
+        .status-badge { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; margin-top: 10px; }
+        .online { background: rgba(34, 197, 94, 0.2); color: #22c55e; border: 1px solid var(--green); }
+        .offline { background: rgba(148, 163, 184, 0.2); color: #94a3b8; border: 1px solid #94a3b8; }
+
+        /* Stats & Details */
+        .card { background: white; width: 92%; max-width: 500px; margin: -30px auto 20px; border-radius: 25px; padding: 25px; box-sizing: border-box; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .stat-box { background: #f8fafc; padding: 15px; border-radius: 15px; text-align: center; }
+        .stat-label { display: block; font-size: 0.6rem; color: #94a3b8; font-weight: 800; text-transform: uppercase; }
+        .stat-val { font-size: 1.1rem; font-weight: 800; color: var(--maroon); }
+
+        .bio-title { font-size: 0.8rem; font-weight: 800; color: #64748b; margin-bottom: 8px; text-transform: uppercase; }
+        .bio-text { font-size: 0.95rem; line-height: 1.6; color: #334155; }
+
+        /* Map Link */
+        .map-btn { display: flex; align-items: center; justify-content: center; gap: 10px; background: #e2e8f0; color: #475569; padding: 12px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 0.85rem; margin-top: 20px; }
+
+        /* Fixed Action Bar */
+        .action-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; box-shadow: 0 -10px 30px rgba(0,0,0,0.1); z-index: 1000; }
+        .btn-call { background: #3b82f6; color: white; text-decoration: none; padding: 15px; border-radius: 15px; text-align: center; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-whatsapp { background: var(--green); color: white; text-decoration: none; padding: 15px; border-radius: 15px; text-align: center; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    </style>
+</head>
+<body>
+
+    <div class="hero">
+        <img id="runnerImg" class="profile-pic" src="https://via.placeholder.com/120">
+        <h1 id="runnerName" style="margin: 0; font-weight: 800; font-size: 1.5rem;">---</h1>
+        <div id="statusTag" class="status-badge offline">Checking Status...</div>
+    </div>
+
+    <div class="card">
+        <div class="stats-row">
+            <div class="stat-box">
+                <span class="stat-label">Rating</span>
+                <span class="stat-val"><i class="fas fa-star" style="color:var(--gold)"></i> 4.9</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-label">Starting From</span>
+                <span class="stat-val" id="statRate">KES 0</span>
+            </div>
+        </div>
+
+        <div class="bio-title">About Me</div>
+        <div class="bio-text" id="runnerAbout">Loading runner information...</div>
+
+        <a id="mapLink" class="map-btn" target="_blank">
+            <i class="fas fa-map-marker-alt"></i> Area: <span id="runnerLoc">---</span>
+        </a>
+    </div>
+
+    <div class="action-bar">
+        <a id="callBtn" class="btn-call" href="#"><i class="fas fa-phone-alt"></i> Call</a>
+        <a id="waBtn" class="btn-whatsapp" href="#"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+    </div>
+
+    <script>
+        const SB_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
+        const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
+        const db = supabase.createClient(SB_URL, SB_KEY);
+
+        async function loadProfile() {
+            const params = new URLSearchParams(window.location.search);
+            const email = params.get('email');
+
+            if (!email) {
+                document.body.innerHTML = "<h2 style='text-align:center; margin-top:50px;'>Invalid Runner Link</h2>";
+                return;
+            }
+
+            const { data, error } = await db.from('runners').select('*').eq('email', email.toLowerCase()).maybeSingle();
+
+            if (data) {
+                document.getElementById("runnerName").innerText = data.name;
+                document.getElementById("runnerAbout").innerText = data.about || "This runner hasn't added a bio yet.";
+                document.getElementById("runnerLoc").innerText = data.location || "Nairobi";
+                document.getElementById("statRate").innerText = `KES ${data.base_rate || 200}`;
+                if(data.profilepicture) document.getElementById("runnerImg").src = data.profilepicture;
+
+                // Status Update
+                const tag = document.getElementById("statusTag");
+                tag.innerText = data.is_online ? "Available Now" : "Currently Busy";
+                tag.className = `status-badge ${data.is_online ? 'online' : 'offline'}`;
+
+                // Action Buttons
+                document.getElementById("callBtn").href = `tel:${data.phone}`;
+                document.getElementById("waBtn").href = `https://wa.me/${data.phone}?text=Hi ${data.name}, I found your profile on Runner HQ. Are you available for an errand?`;
+                
+                // Map Link (Open Google Maps for the area)
+                document.getElementById("mapLink").href = `https://www.google.com/maps/search/${encodeURIComponent(data.location)}`;
+            } else {
+                alert("Runner not found.");
+            }
+        }
+
+        window.onload = loadProfile;
+    </script>
+</body>
+  </html>
+
