@@ -3,294 +3,260 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Runner Profile - Runner HQ</title>
     
-    <meta property="og:title" content="Hire This Runner | Runner HQ">
-    <meta property="og:description" content="Verified errands runner available for hire. View rates and availability.">
-    <meta property="og:image" content="https://via.placeholder.com/600x315/7B1E3A/FFD700?text=Runner+HQ">
+    <title id="pageTitle">Runner Profile | Runner HQ</title>
+    <meta id="metaTitle" property="og:title" content="Verified Runner Profile">
+    <meta id="metaDesc" property="og:description" content="View services, reviews, and rates on Runner HQ.">
+    <meta id="metaImg" property="og:image" content="https://yourdomain.com/logo.png">
+    <meta property="og:type" content="website">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        :root { 
-            --maroon: #7B1E3A; 
-            --gold: #FFD700; 
-            --glass: rgba(255, 255, 255, 0.9);
-            --green: #22c55e;
-        }
+        :root { --maroon: #7B1E3A; --gold: #FFD700; --white: #FFFFFF; --light: #F4F7F9; }
         
-        body { 
-            font-family: 'Montserrat', sans-serif; 
-            margin: 0; 
-            background: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%); 
-            padding-bottom: 120px; 
-            color: #2c3e50; 
+        /* Entrance Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        body { font-family: 'Montserrat', sans-serif; margin: 0; background: var(--light); color: #333; padding-bottom: 120px; overflow-x: hidden; }
         
-        /* IG Style Profile Header */
+        /* Hero Section */
         .hero { 
-            background: white; 
-            padding: 60px 20px 40px; 
+            background: var(--maroon); 
+            padding: 70px 20px 60px; 
             text-align: center; 
             border-radius: 0 0 50px 50px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+            animation: fadeInUp 0.8s ease-out;
         }
-        
-        .pic-ring { 
-            width: 120px; height: 120px; 
-            border-radius: 50%; 
-            padding: 4px; 
-            margin: 0 auto 15px;
-            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); 
-        }
-        
+        .profile-container { position: relative; display: inline-block; animation: scaleIn 1s ease-out; }
         .profile-pic { 
-            width: 100%; height: 100%; 
-            border-radius: 50%; 
-            object-fit: cover; 
-            background: white; 
-            border: 3px solid white; 
-        }
-        
-        .status-pill { 
-            display: inline-block; 
-            padding: 6px 15px; 
-            border-radius: 30px; 
-            font-size: 0.7rem; 
-            font-weight: 800; 
-            text-transform: uppercase; 
-            margin-top: 10px; 
-        }
-        
-        .online { background: #dcfce7; color: #166534; }
-        .offline { background: #f1f5f9; color: #64748b; }
-
-        /* Premium Content Card */
-        .card { 
-            background: var(--glass); 
-            backdrop-filter: blur(15px); 
-            width: 92%; 
-            max-width: 500px; 
-            margin: 25px auto; 
+            width: 130px; height: 130px; 
             border-radius: 35px; 
-            padding: 30px; 
-            box-sizing: border-box; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1); 
-            border: 1px solid rgba(255,255,255,0.4); 
-        }
-        
-        .stats-grid { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 15px; 
-            margin-bottom: 25px; 
-        }
-        
-        .stat-box { 
-            background: rgba(0,0,0,0.03); 
-            padding: 15px; 
-            border-radius: 20px; 
-            text-align: center; 
-        }
-        
-        .stat-val { 
-            display: block; 
-            font-weight: 800; 
-            font-size: 1.2rem; 
-            color: var(--maroon); 
-        }
-        
-        .stat-label { 
-            font-size: 0.6rem; 
-            font-weight: 800; 
-            color: #94a3b8; 
-            text-transform: uppercase; 
-        }
-
-        .section-title { 
-            font-size: 0.75rem; 
-            font-weight: 800; 
-            color: #94a3b8; 
-            margin-bottom: 10px; 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
-        }
-        
-        .bio { 
-            font-size: 0.95rem; 
-            line-height: 1.6; 
-            font-weight: 500; 
-            color: #334155; 
-            margin-bottom: 20px; 
-        }
-        
-        .loc-tag { 
-            background: #f1f5f9; 
-            padding: 12px; 
-            border-radius: 15px; 
-            display: flex; 
-            align-items: center; 
-            gap: 10px; 
-            color: #475569; 
-            font-weight: 700; 
-            text-decoration: none; 
-            font-size: 0.85rem; 
-        }
-
-        /* Floating App Bar */
-        .action-bar { 
-            position: fixed; 
-            bottom: 30px; 
-            left: 5%; 
-            right: 5%; 
-            background: rgba(0,0,0,0.9); 
-            padding: 10px; 
-            border-radius: 50px; 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 10px; 
+            border: 4px solid var(--gold); 
+            background: white; 
+            object-fit: cover; 
             box-shadow: 0 15px 35px rgba(0,0,0,0.3); 
-            z-index: 1000; 
         }
-        
-        .btn-call { 
-            background: #334155; 
-            color: white; 
-            text-decoration: none; 
-            padding: 14px; 
-            border-radius: 40px; 
-            text-align: center; 
-            font-weight: 800; 
-            font-size: 0.8rem; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 8px; 
+        .runner-name { color: var(--white); margin: 20px 0 5px; font-weight: 800; font-size: 1.8rem; }
+        .verified-badge { color: var(--gold); font-size: 0.75rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
+
+        /* Container & Cards */
+        .container { width: 92%; max-width: 500px; margin: -40px auto 0; }
+        .card { 
+            background: var(--white); 
+            border-radius: 30px; 
+            padding: 25px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.06); 
+            margin-bottom: 20px; 
+            animation: fadeInUp 1s ease-out both;
+            border: 1px solid rgba(123, 30, 58, 0.05);
         }
-        
-        .btn-wa { 
-            background: var(--green); 
-            color: white; 
-            text-decoration: none; 
-            padding: 14px; 
-            border-radius: 40px; 
-            text-align: center; 
-            font-weight: 800; 
-            font-size: 0.8rem; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 8px; 
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.4s; }
+
+        /* Stats Section */
+        .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .stat-box { background: #FFFDF5; padding: 18px; border-radius: 20px; text-align: center; border: 1px solid #FDF2D5; transition: 0.3s; }
+        .stat-box:hover { transform: translateY(-5px); border-color: var(--gold); }
+        .stat-val { display: block; font-weight: 800; font-size: 1.3rem; color: var(--maroon); }
+        .stat-lab { font-size: 0.6rem; font-weight: 800; color: #999; text-transform: uppercase; margin-top: 4px; }
+
+        /* Service Tags */
+        .section-title { font-size: 0.8rem; font-weight: 800; color: var(--maroon); text-transform: uppercase; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .tag-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+        .tag { background: #f0f2f5; color: #444; padding: 8px 16px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; transition: 0.3s; }
+        .tag:hover { background: var(--maroon); color: white; }
+
+        /* Reviews Section */
+        .review-item { border-bottom: 1px solid #f1f1f1; padding: 15px 0; transition: 0.3s; }
+        .rev-header { display: flex; justify-content: space-between; align-items: center; }
+        .rev-name { font-weight: 800; font-size: 0.9rem; color: var(--maroon); }
+        .rev-stars { color: var(--gold); font-size: 0.75rem; }
+        .rev-text { font-size: 0.85rem; color: #555; line-height: 1.5; margin-top: 5px; }
+
+        /* Floating Action Bar */
+        .action-bar { 
+            position: fixed; bottom: 30px; left: 5%; right: 5%; 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; 
+            z-index: 2000;
+            animation: fadeInUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+        .btn { text-decoration: none; padding: 18px; border-radius: 20px; text-align: center; font-weight: 800; font-size: 0.9rem; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+        .btn-call { background: #222; color: white; }
+        .btn-wa { background: #25D366; color: white; }
+        .btn:active { transform: scale(0.95); }
+
+        /* Review Inputs */
+        .review-input { width: 100%; padding: 15px; border-radius: 15px; border: 1px solid #ddd; font-family: inherit; margin-bottom: 10px; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
-    <div class="hero">
-        <div class="pic-ring">
-            <img id="runnerImg" class="profile-pic" src="https://via.placeholder.com/150">
+<div class="hero">
+    <div class="profile-container">
+        <img id="runnerImg" class="profile-pic" src="https://via.placeholder.com/150">
+    </div>
+    <div class="runner-name" id="runnerName">Loading...</div>
+    <div class="verified-badge"><i class="fas fa-check-circle"></i> Runner HQ Partner</div>
+</div>
+
+<div class="container">
+    <div class="card">
+        <div class="stats-row">
+            <div class="stat-box">
+                <span class="stat-lab">Global Rating</span>
+                <span class="stat-val" id="displayRating">⭐ 5.0</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-lab">Starting From</span>
+                <span class="stat-val" id="statRate">KES 0</span>
+            </div>
         </div>
-        <h1 id="runnerName" style="margin: 0; font-weight: 800; font-size: 1.6rem;">---</h1>
-        <div id="statusTag" class="status-pill offline">Busy</div>
+
+        <div class="section-title"><i class="fas fa-shipping-fast"></i> Errands I Cover</div>
+        <div class="tag-container" id="tagList">
+            <span class="tag">Grocery Shopping</span>
+            <span class="tag">Document Delivery</span>
+            <span class="tag">Pharmacy Pickups</span>
+            <span class="tag">Home Supplies</span>
+        </div>
+
+        <div class="section-title"><i class="fas fa-info-circle"></i> Service Bio</div>
+        <div class="rev-text" id="runnerAbout" style="font-size: 0.95rem; color: #444; border-left: 3px solid var(--gold); padding-left: 15px;">
+            Loading runner services...
+        </div>
     </div>
 
     <div class="card">
-        <div class="stats-grid">
-            <div class="stat-box">
-                <span class="stat-label">Rating</span>
-                <span class="stat-val" id="runnerRating">⭐ 5.0</span>
-            </div>
-            <div class="stat-box">
-                <span class="stat-label">Starts From</span>
-                <span class="stat-val" id="statRate">KES ---</span>
-            </div>
+        <div class="section-title"><i class="fas fa-star"></i> Recent Reviews</div>
+        <div id="reviewsList">
+            <p style="font-size: 0.8rem; color: #999; text-align: center; padding: 20px;">Fetching reviews...</p>
         </div>
 
-        <div class="section-title">About This Runner</div>
-        <div class="bio" id="runnerAbout">Loading runner profile...</div>
+        <hr style="border:0; border-top: 1px solid #f1f1f1; margin: 20px 0;">
 
-        <div class="section-title">Primary Location</div>
-        <a id="mapLink" class="loc-tag" target="_blank">
-            <i class="fas fa-map-marker-alt" style="color:var(--maroon)"></i> 
-            <span id="runnerLoc">---</span>
-        </a>
+        <div id="writeReviewCard" style="display:none;">
+            <div class="section-title">Leave a Review</div>
+            <select id="ratingScore" class="review-input">
+                <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+                <option value="4">⭐⭐⭐⭐ Good</option>
+                <option value="3">⭐⭐⭐ Average</option>
+                <option value="2">⭐⭐ Poor</option>
+                <option value="1">⭐ Terrible</option>
+            </select>
+            <textarea id="reviewComment" class="review-input" placeholder="Share your experience with this runner..." rows="3"></textarea>
+            <button onclick="submitReview()" class="btn-wa" style="width:100%; border:none; cursor:pointer;">POST REVIEW</button>
+        </div>
+
+        <div id="loginToReview" style="text-align:center;">
+            <p style="font-size: 0.8rem; font-weight: 600;">Log in as a User to rate this runner</p>
+            <a href="login.html" style="color: var(--maroon); font-weight: 800; text-decoration: none; font-size: 0.85rem;">Login / Sign Up</a>
+        </div>
     </div>
+</div>
 
-    <div class="action-bar">
-        <a id="callBtn" class="btn-call" href="#"><i class="fas fa-phone-alt"></i> Call Now</a>
-        <a id="waBtn" class="btn-wa" href="#"><i class="fab fa-whatsapp"></i> WhatsApp</a>
-    </div>
+<div class="action-bar">
+    <a id="callBtn" class="btn btn-call" href="#"><i class="fas fa-phone-alt"></i> CALL</a>
+    <a id="waBtn" class="btn btn-wa" href="#"><i class="fab fa-whatsapp"></i> WHATSAPP</a>
+</div>
 
-    <script>
-        // Supabase Configuration
-        const SB_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
-        const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
-        const db = supabase.createClient(SB_URL, SB_KEY);
+<script>
+    const SB_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
+    const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
+    const db = supabase.createClient(SB_URL, SB_KEY);
 
-        async function loadProfile() {
-            const params = new URLSearchParams(window.location.search);
-            const encodedId = params.get('id'); // Get the Base64 email from the link
+    async function load() {
+        const params = new URLSearchParams(window.location.search);
+        const encodedId = params.get('id');
+        if(!encodedId) return;
 
-            if (!encodedId) {
-                document.body.innerHTML = "<div style='text-align:center; padding:100px; font-weight:800;'>Invalid Runner Link</div>";
-                return;
-            }
+        const email = atob(encodedId).trim().toLowerCase();
 
-            try {
-                // Decode the email from the URL ID
-                const email = atob(encodedId).trim().toLowerCase();
+        // Load Runner Profile
+        const { data: runner } = await db.from('runners').select('*').eq('email', email).maybeSingle();
 
-                // Increment profile views automatically when someone opens the link
-                await db.rpc('increment_profile_views', { runner_email: email });
+        if(runner) {
+            document.getElementById("runnerName").innerText = runner.name;
+            document.getElementById("runnerAbout").innerText = runner.about || "Verified Runner HQ professional.";
+            document.getElementById("statRate").innerText = `KES ${runner.base_rate || 250}`;
+            document.getElementById("displayRating").innerText = `⭐ ${runner.avg_rating || '5.0'}`;
+            if(runner.profilepicture) document.getElementById("runnerImg").src = runner.profilepicture;
 
-                // Fetch runner data
-                const { data, error } = await db
-                    .from('runners')
-                    .select('*')
-                    .eq('email', email)
-                    .maybeSingle();
+            // Contact Links
+            document.getElementById("callBtn").href = `tel:${runner.phone}`;
+            document.getElementById("waBtn").href = `https://wa.me/${runner.phone}?text=Hello ${runner.name}, I'm interested in hiring you via Runner HQ.`;
 
-                if (data) {
-                    // Update UI with Runner Data
-                    document.getElementById("runnerName").innerText = data.name;
-                    document.getElementById("runnerAbout").innerText = data.about || "This runner provides professional errand services in Nairobi.";
-                    document.getElementById("runnerLoc").innerText = data.location || "Nairobi, Kenya";
-                    document.getElementById("statRate").innerText = `KES ${data.base_rate || 250}`;
-                    
-                    if(data.profilepicture) {
-                        document.getElementById("runnerImg").src = data.profilepicture;
-                    }
-
-                    // Online Status UI
-                    const tag = document.getElementById("statusTag");
-                    tag.innerText = data.is_online ? "Available Now" : "Currently Busy";
-                    tag.className = `status-pill ${data.is_online ? 'online' : 'offline'}`;
-
-                    // Contact Buttons
-                    document.getElementById("callBtn").href = `tel:${data.phone}`;
-                    document.getElementById("waBtn").href = `https://wa.me/${data.phone}?text=Hi ${data.name}, I found your profile on Runner HQ and would like to hire you!`;
-                    
-                    // Map Search
-                    document.getElementById("mapLink").href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.location)}`;
-                } else {
-                    document.body.innerHTML = "<div style='text-align:center; padding:100px; font-weight:800;'>Runner Not Found</div>";
-                }
-            } catch (e) {
-                console.error("Profile load failed:", e);
-                document.body.innerHTML = "<div style='text-align:center; padding:100px; font-weight:800;'>Link Error</div>";
+            // WhatsApp Share Tags
+            document.title = `${runner.name} | Runner HQ`;
+            
+            // Load Real Reviews
+            fetchReviews(runner.id);
+            
+            // Show/Hide Review Input based on Role
+            const role = localStorage.getItem("userRole");
+            if(role === 'user') {
+                document.getElementById("writeReviewCard").style.display = "block";
+                document.getElementById("loginToReview").style.display = "none";
             }
         }
+    }
 
-        window.onload = loadProfile;
-    </script>
+    async function fetchReviews(runnerId) {
+        const { data } = await db.from('reviews').select('rating, comment, users(name)').eq('runner_id', runnerId).order('created_at', {ascending: false});
+        const container = document.getElementById("reviewsList");
+        
+        if(data && data.length > 0) {
+            container.innerHTML = data.map(r => `
+                <div class="review-item">
+                    <div class="rev-header">
+                        <span class="rev-name">${r.users.name}</span>
+                        <span class="rev-stars">${"⭐".repeat(r.rating)}</span>
+                    </div>
+                    <div class="rev-text">"${r.comment}"</div>
+                </div>
+            `).join('');
+        } else {
+            container.innerHTML = `<p style="text-align:center; font-size:0.8rem; color:#999;">No reviews yet.</p>`;
+        }
+    }
+
+    async function submitReview() {
+        const userEmail = localStorage.getItem("loggedInEmail");
+        const rating = document.getElementById("ratingScore").value;
+        const comment = document.getElementById("reviewComment").value;
+        
+        if(!comment) return alert("Please add a comment.");
+
+        const { data: userData } = await db.from('users').select('id').eq('email', userEmail).single();
+        const params = new URLSearchParams(window.location.search);
+        const runnerEmail = atob(params.get('id'));
+        const { data: runnerData } = await db.from('runners').select('id').eq('email', runnerEmail).single();
+
+        if(userData && runnerData) {
+            const { error } = await db.from('reviews').insert([{ 
+                runner_id: runnerData.id, 
+                user_id: userData.id, 
+                rating: parseInt(rating), 
+                comment: comment 
+            }]);
+            
+            if(error) alert("You've already rated this runner.");
+            else location.reload();
+        }
+    }
+
+    window.onload = load;
+</script>
 </body>
 </html>
-
-
-
-
-
 
 
