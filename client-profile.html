@@ -25,6 +25,8 @@
     }
     .action-card { transition: all 0.2s; }
     .action-card:active { transform: scale(0.96); }
+    .pulse-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; display: inline-block; margin-right: 5px; animation: pulse 2s infinite; }
+    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
   </style>
 </head>
 <body class="min-h-screen pb-24">
@@ -53,7 +55,7 @@
 
     <div class="mb-8">
         <h3 class="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1 flex items-center">
-            <span class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
+            <span class="pulse-dot"></span>
             Live Errand Status
         </h3>
         
@@ -79,6 +81,7 @@
                 <div class="flex-1">
                     <p class="text-[10px] text-slate-400 font-black uppercase mb-1">On the Job</p>
                     <p id="runnerName" class="text-sm font-extrabold text-slate-800">Runner Assigned</p>
+                    <p id="lastSeen" class="text-[9px] text-blue-500 font-bold uppercase mt-0.5"></p>
                 </div>
                 <a id="runnerCall" href="tel:" class="w-10 h-10 bg-green-500 text-white rounded-full flex items-center justify-center shadow-lg active:scale-90 transition">
                     <i class="fas fa-phone-alt text-sm"></i>
@@ -109,13 +112,15 @@
     const S_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
     const S_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
     const supabaseClient = window.supabase.createClient(S_URL, S_KEY);
+    
+    let userPhone = null;
+    let refreshTimer = null;
 
     async function init() {
         const email = localStorage.getItem('loggedInEmail');
         if (!email) { window.location.href = "login.html"; return; }
 
-        // Fetch user data
-        const { data: user, error } = await supabaseClient
+        const { data: user } = await supabaseClient
             .from('users')
             .select('*')
             .eq('email', email.trim())
@@ -126,19 +131,22 @@
             document.getElementById("userPhoneDisplay").innerText = user.phone || "No Phone Linked";
             document.getElementById("avatar").innerText = (user.full_name || "U").substring(0,2).toUpperCase();
             
-            // Check for errands using the phone stored in DB
             if(user.phone) {
-                checkActiveErrands(user.phone.trim());
+                userPhone = user.phone.trim();
+                checkActiveErrands();
+                // Start polling every 15 seconds to catch GPS updates
+                refreshTimer = setInterval(checkActiveErrands, 15000);
             }
         }
     }
 
-    async function checkActiveErrands(phone) {
-        // 1. Fetch the Errand Record
-        const { data: errand, error } = await supabaseClient
+    async function checkActiveErrands() {
+        if(!userPhone) return;
+
+        const { data: errand } = await supabaseClient
             .from('errands')
-            .select('*') // Raw select to avoid join errors
-            .eq('client_phone', phone)
+            .select('*')
+            .eq('client_phone', userPhone)
             .eq('status', 'In Progress')
             .maybeSingle();
 
@@ -148,8 +156,9 @@
             document.getElementById('errandTask').innerText = errand.description;
             document.getElementById('errandFee').innerText = `KES ${errand.estimated_fee}`;
             
-            // 2. Separate fetch for Runner Details
-            if(errand.runner_email) {
+            // Fetch Runner Details if not already displayed
+            const runnerLabel = document.getElementById('runnerName');
+            if(errand.runner_email && runnerLabel.innerText === "Runner Assigned") {
                 const { data: runner } = await supabaseClient
                     .from('runners')
                     .select('name, phone')
@@ -157,32 +166,42 @@
                     .maybeSingle();
 
                 if (runner) {
-                    document.getElementById('runnerName').innerText = runner.name;
+                    runnerLabel.innerText = runner.name;
                     document.getElementById('runnerInitial').innerText = runner.name[0];
                     document.getElementById('runnerCall').href = `tel:${runner.phone}`;
                 }
             }
 
-            // 3. Handle GPS Display
+            // GPS Logic
             if (errand.lat && errand.lng) {
                 const mBtn = document.getElementById('mapBtn');
                 mBtn.classList.remove('hidden');
+                // Use a standard universal Google Maps link format
                 mBtn.href = `https://www.google.com/maps?q=${errand.lat},${errand.lng}`;
+                
+                // Show "Last Updated" time
+                if(errand.last_ping) {
+                    const time = new Date(errand.last_ping).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    document.getElementById('lastSeen').innerText = `Location updated: ${time}`;
+                }
             }
+        } else {
+            // If job was completed or cancelled, reset view
+            document.getElementById('trackerEmpty').classList.remove('hidden');
+            document.getElementById('trackerActive').classList.add('hidden');
         }
     }
 
     document.getElementById("logoutBtn").onclick = () => { 
         localStorage.clear(); 
+        if(refreshTimer) clearInterval(refreshTimer);
         window.location.href="login.html"; 
     };
 
     window.onload = init;
   </script>
 </body>
-              </html>
-
-
+</html>
 
 
 
