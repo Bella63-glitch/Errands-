@@ -15,7 +15,6 @@
     .text-maroon{color:var(--maroon);}
     .text-gold{color:var(--gold);} 
     .bg-gold{background-color:var(--gold);}
-    
     .profile-card { background: white; border-radius: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
     .initials-avatar {
       width: 4.5rem; height: 4.5rem; border-radius: 1.2rem;
@@ -23,8 +22,6 @@
       color: var(--gold); display: flex; align-items: center;
       justify-content: center; font-size: 1.8rem; font-weight: 800;
     }
-    .action-card { transition: all 0.2s; }
-    .action-card:active { transform: scale(0.96); }
     .pulse-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; display: inline-block; margin-right: 5px; animation: pulse 2s infinite; }
     @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
   </style>
@@ -61,7 +58,7 @@
         
         <div id="trackerEmpty" class="bg-white p-10 rounded-3xl border-2 border-dashed border-slate-200 text-center">
             <p class="text-sm font-bold text-slate-400 uppercase">No active errands</p>
-            <button onclick="window.location.reload()" class="mt-4 text-[10px] font-black text-maroon uppercase underline underline-offset-4">Refresh Feed</button>
+            <p class="text-[9px] text-slate-300 mt-2 italic">Waiting for runner to start...</p>
         </div>
 
         <div id="trackerActive" class="hidden bg-white p-6 rounded-3xl shadow-xl border-t-4 border-maroon">
@@ -113,8 +110,7 @@
     const S_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
     const supabaseClient = window.supabase.createClient(S_URL, S_KEY);
     
-    let userPhone = null;
-    let refreshTimer = null;
+    let userPhoneNum = null;
 
     async function init() {
         const email = localStorage.getItem('loggedInEmail');
@@ -123,30 +119,31 @@
         const { data: user } = await supabaseClient
             .from('users')
             .select('*')
-            .eq('email', email.trim())
+            .eq('email', email.trim().toLowerCase())
             .maybeSingle();
         
         if (user) {
-            document.getElementById("userName").innerText = user.full_name || "Member";
-            document.getElementById("userPhoneDisplay").innerText = user.phone || "No Phone Linked";
+            document.getElementById("userName").innerText = user.full_name;
+            document.getElementById("userPhoneDisplay").innerText = user.phone;
             document.getElementById("avatar").innerText = (user.full_name || "U").substring(0,2).toUpperCase();
             
-            if(user.phone) {
-                userPhone = user.phone.trim();
-                checkActiveErrands();
-                // Start polling every 15 seconds to catch GPS updates
-                refreshTimer = setInterval(checkActiveErrands, 15000);
-            }
+            userPhoneNum = user.phone.trim();
+            
+            // Initial Check
+            checkActiveErrands();
+            // Polling every 10 seconds for GPS and Status updates
+            setInterval(checkActiveErrands, 10000);
         }
     }
 
     async function checkActiveErrands() {
-        if(!userPhone) return;
+        if(!userPhoneNum) return;
 
-        const { data: errand } = await supabaseClient
+        // Fetch the errand where this user is the client
+        const { data: errand, error } = await supabaseClient
             .from('errands')
             .select('*')
-            .eq('client_phone', userPhone)
+            .eq('client_phone', userPhoneNum)
             .eq('status', 'In Progress')
             .maybeSingle();
 
@@ -156,9 +153,8 @@
             document.getElementById('errandTask').innerText = errand.description;
             document.getElementById('errandFee').innerText = `KES ${errand.estimated_fee}`;
             
-            // Fetch Runner Details if not already displayed
-            const runnerLabel = document.getElementById('runnerName');
-            if(errand.runner_email && runnerLabel.innerText === "Runner Assigned") {
+            // Get Runner Name
+            if(errand.runner_email) {
                 const { data: runner } = await supabaseClient
                     .from('runners')
                     .select('name, phone')
@@ -166,27 +162,26 @@
                     .maybeSingle();
 
                 if (runner) {
-                    runnerLabel.innerText = runner.name;
+                    document.getElementById('runnerName').innerText = runner.name;
                     document.getElementById('runnerInitial').innerText = runner.name[0];
                     document.getElementById('runnerCall').href = `tel:${runner.phone}`;
                 }
             }
 
-            // GPS Logic
+            // Maps Link Fix
             if (errand.lat && errand.lng) {
                 const mBtn = document.getElementById('mapBtn');
                 mBtn.classList.remove('hidden');
-                // Use a standard universal Google Maps link format
+                // Correctly formatted Google Maps Link
                 mBtn.href = `https://www.google.com/maps?q=${errand.lat},${errand.lng}`;
                 
-                // Show "Last Updated" time
                 if(errand.last_ping) {
                     const time = new Date(errand.last_ping).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                    document.getElementById('lastSeen').innerText = `Location updated: ${time}`;
+                    document.getElementById('lastSeen').innerText = `LIVE POSITION @ ${time}`;
                 }
             }
         } else {
-            // If job was completed or cancelled, reset view
+            // Reset to empty if no errand is "In Progress"
             document.getElementById('trackerEmpty').classList.remove('hidden');
             document.getElementById('trackerActive').classList.add('hidden');
         }
@@ -194,7 +189,6 @@
 
     document.getElementById("logoutBtn").onclick = () => { 
         localStorage.clear(); 
-        if(refreshTimer) clearInterval(refreshTimer);
         window.location.href="login.html"; 
     };
 
@@ -202,6 +196,15 @@
   </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
 
 
 
