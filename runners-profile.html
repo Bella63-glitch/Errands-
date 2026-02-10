@@ -7,6 +7,10 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <style>
         :root { --maroon: #7B1E3A; --gold: #FFD700; --white: #ffffff; --light: #f4f7f9; --green: #22c55e; --red: #ef4444; --slate: #64748b; --blue: #0ea5e9; }
         body { font-family: 'Montserrat', sans-serif; margin: 0; background: var(--light); color: #2c3e50; padding-bottom: 100px; }
@@ -17,6 +21,9 @@
         .top-status-box { background: white; width: 92%; max-width: 500px; margin: 15px auto; border-radius: 20px; padding: 15px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-left: 4px solid var(--green); }
         .label-tiny { font-size: 0.6rem; font-weight: 800; color: var(--slate); text-transform: uppercase; margin-bottom: 3px; display: block; }
         
+        /* Map Styling */
+        #map { height: 200px; width: 92%; max-width: 500px; margin: 10px auto; border-radius: 20px; border: 2px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: none; z-index: 1; }
+
         .main-card { background: white; width: 92%; max-width: 500px; margin: 0 auto 20px; border-radius: 25px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
         .hero { background: linear-gradient(135deg, var(--maroon) 0%, #5c162b 100%); padding: 30px 20px; text-align: center; position: relative; }
         .profile-pic { width: 90px; height: 90px; border-radius: 28px; border: 3px solid var(--gold); background: white; object-fit: cover; }
@@ -58,9 +65,11 @@
         </div>
     </div>
 
+    <div id="map"></div>
+
     <div id="activeControls" style="display:none; text-align:center;">
         <button class="btn btn-gps" onclick="updateMyLocation()">
-            <i class="fas fa-map-marker-alt"></i> Enable Live Tracking
+            <i class="fas fa-satellite-dish"></i> Refresh Live Position
         </button>
         <button class="btn" onclick="completeErrandAuto()" style="background: #1e293b; color: white;">
             <i class="fas fa-check-circle"></i> Complete & Log Errand
@@ -117,6 +126,7 @@
         };
         const runnerClient = supabase.createClient(config.url, config.key);
         let trackingInterval = null;
+        let map, marker;
 
         async function init() {
             const email = localStorage.getItem("loggedInEmail");
@@ -126,7 +136,7 @@
             if(active) {
                 document.getElementById("activeClientDisplay").innerText = active;
                 document.getElementById("activeControls").style.display = "block";
-                startLiveTracking(); // Auto-start tracking if a job is active
+                startLiveTracking(); 
             }
 
             const { data } = await runnerClient.from("runners").select("*").eq("email", email.trim().toLowerCase()).maybeSingle();
@@ -145,6 +155,23 @@
                 idStat.innerText = data.id_verified ? "VERIFIED PRO" : "ACTIVE";
                 if(data.id_verified) idStat.style.color = "var(--gold)";
             }
+        }
+
+        // Map initialization/update
+        function updateMap(lat, lng) {
+            document.getElementById('map').style.display = 'block';
+            if (!map) {
+                map = L.map('map').setView([lat, lng], 16);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap'
+                }).addTo(map);
+                marker = L.marker([lat, lng]).addTo(map);
+            } else {
+                marker.setLatLng([lat, lng]);
+                map.setView([lat, lng]);
+            }
+            // Force leaflet to recalculate size in case it was hidden
+            setTimeout(() => { map.invalidateSize(); }, 200);
         }
 
         async function setClient() {
@@ -174,10 +201,9 @@
             else alert("No active client set.");
         }
 
-        // UPDATED: Triggers interval-based tracking
         function updateMyLocation() {
-            startLiveTracking();
-            alert("Live tracking started. Updates every 15 seconds.");
+            sendLocationPing();
+            alert("Location refreshed.");
         }
 
         async function completeErrandAuto() {
@@ -187,7 +213,7 @@
             const email = localStorage.getItem("loggedInEmail");
             const p = localStorage.getItem("activeClientPhone");
 
-            stopLiveTracking(); // Stop GPS
+            stopLiveTracking(); 
 
             await runnerClient.from('errands')
                 .update({ status: 'Completed' })
@@ -204,10 +230,9 @@
             location.reload();
         }
 
-        /* LIVE AUTO TRACKING LOGIC */
         function startLiveTracking() {
             if (trackingInterval) return;
-            trackingInterval = setInterval(sendLocationPing, 15000);
+            trackingInterval = setInterval(sendLocationPing, 15000); // 15 seconds
             sendLocationPing(); 
         }
 
@@ -222,17 +247,28 @@
             if (!navigator.geolocation) return;
 
             navigator.geolocation.getCurrentPosition(async (pos) => {
+                const lat = pos.coords.latitude;
+                const lng = pos.coords.longitude;
                 const email = localStorage.getItem("loggedInEmail");
+
+                // 1. Update Map UI
+                updateMap(lat, lng);
+
+                // 2. Update Database
                 await runnerClient
                     .from('errands')
                     .update({
-                        lat: pos.coords.latitude,
-                        lng: pos.coords.longitude,
+                        lat: lat,
+                        lng: lng,
                         last_ping: new Date().toISOString()
                     })
                     .eq('runner_email', email)
                     .eq('status', 'In Progress');
-            }, (err) => console.error("GPS Error:", err), { enableHighAccuracy: true });
+
+            }, (err) => console.error("GPS Error:", err), { 
+                enableHighAccuracy: true,
+                timeout: 10000 
+            });
         }
 
         function openEdit(col, label) {
@@ -264,4 +300,4 @@
 </html>
 
 
-            
+
