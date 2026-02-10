@@ -45,15 +45,9 @@
             </div>
         </div>
         
-        <div class="grid grid-cols-2 gap-3">
-            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
-                <span class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Errands Run</span>
-                <span id="jobCount" class="text-2xl font-black text-maroon">0</span>
-            </div>
-            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
-                <span class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Points</span>
-                <span id="pointCount" class="text-2xl font-black text-gold">0</span>
-            </div>
+        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
+            <span class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Membership Status</span>
+            <span class="text-sm font-black text-maroon uppercase">Active Profile</span>
         </div>
     </div>
 
@@ -64,8 +58,8 @@
         </h3>
         
         <div id="trackerEmpty" class="bg-white p-10 rounded-3xl border-2 border-dashed border-slate-200 text-center">
-            <p class="text-sm font-bold text-slate-400">No active errands.</p>
-            <button onclick="window.location.href='runners.html'" class="mt-4 text-xs font-black text-maroon uppercase underline underline-offset-4">Hire a Runner</button>
+            <p class="text-sm font-bold text-slate-400 uppercase">No active errands</p>
+            <button onclick="window.location.reload()" class="mt-4 text-[10px] font-black text-maroon uppercase underline underline-offset-4">Refresh Feed</button>
         </div>
 
         <div id="trackerActive" class="hidden bg-white p-6 rounded-3xl shadow-xl border-t-4 border-maroon">
@@ -75,7 +69,7 @@
                     <h4 id="errandTask" class="text-base font-black text-slate-800 mt-2 leading-tight">---</h4>
                 </div>
                 <div class="text-right">
-                    <span class="text-[9px] font-black text-slate-400 uppercase block">Fee</span>
+                    <span class="text-[9px] font-black text-slate-400 uppercase block tracking-tighter">Est. Fee</span>
                     <span id="errandFee" class="text-lg font-black text-maroon">KES 0</span>
                 </div>
             </div>
@@ -83,15 +77,15 @@
             <div class="flex items-center p-4 bg-slate-50 rounded-2xl mb-4 border border-slate-100">
                 <div id="runnerInitial" class="w-10 h-10 bg-maroon rounded-xl flex items-center justify-center text-gold font-black text-sm mr-4 shadow-sm">R</div>
                 <div class="flex-1">
-                    <p class="text-[10px] text-slate-400 font-black uppercase mb-1">Runner</p>
-                    <p id="runnerName" class="text-sm font-extrabold text-slate-800">Assigned</p>
+                    <p class="text-[10px] text-slate-400 font-black uppercase mb-1">On the Job</p>
+                    <p id="runnerName" class="text-sm font-extrabold text-slate-800">Runner Assigned</p>
                 </div>
-                <a id="runnerCall" href="tel:" class="w-10 h-10 bg-green-500 text-white rounded-full flex items-center justify-center shadow-lg">
+                <a id="runnerCall" href="tel:" class="w-10 h-10 bg-green-500 text-white rounded-full flex items-center justify-center shadow-lg active:scale-90 transition">
                     <i class="fas fa-phone-alt text-sm"></i>
                 </a>
             </div>
 
-            <a id="mapBtn" href="#" target="_blank" class="hidden w-full py-4 bg-blue-600 text-white rounded-2xl text-xs font-black text-center shadow-xl flex items-center justify-center gap-3">
+            <a id="mapBtn" href="#" target="_blank" class="hidden w-full py-4 bg-blue-600 text-white rounded-2xl text-xs font-black text-center shadow-xl flex items-center justify-center gap-3 active:scale-95 transition">
                 <i class="fas fa-map-marked-alt text-lg"></i>
                 VIEW ON LIVE MAP
             </a>
@@ -116,60 +110,79 @@
     const S_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
     const supabaseClient = window.supabase.createClient(S_URL, S_KEY);
 
-    async function loadProfile() {
-      const email = localStorage.getItem('loggedInEmail');
-      if (!email) { window.location.href = "login.html"; return; }
+    async function init() {
+        const email = localStorage.getItem('loggedInEmail');
+        if (!email) { window.location.href = "login.html"; return; }
 
-      const { data: user } = await supabaseClient.from('users').select('*').eq('email', email).maybeSingle();
-      
-      if (user) {
-        document.getElementById("userName").innerText = user.full_name || "User";
-        document.getElementById("userPhoneDisplay").innerText = user.phone || "No Phone Linked";
-        document.getElementById("avatar").innerText = (user.full_name || "U").substring(0,2).toUpperCase();
-        document.getElementById("jobCount").innerText = user.errands_completed || 0;
-        document.getElementById("pointCount").innerText = (user.errands_completed || 0) * 10;
-        if(user.phone) checkActiveErrands(user.phone);
-      }
+        // Fetch user data
+        const { data: user, error } = await supabaseClient
+            .from('users')
+            .select('*')
+            .eq('email', email.trim())
+            .maybeSingle();
+        
+        if (user) {
+            document.getElementById("userName").innerText = user.full_name || "Member";
+            document.getElementById("userPhoneDisplay").innerText = user.phone || "No Phone Linked";
+            document.getElementById("avatar").innerText = (user.full_name || "U").substring(0,2).toUpperCase();
+            
+            // Check for errands using the phone stored in DB
+            if(user.phone) {
+                checkActiveErrands(user.phone.trim());
+            }
+        }
     }
 
     async function checkActiveErrands(phone) {
-      const { data: errand } = await supabaseClient
-        .from('errands')
-        .select(`*, runners:runner_email(name, phone)`)
-        .eq('client_phone', phone)
-        .eq('status', 'In Progress')
-        .maybeSingle();
+        // 1. Fetch the Errand Record
+        const { data: errand, error } = await supabaseClient
+            .from('errands')
+            .select('*') // Raw select to avoid join errors
+            .eq('client_phone', phone)
+            .eq('status', 'In Progress')
+            .maybeSingle();
 
-      if (errand) {
-        document.getElementById('trackerEmpty').classList.add('hidden');
-        document.getElementById('trackerActive').classList.remove('hidden');
-        document.getElementById('errandTask').innerText = errand.description;
-        document.getElementById('errandFee').innerText = `KES ${errand.estimated_fee}`;
-        
-        if(errand.runners) {
-          document.getElementById('runnerName').innerText = errand.runners.name;
-          document.getElementById('runnerInitial').innerText = errand.runners.name[0];
-          document.getElementById('runnerCall').href = `tel:${errand.runners.phone}`;
-        }
+        if (errand) {
+            document.getElementById('trackerEmpty').classList.add('hidden');
+            document.getElementById('trackerActive').classList.remove('hidden');
+            document.getElementById('errandTask').innerText = errand.description;
+            document.getElementById('errandFee').innerText = `KES ${errand.estimated_fee}`;
+            
+            // 2. Separate fetch for Runner Details
+            if(errand.runner_email) {
+                const { data: runner } = await supabaseClient
+                    .from('runners')
+                    .select('name, phone')
+                    .eq('email', errand.runner_email)
+                    .maybeSingle();
 
-        if (errand.lat && errand.lng) {
-          const mBtn = document.getElementById('mapBtn');
-          mBtn.classList.remove('hidden');
-          mBtn.href = `https://www.google.com/maps?q=${errand.lat},${errand.lng}`;
+                if (runner) {
+                    document.getElementById('runnerName').innerText = runner.name;
+                    document.getElementById('runnerInitial').innerText = runner.name[0];
+                    document.getElementById('runnerCall').href = `tel:${runner.phone}`;
+                }
+            }
+
+            // 3. Handle GPS Display
+            if (errand.lat && errand.lng) {
+                const mBtn = document.getElementById('mapBtn');
+                mBtn.classList.remove('hidden');
+                mBtn.href = `https://www.google.com/maps?q=${errand.lat},${errand.lng}`;
+            }
         }
-      }
     }
 
     document.getElementById("logoutBtn").onclick = () => { 
         localStorage.clear(); 
         window.location.href="login.html"; 
     };
-    window.onload = loadProfile;
+
+    window.onload = init;
   </script>
 </body>
-</html>
+              </html>
 
 
 
 
- 
+
