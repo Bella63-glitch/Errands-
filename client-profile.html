@@ -3,206 +3,173 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Client Profile - Run Me an Errand</title>
+  <title>Dashboard - Run Me an Errand</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root { --maroon:#7B1E3A; --gold:#FFD700; }
+    body { font-family: 'Montserrat', sans-serif; background-color: #f8fafc; color: #1e293b; }
     .bg-maroon{background-color:var(--maroon);} 
     .text-maroon{color:var(--maroon);}
     .text-gold{color:var(--gold);} 
     .bg-gold{background-color:var(--gold);}
-    .spinner {
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid var(--maroon);
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-      margin: 20px auto;
-    }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    .profile-card {
-      background-color: #fff;
-      border: 1px solid #e5e7eb;
-      border-radius: 1rem;
-      padding: 2rem;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    }
+    
+    .profile-card { background: white; border-radius: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
     .initials-avatar {
-      width: 6rem; height: 6rem; border-radius: 50%;
-      border: 4px solid var(--gold); background-color: var(--maroon);
+      width: 4.5rem; height: 4.5rem; border-radius: 1.2rem;
+      border: 3px solid var(--gold); background-color: var(--maroon);
       color: var(--gold); display: flex; align-items: center;
-      justify-content: center; font-size: 2rem; font-weight: bold;
+      justify-content: center; font-size: 1.8rem; font-weight: 800;
     }
-    button.action-btn { font-weight: 600; padding: 0.5rem 1rem; border-radius: 8px; transition: all 0.2s; cursor: pointer; }
-    .btn-maroon { background-color: var(--maroon); color: var(--gold); }
-    .btn-gold { background-color: var(--gold); color: var(--maroon); }
+    .action-card { transition: all 0.2s; }
+    .action-card:active { transform: scale(0.96); }
   </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-start pt-12">
+<body class="min-h-screen pb-24">
 
-  <h1 class="text-4xl font-bold text-maroon mb-10">My Profile</h1>
+  <nav class="bg-maroon p-4 text-white flex justify-between items-center sticky top-0 z-50">
+    <h1 class="font-black tracking-tighter text-lg uppercase">DASHBOARD</h1>
+    <button id="logoutBtn" class="text-[10px] font-bold border border-white/20 px-4 py-1.5 rounded-full">LOGOUT</button>
+  </nav>
 
-  <div id="profileContainer" class="w-full max-w-4xl px-4">
-    <div id="profileDetails" class="profile-card">
-      <div class="text-center" id="loadingState">
-        <div class="spinner"></div>
-        <p class="text-gray-500 mt-2">Connecting to database...</p>
-      </div>
+  <div class="max-w-md mx-auto px-4 mt-6">
+    
+    <div id="profileDetails" class="profile-card p-6 mb-6">
+        <div class="flex items-center space-x-4 mb-6">
+            <div id="avatar" class="initials-avatar shadow-sm">..</div>
+            <div>
+                <h2 id="userName" class="text-xl font-extrabold text-maroon leading-tight">Loading...</h2>
+                <p id="userPhoneDisplay" class="text-xs font-bold text-slate-400 tracking-wide"></p>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-3">
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
+                <span class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Errands Run</span>
+                <span id="jobCount" class="text-2xl font-black text-maroon">0</span>
+            </div>
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
+                <span class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Points</span>
+                <span id="pointCount" class="text-2xl font-black text-gold">0</span>
+            </div>
+        </div>
     </div>
 
-    <div id="errorMessage" class="mt-4 text-center text-red-600 font-semibold"></div>
+    <div class="mb-8">
+        <h3 class="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1 flex items-center">
+            <span class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
+            Live Errand Status
+        </h3>
+        
+        <div id="trackerEmpty" class="bg-white p-10 rounded-3xl border-2 border-dashed border-slate-200 text-center">
+            <p class="text-sm font-bold text-slate-400">No active errands.</p>
+            <button onclick="window.location.href='runners.html'" class="mt-4 text-xs font-black text-maroon uppercase underline underline-offset-4">Hire a Runner</button>
+        </div>
 
-    <div class="mt-8 flex flex-col items-center space-y-4">
-      <button id="exploreRunnersBtn" class="action-btn btn-maroon w-64">Explore Runners</button>
-      <div class="flex space-x-4">
-        <a href="index.html" class="px-4 py-2 rounded-lg border border-maroon text-maroon font-semibold hover:bg-maroon hover:text-gold transition">Home</a>
-        <button id="logoutBtn" class="px-4 py-2 rounded-lg bg-maroon text-gold font-bold">Logout</button>
-      </div>
+        <div id="trackerActive" class="hidden bg-white p-6 rounded-3xl shadow-xl border-t-4 border-maroon">
+            <div class="flex justify-between items-start mb-6">
+                <div class="flex-1 pr-4">
+                    <span class="bg-maroon text-gold text-[10px] font-black px-2.5 py-1 rounded-md uppercase">In Progress</span>
+                    <h4 id="errandTask" class="text-base font-black text-slate-800 mt-2 leading-tight">---</h4>
+                </div>
+                <div class="text-right">
+                    <span class="text-[9px] font-black text-slate-400 uppercase block">Fee</span>
+                    <span id="errandFee" class="text-lg font-black text-maroon">KES 0</span>
+                </div>
+            </div>
+
+            <div class="flex items-center p-4 bg-slate-50 rounded-2xl mb-4 border border-slate-100">
+                <div id="runnerInitial" class="w-10 h-10 bg-maroon rounded-xl flex items-center justify-center text-gold font-black text-sm mr-4 shadow-sm">R</div>
+                <div class="flex-1">
+                    <p class="text-[10px] text-slate-400 font-black uppercase mb-1">Runner</p>
+                    <p id="runnerName" class="text-sm font-extrabold text-slate-800">Assigned</p>
+                </div>
+                <a id="runnerCall" href="tel:" class="w-10 h-10 bg-green-500 text-white rounded-full flex items-center justify-center shadow-lg">
+                    <i class="fas fa-phone-alt text-sm"></i>
+                </a>
+            </div>
+
+            <a id="mapBtn" href="#" target="_blank" class="hidden w-full py-4 bg-blue-600 text-white rounded-2xl text-xs font-black text-center shadow-xl flex items-center justify-center gap-3">
+                <i class="fas fa-map-marked-alt text-lg"></i>
+                VIEW ON LIVE MAP
+            </a>
+        </div>
     </div>
+
+    <div class="grid grid-cols-2 gap-4">
+        <button onclick="window.location.href='runners.html'" class="action-card bg-white border-2 border-maroon text-maroon p-5 rounded-3xl font-black text-xs flex flex-col items-center gap-3">
+            <i class="fas fa-running text-xl"></i>
+            RUNNERS
+        </button>
+        <button onclick="window.location.href='tel:0797046378'" class="action-card bg-maroon text-gold p-5 rounded-3xl font-black text-xs flex flex-col items-center gap-3 shadow-lg">
+            <i class="fas fa-headset text-xl"></i>
+            SUPPORT
+        </button>
+    </div>
+
   </div>
 
   <script>
-    // Constants
     const S_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
     const S_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
-    
-    // Initialize inside a check to prevent "already declared" error
-    let supabaseClient;
-    try {
-        supabaseClient = window.supabase.createClient(S_URL, S_KEY);
-    } catch (e) {
-        console.error("Supabase initialization failed", e);
-    }
-
-    const profileDiv = document.getElementById("profileDetails");
-    const errorDiv = document.getElementById("errorMessage");
-
-    function getInitials(name, email) {
-      if (name && name.trim()) {
-        const parts = name.trim().split(/\s+/);
-        if (parts.length > 1) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-        return parts[0].substring(0, 2).toUpperCase();
-      }
-      return email ? email.substring(0, 2).toUpperCase() : "??";
-    }
+    const supabaseClient = window.supabase.createClient(S_URL, S_KEY);
 
     async function loadProfile() {
       const email = localStorage.getItem('loggedInEmail');
+      if (!email) { window.location.href = "login.html"; return; }
+
+      const { data: user } = await supabaseClient.from('users').select('*').eq('email', email).maybeSingle();
       
-      if (!email) {
-        profileDiv.innerHTML = `<p class="text-center">No active session. Redirecting to login...</p>`;
-        setTimeout(() => window.location.href = "login.html", 2000);
-        return;
-      }
-
-      try {
-        const { data: user, error } = await supabaseClient
-          .from('users')
-          .select('*')
-          .eq('email', email)
-          .maybeSingle();
-
-        if (error) throw error;
-
-        if (!user) {
-          profileDiv.innerHTML = `<p class="text-center">Account details not found. Please log in again.</p>`;
-          return;
-        }
-
-        renderProfile(user);
-
-      } catch (err) {
-        console.error("Fetch error:", err);
-        errorDiv.textContent = "Database Error: " + err.message;
-        profileDiv.innerHTML = `<p class="text-center text-red-500">Failed to load profile data.</p>`;
+      if (user) {
+        document.getElementById("userName").innerText = user.full_name || "User";
+        document.getElementById("userPhoneDisplay").innerText = user.phone || "No Phone Linked";
+        document.getElementById("avatar").innerText = (user.full_name || "U").substring(0,2).toUpperCase();
+        document.getElementById("jobCount").innerText = user.errands_completed || 0;
+        document.getElementById("pointCount").innerText = (user.errands_completed || 0) * 10;
+        if(user.phone) checkActiveErrands(user.phone);
       }
     }
 
-    function renderProfile(user) {
-      const initials = getInitials(user.full_name, user.email);
-      profileDiv.innerHTML = `
-        <div class="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6 mb-8 border-b pb-6">
-          <div class="initials-avatar">${initials}</div>
-          <div class="text-center md:text-left">
-            <h2 class="text-3xl font-bold text-maroon">${user.full_name || 'Valued Client'}</h2>
-            <p class="text-lg text-gray-500">${user.email}</p>
-          </div>
-        </div>
-        <div class="grid md:grid-cols-2 gap-8">
-          <div>
-            <h3 class="font-bold text-maroon border-b mb-3">Personal Details</h3>
-            <p class="mb-2"><strong>Phone:</strong> ${user.phone || 'Not set'}</p>
-            <button id="editBtn" class="action-btn btn-gold mt-2">Edit My Info</button>
-          </div>
-          <div class="bg-gray-50 p-4 rounded-lg">
-            <h3 class="font-bold text-maroon mb-2">History</h3>
-            <p class="text-sm text-gray-500 italic">You haven't requested any errands yet.</p>
-          </div>
-        </div>
-      `;
+    async function checkActiveErrands(phone) {
+      const { data: errand } = await supabaseClient
+        .from('errands')
+        .select(`*, runners:runner_email(name, phone)`)
+        .eq('client_phone', phone)
+        .eq('status', 'In Progress')
+        .maybeSingle();
 
-      document.getElementById("editBtn").onclick = () => renderEdit(user);
-    }
-
-    function renderEdit(user) {
-      profileDiv.innerHTML = `
-        <h2 class="text-2xl font-bold text-maroon mb-6">Update Profile</h2>
-        <div class="space-y-4">
-          <div>
-            <label class="block text-sm font-bold text-gray-700">Full Name</label>
-            <input type="text" id="editName" class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-maroon" value="${user.full_name || ''}">
-          </div>
-          <div>
-            <label class="block text-sm font-bold text-gray-700">Phone Number</label>
-            <input type="text" id="editPhone" class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-maroon" value="${user.phone || ''}">
-          </div>
-          <div class="flex space-x-3 pt-4">
-            <button id="saveBtn" class="action-btn btn-maroon">Save Changes</button>
-            <button id="cancelBtn" class="action-btn bg-gray-200 text-gray-700">Cancel</button>
-          </div>
-        </div>
-      `;
-
-      document.getElementById("cancelBtn").onclick = () => renderProfile(user);
-      document.getElementById("saveBtn").onclick = async () => {
-        const btn = document.getElementById("saveBtn");
-        btn.disabled = true;
-        btn.innerText = "Saving...";
-
-        const { data, error } = await supabaseClient
-          .from('users')
-          .update({ 
-            full_name: document.getElementById("editName").value, 
-            phone: document.getElementById("editPhone").value 
-          })
-          .eq('email', user.email)
-          .select()
-          .single();
-
-        if (error) {
-          alert("Update failed: " + error.message);
-          btn.disabled = false;
-          btn.innerText = "Save Changes";
-        } else {
-          renderProfile(data);
+      if (errand) {
+        document.getElementById('trackerEmpty').classList.add('hidden');
+        document.getElementById('trackerActive').classList.remove('hidden');
+        document.getElementById('errandTask').innerText = errand.description;
+        document.getElementById('errandFee').innerText = `KES ${errand.estimated_fee}`;
+        
+        if(errand.runners) {
+          document.getElementById('runnerName').innerText = errand.runners.name;
+          document.getElementById('runnerInitial').innerText = errand.runners.name[0];
+          document.getElementById('runnerCall').href = `tel:${errand.runners.phone}`;
         }
-      };
+
+        if (errand.lat && errand.lng) {
+          const mBtn = document.getElementById('mapBtn');
+          mBtn.classList.remove('hidden');
+          mBtn.href = `https://www.google.com/maps?q=${errand.lat},${errand.lng}`;
+        }
+      }
     }
 
-    // Global Listeners
-    document.getElementById("logoutBtn").onclick = () => {
-      localStorage.clear();
-      window.location.href = "login.html";
+    document.getElementById("logoutBtn").onclick = () => { 
+        localStorage.clear(); 
+        window.location.href="login.html"; 
     };
-
-    document.getElementById("exploreRunnersBtn").onclick = () => {
-      window.location.href = "runners.html";
-    };
-
-    // Initialize on page load
-    window.addEventListener('DOMContentLoaded', loadProfile);
+    window.onload = loadProfile;
   </script>
 </body>
 </html>
+
+
+
+
+ 
