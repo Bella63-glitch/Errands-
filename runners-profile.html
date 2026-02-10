@@ -60,7 +60,7 @@
 
     <div id="activeControls" style="display:none; text-align:center;">
         <button class="btn btn-gps" onclick="updateMyLocation()">
-            <i class="fas fa-map-marker-alt"></i> Send GPS Ping to Client
+            <i class="fas fa-map-marker-alt"></i> Enable Live Tracking
         </button>
         <button class="btn" onclick="completeErrandAuto()" style="background: #1e293b; color: white;">
             <i class="fas fa-check-circle"></i> Complete & Log Errand
@@ -116,6 +116,7 @@
             key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI"
         };
         const runnerClient = supabase.createClient(config.url, config.key);
+        let trackingInterval = null;
 
         async function init() {
             const email = localStorage.getItem("loggedInEmail");
@@ -125,6 +126,7 @@
             if(active) {
                 document.getElementById("activeClientDisplay").innerText = active;
                 document.getElementById("activeControls").style.display = "block";
+                startLiveTracking(); // Auto-start tracking if a job is active
             }
 
             const { data } = await runnerClient.from("runners").select("*").eq("email", email.trim().toLowerCase()).maybeSingle();
@@ -153,13 +155,13 @@
             if(p && task) {
                 localStorage.setItem("activeClientPhone", p);
                 
-                // Create the record for the client to track
                 await runnerClient.from('errands').insert([{
                     client_phone: p,
                     description: task,
                     estimated_fee: parseInt(fee),
                     status: 'In Progress',
-                    runner_email: localStorage.getItem("loggedInEmail")
+                    runner_email: localStorage.getItem("loggedInEmail"),
+                    last_ping: new Date().toISOString()
                 }]);
 
                 location.reload();
@@ -172,19 +174,10 @@
             else alert("No active client set.");
         }
 
+        // UPDATED: Triggers interval-based tracking
         function updateMyLocation() {
-            if (!navigator.geolocation) return alert("GPS not available.");
-            navigator.geolocation.getCurrentPosition(async (pos) => {
-                const { latitude, longitude } = pos.coords;
-                const p = localStorage.getItem("activeClientPhone");
-                
-                await runnerClient.from('errands')
-                    .update({ lat: latitude, lng: longitude })
-                    .eq('client_phone', p)
-                    .eq('status', 'In Progress');
-
-                alert("GPS Ping Sent! Client can now see your location.");
-            });
+            startLiveTracking();
+            alert("Live tracking started. Updates every 15 seconds.");
         }
 
         async function completeErrandAuto() {
@@ -194,13 +187,13 @@
             const email = localStorage.getItem("loggedInEmail");
             const p = localStorage.getItem("activeClientPhone");
 
-            // Close the live errand
+            stopLiveTracking(); // Stop GPS
+
             await runnerClient.from('errands')
                 .update({ status: 'Completed' })
                 .eq('client_phone', p)
                 .eq('runner_email', email);
 
-            // Update stats
             const { data: current } = await runnerClient.from("runners").select("errands_completed, total_earnings").eq("email", email).single();
             await runnerClient.from("runners").update({ 
                 errands_completed: (current.errands_completed || 0) + 1,
@@ -209,6 +202,37 @@
 
             localStorage.removeItem("activeClientPhone");
             location.reload();
+        }
+
+        /* LIVE AUTO TRACKING LOGIC */
+        function startLiveTracking() {
+            if (trackingInterval) return;
+            trackingInterval = setInterval(sendLocationPing, 15000);
+            sendLocationPing(); 
+        }
+
+        function stopLiveTracking() {
+            if (trackingInterval) {
+                clearInterval(trackingInterval);
+                trackingInterval = null;
+            }
+        }
+
+        async function sendLocationPing() {
+            if (!navigator.geolocation) return;
+
+            navigator.geolocation.getCurrentPosition(async (pos) => {
+                const email = localStorage.getItem("loggedInEmail");
+                await runnerClient
+                    .from('errands')
+                    .update({
+                        lat: pos.coords.latitude,
+                        lng: pos.coords.longitude,
+                        last_ping: new Date().toISOString()
+                    })
+                    .eq('runner_email', email)
+                    .eq('status', 'In Progress');
+            }, (err) => console.error("GPS Error:", err), { enableHighAccuracy: true });
         }
 
         function openEdit(col, label) {
@@ -240,7 +264,4 @@
 </html>
 
 
-
-
-
-
+            
