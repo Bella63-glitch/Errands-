@@ -8,18 +8,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { --maroon: #7B1E3A; --gold: #FFD700; --white: #ffffff; --light: #f4f7f9; --green: #22c55e; --red: #ef4444; --slate: #64748b; }
+        :root { --maroon: #7B1E3A; --gold: #FFD700; --white: #ffffff; --light: #f4f7f9; --green: #22c55e; --red: #ef4444; --slate: #64748b; --blue: #0ea5e9; }
         body { font-family: 'Montserrat', sans-serif; margin: 0; background: var(--light); color: #2c3e50; padding-bottom: 100px; }
         
-        /* Header */
         .header { background: var(--maroon); padding: 15px 20px; color: white; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         .header h1 { font-size: 0.9rem; margin: 0; font-weight: 800; letter-spacing: 1px; }
 
-        /* Status Cards */
         .top-status-box { background: white; width: 92%; max-width: 500px; margin: 15px auto; border-radius: 20px; padding: 15px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-left: 4px solid var(--green); }
         .label-tiny { font-size: 0.6rem; font-weight: 800; color: var(--slate); text-transform: uppercase; margin-bottom: 3px; display: block; }
         
-        /* Profile Section */
         .main-card { background: white; width: 92%; max-width: 500px; margin: 0 auto 20px; border-radius: 25px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
         .hero { background: linear-gradient(135deg, var(--maroon) 0%, #5c162b 100%); padding: 30px 20px; text-align: center; position: relative; }
         .profile-pic { width: 90px; height: 90px; border-radius: 28px; border: 3px solid var(--gold); background: white; object-fit: cover; }
@@ -28,26 +25,16 @@
         .stat-val { display: block; font-weight: 800; color: var(--maroon); font-size: 1rem; }
         .stat-lab { font-size: 0.55rem; color: var(--slate); font-weight: 700; text-transform: uppercase; }
 
-        /* Action Buttons */
         .btn { width: 92%; max-width: 500px; margin: 8px auto; padding: 14px; border-radius: 12px; border: none; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; font-family: inherit; font-size: 0.8rem; text-decoration: none; }
         .btn-gold { background: var(--gold); color: var(--maroon); }
         .btn-outline { background: white; color: var(--maroon); border: 2px solid var(--maroon); }
+        .btn-gps { background: #e0f2fe; color: var(--blue); border: 2px solid var(--blue); }
         .btn-emergency { background: #fee2e2; color: var(--red); margin-top: 20px; }
 
-        /* Settings List */
         .setting-item { display: flex; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid #f8fafc; cursor: pointer; align-items: center; }
         .setting-item label { font-size: 0.65rem; font-weight: 800; color: var(--slate); }
         .setting-item span { font-weight: 600; font-size: 0.8rem; color: #334155; max-width: 60%; text-align: right; }
 
-        /* Modern Tutorial Overlay */
-        #tutorialOverlay { display:none; position:fixed; inset:0; background:rgba(15, 23, 42, 0.95); z-index:3000; align-items:center; justify-content:center; padding:20px; color: white; }
-        .tut-card { background: white; color: #1e293b; padding: 30px; border-radius: 24px; width: 100%; max-width: 380px; text-align: center; position: relative; }
-        .tut-step { display: none; animation: fadeIn 0.4s ease; }
-        .tut-step.active { display: block; }
-        .tut-icon { width: 60px; height: 60px; background: #fff7ed; color: #f59e0b; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 1.5rem; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Modals */
         #editModal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:2000; align-items:center; justify-content:center; padding:20px; }
         .modal-content { background:white; padding:25px; border-radius:20px; width:100%; max-width:400px; box-sizing: border-box; }
         input, textarea { width:100%; padding:12px; border:1px solid #e2e8f0; border-radius:10px; margin: 10px 0; font-family: inherit; font-size: 0.9rem; }
@@ -66,14 +53,19 @@
             <span id="activeClientDisplay" style="font-weight: 800; font-size: 13px;">No Active Errand</span>
         </div>
         <div style="display:flex; gap:6px;">
-            <button onclick="setClient()" style="background:#f1f5f9; border:none; padding:8px 12px; border-radius:8px; font-size:10px; font-weight:700; color:var(--slate);">SET</button>
+            <button onclick="setClient()" style="background:#f1f5f9; border:none; padding:8px 12px; border-radius:8px; font-size:10px; font-weight:700; color:var(--slate);">START</button>
             <button onclick="callClient()" style="background:var(--green); color:white; border:none; padding:8px 14px; border-radius:8px; font-size:10px; font-weight:700;"><i class="fas fa-phone"></i> CALL</button>
         </div>
     </div>
 
-    <button class="btn" id="finishBtn" onclick="completeErrandAuto()" style="display:none; background: #1e293b; color: white; margin-bottom: 20px;">
-        <i class="fas fa-check-circle"></i> Complete & Log Errand
-    </button>
+    <div id="activeControls" style="display:none; text-align:center;">
+        <button class="btn btn-gps" onclick="updateMyLocation()">
+            <i class="fas fa-map-marker-alt"></i> Send GPS Ping to Client
+        </button>
+        <button class="btn" onclick="completeErrandAuto()" style="background: #1e293b; color: white;">
+            <i class="fas fa-check-circle"></i> Complete & Log Errand
+        </button>
+    </div>
 
     <div class="main-card">
         <div class="hero">
@@ -93,10 +85,6 @@
                 <label>FULL NAME</label>
                 <span><span id="valName">---</span> <i class="fas fa-chevron-right"></i></span>
             </div>
-            <div class="setting-item" onclick="openEdit('phone', 'Public Phone')">
-                <label>WHATSAPP/CALL</label>
-                <span><span id="valPhone">---</span> <i class="fas fa-chevron-right"></i></span>
-            </div>
             <div class="setting-item" onclick="openEdit('location', 'Town/City')">
                 <label>OPERATING AREA</label>
                 <span><span id="valLoc">---</span> <i class="fas fa-chevron-right"></i></span>
@@ -105,10 +93,6 @@
                 <label>MY BASE RATE</label>
                 <span>KES <span id="valRate">0</span> <i class="fas fa-chevron-right"></i></span>
             </div>
-            <div class="setting-item" onclick="openEdit('about', 'Profile Bio')">
-                <label>MY SERVICES/BIO</label>
-                <span>Edit Bio <i class="fas fa-chevron-right"></i></span>
-            </div>
         </div>
     </div>
 
@@ -116,29 +100,6 @@
     <button class="btn btn-outline" onclick="showSafety()"><i class="fas fa-shield-alt"></i> Safety Checklist</button>
     
     <button class="btn btn-emergency" onclick="window.location.href='tel:0797046378'"><i class="fas fa-headset"></i> Call Support Office</button>
-
-    <div id="tutorialOverlay">
-        <div class="tut-card">
-            <div class="tut-step active" id="s1">
-                <div class="tut-icon"><i class="fas fa-briefcase"></i></div>
-                <h3 style="margin:0 0 10px;">Your National Office</h3>
-                <p style="font-size: 0.9rem; color: #64748b; line-height: 1.5;">Welcome to Run Me An Errand. This website is your storefront where customers find and hire you.</p>
-                <button class="btn btn-gold" onclick="goStep(2)">Continue</button>
-            </div>
-            <div class="tut-step" id="s2">
-                <div class="tut-icon"><i class="fas fa-bolt"></i></div>
-                <h3 style="margin:0 0 10px;">Direct Hiring</h3>
-                <p style="font-size: 0.9rem; color: #64748b; line-height: 1.5;">Clients call you directly from your profile. No middlemen. You keep 100% of the money you make.</p>
-                <button class="btn btn-gold" onclick="goStep(3)">Continue</button>
-            </div>
-            <div class="tut-step" id="s3">
-                <div class="tut-icon"><i class="fas fa-star"></i></div>
-                <h3 style="margin:0 0 10px;">Grow Your Brand</h3>
-                <p style="font-size: 0.9rem; color: #64748b; line-height: 1.5;">Log every job to increase your "Jobs Done" count. High stats mean more calls and more trust!</p>
-                <button class="btn btn-gold" onclick="closeTut()">Start Earning</button>
-            </div>
-        </div>
-    </div>
 
     <div id="editModal">
         <div class="modal-content">
@@ -160,21 +121,16 @@
             const email = localStorage.getItem("loggedInEmail");
             if (!email) { window.location.href = "login.html"; return; }
 
-            if (!localStorage.getItem("v2_tut")) {
-                document.getElementById("tutorialOverlay").style.display = "flex";
-            }
-
             const active = localStorage.getItem("activeClientPhone");
             if(active) {
                 document.getElementById("activeClientDisplay").innerText = active;
-                document.getElementById("finishBtn").style.display = "flex";
+                document.getElementById("activeControls").style.display = "block";
             }
 
             const { data } = await runnerClient.from("runners").select("*").eq("email", email.trim().toLowerCase()).maybeSingle();
             if (data) {
                 document.getElementById("nameDisplay").innerText = data.name;
                 document.getElementById("valName").innerText = data.name;
-                document.getElementById("valPhone").innerText = data.phone || "Not Set";
                 document.getElementById("valLoc").innerText = data.location || "National";
                 document.getElementById("cityPill").innerText = (data.location || "National") + " RUNNER";
                 document.getElementById("valRate").innerText = data.base_rate || 0;
@@ -189,29 +145,63 @@
             }
         }
 
-        function goStep(n) {
-            document.querySelectorAll('.tut-step').forEach(s => s.classList.remove('active'));
-            document.getElementById('s'+n).classList.add('active');
-        }
-        function closeTut() { localStorage.setItem("v2_tut", "true"); document.getElementById("tutorialOverlay").style.display = "none"; }
-
-        function setClient() {
+        async function setClient() {
             const p = prompt("Enter Client Phone Number:");
-            if(p) { localStorage.setItem("activeClientPhone", p); location.reload(); }
+            const task = prompt("What is the errand? (e.g. Delivery, Shopping)");
+            const fee = prompt("Agreed Fee (KES):");
+            
+            if(p && task) {
+                localStorage.setItem("activeClientPhone", p);
+                
+                // Create the record for the client to track
+                await runnerClient.from('errands').insert([{
+                    client_phone: p,
+                    description: task,
+                    estimated_fee: parseInt(fee),
+                    status: 'In Progress',
+                    runner_email: localStorage.getItem("loggedInEmail")
+                }]);
+
+                location.reload();
+            }
         }
 
         function callClient() {
             const p = localStorage.getItem("activeClientPhone");
             if(p) window.location.href = `tel:${p}`;
-            else alert("Please set a client number first.");
+            else alert("No active client set.");
+        }
+
+        function updateMyLocation() {
+            if (!navigator.geolocation) return alert("GPS not available.");
+            navigator.geolocation.getCurrentPosition(async (pos) => {
+                const { latitude, longitude } = pos.coords;
+                const p = localStorage.getItem("activeClientPhone");
+                
+                await runnerClient.from('errands')
+                    .update({ lat: latitude, lng: longitude })
+                    .eq('client_phone', p)
+                    .eq('status', 'In Progress');
+
+                alert("GPS Ping Sent! Client can now see your location.");
+            });
         }
 
         async function completeErrandAuto() {
-            const amt = prompt("Enter Fee Collected (KES):");
+            const amt = prompt("Final Fee Collected (KES):");
             if(!amt || isNaN(amt)) return;
-            const email = localStorage.getItem("loggedInEmail");
-            const { data: current } = await runnerClient.from("runners").select("errands_completed, total_earnings").eq("email", email).single();
             
+            const email = localStorage.getItem("loggedInEmail");
+            const p = localStorage.getItem("activeClientPhone");
+
+            // Close the live errand
+            await runnerClient.from('errands')
+                .update({ status: 'Completed' })
+                .eq('client_phone', p)
+                .eq('runner_email', email);
+
+            // Update stats
+            const { data: current } = await runnerClient.from("runners").select("errands_completed, total_earnings").eq("email", email).single();
             await runnerClient.from("runners").update({ 
                 errands_completed: (current.errands_completed || 0) + 1,
                 total_earnings: (current.total_earnings || 0) + parseInt(amt) 
@@ -225,7 +215,7 @@
             document.getElementById("editModal").style.display = "flex";
             document.getElementById("modalTitle").innerText = `Edit ${label}`;
             const wrap = document.getElementById("inputWrap");
-            wrap.innerHTML = col === 'about' ? `<textarea id="editIn" rows="4"></textarea>` : `<input type="text" id="editIn">`;
+            wrap.innerHTML = `<input type="text" id="editIn">`;
             
             document.getElementById("saveBtn").onclick = async () => {
                 const val = document.getElementById("editIn").value;
@@ -237,22 +227,17 @@
         }
 
         function closeModal() { document.getElementById("editModal").style.display = "none"; }
-        function showSafety() { alert("SAFETY CHECKLIST:\n1. Verify customer M-Pesa name.\n2. Do not use your own cash for purchases.\n3. Send location to office if suspicious.\n4. Take photos of delivery receipts."); }
+        function showSafety() { alert("1. Verify M-Pesa Name.\n2. Never use your own cash for client items.\n3. Send GPS pings often."); }
+        
         function shareProfile() { 
             const url = `https://runmeanerrand.co.ke/view.html?id=${btoa(localStorage.getItem("loggedInEmail")).substring(0,8)}`;
-            window.open(`https://wa.me/?text=${encodeURIComponent("Check out my professional errand profile: " + url)}`, '_blank');
+            window.open(`https://wa.me/?text=${encodeURIComponent("Hire me for errands: " + url)}`, '_blank');
         }
 
         window.onload = init;
     </script>
 </body>
 </html>
-
-
-
-
-
-
 
 
 
