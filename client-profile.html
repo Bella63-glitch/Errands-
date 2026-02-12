@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Client Hub | Run Me An Errand</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Premium Dashboard</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -13,223 +13,279 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
-    :root { --maroon:#630d21; --gold:#fcc419; --soft-bg:#f3f4f6; }
-    body { font-family:'Outfit',sans-serif; background:var(--soft-bg); color:#1e293b; }
-    .glass-header { background:linear-gradient(135deg,var(--maroon),#4a0a19); }
-    .neo-card { background:#fff; border-radius:2rem; box-shadow:0 10px 25px -5px rgba(0,0,0,.05); }
-    #map { height:260px; width:100%; border-radius:1.5rem; margin-top:1rem; display:none; }
-    .status-pulse { width:8px;height:8px;background:#22c55e;border-radius:50%;animation:blink 1.5s infinite; }
-    @keyframes blink { 0%,100%{opacity:.2} 50%{opacity:1} }
-    #ratingModal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:5000; align-items:center; justify-content:center; }
-    .star-rating { color:#d1d5db; cursor:pointer; }
-    .star-rating.active { color:var(--gold); }
+    :root { --maroon: #630d21; --gold: #fcc419; --soft-bg: #f3f4f6; }
+    body { font-family: 'Outfit', sans-serif; background-color: var(--soft-bg); color: #1e293b; }
+    .glass-header { background: linear-gradient(135deg, var(--maroon) 0%, #4a0a19 100%); }
+    .neo-card {
+      background: #ffffff;
+      border-radius: 2rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(255,255,255,1);
+    }
+    #map {
+      height: 260px; width: 100%; border-radius: 1.5rem;
+      margin-top: 1rem; border: 4px solid white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      display: none; z-index: 1;
+    }
+    .star-rating { color: #d1d5db; cursor: pointer; transition: color 0.2s; }
+    .star-rating.active { color: var(--gold); }
+    #ratingModal {
+      display:none; position:fixed; inset:0;
+      background:rgba(0,0,0,0.8); z-index:5000;
+      align-items:center; justify-content:center;
+      padding:20px; backdrop-filter: blur(5px);
+    }
   </style>
 </head>
 
 <body class="min-h-screen pb-10">
 
-<div id="ratingModal">
-  <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 text-center shadow-2xl">
-    <h2 class="text-xl font-black mb-2">Errand Completed!</h2>
-    <p class="text-sm mb-6">Rate your experience with <span id="ratingRunnerName" class="font-bold text-maroon">runner</span></p>
-    <div class="flex justify-center gap-3 mb-8">
-      <i class="fas fa-star fa-2x star-rating" onclick="setRating(1)"></i>
-      <i class="fas fa-star fa-2x star-rating" onclick="setRating(2)"></i>
-      <i class="fas fa-star fa-2x star-rating" onclick="setRating(3)"></i>
-      <i class="fas fa-star fa-2x star-rating" onclick="setRating(4)"></i>
-      <i class="fas fa-star fa-2x star-rating" onclick="setRating(5)"></i>
-    </div>
-    <button onclick="submitReview()" class="w-full bg-[#630d21] text-white py-4 rounded-2xl font-black">SUBMIT REVIEW</button>
-  </div>
-</div>
-
-<div class="glass-header pt-12 pb-24 px-6 rounded-b-[3rem]">
-  <div class="flex justify-between items-center">
-    <div>
-      <h1 class="text-white text-3xl font-black">My Hub</h1>
-      <p class="text-white/60 text-xs uppercase">Live Dashboard</p>
-    </div>
-    <button onclick="logout()" class="bg-white/10 p-3 rounded-2xl text-white">
-      <i class="fas fa-power-off"></i>
-    </button>
-  </div>
-</div>
-
-<div class="max-w-md mx-auto px-6 -mt-16">
-
-  <div class="neo-card p-6 mb-8">
-    <div class="flex justify-between mb-2">
-      <div id="avatar" class="w-14 h-14 bg-maroon rounded-2xl flex items-center justify-center text-gold font-black">?</div>
-      <span class="text-[10px] font-black bg-slate-100 px-3 py-1 rounded-full uppercase">Client Profile</span>
-    </div>
-    <h2 id="userName" class="text-2xl font-bold">---</h2>
-    <p id="userPhoneDisplay" class="text-sm">---</p>
-  </div>
-
-  <div class="mb-10">
-    <h3 class="text-xs font-black uppercase mb-4 ml-2">Live Activity</h3>
-
-    <div id="trackerEmpty" class="neo-card p-12 text-center">
-      <i class="fas fa-box-open text-3xl mb-3"></i>
-      <p class="text-xs font-bold uppercase">No active errands</p>
-    </div>
-
-    <div id="trackerActive" class="hidden neo-card p-6 border-l-4 border-green-500">
-      <div class="flex justify-between mb-4">
-        <div class="flex items-center gap-2">
-          <span class="status-pulse"></span>
-          <span class="text-[10px] font-black uppercase">Runner Active</span>
+  <!-- Rating Modal -->
+  <div id="ratingModal">
+    <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 text-center shadow-2xl">
+        <div class="w-20 h-20 bg-maroon/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-star text-maroon text-3xl"></i>
         </div>
-        <span id="errandFee" class="font-black text-sm">KES 0</span>
-      </div>
+        <h2 class="text-xl font-black text-slate-800 mb-2">Errand Complete!</h2>
+        <p class="text-slate-500 text-sm mb-6">
+          How was your experience with 
+          <span id="ratingRunnerName" class="font-bold text-maroon">your runner</span>?
+        </p>
 
-      <h4 id="errandTask" class="text-lg font-bold mb-5">---</h4>
-
-      <div class="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl">
-        <div id="runnerInitial" class="w-12 h-12 bg-white rounded-xl flex items-center justify-center font-black">R</div>
-        <div class="flex-1">
-          <p id="runnerName" class="text-sm font-black">Assigning...</p>
-          <p class="text-[9px] uppercase">Live GPS</p>
+        <div class="flex justify-center gap-3 mb-8">
+            <i class="fas fa-star fa-2x star-rating" onclick="setRating(1)"></i>
+            <i class="fas fa-star fa-2x star-rating" onclick="setRating(2)"></i>
+            <i class="fas fa-star fa-2x star-rating" onclick="setRating(3)"></i>
+            <i class="fas fa-star fa-2x star-rating" onclick="setRating(4)"></i>
+            <i class="fas fa-star fa-2x star-rating" onclick="setRating(5)"></i>
         </div>
-        <a id="runnerCall" href="#" class="w-11 h-11 bg-green-500 text-white rounded-xl flex items-center justify-center">
-          <i class="fas fa-phone"></i>
-        </a>
-      </div>
 
-      <div id="map"></div>
+        <textarea id="reviewText"
+          class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm mb-4 outline-none focus:border-gold"
+          placeholder="Optional: Leave a comment..."></textarea>
+
+        <button onclick="submitReview()"
+          class="w-full bg-maroon text-white py-4 rounded-2xl font-black shadow-lg active:scale-95 transition">
+          SUBMIT REVIEW
+        </button>
     </div>
   </div>
 
-  <div class="grid grid-cols-2 gap-4">
-    <button onclick="window.location.href='runners.html'" class="neo-card p-6 text-center">
-      <i class="fas fa-motorcycle text-2xl mb-2"></i>
-      <p class="text-[10px] font-black uppercase">New Errand</p>
-    </button>
-    <button onclick="window.location.href='tel:0797046378'" class="neo-card p-6 text-center">
-      <i class="fas fa-headset text-2xl mb-2"></i>
-      <p class="text-[10px] font-black uppercase">Support</p>
-    </button>
+  <!-- Header -->
+  <div class="glass-header pt-12 pb-24 px-6 rounded-b-[3rem] shadow-2xl">
+    <div class="flex justify-between items-center mb-4">
+        <div>
+            <h1 class="text-white text-3xl font-black tracking-tight">My Hub</h1>
+            <p class="text-white/60 text-xs font-medium uppercase tracking-widest">
+              Run Me An Errand
+            </p>
+        </div>
+        <button id="logoutBtn"
+          class="bg-white/10 hover:bg-white/20 p-3 rounded-2xl text-white transition">
+            <i class="fas fa-power-off"></i>
+        </button>
+    </div>
   </div>
 
-</div>
+  <!-- Content -->
+  <div class="max-w-md mx-auto px-6 -mt-16">
+
+    <!-- Profile -->
+    <div class="neo-card p-6 mb-8">
+        <div class="flex justify-between items-start mb-4">
+            <div id="avatar"
+              class="w-14 h-14 bg-[#630d21] rounded-2xl flex items-center justify-center text-[#fcc419] text-xl font-black shadow-lg">
+              ..
+            </div>
+        </div>
+        <div>
+            <h2 id="userName" class="text-2xl font-bold text-slate-800">Loading...</h2>
+            <p id="userPhoneDisplay" class="text-slate-500 text-sm font-medium"></p>
+        </div>
+    </div>
+
+    <!-- Empty -->
+    <div id="trackerEmpty"
+      class="neo-card p-12 text-center border-2 border-dashed border-slate-200 shadow-none bg-white/50 mb-8">
+        <i class="fas fa-box-open text-3xl text-slate-300 mb-3"></i>
+        <p class="text-xs font-bold text-slate-400 uppercase">
+          Everything is quiet
+        </p>
+    </div>
+
+    <!-- Active -->
+    <div id="trackerActive"
+      class="hidden neo-card p-6 overflow-hidden mb-8">
+        <div class="flex justify-between items-center mb-4">
+            <span class="text-[#22c55e] text-[10px] font-black uppercase">
+              Runner is Live
+            </span>
+            <span id="errandFee"
+              class="text-[#630d21] font-black text-sm">
+              KES 0
+            </span>
+        </div>
+
+        <h4 id="errandTask"
+          class="text-lg font-bold text-slate-800 mb-5 leading-tight">
+          ---
+        </h4>
+
+        <div class="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+            <div id="runnerInitial"
+              class="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-[#630d21] font-black">
+              R
+            </div>
+            <div class="flex-1">
+                <p id="runnerName"
+                  class="text-sm font-black text-slate-700">
+                  Assigning...
+                </p>
+            </div>
+            <a id="runnerCall"
+              href="#"
+              class="w-11 h-11 bg-[#22c55e] text-white rounded-xl flex items-center justify-center">
+              <i class="fas fa-phone"></i>
+            </a>
+        </div>
+
+        <div id="map"></div>
+    </div>
+
+  </div>
 
 <script>
-const supabaseClient = supabase.createClient(
+const supabaseClient = window.supabase.createClient(
   "https://zchofpncqskvnfrzbcww.supabase.co",
-  "YOUR_ANON_KEY"
+  "YOUR_PUBLIC_ANON_KEY"
 );
 
-let userPhoneNum = null;
-let currentErrandId = null;
-let selectedRating = 0;
-let map, marker;
+let userPhoneNum=null,currentErrandId=null,currentRunnerEmail=null,selectedRating=0,map,marker;
 
-async function init() {
-  const email = localStorage.getItem("loggedInEmail");
-  if (!email) return location.href = "login.html";
+async function init(){
+  const email=localStorage.getItem('loggedInEmail');
+  if(!email){window.location.href="login.html";return;}
 
-  const { data:user } = await supabaseClient
-    .from("users")
-    .select("*")
-    .eq("email", email.toLowerCase())
-    .maybeSingle();
+  const {data:user}=await supabaseClient
+    .from('users')
+    .select('*')
+    .eq('email',email.trim().toLowerCase())
+    .single();
 
-  if (!user) return;
+  if(!user)return;
 
-  userPhoneNum = String(user.phone).trim();
-  document.getElementById("userName").innerText = user.full_name;
-  document.getElementById("userPhoneDisplay").innerText = user.phone;
-  document.getElementById("avatar").innerText = user.full_name[0];
+  userPhoneNum=user.phone.trim();
+  document.getElementById("userName").innerText=user.full_name;
+  document.getElementById("userPhoneDisplay").innerText=user.phone;
+  document.getElementById("avatar").innerText=user.full_name.substring(0,1).toUpperCase();
 
-  setupRealtime();
   checkActiveErrands();
+  setInterval(checkActiveErrands,8000);
 }
 
-function setupRealtime() {
-  supabaseClient
-    .channel(`client-${userPhoneNum}`)
-    .on("postgres_changes", {
-      event: "*",
-      schema: "public",
-      table: "errands",
-      filter: `client_phone=eq.${userPhoneNum}`
-    }, checkActiveErrands)
-    .subscribe();
+async function checkActiveErrands(){
+  if(!userPhoneNum)return;
+
+  const {data:active}=await supabaseClient
+    .from('errands')
+    .select('*')
+    .eq('client_phone',userPhoneNum)
+    .eq('status','In Progress')
+    .order('created_at',{ascending:false})
+    .limit(1);
+
+  if(active&&active.length>0){
+    const err=active[0];
+    currentErrandId=err.id;
+    currentRunnerEmail=err.runner_email;
+    showTracker(err);
+    return;
+  }
+
+  const {data:completed}=await supabaseClient
+    .from('errands')
+    .select('*')
+    .eq('client_phone',userPhoneNum)
+    .eq('status','Completed')
+    .is('rating',null)
+    .order('created_at',{ascending:false})
+    .limit(1);
+
+  if(completed&&completed.length>0){
+    currentErrandId=completed[0].id;
+    fetchRunnerDetails(completed[0].runner_email);
+    openRatingModal();
+  }
+
+  hideTracker();
 }
 
-async function checkActiveErrands() {
-  const { data:errand } = await supabaseClient
-    .from("errands")
-    .select("*")
-    .eq("client_phone", userPhoneNum)
-    .in("status", ["In Progress","Completed"])
-    .order("created_at",{ascending:false})
-    .limit(1)
-    .maybeSingle();
-
-  if (!errand) return hideTracker();
-
-  currentErrandId = errand.id;
-
-  if (errand.status === "In Progress") showTracker(errand);
-  if (errand.status === "Completed" && errand.rating == null) openRatingModal(errand.runner_email);
+function showTracker(e){
+  document.getElementById('trackerEmpty').classList.add('hidden');
+  document.getElementById('trackerActive').classList.remove('hidden');
+  document.getElementById('errandTask').innerText=e.description;
+  document.getElementById('errandFee').innerText=`KES ${e.estimated_fee}`;
+  if(e.lat&&e.lng)updateMap(e.lat,e.lng);
+  fetchRunnerDetails(e.runner_email);
 }
 
-function showTracker(errand) {
-  trackerEmpty.classList.add("hidden");
-  trackerActive.classList.remove("hidden");
-  errandTask.innerText = errand.description;
-  errandFee.innerText = `KES ${errand.estimated_fee}`;
-  if (errand.lat !== null && errand.lng !== null) updateMap(errand.lat, errand.lng);
-  fetchRunner(errand.runner_email);
+function hideTracker(){
+  document.getElementById('trackerEmpty').classList.remove('hidden');
+  document.getElementById('trackerActive').classList.add('hidden');
 }
 
-function hideTracker() {
-  trackerActive.classList.add("hidden");
-  trackerEmpty.classList.remove("hidden");
+async function fetchRunnerDetails(email){
+  const {data}=await supabaseClient
+    .from('runners')
+    .select('name,phone')
+    .eq('email',email)
+    .single();
+  if(!data)return;
+  document.getElementById('runnerName').innerText=data.name;
+  document.getElementById('runnerInitial').innerText=data.name.substring(0,1);
+  document.getElementById('runnerCall').href=`tel:${data.phone}`;
+  document.getElementById('ratingRunnerName').innerText=data.name;
 }
 
-async function fetchRunner(email) {
-  const { data } = await supabaseClient.from("runners").select("name,phone").eq("email",email).maybeSingle();
-  if (!data) return;
-  runnerName.innerText = data.name;
-  runnerInitial.innerText = data.name[0];
-  runnerCall.href = `tel:${data.phone}`;
-  ratingRunnerName.innerText = data.name;
+function openRatingModal(){
+  document.getElementById('ratingModal').style.display='flex';
 }
 
-function updateMap(lat,lng) {
-  map ??= L.map("map").setView([lat,lng],16);
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png").addTo(map);
-  marker ??= L.circleMarker([lat,lng],{radius:10,fillColor:"#630d21",color:"#fff",weight:3}).addTo(map);
-  marker.setLatLng([lat,lng]);
-  map.invalidateSize();
-  map.getContainer().style.display="block";
+function setRating(val){
+  selectedRating=val;
+  document.querySelectorAll('.star-rating')
+    .forEach((s,i)=>s.classList.toggle('active',i<val));
 }
 
-function openRatingModal() {
-  ratingModal.style.display="flex";
+async function submitReview(){
+  if(selectedRating===0){alert("Please select a star rating");return;}
+  await supabaseClient
+    .from('errands')
+    .update({rating:selectedRating,review:document.getElementById('reviewText').value})
+    .eq('id',currentErrandId);
+  document.getElementById('ratingModal').style.display='none';
+  alert("Thank you for your feedback!");
 }
 
-function setRating(v) {
-  selectedRating=v;
-  document.querySelectorAll(".star-rating").forEach((s,i)=>s.classList.toggle("active",i<v));
+function updateMap(lat,lng){
+  document.getElementById('map').style.display='block';
+  if(!map){
+    map=L.map('map',{zoomControl:false}).setView([lat,lng],16);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(map);
+    marker=L.circleMarker([lat,lng],{radius:10,fillColor:"#630d21",color:"#fff",weight:3,opacity:1,fillOpacity:1}).addTo(map);
+  }else{
+    marker.setLatLng([lat,lng]);
+    map.panTo([lat,lng]);
+  }
+  setTimeout(()=>map.invalidateSize(),300);
 }
 
-async function submitReview() {
-  if(!selectedRating) return alert("Select rating");
-  await supabaseClient.from("errands").update({rating:selectedRating}).eq("id",currentErrandId);
-  ratingModal.style.display="none";
-}
-
-function logout() {
-  localStorage.clear();
-  location.href="login.html";
-}
-
-window.onload = init;
+document.getElementById("logoutBtn").onclick=()=>{localStorage.clear();window.location.href="login.html";};
+window.onload=init;
 </script>
 
 </body>
 </html>
+
 
