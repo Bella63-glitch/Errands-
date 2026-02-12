@@ -13,44 +13,33 @@
 
   <style>
     :root { --maroon: #630d21; --gold: #fcc419; --soft-bg: #f3f4f6; }
-    body { font-family: 'Outfit', sans-serif; background-color: var(--soft-bg); }
+    body { font-family: 'Outfit', sans-serif; background-color: var(--soft-bg); color: #1e293b; }
     
     .glass-header { background: linear-gradient(135deg, var(--maroon) 0%, #4a0a19 100%); }
     
-    /* Neumorphic Card Effect */
     .neo-card {
       background: #ffffff;
       border-radius: 2rem;
-      box-shadow: 20px 20px 60px #d1d1d1, -20px -20px 60px #ffffff;
-      border: 1px solid rgba(255,255,255,0.8);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(255,255,255,1);
     }
 
     #map { 
-      height: 280px; width: 100%; border-radius: 1.5rem; 
+      height: 260px; width: 100%; border-radius: 1.5rem; 
       margin-top: 1rem; border: 4px solid white; 
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       display: none; z-index: 1;
     }
 
-    .edit-input {
-      background: #f8fafc;
-      border: 2px solid transparent;
-      transition: all 0.3s ease;
+    .status-pulse {
+      width: 8px; height: 8px; background: #22c55e;
+      border-radius: 50%; display: inline-block;
+      margin-right: 6px; animation: blink 1.5s infinite;
     }
-    .edit-input:focus {
-      border-color: var(--gold);
-      background: white;
-      outline: none;
-    }
+    @keyframes blink { 0% { opacity: 0.2; } 50% { opacity: 1; } 100% { opacity: 0.2; } }
 
-    .pulse-gold {
-      box-shadow: 0 0 0 0 rgba(252, 196, 25, 0.7);
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      70% { box-shadow: 0 0 0 10px rgba(252, 196, 25, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(252, 196, 25, 0); }
-    }
+    .edit-input { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 12px; }
+    .edit-input:focus { border-color: var(--gold); outline: none; background: white; }
   </style>
 </head>
 <body class="min-h-screen pb-10">
@@ -58,7 +47,7 @@
   <div class="glass-header pt-12 pb-24 px-6 rounded-b-[3rem] shadow-2xl">
     <div class="flex justify-between items-center mb-4">
         <div>
-            <h1 class="text-white text-3xl font-800 font-black tracking-tight">My Hub</h1>
+            <h1 class="text-white text-3xl font-black tracking-tight">My Hub</h1>
             <p class="text-white/60 text-xs font-medium uppercase tracking-widest">Run Me An Errand</p>
         </div>
         <button id="logoutBtn" class="bg-white/10 hover:bg-white/20 p-3 rounded-2xl text-white transition">
@@ -71,66 +60,65 @@
     
     <div class="neo-card p-6 mb-8">
         <div class="flex justify-between items-start mb-4">
-            <div id="avatar" class="w-16 h-16 bg-maroon rounded-2xl flex items-center justify-center text-gold text-2xl font-black shadow-lg">..</div>
-            <button id="editBtn" class="text-[10px] font-black text-maroon bg-gold/20 px-4 py-2 rounded-full uppercase tracking-tighter hover:bg-gold/40 transition">
+            <div id="avatar" class="w-14 h-14 bg-[#630d21] rounded-2xl flex items-center justify-center text-[#fcc419] text-xl font-black shadow-lg">..</div>
+            <button id="editBtn" class="text-[10px] font-black text-[#630d21] bg-[#fcc419]/20 px-4 py-2 rounded-full uppercase transition">
                 <i class="fas fa-pen mr-1"></i> Edit
             </button>
         </div>
 
         <div id="profileDisplay">
-            <h2 id="userName" class="text-2xl font-800 text-slate-800 font-bold">Loading...</h2>
-            <p id="userPhoneDisplay" class="text-slate-500 font-medium"></p>
+            <h2 id="userName" class="text-2xl font-bold text-slate-800">Loading...</h2>
+            <p id="userPhoneDisplay" class="text-slate-500 text-sm font-medium"></p>
         </div>
 
         <div id="profileEdit" class="hidden space-y-3">
-            <input type="text" id="inputName" class="edit-input w-full p-3 rounded-xl font-bold" placeholder="Your Name">
-            <input type="text" id="inputPhone" class="edit-input w-full p-3 rounded-xl font-bold" placeholder="Your Phone">
-            <button id="saveBtn" class="w-full bg-maroon text-white py-3 rounded-xl font-black text-sm shadow-lg active:scale-95 transition">SAVE PROFILE</button>
+            <input type="text" id="inputName" class="edit-input w-full p-3 font-bold" placeholder="Full Name">
+            <input type="text" id="inputPhone" class="edit-input w-full p-3 font-bold" placeholder="Phone Number">
+            <button id="saveBtn" class="w-full bg-[#630d21] text-white py-3 rounded-xl font-black text-sm shadow-lg active:scale-95 transition">SAVE PROFILE</button>
         </div>
     </div>
 
     <div class="mb-10">
         <h3 class="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-4 ml-2">Live Activity</h3>
         
-        <div id="trackerEmpty" class="neo-card p-12 text-center opacity-60 border-2 border-dashed border-slate-200 shadow-none bg-transparent">
+        <div id="trackerEmpty" class="neo-card p-12 text-center border-2 border-dashed border-slate-200 shadow-none bg-white/50">
             <i class="fas fa-box-open text-3xl text-slate-300 mb-3"></i>
             <p class="text-xs font-bold text-slate-400 uppercase">Everything is quiet</p>
         </div>
 
         <div id="trackerActive" class="hidden neo-card p-6 overflow-hidden">
-            <div class="flex justify-between mb-4">
-                <span class="bg-green-100 text-green-700 text-[10px] font-black px-3 py-1 rounded-full uppercase">On The Way</span>
-                <span id="errandFee" class="text-maroon font-black">KES 0</span>
+            <div class="flex justify-between items-center mb-4">
+                <div class="flex items-center">
+                    <span class="status-pulse"></span>
+                    <span class="text-[#22c55e] text-[10px] font-black uppercase">Runner is Live</span>
+                </div>
+                <span id="errandFee" class="text-[#630d21] font-black text-sm">KES 0</span>
             </div>
             
-            <h4 id="errandTask" class="text-lg font-bold text-slate-800 mb-4 leading-snug">---</h4>
+            <h4 id="errandTask" class="text-lg font-bold text-slate-800 mb-5 leading-tight">---</h4>
 
-            <div class="flex items-center gap-4 bg-slate-50 p-3 rounded-2xl border border-slate-100 mb-4">
-                <div class="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-maroon font-black" id="runnerInitial">R</div>
+            <div class="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                <div class="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-[#630d21] font-black" id="runnerInitial">R</div>
                 <div class="flex-1">
                     <p id="runnerName" class="text-sm font-black text-slate-700">Assigning...</p>
-                    <p id="lastSeen" class="text-[9px] text-gold font-black uppercase tracking-widest"></p>
+                    <p id="lastSeen" class="text-[9px] text-[#fcc419] font-black uppercase tracking-widest">Locating...</p>
                 </div>
-                <a id="runnerCall" href="#" class="w-12 h-12 bg-green-500 text-white rounded-2xl flex items-center justify-center shadow-lg pulse-gold">
+                <a id="runnerCall" href="#" class="w-11 h-11 bg-[#22c55e] text-white rounded-xl flex items-center justify-center shadow-lg transition active:scale-90">
                     <i class="fas fa-phone"></i>
                 </a>
             </div>
 
             <div id="map"></div>
-
-            <a id="externalMapBtn" href="#" target="_blank" class="hidden w-full mt-4 py-4 bg-slate-800 text-white rounded-2xl text-[10px] font-black flex items-center justify-center gap-3">
-                <i class="fas fa-map-marked-alt text-gold"></i> OPEN GOOGLE MAPS
-            </a>
         </div>
     </div>
 
     <div class="grid grid-cols-2 gap-4">
-        <button onclick="window.location.href='runners.html'" class="neo-card p-6 text-center hover:bg-slate-50 transition active:scale-95">
-            <i class="fas fa-motorcycle text-maroon text-2xl mb-2"></i>
+        <button onclick="window.location.href='runners.html'" class="neo-card p-6 text-center hover:bg-white transition active:scale-95">
+            <i class="fas fa-motorcycle text-[#630d21] text-2xl mb-2"></i>
             <p class="text-[10px] font-black text-slate-600 uppercase">New Errand</p>
         </button>
-        <button onclick="window.location.href='tel:0797046378'" class="neo-card p-6 text-center hover:bg-slate-50 transition active:scale-95">
-            <i class="fas fa-headset text-gold text-2xl mb-2"></i>
+        <button onclick="window.location.href='tel:0797046378'" class="neo-card p-6 text-center hover:bg-white transition active:scale-95">
+            <i class="fas fa-headset text-[#fcc419] text-2xl mb-2"></i>
             <p class="text-[10px] font-black text-slate-600 uppercase">Support</p>
         </button>
     </div>
@@ -149,11 +137,7 @@
         const email = localStorage.getItem('loggedInEmail');
         if (!email) { window.location.href = "login.html"; return; }
 
-        const { data: user } = await supabaseClient
-            .from('users')
-            .select('*')
-            .eq('email', email.trim().toLowerCase())
-            .maybeSingle();
+        const { data: user } = await supabaseClient.from('users').select('*').eq('email', email.trim().toLowerCase()).maybeSingle();
         
         if (user) {
             document.getElementById("userName").innerText = user.full_name;
@@ -168,7 +152,6 @@
         }
     }
 
-    // Toggle Edit Mode
     document.getElementById('editBtn').onclick = () => {
         const display = document.getElementById('profileDisplay');
         const edit = document.getElementById('profileEdit');
@@ -177,58 +160,31 @@
         document.getElementById('editBtn').innerHTML = isEditing ? '<i class="fas fa-times"></i> Cancel' : '<i class="fas fa-pen"></i> Edit';
     };
 
-    // Save logic
     document.getElementById('saveBtn').onclick = async () => {
-        const newName = document.getElementById('inputName').value;
-        const newPhone = document.getElementById('inputPhone').value;
         const email = localStorage.getItem('loggedInEmail');
-
-        const { error } = await supabaseClient
-            .from('users')
-            .update({ full_name: newName, phone: newPhone })
-            .eq('email', email);
-
-        if (!error) { location.reload(); }
-        else { alert("Failed to save changes."); }
+        await supabaseClient.from('users').update({ 
+            full_name: document.getElementById('inputName').value, 
+            phone: document.getElementById('inputPhone').value 
+        }).eq('email', email);
+        location.reload();
     };
 
     function updateMap(lat, lng) {
-        const mapDiv = document.getElementById('map');
-        mapDiv.style.display = 'block';
-
+        document.getElementById('map').style.display = 'block';
         if (!map) {
-            // Initialize map
             map = L.map('map', { zoomControl: false }).setView([lat, lng], 16);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                attribution: '©OpenStreetMap'
-            }).addTo(map);
-            
-            // Custom Runner Marker
-            marker = L.circleMarker([lat, lng], {
-                radius: 12,
-                fillColor: "#630d21",
-                color: "#fcc419",
-                weight: 3,
-                opacity: 1,
-                fillOpacity: 0.9
-            }).addTo(map);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(map);
+            marker = L.circleMarker([lat, lng], { radius: 10, fillColor: "#630d21", color: "#fff", weight: 3, opacity: 1, fillOpacity: 1 }).addTo(map);
         } else {
             marker.setLatLng([lat, lng]);
             map.panTo([lat, lng]);
         }
-        // Force Leaflet to recalculate size in case it was hidden
         setTimeout(() => map.invalidateSize(), 300);
     }
 
     async function checkActiveErrands() {
         if(!userPhoneNum) return;
-
-        const { data: errand } = await supabaseClient
-            .from('errands')
-            .select('*')
-            .eq('client_phone', userPhoneNum)
-            .eq('status', 'In Progress')
-            .maybeSingle();
+        const { data: errand } = await supabaseClient.from('errands').select('*').eq('client_phone', userPhoneNum).eq('status', 'In Progress').maybeSingle();
 
         if (errand) {
             document.getElementById('trackerEmpty').classList.add('hidden');
@@ -236,13 +192,17 @@
             document.getElementById('errandTask').innerText = errand.description;
             document.getElementById('errandFee').innerText = `KES ${errand.estimated_fee}`;
             
+            if (errand.runner_email) {
+                const { data: runner } = await supabaseClient.from('runners').select('name, phone').eq('email', errand.runner_email).maybeSingle();
+                if (runner) {
+                    document.getElementById('runnerName').innerText = runner.name;
+                    document.getElementById('runnerInitial').innerText = runner.name.substring(0,1);
+                    document.getElementById('runnerCall').href = `tel:${runner.phone}`;
+                }
+            }
+
             if (errand.lat && errand.lng) {
                 updateMap(errand.lat, errand.lng);
-                
-                const extBtn = document.getElementById('externalMapBtn');
-                extBtn.classList.remove('hidden');
-                extBtn.href = `https://www.google.com/maps?q=${errand.lat},${errand.lng}`;
-                
                 if(errand.last_ping) {
                     const time = new Date(errand.last_ping).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                     document.getElementById('lastSeen').innerText = `LIVE @ ${time}`;
@@ -254,22 +214,11 @@
         }
     }
 
-    document.getElementById("logoutBtn").onclick = () => { 
-        localStorage.clear(); 
-        window.location.href="login.html"; 
-    };
-
+    document.getElementById("logoutBtn").onclick = () => { localStorage.clear(); window.location.href="login.html"; };
     window.onload = init;
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
 
 
 
