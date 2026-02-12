@@ -10,60 +10,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root { --maroon: #630d21; --gold: #fcc419; --soft-bg: #f3f4f6; }
-        body { font-family: 'Outfit', sans-serif; background-color: var(--soft-bg); color: #1e293b; overflow-x: hidden; }
-        
+        body { font-family: 'Outfit', sans-serif; background-color: var(--soft-bg); color: #1e293b; }
         .glass-header { background: linear-gradient(135deg, var(--maroon) 0%, #4a0a19 100%); }
-        
-        .neo-card {
-            background: #ffffff;
-            border-radius: 2rem;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(255,255,255,1);
-        }
-
-        /* Rating Stars */
-        .star-rating { color: #d1d5db; cursor: pointer; transition: transform 0.2s, color 0.2s; }
-        .star-rating.active { color: var(--gold); }
-        .star-rating:active { transform: scale(1.2); }
-
-        /* Modal Styling */
-        #ratingModal { 
-            display:none; position:fixed; inset:0; 
-            background:rgba(0,0,0,0.8); z-index:5000; 
-            align-items:center; justify-content:center; 
-            padding:20px; backdrop-filter: blur(8px); 
-        }
+        .neo-card { background: #ffffff; border-radius: 2rem; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); border: 1px solid white; }
+        .edit-input { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 0.5rem; width: 100%; font-size: 0.875rem; outline: none; transition: border-color 0.2s; }
+        .edit-input:focus { border-color: var(--maroon); }
+        .hidden { display: none; }
     </style>
 </head>
 <body class="min-h-screen pb-10">
-
-    <div id="ratingModal">
-        <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 text-center shadow-2xl">
-            <div class="w-20 h-20 bg-maroon/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fas fa-star text-[#630d21] text-3xl"></i>
-            </div>
-            <h2 class="text-xl font-black text-slate-800 mb-2">Errand Complete!</h2>
-            <p class="text-slate-500 text-sm mb-6">How was your experience with <span id="ratingRunnerName" class="font-bold text-maroon">your runner</span>?</p>
-            
-            <div class="flex justify-center gap-3 mb-8">
-                <i class="fas fa-star fa-2x star-rating" data-val="1"></i>
-                <i class="fas fa-star fa-2x star-rating" data-val="2"></i>
-                <i class="fas fa-star fa-2x star-rating" data-val="3"></i>
-                <i class="fas fa-star fa-2x star-rating" data-val="4"></i>
-                <i class="fas fa-star fa-2x star-rating" data-val="5"></i>
-            </div>
-
-            <textarea id="reviewText" class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm mb-4 outline-none focus:border-gold" placeholder="Optional: Leave a comment..."></textarea>
-            
-            <button onclick="submitReview()" class="w-full bg-[#630d21] text-white py-4 rounded-2xl font-black shadow-lg active:scale-95 transition">SUBMIT REVIEW</button>
-        </div>
-    </div>
 
     <div class="glass-header pt-12 pb-24 px-6 rounded-b-[3rem] shadow-2xl">
         <div class="flex justify-between items-center mb-4">
             <div>
                 <h1 class="text-white text-3xl font-black tracking-tight">My Hub</h1>
-                <p class="text-white/60 text-xs font-medium uppercase tracking-widest">Run Me An Errand</p>
+                <p class="text-white/60 text-xs font-medium uppercase tracking-widest">Profile Management</p>
             </div>
             <button id="logoutBtn" class="bg-white/10 hover:bg-white/20 p-3 rounded-2xl text-white transition">
                 <i class="fas fa-power-off"></i>
@@ -72,58 +33,55 @@
     </div>
 
     <div class="max-w-md mx-auto px-6 -mt-16">
-        
         <div class="neo-card p-6 mb-8">
-            <div class="flex justify-between items-start mb-4">
-                <div id="avatar" class="w-14 h-14 bg-[#630d21] rounded-2xl flex items-center justify-center text-[#fcc419] text-xl font-black shadow-lg">..</div>
-                <button onclick="alert('Profile settings coming soon!')" class="text-[10px] font-black text-[#630d21] bg-[#fcc419]/20 px-4 py-2 rounded-full uppercase transition hover:bg-[#fcc419]/40">
-                    <i class="fas fa-pen mr-1"></i> Edit
+            <div class="flex justify-between items-start mb-6">
+                <div id="avatar" class="w-16 h-16 bg-[#630d21] rounded-2xl flex items-center justify-center text-[#fcc419] text-2xl font-black shadow-lg">..</div>
+                <button id="editToggleBtn" onclick="toggleEdit()" class="text-[10px] font-black text-[#630d21] bg-[#fcc419]/20 px-5 py-2.5 rounded-full uppercase transition hover:bg-[#fcc419]/40">
+                    <span id="btnText"><i class="fas fa-pen mr-1"></i> Edit</span>
                 </button>
             </div>
-            <div id="profileDisplay">
-                <h2 id="userName" class="text-2xl font-bold text-slate-800">Loading...</h2>
-                <p id="userPhoneDisplay" class="text-slate-500 text-sm font-medium"></p>
-            </div>
-        </div>
 
-        <div id="trackerEmpty" class="neo-card p-12 text-center border-2 border-dashed border-slate-200 shadow-none bg-white/50 mb-8">
-            <i class="fas fa-box-open text-3xl text-slate-300 mb-3"></i>
-            <p class="text-xs font-bold text-slate-400 uppercase">No active errands</p>
-        </div>
-
-        <div id="trackerActive" class="hidden neo-card p-6 overflow-hidden mb-8">
-            <div class="flex justify-between items-center mb-4">
-                <span class="flex items-center gap-2">
-                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                    <span class="text-[#22c55e] text-[10px] font-black uppercase">Runner is Live</span>
-                </span>
-                <span id="errandFee" class="text-[#630d21] font-black text-sm">KES 0</span>
-            </div>
-            <h4 id="errandTask" class="text-lg font-bold text-slate-800 mb-5 leading-tight">---</h4>
-            
-            <div class="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                <div class="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-[#630d21] font-black border border-slate-100" id="runnerInitial">R</div>
-                <div class="flex-1">
-                    <p id="runnerName" class="text-sm font-black text-slate-700">Assigning...</p>
-                    <p id="lastSeen" class="text-[9px] text-[#fcc419] font-black uppercase tracking-widest">En route</p>
+            <div id="viewMode" class="space-y-4">
+                <div>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Full Name</p>
+                    <h2 id="userName" class="text-xl font-bold text-slate-800">Loading...</h2>
                 </div>
-                <a id="runnerCall" href="#" class="w-11 h-11 bg-[#22c55e] text-white rounded-xl flex items-center justify-center shadow-lg active:scale-90 transition">
-                    <i class="fas fa-phone"></i>
-                </a>
+                <div>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Phone Number</p>
+                    <p id="userPhoneDisplay" class="text-slate-600 font-semibold"></p>
+                </div>
+                <div>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Location</p>
+                    <p id="userLocationDisplay" class="text-slate-600 font-semibold italic">Not set</p>
+                </div>
+            </div>
+
+            <div id="editMode" class="hidden space-y-4">
+                <div>
+                    <label class="text-[10px] text-maroon font-bold uppercase">Full Name</label>
+                    <input type="text" id="editName" class="edit-input">
+                </div>
+                <div>
+                    <label class="text-[10px] text-maroon font-bold uppercase">Phone Number</label>
+                    <input type="text" id="editPhone" class="edit-input">
+                </div>
+                <div>
+                    <label class="text-[10px] text-maroon font-bold uppercase">Location (Estate/Street)</label>
+                    <input type="text" id="editLocation" class="edit-input">
+                </div>
+                <button onclick="saveProfile()" class="w-full bg-[#630d21] text-white py-3 rounded-xl font-black text-sm shadow-lg active:scale-95 transition mt-2">
+                    SAVE CHANGES
+                </button>
             </div>
         </div>
 
         <div class="grid grid-cols-2 gap-4">
-            <button onclick="window.location.href='runners.html'" class="neo-card p-6 text-center hover:bg-slate-50 transition active:scale-95">
-                <div class="w-12 h-12 bg-maroon/5 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <i class="fas fa-motorcycle text-[#630d21] text-xl"></i>
-                </div>
+            <button onclick="window.location.href='runners.html'" class="neo-card p-6 text-center hover:bg-slate-50 transition">
+                <i class="fas fa-motorcycle text-[#630d21] text-xl mb-2"></i>
                 <p class="text-[10px] font-black text-slate-600 uppercase">New Errand</p>
             </button>
-            <button onclick="window.location.href='tel:0797046378'" class="neo-card p-6 text-center hover:bg-slate-50 transition active:scale-95">
-                <div class="w-12 h-12 bg-gold/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <i class="fas fa-headset text-[#fcc419] text-xl"></i>
-                </div>
+            <button onclick="window.location.href='tel:0797046378'" class="neo-card p-6 text-center hover:bg-slate-50 transition">
+                <i class="fas fa-headset text-[#fcc419] text-xl mb-2"></i>
                 <p class="text-[10px] font-black text-slate-600 uppercase">Support</p>
             </button>
         </div>
@@ -134,131 +92,77 @@
         const S_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
         const supabaseClient = window.supabase.createClient(S_URL, S_KEY);
         
-        let userPhoneNum = null;
-        let currentErrandId = null;
-        let selectedRating = 0;
+        let currentUser = null;
+        let isEditing = false;
 
-        // Initialize User
         async function init() {
             const email = localStorage.getItem('loggedInEmail');
             if (!email) { window.location.href = "login.html"; return; }
 
-            const { data: user, error } = await supabaseClient
+            const { data: user } = await supabaseClient
                 .from('users')
                 .select('*')
                 .eq('email', email.trim().toLowerCase())
                 .maybeSingle();
 
             if (user) {
-                userPhoneNum = user.phone.trim();
-                document.getElementById("userName").innerText = user.full_name;
-                document.getElementById("userPhoneDisplay").innerText = user.phone;
-                document.getElementById("avatar").innerText = user.full_name.substring(0,1).toUpperCase();
-                
-                checkActiveErrands();
-                setInterval(checkActiveErrands, 8000); 
-            } else {
-                console.error("User not found or Supabase error:", error);
+                currentUser = user;
+                updateUI();
             }
         }
 
-        async function checkActiveErrands() {
-            if(!userPhoneNum) return;
-
-            // 1. Check for In Progress
-            const { data: active } = await supabaseClient.from('errands')
-                .select('*').eq('client_phone', userPhoneNum).eq('status', 'In Progress').maybeSingle();
-
-            if (active) {
-                currentErrandId = active.id;
-                showTracker(active);
-                return;
-            }
-
-            // 2. Check for Completed + Not yet rated
-            const { data: completed } = await supabaseClient.from('errands')
-                .select('*').eq('client_phone', userPhoneNum).eq('status', 'Completed').is('rating', null).maybeSingle();
-              
-            if (completed) {
-                currentErrandId = completed.id;
-                openRatingModal(completed.runner_email);
-                hideTracker();
-            } else {
-                hideTracker();
-            }
-        }
-
-        function showTracker(errand) {
-            document.getElementById('trackerEmpty').classList.add('hidden');
-            document.getElementById('trackerActive').classList.remove('hidden');
-            document.getElementById('errandTask').innerText = errand.description;
-            document.getElementById('errandFee').innerText = `KES ${errand.estimated_fee}`;
-            fetchRunnerDetails(errand.runner_email);
-        }
-
-        async function fetchRunnerDetails(email) {
-            if(!email) return;
-            const { data } = await supabaseClient.from('runners').select('name, phone').eq('email', email).maybeSingle();
-            if (data) {
-                document.getElementById('runnerName').innerText = data.name;
-                document.getElementById('runnerInitial').innerText = data.name.substring(0,1);
-                document.getElementById('runnerCall').href = `tel:${data.phone}`;
-                document.getElementById('ratingRunnerName').innerText = data.name;
-            }
-        }
-
-        function hideTracker() {
-            document.getElementById('trackerEmpty').classList.remove('hidden');
-            document.getElementById('trackerActive').classList.add('hidden');
-        }
-
-        // --- Rating Logic ---
-        function openRatingModal(email) {
-            document.getElementById('ratingModal').style.display = 'flex';
-            if(email) fetchRunnerDetails(email);
-        }
-
-        document.querySelectorAll('.star-rating').forEach(star => {
-            star.addEventListener('click', (e) => {
-                const val = parseInt(e.target.getAttribute('data-val'));
-                selectedRating = val;
-                document.querySelectorAll('.star-rating').forEach((s, i) => {
-                    s.classList.toggle('active', i < val);
-                });
-            });
-        });
-
-        async function submitReview() {
-            if(selectedRating === 0) return alert("Please select a star rating");
+        function updateUI() {
+            document.getElementById("userName").innerText = currentUser.full_name;
+            document.getElementById("userPhoneDisplay").innerText = currentUser.phone;
+            document.getElementById("userLocationDisplay").innerText = currentUser.location || "Add a location";
+            document.getElementById("avatar").innerText = currentUser.full_name.substring(0,1).toUpperCase();
             
-            const { error } = await supabaseClient.from('errands').update({ 
-                rating: selectedRating, 
-                review: document.getElementById('reviewText').value 
-            }).eq('id', currentErrandId);
+            // Sync values to inputs
+            document.getElementById("editName").value = currentUser.full_name;
+            document.getElementById("editPhone").value = currentUser.phone;
+            document.getElementById("editLocation").value = currentUser.location || "";
+        }
 
-            if(!error) {
-                document.getElementById('ratingModal').style.display = 'none';
-                alert("Thank you for your feedback!");
+        function toggleEdit() {
+            isEditing = !isEditing;
+            document.getElementById("viewMode").classList.toggle("hidden", isEditing);
+            document.getElementById("editMode").classList.toggle("hidden", !isEditing);
+            document.getElementById("btnText").innerHTML = isEditing ? 
+                '<i class="fas fa-times mr-1"></i> Cancel' : 
+                '<i class="fas fa-pen mr-1"></i> Edit';
+        }
+
+        async function saveProfile() {
+            const newName = document.getElementById("editName").value;
+            const newPhone = document.getElementById("editPhone").value;
+            const newLoc = document.getElementById("editLocation").value;
+
+            const { error } = await supabaseClient
+                .from('users')
+                .update({ 
+                    full_name: newName, 
+                    phone: newPhone, 
+                    location: newLoc 
+                })
+                .eq('email', currentUser.email);
+
+            if (!error) {
+                currentUser.full_name = newName;
+                currentUser.phone = newPhone;
+                currentUser.location = newLoc;
+                updateUI();
+                toggleEdit();
+                alert("Profile Updated!");
             } else {
-                alert("Error saving review. Please try again.");
+                alert("Error updating profile. Check your connection.");
             }
         }
 
-        document.getElementById("logoutBtn").onclick = () => { 
-            localStorage.clear(); 
-            window.location.href="login.html"; 
-        };
-
+        document.getElementById("logoutBtn").onclick = () => { localStorage.clear(); window.location.href="login.html"; };
         window.onload = init;
     </script>
 </body>
 </html>
-
-
-
-
-
-
 
 
 
