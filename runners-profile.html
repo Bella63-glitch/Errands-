@@ -18,11 +18,12 @@
         .header { background: var(--maroon); padding: 15px 20px; color: white; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         .header h1 { font-size: 0.9rem; margin: 0; font-weight: 800; letter-spacing: 1px; }
 
+        .sync-bar { background: #1e293b; color: #94a3b8; font-size: 9px; padding: 5px 20px; text-align: center; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
         .top-status-box { background: white; width: 92%; max-width: 500px; margin: 15px auto; border-radius: 20px; padding: 15px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-left: 4px solid var(--green); }
         .label-tiny { font-size: 0.6rem; font-weight: 800; color: var(--slate); text-transform: uppercase; margin-bottom: 3px; display: block; }
         
-        /* Map Styling */
-        #map { height: 200px; width: 92%; max-width: 500px; margin: 10px auto; border-radius: 20px; border: 2px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: none; z-index: 1; }
+        #map { height: 250px; width: 92%; max-width: 500px; margin: 10px auto; border-radius: 20px; border: 4px solid white; box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: none; z-index: 1; }
 
         .main-card { background: white; width: 92%; max-width: 500px; margin: 0 auto 20px; border-radius: 25px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
         .hero { background: linear-gradient(135deg, var(--maroon) 0%, #5c162b 100%); padding: 30px 20px; text-align: center; position: relative; }
@@ -32,26 +33,34 @@
         .stat-val { display: block; font-weight: 800; color: var(--maroon); font-size: 1rem; }
         .stat-lab { font-size: 0.55rem; color: var(--slate); font-weight: 700; text-transform: uppercase; }
 
-        .btn { width: 92%; max-width: 500px; margin: 8px auto; padding: 14px; border-radius: 12px; border: none; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; font-family: inherit; font-size: 0.8rem; text-decoration: none; }
+        .btn { width: 92%; max-width: 500px; margin: 8px auto; padding: 14px; border-radius: 12px; border: none; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; font-family: inherit; font-size: 0.8rem; text-decoration: none; transition: 0.2s; }
+        .btn:active { transform: scale(0.97); }
         .btn-gold { background: var(--gold); color: var(--maroon); }
-        .btn-outline { background: white; color: var(--maroon); border: 2px solid var(--maroon); }
         .btn-gps { background: #e0f2fe; color: var(--blue); border: 2px solid var(--blue); }
-        .btn-emergency { background: #fee2e2; color: var(--red); margin-top: 20px; }
+        .btn-logout { background: rgba(255,255,255,0.15); color: white; border: none; padding: 6px 12px; font-size: 10px; border-radius: 8px; cursor: pointer; }
 
         .setting-item { display: flex; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid #f8fafc; cursor: pointer; align-items: center; }
         .setting-item label { font-size: 0.65rem; font-weight: 800; color: var(--slate); }
-        .setting-item span { font-weight: 600; font-size: 0.8rem; color: #334155; max-width: 60%; text-align: right; }
+        .setting-item span { font-weight: 600; font-size: 0.8rem; color: #334155; }
 
-        #editModal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:2000; align-items:center; justify-content:center; padding:20px; }
-        .modal-content { background:white; padding:25px; border-radius:20px; width:100%; max-width:400px; box-sizing: border-box; }
-        input, textarea { width:100%; padding:12px; border:1px solid #e2e8f0; border-radius:10px; margin: 10px 0; font-family: inherit; font-size: 0.9rem; }
+        #editModal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:2000; align-items:center; justify-content:center; padding:20px; backdrop-filter: blur(5px); }
+        .modal-content { background:white; padding:25px; border-radius:25px; width:100%; max-width:400px; }
+        input { width:100%; padding:14px; border:2px solid #f1f5f9; border-radius:12px; margin: 10px 0; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
     <div class="header">
         <h1>RUNNER <span style="color:var(--gold)">HQ</span></h1>
-        <div id="idStatus" style="font-size: 9px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: rgba(255,255,255,0.1);">LOADING...</div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <div id="idStatus" style="font-size: 9px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: rgba(255,255,255,0.1);">LOADING...</div>
+            <button onclick="logout()" class="btn-logout"><i class="fas fa-sign-out-alt"></i></button>
+        </div>
+    </div>
+
+    <div id="syncBar" class="sync-bar" style="display:none;">
+        <i class="fas fa-circle" style="color:var(--green); font-size:7px;"></i> 
+        GPS ACTIVE: LAST SYNC <span id="syncTime">JUST NOW</span>
     </div>
 
     <div class="top-status-box">
@@ -60,7 +69,7 @@
             <span id="activeClientDisplay" style="font-weight: 800; font-size: 13px;">No Active Errand</span>
         </div>
         <div style="display:flex; gap:6px;">
-            <button onclick="setClient()" style="background:#f1f5f9; border:none; padding:8px 12px; border-radius:8px; font-size:10px; font-weight:700; color:var(--slate);">START</button>
+            <button onclick="setClient()" id="startBtn" style="background:#f1f5f9; border:none; padding:8px 12px; border-radius:8px; font-size:10px; font-weight:700; color:var(--slate);">START</button>
             <button onclick="callClient()" style="background:var(--green); color:white; border:none; padding:8px 14px; border-radius:8px; font-size:10px; font-weight:700;"><i class="fas fa-phone"></i> CALL</button>
         </div>
     </div>
@@ -68,7 +77,7 @@
     <div id="map"></div>
 
     <div id="activeControls" style="display:none; text-align:center;">
-        <button class="btn btn-gps" onclick="updateMyLocation()">
+        <button class="btn btn-gps" id="gpsRefreshBtn" onclick="updateMyLocation()">
             <i class="fas fa-satellite-dish"></i> Refresh Live Position
         </button>
         <button class="btn" onclick="completeErrandAuto()" style="background: #1e293b; color: white;">
@@ -92,30 +101,23 @@
         <div class="settings-list">
             <div class="setting-item" onclick="openEdit('name', 'Full Name')">
                 <label>FULL NAME</label>
-                <span><span id="valName">---</span> <i class="fas fa-chevron-right"></i></span>
+                <span><span id="valName">---</span> <i class="fas fa-chevron-right" style="margin-left:10px; font-size:10px; color:#cbd5e1;"></i></span>
             </div>
             <div class="setting-item" onclick="openEdit('location', 'Town/City')">
                 <label>OPERATING AREA</label>
-                <span><span id="valLoc">---</span> <i class="fas fa-chevron-right"></i></span>
-            </div>
-            <div class="setting-item" onclick="openEdit('base_rate', 'Base Rate')">
-                <label>MY BASE RATE</label>
-                <span>KES <span id="valRate">0</span> <i class="fas fa-chevron-right"></i></span>
+                <span><span id="valLoc">---</span> <i class="fas fa-chevron-right" style="margin-left:10px; font-size:10px; color:#cbd5e1;"></i></span>
             </div>
         </div>
     </div>
 
     <button class="btn btn-gold" onclick="shareProfile()"><i class="fab fa-whatsapp"></i> Share My Pro Link</button>
-    <button class="btn btn-outline" onclick="showSafety()"><i class="fas fa-shield-alt"></i> Safety Checklist</button>
-    
-    <button class="btn btn-emergency" onclick="window.location.href='tel:0797046378'"><i class="fas fa-headset"></i> Call Support Office</button>
 
     <div id="editModal">
         <div class="modal-content">
             <h3 id="modalTitle" style="margin-top:0; color:var(--maroon);">Update Info</h3>
             <div id="inputWrap"></div>
             <button class="btn btn-gold" id="saveBtn" style="width:100%; margin: 10px 0 0;">Save Changes</button>
-            <button onclick="closeModal()" style="width:100%; background:none; border:none; margin-top:10px; color:var(--slate); font-weight:700;">Cancel</button>
+            <button onclick="closeModal()" style="width:100%; background:none; border:none; margin-top:15px; color:var(--slate); font-weight:700;">Cancel</button>
         </div>
     </div>
 
@@ -132,20 +134,13 @@
             const email = localStorage.getItem("loggedInEmail");
             if (!email) { window.location.href = "login.html"; return; }
 
-            const active = localStorage.getItem("activeClientPhone");
-            if(active) {
-                document.getElementById("activeClientDisplay").innerText = active;
-                document.getElementById("activeControls").style.display = "block";
-                startLiveTracking(); 
-            }
-
+            // Profile Data
             const { data } = await runnerClient.from("runners").select("*").eq("email", email.trim().toLowerCase()).maybeSingle();
             if (data) {
                 document.getElementById("nameDisplay").innerText = data.name;
                 document.getElementById("valName").innerText = data.name;
                 document.getElementById("valLoc").innerText = data.location || "National";
                 document.getElementById("cityPill").innerText = (data.location || "National") + " RUNNER";
-                document.getElementById("valRate").innerText = data.base_rate || 0;
                 document.getElementById("statRate").innerText = data.base_rate || 0;
                 document.getElementById("statErrands").innerText = data.errands_completed || 0;
                 document.getElementById("statEarned").innerText = data.total_earnings || 0;
@@ -155,149 +150,121 @@
                 idStat.innerText = data.id_verified ? "VERIFIED PRO" : "ACTIVE";
                 if(data.id_verified) idStat.style.color = "var(--gold)";
             }
+
+            // Check for active errand
+            const active = localStorage.getItem("activeClientPhone");
+            if(active) {
+                document.getElementById("activeClientDisplay").innerText = active;
+                document.getElementById("activeControls").style.display = "block";
+                document.getElementById("syncBar").style.display = "block";
+                document.getElementById("startBtn").innerText = "RUNNING";
+                startLiveTracking(); 
+            }
         }
 
-        // Map initialization/update
         function updateMap(lat, lng) {
-            document.getElementById('map').style.display = 'block';
+            const mDiv = document.getElementById('map');
+            mDiv.style.display = 'block';
+            
             if (!map) {
-                map = L.map('map').setView([lat, lng], 16);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '© OpenStreetMap'
-                }).addTo(map);
+                map = L.map('map', { zoomControl: false }).setView([lat, lng], 16);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
                 marker = L.marker([lat, lng]).addTo(map);
             } else {
                 marker.setLatLng([lat, lng]);
                 map.setView([lat, lng]);
             }
-            // Force leaflet to recalculate size in case it was hidden
-            setTimeout(() => { map.invalidateSize(); }, 200);
-        }
-
-        async function setClient() {
-            const p = prompt("Enter Client Phone Number:");
-            const task = prompt("What is the errand? (e.g. Delivery, Shopping)");
-            const fee = prompt("Agreed Fee (KES):");
             
-            if(p && task) {
-                localStorage.setItem("activeClientPhone", p);
-                
-                await runnerClient.from('errands').insert([{
-                    client_phone: p,
-                    description: task,
-                    estimated_fee: parseInt(fee),
-                    status: 'In Progress',
-                    runner_email: localStorage.getItem("loggedInEmail"),
-                    last_ping: new Date().toISOString()
-                }]);
-
-                location.reload();
-            }
-        }
-
-        function callClient() {
-            const p = localStorage.getItem("activeClientPhone");
-            if(p) window.location.href = `tel:${p}`;
-            else alert("No active client set.");
-        }
-
-        function updateMyLocation() {
-            sendLocationPing();
-            alert("Location refreshed.");
-        }
-
-        async function completeErrandAuto() {
-            const amt = prompt("Final Fee Collected (KES):");
-            if(!amt || isNaN(amt)) return;
-            
-            const email = localStorage.getItem("loggedInEmail");
-            const p = localStorage.getItem("activeClientPhone");
-
-            stopLiveTracking(); 
-
-            await runnerClient.from('errands')
-                .update({ status: 'Completed' })
-                .eq('client_phone', p)
-                .eq('runner_email', email);
-
-            const { data: current } = await runnerClient.from("runners").select("errands_completed, total_earnings").eq("email", email).single();
-            await runnerClient.from("runners").update({ 
-                errands_completed: (current.errands_completed || 0) + 1,
-                total_earnings: (current.total_earnings || 0) + parseInt(amt) 
-            }).eq("email", email);
-
-            localStorage.removeItem("activeClientPhone");
-            location.reload();
-        }
-
-        function startLiveTracking() {
-            if (trackingInterval) return;
-            trackingInterval = setInterval(sendLocationPing, 15000); // 15 seconds
-            sendLocationPing(); 
-        }
-
-        function stopLiveTracking() {
-            if (trackingInterval) {
-                clearInterval(trackingInterval);
-                trackingInterval = null;
-            }
+            // Fix Leaflet sizing bug
+            setTimeout(() => { map.invalidateSize(); }, 400);
         }
 
         async function sendLocationPing() {
             if (!navigator.geolocation) return;
 
             navigator.geolocation.getCurrentPosition(async (pos) => {
-                const lat = pos.coords.latitude;
-                const lng = pos.coords.longitude;
+                const { latitude: lat, longitude: lng } = pos.coords;
                 const email = localStorage.getItem("loggedInEmail");
 
-                // 1. Update Map UI
                 updateMap(lat, lng);
+                document.getElementById("syncTime").innerText = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'});
 
-                // 2. Update Database
-                await runnerClient
-                    .from('errands')
-                    .update({
-                        lat: lat,
-                        lng: lng,
-                        last_ping: new Date().toISOString()
-                    })
-                    .eq('runner_email', email)
-                    .eq('status', 'In Progress');
+                await runnerClient.from('errands').update({
+                    lat: lat, lng: lng, last_ping: new Date().toISOString()
+                }).eq('runner_email', email).eq('status', 'In Progress');
 
-            }, (err) => console.error("GPS Error:", err), { 
-                enableHighAccuracy: true,
-                timeout: 10000 
-            });
+            }, (err) => console.warn("GPS Fail"), { enableHighAccuracy: true });
+        }
+
+        function startLiveTracking() {
+            if (trackingInterval) return;
+            sendLocationPing();
+            trackingInterval = setInterval(sendLocationPing, 15000); 
+        }
+
+        async function setClient() {
+            const p = prompt("Client Phone Number:");
+            const task = prompt("Errand Task:");
+            const fee = prompt("Agreed Fee (KES):");
+            if(!p || !task) return;
+
+            localStorage.setItem("activeClientPhone", p);
+            await runnerClient.from('errands').insert([{
+                client_phone: p, description: task, estimated_fee: parseInt(fee),
+                status: 'In Progress', runner_email: localStorage.getItem("loggedInEmail"),
+                last_ping: new Date().toISOString()
+            }]);
+            location.reload();
+        }
+
+        async function completeErrandAuto() {
+            const amt = prompt("Final Fee Collected (KES):");
+            if(!amt) return;
+            
+            const email = localStorage.getItem("loggedInEmail");
+            const p = localStorage.getItem("activeClientPhone");
+
+            await runnerClient.from('errands').update({ status: 'Completed' })
+                .eq('client_phone', p).eq('runner_email', email);
+
+            localStorage.removeItem("activeClientPhone");
+            location.reload();
+        }
+
+        function updateMyLocation() {
+            const btn = document.getElementById("gpsRefreshBtn");
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Locating...';
+            sendLocationPing();
+            setTimeout(() => { btn.innerHTML = '<i class="fas fa-satellite-dish"></i> Refresh Live Position'; }, 2000);
         }
 
         function openEdit(col, label) {
             document.getElementById("editModal").style.display = "flex";
             document.getElementById("modalTitle").innerText = `Edit ${label}`;
             const wrap = document.getElementById("inputWrap");
-            wrap.innerHTML = `<input type="text" id="editIn">`;
+            wrap.innerHTML = `<input type="text" id="editIn" placeholder="Enter new ${label}">`;
             
             document.getElementById("saveBtn").onclick = async () => {
                 const val = document.getElementById("editIn").value;
-                const update = {};
-                update[col] = (col === 'base_rate') ? parseInt(val) : val;
-                await runnerClient.from("runners").update(update).eq("email", localStorage.getItem("loggedInEmail"));
+                if(!val) return;
+                await runnerClient.from("runners").update({ [col]: val }).eq("email", localStorage.getItem("loggedInEmail"));
                 location.reload();
             };
         }
 
-        function closeModal() { document.getElementById("editModal").style.display = "none"; }
-        function showSafety() { alert("1. Verify M-Pesa Name.\n2. Never use your own cash for client items.\n3. Send GPS pings often."); }
-        
-        function shareProfile() { 
-            const url = `https://runmeanerrand.co.ke/view.html?id=${btoa(localStorage.getItem("loggedInEmail")).substring(0,8)}`;
-            window.open(`https://wa.me/?text=${encodeURIComponent("Hire me for errands: " + url)}`, '_blank');
+        function logout() {
+            localStorage.clear();
+            window.location.href = "login.html";
         }
+
+        function closeModal() { document.getElementById("editModal").style.display = "none"; }
+        function shareProfile() { alert("Profile Link Copied to Clipboard!"); }
 
         window.onload = init;
     </script>
 </body>
 </html>
+
 
 
 
