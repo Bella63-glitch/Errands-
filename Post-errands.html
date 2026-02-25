@@ -3,237 +3,311 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Post an Errand | Run Me an Errand</title>
-  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Raleway:wght@300;500;700&display=swap" rel="stylesheet">
+  <title>Elite Concierge | Run Me an Errand</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
   
   <style>
     :root {
       --maroon: #600000;
       --gold: #D4AF37;
-      --dark-gold: #aa8a2e;
       --white: #ffffff;
-      --off-white: #fcfaf7;
+      --light-bg: #fdfdfd;
+      --error-bg: #fff5f5;
+      --error-text: #c0392b;
     }
 
     body {
-      font-family: 'Raleway', sans-serif;
-      background: linear-gradient(rgba(74, 0, 0, 0.9), rgba(128, 0, 0, 0.9)), 
-                  url('https://www.transparenttextures.com/patterns/cubes.png');
-      background-color: var(--maroon);
-      margin: 0;
-      padding: 20px;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      font-family: 'Roboto', sans-serif;
+      background-color: var(--light-bg);
+      margin: 0; padding: 20px; color: #333;
     }
 
     .container {
-      max-width: 500px;
-      width: 100%;
+      max-width: 650px; width: 100%;
+      margin: 0 auto;
       background: var(--white);
-      padding: 50px 40px;
-      border-radius: 4px; /* Sharper edges for a more professional, "boxed" luxury feel */
-      box-shadow: 0 40px 100px rgba(0,0,0,0.5);
-      border-top: 8px solid var(--gold);
-      position: relative;
+      padding: 45px;
+      border: 1px solid #eee;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.05);
+      border-top: 10px solid var(--maroon);
     }
 
-    .header {
-      text-align: center;
-      margin-bottom: 40px;
+    .header { text-align: center; margin-bottom: 35px; }
+    .logo-frame { width: 90px; height: 90px; margin: 0 auto 15px; border-radius: 50%; border: 2px solid var(--gold); padding: 3px; overflow: hidden;}
+    .logo-frame img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    
+    h1 { font-family: 'Playfair Display', serif; color: var(--maroon); font-size: 28px; margin: 0; }
+    .header p { color: var(--gold); font-size: 11px; text-transform: uppercase; letter-spacing: 4px; font-weight: 700; margin-top: 5px; }
+
+    .section-title {
+      font-size: 12px; font-weight: 700; color: var(--maroon);
+      text-transform: uppercase; border-bottom: 1px solid #eee;
+      padding-bottom: 8px; margin: 30px 0 20px; letter-spacing: 1px;
     }
 
-    /* Perfectly Circular Logo */
-    .logo-frame {
-      width: 120px;
-      height: 120px;
-      margin: 0 auto 20px;
-      border-radius: 50%;
-      border: 2px solid var(--gold);
-      padding: 5px;
-      background: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
+    label { font-weight: 500; display: block; margin-bottom: 8px; font-size: 11px; color: #666; text-transform: uppercase;}
+    
+    select, input, textarea {
+      width: 100%; padding: 14px; border: 1px solid #ddd; margin-bottom: 20px; 
+      box-sizing: border-box; font-family: 'Roboto', sans-serif; font-size: 15px;
+      border-radius: 0px; transition: 0.3s;
     }
 
-    .logo-frame img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 50%;
+    input:focus, textarea:focus { border-color: var(--gold); outline: none; background: #fff; }
+
+    .market-alert {
+      display: none; background: var(--error-bg); border-left: 4px solid var(--error-text);
+      padding: 15px; font-size: 13px; color: var(--error-text); margin-bottom: 20px;
     }
 
-    h1 {
-      font-family: 'Libre Baskerville', serif;
-      color: var(--maroon);
-      font-size: 26px;
-      margin: 0 0 10px 0;
-      font-weight: 700;
+    .tos-trigger {
+      font-size: 12px; color: var(--maroon); text-decoration: underline; cursor: pointer; font-weight: 600; margin-bottom: 20px; display: inline-block;
     }
 
-    .header p {
-      color: var(--gold);
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 3px;
-      font-weight: 700;
-      margin: 0;
-    }
+    .dynamic-content { display: none; border: 1px solid #f0f0f0; padding: 20px; margin-bottom: 20px; background: #fafafa; }
 
-    .form-group {
-      margin-bottom: 25px;
+    /* Policy Checkbox Styling */
+    .policy-container {
+      display: none; align-items: flex-start; gap: 10px; background: #fdfae6; padding: 15px; border: 1px solid var(--gold); margin-bottom: 20px;
     }
-
-    label {
-      font-family: 'Raleway', sans-serif;
-      font-weight: 700;
-      display: block;
-      margin-bottom: 10px;
-      font-size: 11px;
-      color: #333;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-    }
-
-    input, textarea {
-      width: 100%;
-      padding: 15px;
-      box-sizing: border-box;
-      border: 1px solid #ddd;
-      font-size: 15px;
-      font-family: 'Libre Baskerville', serif; /* Input text looks more formal */
-      transition: all 0.3s ease;
-      background: var(--off-white);
-      border-radius: 0; /* Minimalist aesthetic */
-    }
-
-    input:focus, textarea:focus {
-      outline: none;
-      border-color: var(--maroon);
-      background: #fff;
-      box-shadow: 5px 5px 0px rgba(212, 175, 55, 0.2);
-    }
-
-    textarea {
-      resize: none;
-      min-height: 100px;
-    }
-
-    .row {
-      display: flex;
-      gap: 20px;
-    }
-
-    .row > div {
-      flex: 1;
-    }
+    .policy-container input { width: auto; margin-top: 4px; cursor: pointer; }
+    .policy-container label { text-transform: none; color: #444; cursor: pointer; line-height: 1.4; font-size: 13px;}
 
     button {
-      width: 100%;
-      background: var(--maroon);
-      color: var(--white);
-      border: 1px solid var(--maroon);
-      padding: 20px;
-      font-family: 'Raleway', sans-serif;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-transform: uppercase;
-      letter-spacing: 4px;
-      margin-top: 10px;
+      width: 100%; background: var(--maroon); color: white; padding: 20px; 
+      font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;
+      border: none; cursor: pointer; transition: 0.3s;
     }
+    button:disabled { background: #ccc; cursor: not-allowed; opacity: 0.6; }
+    button:hover:not(:disabled) { background: #3d0000; box-shadow: 0 8px 20px rgba(96,0,0,0.2); }
 
-    button:hover {
-      background: var(--white);
-      color: var(--maroon);
-      border-color: var(--maroon);
-    }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
-    .disclaimer-text {
-      font-family: 'Raleway', sans-serif;
-      font-size: 11px;
-      color: #888;
-      text-align: center;
-      margin-top: 35px;
-      line-height: 1.8;
-      border-top: 1px solid #eee;
-      padding-top: 20px;
+    /* Modal Styling */
+    .modal {
+      display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.5); backdrop-filter: blur(3px);
     }
+    .modal-content {
+      background-color: #fff; margin: 10% auto; padding: 30px; border-top: 5px solid var(--gold);
+      width: 80%; max-width: 500px; box-shadow: 0 5px 30px rgba(0,0,0,0.3);
+    }
+    .modal-content h2 { font-family: 'Playfair Display', serif; color: var(--maroon); margin-top: 0; }
+    .modal-content p { font-size: 14px; line-height: 1.6; color: #444; }
+    .close-btn { background: var(--maroon); color: #fff; border: none; padding: 10px 20px; cursor: pointer; margin-top: 15px; width: 100%; text-transform: uppercase; font-weight: 700; }
 
-    @media (max-width: 480px) {
-      .container { padding: 40px 20px; }
-      .row { flex-direction: column; gap: 0; }
-    }
+    @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <div class="header">
-      <div class="logo-frame">
-        <img src="https://i.postimg.cc/YSKsLg9p/IMG-20251220-WA0009.jpg" alt="Logo">
-      </div>
-      <h1>Run Me an Errand</h1>
-      <p>Elite Concierge</p>
-    </div>
-
-    <form id="errandForm">
-      <div class="form-group">
-        <label>The Errand Details</label>
-        <textarea id="task" placeholder="Example: Purchase gift from Village Market and deliver to Muthaiga..." required></textarea>
-      </div>
-
-      <div class="form-group">
-        <label>Location</label>
-        <input type="text" id="location" placeholder="Specific Building or Area" required />
-      </div>
-
-      <div class="row">
-        <div class="form-group">
-          <label>Budget (KES)</label>
-          <input type="number" id="budget" placeholder="e.g. 1500" />
-        </div>
-        <div class="form-group">
-          <label>Your Phone</label>
-          <input type="tel" id="phone" placeholder="07XX XXX XXX" required />
-        </div>
-      </div>
-
-      <button type="submit">Submit Request</button>
-    </form>
-
-    <div class="disclaimer-text">
-      <strong>Terms of Service:</strong> By submitting this request, you agree to be contacted directly by an independent runner. <em>Run Me an Errand</em> acts as a connecting platform for independent service providers. Please verify all details with your runner before service begins.
-    </div>
+<div class="container">
+  <div class="header">
+    <div class="logo-frame"><img src="https://i.postimg.cc/YSKsLg9p/IMG-20251220-WA0009.jpg" alt="Logo"></div>
+    <h1>Run Me an Errand</h1>
+    <p>Premium Concierge</p>
   </div>
 
-  <script>
-    document.getElementById("errandForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      const task = document.getElementById("task").value;
-      const location = document.getElementById("location").value;
-      const budget = document.getElementById("budget").value || "To be discussed";
-      const phone = document.getElementById("phone").value;
+  <form id="errandForm">
+    <div class="section-title">01. Service Category</div>
+    <label>Select Service</label>
+    <select id="serviceType" onchange="toggleLogic()" required>
+      <option value="" disabled selected>Please select...</option>
+      <option value="House Hunting">House Hunting</option>
+      <option value="Property Management">Property Management</option>
+      <option value="Pick-up & Drop-off">Pick-up & Drop-off</option>
+      <option value="Shopping">Shopping (Wigs, Groceries, etc.)</option>
+      <option value="General">General / Other Errand</option>
+    </select>
 
-      const whatsappNumber = "254797046378";
-      const message =
-        "🏆 *NEW CONCIERGE REQUEST* 🏆%0A" +
-        "━━━━━━━━━━━━━━━━━━━━%0A" +
-        "*TASK:* " + task + "%0A" +
-        "*WHERE:* " + location + "%0A" +
-        "*BUDGET:* KES " + budget + "%0A" +
-        "*CLIENT:* " + phone + "%0A" +
-        "━━━━━━━━━━━━━━━━━━━━";
+    <div id="huntingDetails" class="dynamic-content">
+      <div class="tos-trigger" onclick="showTos()">View House Hunting Terms of Service</div>
+      
+      <label>Target Neighborhoods</label>
+      <input type="text" id="h_area" placeholder="e.g. Kilimani, Lavington, Westlands" oninput="checkMarket()">
 
-      window.open("https://wa.me/" + whatsappNumber + "?text=" + message, "_blank");
-    });
-  </script>
+      <div class="grid">
+        <div>
+          <label>Bedrooms</label>
+          <select id="h_bedrooms" onchange="checkMarket()">
+            <option value="Bedsitter">Bedsitter</option>
+            <option value="1 Bedroom">1 Bedroom</option>
+            <option value="2 Bedrooms">2 Bedrooms</option>
+            <option value="3+ Bedrooms">3+ Bedrooms</option>
+          </select>
+        </div>
+        <div>
+          <label>Max Rent Budget (KES)</label>
+          <input type="number" id="h_rent" placeholder="e.g. 45000" oninput="checkMarket()">
+        </div>
+      </div>
+      
+      <div id="marketWarning" class="market-alert">
+        ⚠️ <strong>Unrealistic Expectation Warning:</strong> Current market data for prime areas shows that your budget is significantly low for this bedroom count. Finding a quality unit under these terms is unlikely.
+      </div>
+    </div>
+
+    <div id="propertyDetails" class="dynamic-content">
+      <label>Management Request</label>
+      <select id="mgmt_type">
+        <option value="Bill Payment">Utility Bill Payment</option>
+        <option value="Property Inspection">Property Inspection</option>
+        <option value="Tenant Support">Tenant/Landlord Support</option>
+        <option value="Repairs">Repairs Oversight</option>
+      </select>
+      <label>Property Address</label>
+      <input type="text" id="mgmt_loc" placeholder="Building name, Apartment number">
+    </div>
+
+    <div id="pickupDetails" class="dynamic-content">
+      <label>Pick-up Point</label>
+      <input type="text" id="p_from" placeholder="Building, Shop/Room number">
+      <label>Drop-off Point</label>
+      <input type="text" id="p_to" placeholder="Receiver's Apartment and Area">
+    </div>
+
+    <div id="shoppingDetails" class="dynamic-content">
+      <label>Item Specifications</label>
+      <textarea id="s_list" placeholder="List items: Brands, wig styles, lengths, colors..."></textarea>
+    </div>
+
+    <div class="section-title">02. Frequency & Logistics</div>
+    
+    <label>Frequency</label>
+    <select id="recurring_type">
+      <option value="Once-off">Once-off task</option>
+      <option value="Weekly">Weekly</option>
+      <option value="Monthly">Monthly</option>
+    </select>
+
+    <label>Service Area (Location)</label>
+    <input type="text" id="task_location" placeholder="e.g. Kilimani, CBD, Westlands" required>
+
+    <div class="grid">
+      <div>
+        <label>Client Name</label>
+        <input type="text" id="u_name" placeholder="Your Name" required>
+      </div>
+      <div>
+        <label>WhatsApp Number</label>
+        <input type="tel" id="u_phone" placeholder="07XX XXX XXX" required>
+      </div>
+    </div>
+
+    <label>Total Service Fee (KES)</label>
+    <input type="number" id="fee" placeholder="Amount for runner's labor" required>
+
+    <label>Engagement Details</label>
+    <textarea id="task_notes" placeholder="Detailed instructions for the runner..."></textarea>
+
+    <div id="policyBox" class="policy-container">
+      <input type="checkbox" id="policyAgree" onchange="validateForm()">
+      <label for="policyAgree">I understand that <strong>KES 1,000</strong> is deducted from the service fee for mobilization and is <strong>non-refundable</strong> if a house is not found.</label>
+    </div>
+
+    <button type="submit" id="submitBtn">Submit Request</button>
+  </form>
+</div>
+
+<div id="tosModal" class="modal">
+  <div class="modal-content">
+    <h2>House Hunting Policy</h2>
+    <p>To ensure a professional and dedicated search, please note:</p>
+    <p>• <strong>Mobilization:</strong> KES 1,000 is deducted from your original service fee to cover logistics (runner's fuel and time).</p>
+    <p>• <strong>Non-Refundable:</strong> This KES 1,000 mobilization portion remains non-refundable if a suitable house is not identified.</p>
+    <p>• <strong>Completion:</strong> The balance of the service fee is considered the success fee upon identifying a matching unit.</p>
+    <button class="close-btn" onclick="hideTos()">I Acknowledge</button>
+  </div>
+</div>
+
+<script>
+  const submitBtn = document.getElementById('submitBtn');
+  const policyAgree = document.getElementById('policyAgree');
+  const policyBox = document.getElementById('policyBox');
+
+  function toggleLogic() {
+    const type = document.getElementById('serviceType').value;
+    const sections = ['huntingDetails', 'propertyDetails', 'pickupDetails', 'shoppingDetails'];
+    
+    sections.forEach(s => document.getElementById(s).style.display = 'none');
+    policyBox.style.display = 'none';
+
+    if(type === 'House Hunting') {
+      document.getElementById('huntingDetails').style.display = 'block';
+      policyBox.style.display = 'flex';
+    } else if(type === 'Property Management') document.getElementById('propertyDetails').style.display = 'block';
+    else if(type === 'Pick-up & Drop-off') document.getElementById('pickupDetails').style.display = 'block';
+    else if(type === 'Shopping') document.getElementById('shoppingDetails').style.display = 'block';
+
+    validateForm();
+  }
+
+  function validateForm() {
+    const type = document.getElementById('serviceType').value;
+    if (type === 'House Hunting') {
+      submitBtn.disabled = !policyAgree.checked;
+    } else {
+      submitBtn.disabled = false;
+    }
+  }
+
+  function checkMarket() {
+    const area = document.getElementById('h_area').value.toLowerCase();
+    const rent = document.getElementById('h_rent').value;
+    const rooms = document.getElementById('h_bedrooms').value;
+    const warning = document.getElementById('marketWarning');
+    const prime = ['kilimani', 'lavington', 'westlands', 'kileleshwa', 'riverside', 'parklands'];
+    
+    let flag = false;
+    if(prime.some(a => area.includes(a))) {
+        if(rooms === 'Bedsitter' && rent < 20000) flag = true;
+        if(rooms === '1 Bedroom' && rent < 35000) flag = true;
+        if(rooms === '2 Bedrooms' && rent < 55000) flag = true;
+        if(rooms === '3+ Bedrooms' && rent < 80000) flag = true;
+    }
+    warning.style.display = flag ? 'block' : 'none';
+  }
+
+  function showTos() { document.getElementById('tosModal').style.display = 'block'; }
+  function hideTos() { document.getElementById('tosModal').style.display = 'none'; }
+
+  document.getElementById("errandForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const type = document.getElementById("serviceType").value;
+    const name = document.getElementById("u_name").value;
+    const fee = document.getElementById("fee").value;
+    const loc = document.getElementById("task_location").value;
+    const notes = document.getElementById("task_notes").value;
+    const freq = document.getElementById("recurring_type").value;
+    
+    let details = "";
+    if(type === 'House Hunting') details = `AREAS: ${document.getElementById('h_area').value}\nBEDS: ${document.getElementById('h_bedrooms').value}\nRENT: ${document.getElementById('h_rent').value}`;
+    else if(type === 'Property Management') details = `MGMT: ${document.getElementById('mgmt_type').value}\nADDRESS: ${document.getElementById('mgmt_loc').value}`;
+    else if(type === 'Pick-up & Drop-off') details = `FROM: ${document.getElementById('p_from').value}\nTO: ${document.getElementById('p_to').value}`;
+    else if(type === 'Shopping') details = `LIST: ${document.getElementById('s_list').value}`;
+
+    // REDIRECTION NUMBER: 254797046378
+    const wa = "254797046378";
+    const msg = encodeURIComponent(
+      `💎 *NEW SERVICE REQUEST*\n` +
+      `━━━━━━━━━━━━━━━\n` +
+      `*CLIENT:* ${name}\n` +
+      `*SERVICE:* ${type}\n` +
+      `*FREQ:* ${freq}\n` +
+      `*AREA:* ${loc}\n` +
+      `*FEE:* KES ${fee}\n\n` +
+      `*DETAILS:*\n${details}\n\n` +
+      `*NOTES:* ${notes}\n` +
+      `━━━━━━━━━━━━━━━\n` +
+      `✅ _Policy Acknowledged (1k mobilization deduction)._`
+    );
+    window.open(`https://wa.me/${wa}?text=${msg}`, "_blank");
+  });
+</script>
 
 </body>
 </html>
+
+
 
       
