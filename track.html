@@ -16,11 +16,10 @@
         /* Map styling */
         #map { height: 100vh; width: 100%; z-index: 1; }
         
-        /* Loading overlay */
+        /* Loading overlay - Background only */
         .map-loader {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            color: white; font-size: 1.2rem; font-weight: 600; z-index: 1000;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            z-index: 1000;
         }
 
         /* Glassmorphism Header */
@@ -126,7 +125,7 @@
     </div>
     
     <div id="map">
-        <div class="map-loader" id="mapLoader">Loading Satellite View...</div>
+        <div class="map-loader" id="mapLoader"></div>
     </div>
 
     <div class="status-container">
