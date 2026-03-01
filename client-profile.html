@@ -20,6 +20,27 @@
         #ratingModal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:5000; align-items:center; justify-content:center; padding:20px; backdrop-filter: blur(8px); }
         .history-item { border-bottom: 1px solid #f1f5f9; padding: 12px 0; }
         .history-item:last-child { border-bottom: none; }
+        
+        /* New Tracking Button Style */
+        .btn-track {
+            background: #0ea5e9;
+            color: white;
+            width: 100%;
+            padding: 12px;
+            border-radius: 1rem;
+            font-weight: 800;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+            transition: all 0.2s;
+        }
+        .btn-track:active { transform: scale(0.96); }
     </style>
 </head>
 <body class="min-h-screen pb-20">
@@ -53,6 +74,7 @@
     </div>
 
     <div class="max-w-md mx-auto px-6 -mt-16">
+        
         <div class="neo-card p-6 mb-6">
             <div class="flex justify-between items-start mb-6">
                 <div id="avatar" class="w-16 h-16 bg-[#630d21] rounded-2xl flex items-center justify-center text-[#fcc419] text-2xl font-black shadow-lg">..</div>
@@ -86,6 +108,11 @@
                 <span id="errandFee" class="text-[#630d21] font-black text-sm">KES 0</span>
             </div>
             <h4 id="errandTask" class="text-lg font-bold text-slate-800 mb-5 leading-tight">---</h4>
+            
+            <a id="trackBtnLink" href="#" class="btn-track">
+                <i class="fas fa-location-crosshairs"></i> Track Runner Live
+            </a>
+
             <div class="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100">
                 <div id="runnerInitial" class="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-[#630d21] font-black border">R</div>
                 <div class="flex-1">
@@ -132,6 +159,7 @@
                 updateProfileUI(); 
                 checkErrands(); 
                 fetchHistory();
+                // Check for updates every 8 seconds
                 setInterval(checkErrands, 8000); 
             }
         }
@@ -140,7 +168,7 @@
             document.getElementById("userName").innerText = currentUser.full_name;
             document.getElementById("userPhoneDisplay").innerText = currentUser.phone;
             document.getElementById("userLocationDisplay").innerText = currentUser.location || "Add a location";
-            document.getElementById("avatar").innerText = currentUser.full_name.substring(0,1).toUpperCase();
+            document.getElementById("avatar").innerText = (currentUser.full_name || "U").substring(0,1).toUpperCase();
             document.getElementById("editName").value = currentUser.full_name;
             document.getElementById("editPhone").value = currentUser.phone;
             document.getElementById("editLocation").value = currentUser.location || "";
@@ -165,14 +193,21 @@
         async function checkErrands() {
             if(!currentUser) return;
             
-            // Check for Active Errand
-            const { data: active } = await supabaseClient.from('errands').select('*').eq('client_phone', currentUser.phone).eq('status', 'In Progress').maybeSingle();
+            const { data: active } = await supabaseClient.from('errands')
+                .select('*')
+                .eq('client_phone', currentUser.phone)
+                .eq('status', 'In Progress')
+                .maybeSingle();
             
             if (active) { 
                 showTracker(active); 
             } else {
-                // If no active, check for one that just completed but isn't rated
-                const { data: recentlyCompleted } = await supabaseClient.from('errands').select('*').eq('client_phone', currentUser.phone).eq('status', 'Completed').is('rating', null).maybeSingle();
+                const { data: recentlyCompleted } = await supabaseClient.from('errands')
+                    .select('*')
+                    .eq('client_phone', currentUser.phone)
+                    .eq('status', 'Completed')
+                    .is('rating', null)
+                    .maybeSingle();
                 
                 if (recentlyCompleted) {
                     currentErrandId = recentlyCompleted.id;
@@ -189,6 +224,10 @@
             document.getElementById('trackerActive').classList.remove('hidden');
             document.getElementById('errandTask').innerText = errand.description;
             document.getElementById('errandFee').innerText = `KES ${errand.estimated_fee}`;
+            
+            // Set the tracking button link
+            document.getElementById('trackBtnLink').href = `track.html?id=${errand.id}`;
+            
             fetchRunner(errand.runner_email);
         }
 
@@ -240,7 +279,7 @@
             await supabaseClient.from('errands').update({ rating: selectedRating, review: document.getElementById('reviewText').value }).eq('id', currentErrandId);
             document.getElementById('ratingModal').style.display = 'none';
             alert("Feedback saved! Thank you.");
-            fetchHistory(); // Refresh history
+            fetchHistory();
         }
 
         window.onload = init;
