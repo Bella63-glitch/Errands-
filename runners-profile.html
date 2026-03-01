@@ -192,14 +192,21 @@
                     badge.style.background = "var(--green)";
                     badge.innerHTML = '<i class="fas fa-location-arrow"></i> GPS LIVE';
                     if(activeErrandId) updateLiveLocation();
-                }, null, { enableHighAccuracy: true });
+                }, (error) => {
+                    const badge = document.getElementById("gpsBadge");
+                    badge.style.background = "var(--red)";
+                    badge.innerHTML = '<i class="fas fa-location-arrow"></i> GPS ERROR';
+                }, { enableHighAccuracy: true });
             }
         }
 
         async function updateLiveLocation() {
             if(!runnerPos.lat || !activeErrandId) return;
+            // Updated to send timestamp for the premium satellite map
             await runnerClient.from('errands').update({ 
-                lat: runnerPos.lat, lng: runnerPos.lng, last_ping: new Date().toISOString() 
+                lat: runnerPos.lat, 
+                lng: runnerPos.lng, 
+                last_ping: new Date().toISOString() 
             }).eq('id', activeErrandId);
         }
 
@@ -309,8 +316,4 @@
     </script>
 </body>
 </html>
-
-
-
-
 
