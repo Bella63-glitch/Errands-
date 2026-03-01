@@ -146,7 +146,7 @@
         const runnerClient = supabase.createClient(config.url, config.key);
         let activeErrandId = null;
         let activeClientPhone = null;
-        let runnerPos = { lat: null, lng: null };
+        let currentRunnerPos = { lat: null, lng: null };
 
         async function init() {
             const email = localStorage.getItem("loggedInEmail");
@@ -186,12 +186,14 @@
         function trackGPS() {
             if (navigator.geolocation) {
                 navigator.geolocation.watchPosition((position) => {
-                    runnerPos.lat = position.coords.latitude;
-                    runnerPos.lng = position.coords.longitude;
+                    currentRunnerPos.lat = position.coords.latitude;
+                    currentRunnerPos.lng = position.coords.longitude;
                     const badge = document.getElementById("gpsBadge");
                     badge.style.background = "var(--green)";
                     badge.innerHTML = '<i class="fas fa-location-arrow"></i> GPS LIVE';
-                    if(activeErrandId) updateLiveLocation();
+                    
+                    // Update DB immediately if errand is active
+                    if(activeErrandId) updateLiveLocation(currentRunnerPos.lat, currentRunnerPos.lng);
                 }, (error) => {
                     const badge = document.getElementById("gpsBadge");
                     badge.style.background = "var(--red)";
@@ -200,12 +202,11 @@
             }
         }
 
-        async function updateLiveLocation() {
-            if(!runnerPos.lat || !activeErrandId) return;
-            // Updated to send timestamp for the premium satellite map
+        async function updateLiveLocation(lat, lng) {
+            if(!lat || !lng || !activeErrandId) return;
             await runnerClient.from('errands').update({ 
-                lat: runnerPos.lat, 
-                lng: runnerPos.lng, 
+                lat: lat, 
+                lng: lng, 
                 last_ping: new Date().toISOString() 
             }).eq('id', activeErrandId);
         }
@@ -231,6 +232,18 @@
             const fee = prompt("Fee (KES):");
             
             if(name && phone && task) {
+                // Get fresh GPS location right now
+                let latestPos = {lat: null, lng: null};
+                try {
+                    latestPos = await new Promise((resolve, reject) => {
+                        navigator.geolocation.getCurrentPosition(
+                            pos => resolve({lat: pos.coords.latitude, lng: pos.coords.longitude}),
+                            err => reject(err),
+                            { enableHighAccuracy: true }
+                        );
+                    });
+                } catch(e) { alert("GPS needed to start."); return; }
+
                 const email = localStorage.getItem("loggedInEmail");
                 const { error } = await runnerClient.from('errands').insert([{
                     client_name: name,
@@ -240,8 +253,8 @@
                     estimated_fee: parseInt(fee),
                     status: 'In Progress',
                     runner_email: email,
-                    lat: runnerPos.lat,
-                    lng: runnerPos.lng,
+                    lat: latestPos.lat, // Use latest
+                    lng: latestPos.lng, // Use latest
                     last_ping: new Date().toISOString()
                 }]);
                 if(!error) { showSuccessOverlay("Errand Started!"); setTimeout(() => location.reload(), 1000); }
