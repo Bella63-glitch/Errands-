@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Satellite Tracking | Premium Hub</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        :root { --maroon: #630d21; --gold: #fcc419; --slate: #1e293b; }
+        body { margin: 0; font-family: 'Outfit', sans-serif; background: #000; overflow: hidden; }
+        
+        /* Map styling */
+        #map { height: 100vh; width: 100%; z-index: 1; }
+
+        /* Glassmorphism Header */
+        .nav-header {
+            position: fixed; top: 0; left: 0; right: 0; padding: 20px;
+            z-index: 1000; display: flex; align-items: center;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 100%);
+        }
+        .back-btn {
+            background: rgba(255, 255, 255, 0.9); width: 45px; height: 45px; border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3); color: var(--maroon);
+            text-decoration: none; backdrop-filter: blur(5px);
+        }
+
+        /* Floating Distance Badge */
+        .distance-badge {
+            position: fixed; top: 25px; right: 20px; z-index: 1000;
+            background: var(--maroon); color: var(--gold);
+            padding: 8px 16px; border-radius: 12px; font-weight: 800;
+            font-size: 0.75rem; box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            border: 1px solid var(--gold);
+        }
+
+        /* Premium Status Card */
+        .status-container {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            width: 92%; max-width: 400px; z-index: 1000;
+        }
+        .status-card {
+            background: rgba(255, 255, 255, 0.95); padding: 20px; border-radius: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5); backdrop-filter: blur(10px);
+        }
+        .runner-info { display: flex; align-items: center; gap: 12px; margin-top: 15px; padding-top: 15px; border-top: 1px solid #e2e8f0; }
+        .avatar { width: 45px; height: 45px; background: var(--maroon); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--gold); font-weight: 800; }
+        
+        .badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: #f0fdf4; color: #16a34a; padding: 4px 10px;
+            border-radius: 100px; font-size: 0.6rem; font-weight: 800;
+            text-transform: uppercase;
+        }
+        .pulse { width: 6px; height: 6px; background: #22c55e; border-radius: 50%; animation: pulse-green 2s infinite; }
+        
+        @keyframes pulse-green {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+
+        .custom-marker {
+            background: var(--gold); border: 2px solid var(--maroon);
+            border-radius: 50% 50% 50% 0; transform: rotate(-45deg);
+            width: 30px; height: 30px; display: flex; align-items: center;
+            justify-content: center; box-shadow: 0 0 20px var(--gold);
+        }
+        .custom-marker i { transform: rotate(45deg); color: var(--maroon); font-size: 14px; }
+    </style>
+</head>
+<body>
+
+    <div class="nav-header">
+        <a href="dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+        <div class="distance-badge" id="distDiv">Calculating...</div>
+    </div>
+    
+    <div id="map"></div>
+
+    <div class="status-container">
+        <div class="status-card">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div>
+                    <span class="badge"><div class="pulse"></div> Live Satellite</span>
+                    <h2 style="margin: 8px 0 2px; font-size: 1.1rem; font-weight: 800; color: var(--slate);" id="taskName">Active Errand</h2>
+                    <p style="margin: 0; font-size: 0.7rem; color: #64748b; font-weight: 600;" id="lastSeen">Updating...</p>
+                </div>
+                <div style="text-align: right;">
+                    <p style="margin: 0; font-size: 0.55rem; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Fee</p>
+                    <p style="margin: 0; font-size: 0.9rem; font-weight: 800; color: var(--maroon);" id="price">---</p>
+                </div>
+            </div>
+
+            <div class="runner-info">
+                <div class="avatar" id="runnerInitial">R</div>
+                <div style="flex: 1;">
+                    <p style="margin: 0; font-size: 0.8rem; font-weight: 800; color: var(--slate);" id="runnerName">...</p>
+                    <p style="margin: 0; font-size: 0.6rem; color: #64748b; font-weight: 700; text-transform: uppercase;">Professional Runner</p>
+                </div>
+                <a id="runnerCall" href="#" style="width: 40px; height: 40px; background: #22c55e; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; box-shadow: 0 4px 10px rgba(34,197,94,0.3);">
+                    <i class="fas fa-phone"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        const S_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
+        const S_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
+        const supabaseClient = supabase.createClient(S_URL, S_KEY);
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const errandId = urlParams.get('id');
+        let clientPos = null;
+
+        // 1. Initialize Satellite Map
+        const map = L.map('map', { zoomControl: false }).setView([-1.286389, 36.817223], 16);
+        
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri'
+        }).addTo(map);
+
+        const runnerIcon = L.divIcon({
+            className: 'custom-div-icon',
+            html: `<div class="custom-marker"><i class="fas fa-motorcycle"></i></div>`,
+            iconSize: [30, 42],
+            iconAnchor: [15, 42]
+        });
+
+        const runnerMarker = L.marker([0, 0], { icon: runnerIcon }).addTo(map);
+
+        // 2. Calculate Distance Logic (Haversine Formula)
+        function getDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        async function initTracking() {
+            if (!errandId) return;
+
+            // Get Client's own location to calculate distance
+            navigator.geolocation.getCurrentPosition(pos => {
+                clientPos = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+            });
+
+            const { data: errand } = await supabaseClient.from('errands').select('*').eq('id', errandId).single();
+            if (errand) {
+                updateUI(errand);
+                fetchRunnerDetails(errand.runner_email);
+            }
+
+            supabaseClient.channel('live-track')
+                .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'errands', filter: `id=eq.${errandId}` }, 
+                payload => updateUI(payload.new)).subscribe();
+        }
+
+        async function fetchRunnerDetails(email) {
+            const { data: runner } = await supabaseClient.from('runners').select('name, phone').eq('email', email).maybeSingle();
+            if (runner) {
+                document.getElementById('runnerName').innerText = runner.name;
+                document.getElementById('runnerInitial').innerText = runner.name[0].toUpperCase();
+                document.getElementById('runnerCall').href = `tel:${runner.phone}`;
+            }
+        }
+
+        function updateUI(data) {
+            if (data.lat && data.lng) {
+                const pos = [data.lat, data.lng];
+                runnerMarker.setLatLng(pos);
+                map.flyTo(pos, 17);
+                
+                document.getElementById('taskName').innerText = data.description;
+                document.getElementById('price').innerText = `KES ${data.estimated_fee}`;
+                document.getElementById('lastSeen').innerText = `Last updated: ${new Date().toLocaleTimeString()}`;
+
+                if (clientPos) {
+                    const dist = getDistance(data.lat, data.lng, clientPos.lat, clientPos.lng);
+                    document.getElementById('distDiv').innerText = dist < 1 ? 
+                        `${(dist * 1000).toFixed(0)} meters away` : 
+                        `${dist.toFixed(1)} km away`;
+                }
+            }
+        }
+
+        initTracking();
+    </script>
+</body>
+</html>
+
+
+
