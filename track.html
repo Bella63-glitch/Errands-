@@ -154,10 +154,11 @@
         // Add Zoom Control to bottom right
         L.control.zoom({ position: 'bottomright' }).addTo(map);
         
-        // 2. High Quality Satellite Layer (Esri World Imagery)
+        // 2. High Quality Satellite Layer with Zoom Cap
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
             attribution: 'Tiles &copy; Esri',
-            maxZoom: 20
+            maxZoom: 19, // CAP MAX ZOOM
+            minZoom: 3
         }).addTo(map);
 
         // Optional: Add Roads/Labels overlay for better context
@@ -240,14 +241,4 @@
 </html>
 
 
-
-
-
-
-
-
-
-
-
-
-                
+            
