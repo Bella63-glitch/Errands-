@@ -64,7 +64,7 @@
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
         }
 
-        /* Enhanced Maroon Ping Marker - High Contrast */
+        /* Enhanced Maroon Ping Marker */
         .custom-marker {
             background: var(--maroon); 
             border: 3px solid white;
@@ -76,7 +76,6 @@
             justify-content: center; 
             box-shadow: 0 0 0 0 rgba(99, 13, 33, 0.7);
             animation: ping-marker 1.5s infinite;
-            transition: all 0.5s ease-out; /* Smooth movement */
         }
         .custom-marker i { color: white; font-size: 14px; }
 
@@ -86,7 +85,7 @@
             100% { box-shadow: 0 0 0 0 rgba(99, 13, 33, 0); }
         }
 
-        /* Zoom Control Styling */
+        /* Zoom Control Styling - Moved to Bottom Right */
         .leaflet-control-zoom { border: none !important; }
         .leaflet-control-zoom a { 
             background-color: rgba(255,255,255,0.9) !important; 
@@ -147,15 +146,21 @@
         let clientPos = null;
         let mapInitialized = false;
 
-        // 1. Initialize Hybrid Satellite Map
-        const map = L.map('map', { zoomControl: true }); // Removed initial setView
+        // 1. Initialize Map with Zoom Control at Bottom Right
+        const map = L.map('map', { 
+            zoomControl: false 
+        });
         
-        // Satellite Base
+        // Add Zoom Control to bottom right
+        L.control.zoom({ position: 'bottomright' }).addTo(map);
+        
+        // 2. High Quality Satellite Layer (Esri World Imagery)
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-            attribution: 'Tiles &copy; Esri'
+            attribution: 'Tiles &copy; Esri',
+            maxZoom: 20
         }).addTo(map);
 
-        // Labels
+        // Optional: Add Roads/Labels overlay for better context
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}').addTo(map);
 
         const runnerIcon = L.divIcon({
@@ -210,7 +215,7 @@
                 const pos = [data.lat, data.lng];
                 runnerMarker.setLatLng(pos);
                 
-                // Fix: Only set view on initial load or if moved significantly
+                // Tight zoom on the runner (17x)
                 if (!mapInitialized || !map.getBounds().contains(pos)) {
                     map.setView(pos, 17);
                     mapInitialized = true;
@@ -234,4 +239,15 @@
 </body>
 </html>
 
-            
+
+
+
+
+
+
+
+
+
+
+
+                
