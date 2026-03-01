@@ -145,11 +145,10 @@
         const urlParams = new URLSearchParams(window.location.search);
         const errandId = urlParams.get('id');
         let clientPos = null;
-        let routeHistory = []; // To store path
-        let polyline = null;
+        let mapInitialized = false;
 
         // 1. Initialize Hybrid Satellite Map
-        const map = L.map('map', { zoomControl: true }).setView([-1.286389, 36.817223], 16);
+        const map = L.map('map', { zoomControl: true }); // Removed initial setView
         
         // Satellite Base
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
@@ -167,9 +166,6 @@
         });
 
         const runnerMarker = L.marker([0, 0], { icon: runnerIcon }).addTo(map);
-
-        // Path history line style
-        polyline = L.polyline([], {color: '#fcc419', weight: 3, opacity: 0.6}).addTo(map);
 
         // Haversine Formula for Distance
         function getDistance(lat1, lon1, lat2, lon2) {
@@ -191,7 +187,7 @@
 
             const { data: errand } = await supabaseClient.from('errands').select('*').eq('id', errandId).single();
             if (errand) {
-                updateUI(errand, true); // true = initial zoom
+                updateUI(errand, true);
                 fetchRunnerDetails(errand.runner_email);
             }
 
@@ -214,13 +210,10 @@
                 const pos = [data.lat, data.lng];
                 runnerMarker.setLatLng(pos);
                 
-                // Update Path History
-                routeHistory.push(pos);
-                polyline.setLatLngs(routeHistory);
-
-                // Only pan if runner is close to edge of screen, keeps map feeling 'live'
-                if (isInitial || !map.getBounds().contains(pos)) {
-                    map.panTo(pos, { animate: true, duration: 1 });
+                // Fix: Only set view on initial load or if moved significantly
+                if (!mapInitialized || !map.getBounds().contains(pos)) {
+                    map.setView(pos, 17);
+                    mapInitialized = true;
                 }
                 
                 document.getElementById('taskName').innerText = data.description;
@@ -241,49 +234,4 @@
 </body>
 </html>
 
-
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
-        }
-
-        /* Enhanced Maroon Ping Marker */
-        .custom-marker {
-            background: var(--maroon); 
-            border: 2px solid white;
-            border-radius: 50%;
-            width: 28px; 
-            height: 28px; 
-            display: flex; 
-            align-items: center;
-            justify-content: center; 
-            /* The Glowing Maroon Ping Animation */
-            box-shadow: 0 0 0 0 rgba(99, 13, 33, 0.7);
-            animation: ping-marker 1.5s infinite;
-        }
-        .custom-marker i { color: white; font-size: 12px; }
-
-        @keyframes ping-marker {
-            0% { box-shadow: 0 0 0 0 rgba(99, 13, 33, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(99, 13, 33, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(99, 13, 33, 0); }
-        }
-
-        /* Zoom Control Styling */
-        .leaflet-control-zoom { border: none !important; }
-        .leaflet-control-zoom a { 
-            background-color: rgba(255,255,255,0.9) !important; 
-            color: var(--maroon) !important;
-            border-radius: 12px !important; 
-            margin-bottom: 8px !important;
-            width: 40px !important; 
-            height: 40px !important;
-            line-height: 40px !important;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
-        }
-    </style>
-</head>
-<body>
-
-
-
+            
