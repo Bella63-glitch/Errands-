@@ -45,6 +45,17 @@
             border: 1px solid var(--gold);
         }
 
+        /* Fit Bounds Button */
+        .fit-btn {
+            position: fixed; top: 85px; right: 20px; z-index: 1000;
+            background: rgba(255, 255, 255, 0.9); color: var(--maroon);
+            width: 45px; height: 45px; border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            text-decoration: none; backdrop-filter: blur(5px);
+            border: none; cursor: pointer; font-size: 1.2rem;
+        }
+
         /* Premium Status Card */
         .status-container {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
@@ -111,6 +122,7 @@
     <div class="nav-header">
         <a href="client-profile.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
         <div class="distance-badge" id="distDiv">Connecting...</div>
+        <button class="fit-btn" onclick="fitView()" title="Fit View"><i class="fas fa-compress-arrows-alt"></i></button>
     </div>
     
     <div id="map">
@@ -154,13 +166,13 @@
         const errandId = urlParams.get('id');
         let clientPos = null;
         let mapInitialized = false;
+        let runnerMarker = null;
+        let clientMarker = null;
 
-        // Path History Variables
-        let pathCoordinates = [];
-        let pathLine = null;
-
+        // Initialize map with maxZoom constraint
         const map = L.map('map', { 
-            zoomControl: false 
+            zoomControl: false,
+            maxZoom: 18 // Setting hard limit to prevent "map unavailable"
         });
         
         L.control.zoom({ position: 'bottomright' }).addTo(map);
@@ -168,11 +180,13 @@
         // Satellite Hybrid
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
             attribution: 'Tiles &copy; Esri',
-            maxZoom: 19,
+            maxZoom: 18,
             minZoom: 3
         }).addTo(map);
 
-        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}').addTo(map);
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 18
+        }).addTo(map);
 
         // Hide loader when tiles load
         map.on('tileload', () => { document.getElementById('mapLoader').style.display = 'none'; });
@@ -184,10 +198,15 @@
             iconAnchor: [16, 16]
         });
 
-        const runnerMarker = L.marker([0, 0], { icon: runnerIcon }).addTo(map);
-        
-        // Initialize Path Polyline
-        pathLine = L.polyline([], {color: '#630d21', weight: 5, opacity: 0.7}).addTo(map);
+        // Function to fit both markers in view
+        function fitView() {
+            if (runnerMarker && clientMarker) {
+                const group = new L.featureGroup([runnerMarker, clientMarker]);
+                map.fitBounds(group.getBounds().pad(0.3)); // .pad adds extra space around markers
+            } else if (runnerMarker) {
+                map.setView(runnerMarker.getLatLng(), 16);
+            }
+        }
 
         function getDistance(lat1, lon1, lat2, lon2) {
             const R = 6371; // km
@@ -202,8 +221,17 @@
         async function initTracking() {
             if (!errandId) return;
 
+            // Get client location once
             navigator.geolocation.getCurrentPosition(pos => {
                 clientPos = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+                
+                // Add client marker (blue dot)
+                clientMarker = L.circleMarker([clientPos.lat, clientPos.lng], {
+                    color: '#3388ff',
+                    fillColor: '#3388ff',
+                    fillOpacity: 0.5,
+                    radius: 8
+                }).addTo(map);
             });
 
             const { data: errand } = await supabaseClient.from('errands').select('*').eq('id', errandId).single();
@@ -229,17 +257,20 @@
         function updateUI(data, isInitial) {
             if (data.lat && data.lng) {
                 const pos = [data.lat, data.lng];
-                runnerMarker.setLatLng(pos);
                 
-                // Add to path history
-                pathCoordinates.push(pos);
-                if (pathCoordinates.length > 50) pathCoordinates.shift(); // Keep last 50 points
-                pathLine.setLatLngs(pathCoordinates);
+                if (!runnerMarker) {
+                    runnerMarker = L.marker(pos, { icon: runnerIcon }).addTo(map);
+                } else {
+                    runnerMarker.setLatLng(pos);
+                }
                 
-                // Slightly wider zoom (16) for faster tile loading
-                if (!mapInitialized || !map.getBounds().contains(pos)) {
-                    map.setView(pos, 16);
-                    mapInitialized = true;
+                // On first load, fit view to show both
+                if (!mapInitialized) {
+                    // Give geolocation a second to load client marker
+                    setTimeout(() => {
+                        fitView();
+                        mapInitialized = true;
+                    }, 1000);
                 }
                 
                 document.getElementById('taskName').innerText = data.description;
