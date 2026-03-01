@@ -15,6 +15,13 @@
         
         /* Map styling */
         #map { height: 100vh; width: 100%; z-index: 1; }
+        
+        /* Loading overlay */
+        .map-loader {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            color: white; font-size: 1.2rem; font-weight: 600; z-index: 1000;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
 
         /* Glassmorphism Header */
         .nav-header {
@@ -85,7 +92,7 @@
             100% { box-shadow: 0 0 0 0 rgba(99, 13, 33, 0); }
         }
 
-        /* Zoom Control Styling - Moved to Bottom Right */
+        /* Zoom Control Styling */
         .leaflet-control-zoom { border: none !important; }
         .leaflet-control-zoom a { 
             background-color: rgba(255,255,255,0.9) !important; 
@@ -102,11 +109,13 @@
 <body>
 
     <div class="nav-header">
-        <a href="dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+        <a href="client-profile.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
         <div class="distance-badge" id="distDiv">Connecting...</div>
     </div>
     
-    <div id="map"></div>
+    <div id="map">
+        <div class="map-loader" id="mapLoader">Loading Satellite View...</div>
+    </div>
 
     <div class="status-container">
         <div class="status-card">
@@ -146,23 +155,27 @@
         let clientPos = null;
         let mapInitialized = false;
 
-        // 1. Initialize Map with Zoom Control at Bottom Right
+        // Path History Variables
+        let pathCoordinates = [];
+        let pathLine = null;
+
         const map = L.map('map', { 
             zoomControl: false 
         });
         
-        // Add Zoom Control to bottom right
         L.control.zoom({ position: 'bottomright' }).addTo(map);
         
-        // 2. High Quality Satellite Layer with Zoom Cap
+        // Satellite Hybrid
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
             attribution: 'Tiles &copy; Esri',
-            maxZoom: 19, // CAP MAX ZOOM
+            maxZoom: 19,
             minZoom: 3
         }).addTo(map);
 
-        // Optional: Add Roads/Labels overlay for better context
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}').addTo(map);
+
+        // Hide loader when tiles load
+        map.on('tileload', () => { document.getElementById('mapLoader').style.display = 'none'; });
 
         const runnerIcon = L.divIcon({
             className: 'custom-div-icon',
@@ -172,8 +185,10 @@
         });
 
         const runnerMarker = L.marker([0, 0], { icon: runnerIcon }).addTo(map);
+        
+        // Initialize Path Polyline
+        pathLine = L.polyline([], {color: '#630d21', weight: 5, opacity: 0.7}).addTo(map);
 
-        // Haversine Formula for Distance
         function getDistance(lat1, lon1, lat2, lon2) {
             const R = 6371; // km
             const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -216,9 +231,14 @@
                 const pos = [data.lat, data.lng];
                 runnerMarker.setLatLng(pos);
                 
-                // Tight zoom on the runner (17x)
+                // Add to path history
+                pathCoordinates.push(pos);
+                if (pathCoordinates.length > 50) pathCoordinates.shift(); // Keep last 50 points
+                pathLine.setLatLngs(pathCoordinates);
+                
+                // Slightly wider zoom (16) for faster tile loading
                 if (!mapInitialized || !map.getBounds().contains(pos)) {
-                    map.setView(pos, 17);
+                    map.setView(pos, 16);
                     mapInitialized = true;
                 }
                 
@@ -241,4 +261,5 @@
 </html>
 
 
-            
+
+
