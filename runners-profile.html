@@ -28,11 +28,17 @@
         .top-status-box { background: white; width: 92%; max-width: 500px; margin: 15px auto; border-radius: 20px; padding: 15px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-left: 4px solid var(--green); transition: all 0.3s ease; }
         .label-tiny { font-size: 0.6rem; font-weight: 800; color: var(--slate); text-transform: uppercase; margin-bottom: 3px; display: block; }
         
-        /* Cards & Profile */
-        .main-card { background: white; width: 92%; max-width: 500px; margin: 0 auto 20px; border-radius: 25px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+        /* Profile Section */
         .hero { background: linear-gradient(135deg, var(--maroon) 0%, #5c162b 100%); padding: 30px 20px; text-align: center; }
-        .profile-pic { width: 90px; height: 90px; border-radius: 28px; border: 3px solid var(--gold); background: white; object-fit: cover; }
         
+        /* New Profile Pic UI */
+        .profile-wrapper { position: relative; width: 90px; height: 90px; margin: 0 auto; cursor: pointer; }
+        .profile-pic { width: 90px; height: 90px; border-radius: 28px; border: 3px solid var(--gold); background: white; object-fit: cover; transition: all 0.3s; }
+        .profile-wrapper:hover .profile-pic { filter: brightness(0.7); }
+        .camera-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 1.2rem; opacity: 0; transition: 0.3s; }
+        .profile-wrapper:hover .camera-icon { opacity: 1; }
+        
+        .main-card { background: white; width: 92%; max-width: 500px; margin: 0 auto 20px; border-radius: 25px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; padding: 15px; background: #fff; border-bottom: 1px solid #f1f5f9; text-align: center; }
         .stat-val { display: block; font-weight: 800; color: var(--maroon); font-size: 1rem; }
         .stat-lab { font-size: 0.55rem; color: var(--slate); font-weight: 700; text-transform: uppercase; }
@@ -57,8 +63,8 @@
 
     <div id="successOverlay">
         <i class="fas fa-check-circle fa-4x"></i>
-        <h2 style="margin-top:20px">SYNCED WITH CLOUD</h2>
-        <p>Your active status is now permanent.</p>
+        <h2 style="margin-top:20px">UPDATED</h2>
+        <p id="successText">Information saved to cloud.</p>
     </div>
 
     <div class="header">
@@ -72,7 +78,7 @@
     <div class="top-status-box" id="statusBar">
         <div>
             <label class="label-tiny" id="statusLabel">Status</label>
-            <span id="activeClientDisplay" style="font-weight: 800; font-size: 13px;">Checking for errands...</span>
+            <span id="activeClientDisplay" style="font-weight: 800; font-size: 13px;">Checking...</span>
         </div>
         <div style="display:flex; gap:6px;">
             <button id="startBtn" onclick="setClient()" style="background:var(--maroon); border:none; padding:8px 12px; border-radius:8px; font-size:10px; font-weight:700; color:white;">START</button>
@@ -88,7 +94,12 @@
 
     <div class="main-card">
         <div class="hero">
-            <img id="runnerImg" class="profile-pic" src="https://via.placeholder.com/100">
+            <div class="profile-wrapper" onclick="document.getElementById('profileInput').click()">
+                <img id="runnerImg" class="profile-pic" src="https://via.placeholder.com/100">
+                <div class="camera-icon"><i class="fas fa-camera"></i></div>
+            </div>
+            <input type="file" id="profileInput" style="display:none" accept="image/*" onchange="handleImageUpload(this)">
+
             <h2 id="nameDisplay" style="color:white; margin:12px 0 4px; font-weight:800; font-size: 1.2rem;">---</h2>
             <div id="cityPill" style="display:inline-block; background:rgba(255,255,255,0.15); color:var(--gold); padding:4px 10px; border-radius:20px; font-size:0.65rem; font-weight:700; text-transform:uppercase;">RUNNER</div>
         </div>
@@ -141,7 +152,6 @@
             const email = localStorage.getItem("loggedInEmail");
             if (!email) { window.location.href = "login.html"; return; }
 
-            // 1. Fetch Runner Profile
             const { data: runner } = await runnerClient.from("runners").select("*").eq("email", email.trim().toLowerCase()).maybeSingle();
             if (runner) {
                 document.getElementById("nameDisplay").innerText = runner.name;
@@ -159,7 +169,6 @@
                 if(runner.id_verified) idStat.style.color = "var(--gold)";
             }
 
-            // 2. IMPORTANT: Check database for active errands (This replaces localStorage)
             const { data: errand } = await runnerClient
                 .from('errands')
                 .select('*')
@@ -174,6 +183,44 @@
             } else {
                 setUItoIdle();
             }
+        }
+
+        // --- NEW: Profile Picture Upload Logic ---
+        async function handleImageUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            // Optional: Alert if file is too large (Base64 can hit DB limits)
+            if (file.size > 1024 * 1024) { 
+                alert("Image too large. Please select a photo under 1MB.");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = async function() {
+                const base64 = reader.result;
+                const email = localStorage.getItem("loggedInEmail");
+
+                const { error } = await runnerClient
+                    .from("runners")
+                    .update({ profilepicture: base64 })
+                    .eq("email", email.trim().toLowerCase());
+
+                if (!error) {
+                    document.getElementById("runnerImg").src = base64;
+                    showSuccessOverlay("Profile Photo Updated!");
+                } else {
+                    alert("Sync Error: Could not save image.");
+                }
+            };
+        }
+
+        function showSuccessOverlay(msg) {
+            const overlay = document.getElementById("successOverlay");
+            document.getElementById("successText").innerText = msg;
+            overlay.style.display = "flex";
+            setTimeout(() => { overlay.style.display = "none"; }, 1500);
         }
 
         function setUItoActive(phone) {
@@ -211,10 +258,8 @@
                 }]);
 
                 if(!error) {
-                    document.getElementById("successOverlay").style.display = "flex";
-                    setTimeout(() => location.reload(), 1200);
-                } else {
-                    alert("Error starting errand. Try again.");
+                    showSuccessOverlay("Errand Started!");
+                    setTimeout(() => location.reload(), 1000);
                 }
             }
         }
@@ -224,14 +269,8 @@
             if(!amt || isNaN(amt)) return;
             
             const email = localStorage.getItem("loggedInEmail");
+            await runnerClient.from('errands').update({ status: 'Completed' }).eq('runner_email', email).eq('status', 'In Progress');
 
-            // Update errand to completed in DB
-            await runnerClient.from('errands')
-                .update({ status: 'Completed' })
-                .eq('runner_email', email)
-                .eq('status', 'In Progress');
-
-            // Update runner stats
             const { data: current } = await runnerClient.from("runners").select("errands_completed, total_earnings").eq("email", email).single();
             await runnerClient.from("runners").update({ 
                 errands_completed: (current.errands_completed || 0) + 1,
@@ -245,7 +284,9 @@
             document.getElementById("editModal").style.display = "flex";
             document.getElementById("modalTitle").innerText = `Edit ${label}`;
             const wrap = document.getElementById("inputWrap");
-            const currentVal = (col === 'base_rate') ? document.getElementById("valRate").innerText : document.getElementById("valName").innerText;
+            const currentVal = (col === 'base_rate') ? document.getElementById("valRate").innerText : 
+                               (col === 'location' ? document.getElementById("valLoc").innerText : document.getElementById("valName").innerText);
+            
             wrap.innerHTML = `<input type="text" id="editIn" value="${currentVal}">`;
             
             document.getElementById("saveBtn").onclick = async () => {
@@ -259,12 +300,8 @@
 
         function closeModal() { document.getElementById("editModal").style.display = "none"; }
         function logout() { localStorage.clear(); window.location.href = "login.html"; }
-        
-        function callClient() {
-            if(activeClientPhone) window.location.href = `tel:${activeClientPhone}`;
-        }
-
-        function showSafety() { alert("1. Verify M-Pesa Name.\n2. Never use your own cash for client items.\n3. Stay safe out there."); }
+        function callClient() { if(activeClientPhone) window.location.href = `tel:${activeClientPhone}`; }
+        function showSafety() { alert("1. Verify M-Pesa Name.\n2. Never use your own cash.\n3. Stay safe."); }
         
         function shareProfile() { 
             const email = localStorage.getItem("loggedInEmail");
@@ -275,7 +312,7 @@
         window.onload = init;
     </script>
 </body>
-</html>
+    </html>
 
 
 
@@ -285,4 +322,6 @@
 
 
 
- 
+
+
+
