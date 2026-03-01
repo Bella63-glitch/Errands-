@@ -30,11 +30,8 @@
         
         /* Profile Section */
         .hero { background: linear-gradient(135deg, var(--maroon) 0%, #5c162b 100%); padding: 30px 20px; text-align: center; }
-        
-        /* New Profile Pic UI */
         .profile-wrapper { position: relative; width: 90px; height: 90px; margin: 0 auto; cursor: pointer; }
         .profile-pic { width: 90px; height: 90px; border-radius: 28px; border: 3px solid var(--gold); background: white; object-fit: cover; transition: all 0.3s; }
-        .profile-wrapper:hover .profile-pic { filter: brightness(0.7); }
         .camera-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 1.2rem; opacity: 0; transition: 0.3s; }
         .profile-wrapper:hover .camera-icon { opacity: 1; }
         
@@ -48,7 +45,7 @@
         .btn-outline { background: white; color: var(--maroon); border: 2px solid var(--maroon); }
         .btn-emergency { background: #fee2e2; color: var(--red); margin-top: 20px; }
 
-        #successOverlay { display: none; position: fixed; inset: 0; background: rgba(34, 197, 94, 0.95); z-index: 5000; flex-direction: column; align-items: center; justify-content: center; color: white; transition: opacity 0.3s; }
+        #successOverlay { display: none; position: fixed; inset: 0; background: rgba(34, 197, 94, 0.95); z-index: 5000; flex-direction: column; align-items: center; justify-content: center; color: white; }
 
         .setting-item { display: flex; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid #f8fafc; cursor: pointer; align-items: center; }
         .setting-item label { font-size: 0.65rem; font-weight: 800; color: var(--slate); }
@@ -57,6 +54,8 @@
         #editModal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:2000; align-items:center; justify-content:center; padding:20px; }
         .modal-content { background:white; padding:25px; border-radius:20px; width:100%; max-width:400px; box-sizing: border-box; }
         input { width:100%; padding:12px; border:1px solid #e2e8f0; border-radius:10px; margin: 10px 0; font-family: inherit; }
+        
+        #gpsBadge { font-size: 9px; padding: 4px 8px; border-radius: 6px; background: rgba(255,255,255,0.1); color: white; font-weight: 800; }
     </style>
 </head>
 <body>
@@ -69,8 +68,8 @@
 
     <div class="header">
         <h1>RUNNER <span style="color:var(--gold)">HQ</span></h1>
-        <div style="display:flex; align-items:center; gap:10px;">
-            <div id="idStatus" style="font-size: 9px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: rgba(255,255,255,0.1);">...</div>
+        <div style="display:flex; align-items:center; gap:8px;">
+            <div id="gpsBadge"><i class="fas fa-location-arrow"></i> GPS OFF</div>
             <button class="logout-btn" onclick="logout()">LOGOUT</button>
         </div>
     </div>
@@ -78,7 +77,7 @@
     <div class="top-status-box" id="statusBar">
         <div>
             <label class="label-tiny" id="statusLabel">Status</label>
-            <span id="activeClientDisplay" style="font-weight: 800; font-size: 13px;">Checking...</span>
+            <span id="activeClientDisplay" style="font-weight: 800; font-size: 13px; line-height: 1.2;">Checking...</span>
         </div>
         <div style="display:flex; gap:6px;">
             <button id="startBtn" onclick="setClient()" style="background:var(--maroon); border:none; padding:8px 12px; border-radius:8px; font-size:10px; font-weight:700; color:white;">START</button>
@@ -101,13 +100,13 @@
             <input type="file" id="profileInput" style="display:none" accept="image/*" onchange="handleImageUpload(this)">
 
             <h2 id="nameDisplay" style="color:white; margin:12px 0 4px; font-weight:800; font-size: 1.2rem;">---</h2>
-            <div id="cityPill" style="display:inline-block; background:rgba(255,255,255,0.15); color:var(--gold); padding:4px 10px; border-radius:20px; font-size:0.65rem; font-weight:700; text-transform:uppercase;">RUNNER</div>
+            <div id="idStatus" style="font-size: 9px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: rgba(255,255,255,0.1); display:inline-block;">...</div>
         </div>
 
         <div class="stats-grid">
             <div class="stat-item"><span class="stat-val" id="statErrands">0</span><span class="stat-lab">Jobs</span></div>
             <div class="stat-item"><span class="stat-val" id="statRate">0</span><span class="stat-lab">Rate</span></div>
-            <div class="stat-item"><span class="stat-val" id="statEarned">0</span><span class="stat-lab">Earnings</span></div>
+            <div class="stat-item"><span class="stat-val" id="statEarned">0</span><span class="stat-lab">Earned</span></div>
         </div>
 
         <div class="settings-list">
@@ -147,17 +146,20 @@
         const runnerClient = supabase.createClient(config.url, config.key);
         let activeErrandId = null;
         let activeClientPhone = null;
+        let runnerPos = { lat: null, lng: null };
 
         async function init() {
             const email = localStorage.getItem("loggedInEmail");
             if (!email) { window.location.href = "login.html"; return; }
+
+            // Start GPS tracking
+            trackGPS();
 
             const { data: runner } = await runnerClient.from("runners").select("*").eq("email", email.trim().toLowerCase()).maybeSingle();
             if (runner) {
                 document.getElementById("nameDisplay").innerText = runner.name;
                 document.getElementById("valName").innerText = runner.name;
                 document.getElementById("valLoc").innerText = runner.location || "National";
-                document.getElementById("cityPill").innerText = (runner.location || "National") + " RUNNER";
                 document.getElementById("valRate").innerText = runner.base_rate || 0;
                 document.getElementById("statRate").innerText = runner.base_rate || 0;
                 document.getElementById("statErrands").innerText = runner.errands_completed || 0;
@@ -169,63 +171,79 @@
                 if(runner.id_verified) idStat.style.color = "var(--gold)";
             }
 
-            const { data: errand } = await runnerClient
-                .from('errands')
-                .select('*')
-                .eq('runner_email', email.trim().toLowerCase())
-                .eq('status', 'In Progress')
-                .maybeSingle();
+            const { data: errand } = await runnerClient.from('errands')
+                .select('*').eq('runner_email', email.trim().toLowerCase()).eq('status', 'In Progress').maybeSingle();
 
             if(errand) {
                 activeErrandId = errand.id;
                 activeClientPhone = errand.client_phone;
-                setUItoActive(errand.client_phone);
+                setUItoActive(errand.client_name, errand.client_location);
             } else {
                 setUItoIdle();
             }
         }
 
-        // --- NEW: Profile Picture Upload Logic ---
+        function trackGPS() {
+            if (navigator.geolocation) {
+                navigator.geolocation.watchPosition((position) => {
+                    runnerPos.lat = position.coords.latitude;
+                    runnerPos.lng = position.coords.longitude;
+                    const badge = document.getElementById("gpsBadge");
+                    badge.style.background = "var(--green)";
+                    badge.innerHTML = '<i class="fas fa-location-arrow"></i> GPS LIVE';
+                    if(activeErrandId) updateLiveLocation();
+                }, null, { enableHighAccuracy: true });
+            }
+        }
+
+        async function updateLiveLocation() {
+            if(!runnerPos.lat || !activeErrandId) return;
+            await runnerClient.from('errands').update({ 
+                lat: runnerPos.lat, lng: runnerPos.lng, last_ping: new Date().toISOString() 
+            }).eq('id', activeErrandId);
+        }
+
         async function handleImageUpload(input) {
             const file = input.files[0];
-            if (!file) return;
-
-            // Optional: Alert if file is too large (Base64 can hit DB limits)
-            if (file.size > 1024 * 1024) { 
-                alert("Image too large. Please select a photo under 1MB.");
-                return;
-            }
-
+            if (!file || file.size > 1024 * 1024) { alert("Max size 1MB"); return; }
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = async function() {
                 const base64 = reader.result;
                 const email = localStorage.getItem("loggedInEmail");
-
-                const { error } = await runnerClient
-                    .from("runners")
-                    .update({ profilepicture: base64 })
-                    .eq("email", email.trim().toLowerCase());
-
-                if (!error) {
-                    document.getElementById("runnerImg").src = base64;
-                    showSuccessOverlay("Profile Photo Updated!");
-                } else {
-                    alert("Sync Error: Could not save image.");
-                }
+                const { error } = await runnerClient.from("runners").update({ profilepicture: base64 }).eq("email", email.trim().toLowerCase());
+                if (!error) { document.getElementById("runnerImg").src = base64; showSuccessOverlay("Photo Saved!"); }
             };
         }
 
-        function showSuccessOverlay(msg) {
-            const overlay = document.getElementById("successOverlay");
-            document.getElementById("successText").innerText = msg;
-            overlay.style.display = "flex";
-            setTimeout(() => { overlay.style.display = "none"; }, 1500);
+        async function setClient() {
+            const name = prompt("Client Name:");
+            const phone = prompt("Client Phone Number:");
+            const loc = prompt("Pickup Location (e.g. Westlands):");
+            const task = prompt("Errand Description:");
+            const fee = prompt("Fee (KES):");
+            
+            if(name && phone && task) {
+                const email = localStorage.getItem("loggedInEmail");
+                const { error } = await runnerClient.from('errands').insert([{
+                    client_name: name,
+                    client_phone: phone,
+                    client_location: loc,
+                    description: task,
+                    estimated_fee: parseInt(fee),
+                    status: 'In Progress',
+                    runner_email: email,
+                    lat: runnerPos.lat,
+                    lng: runnerPos.lng,
+                    last_ping: new Date().toISOString()
+                }]);
+                if(!error) { showSuccessOverlay("Errand Started!"); setTimeout(() => location.reload(), 1000); }
+            }
         }
 
-        function setUItoActive(phone) {
+        function setUItoActive(name, loc) {
             document.getElementById("statusLabel").innerText = "Active Errand";
-            document.getElementById("activeClientDisplay").innerText = "Client: " + phone;
+            document.getElementById("activeClientDisplay").innerHTML = `${name} <br> <small>${loc || 'Location Unset'}</small>`;
             document.getElementById("activeControls").style.display = "block";
             document.getElementById("startBtn").style.display = "none";
             document.getElementById("callBtn").style.display = "block";
@@ -241,42 +259,16 @@
             document.getElementById("statusBar").classList.remove("active-errand-box");
         }
 
-        async function setClient() {
-            const p = prompt("Client Phone Number:");
-            const task = prompt("What is the errand?");
-            const fee = prompt("Agreed Fee (KES):");
-            
-            if(p && task) {
-                const email = localStorage.getItem("loggedInEmail");
-                const { error } = await runnerClient.from('errands').insert([{
-                    client_phone: p,
-                    description: task,
-                    estimated_fee: parseInt(fee),
-                    status: 'In Progress',
-                    runner_email: email,
-                    last_ping: new Date().toISOString()
-                }]);
-
-                if(!error) {
-                    showSuccessOverlay("Errand Started!");
-                    setTimeout(() => location.reload(), 1000);
-                }
-            }
-        }
-
         async function completeErrandAuto() {
             const amt = prompt("Final Fee Collected (KES):");
             if(!amt || isNaN(amt)) return;
-            
             const email = localStorage.getItem("loggedInEmail");
-            await runnerClient.from('errands').update({ status: 'Completed' }).eq('runner_email', email).eq('status', 'In Progress');
-
-            const { data: current } = await runnerClient.from("runners").select("errands_completed, total_earnings").eq("email", email).single();
+            await runnerClient.from('errands').update({ status: 'Completed' }).eq('id', activeErrandId);
+            const { data: curr } = await runnerClient.from("runners").select("errands_completed, total_earnings").eq("email", email).single();
             await runnerClient.from("runners").update({ 
-                errands_completed: (current.errands_completed || 0) + 1,
-                total_earnings: (current.total_earnings || 0) + parseInt(amt) 
+                errands_completed: (curr.errands_completed || 0) + 1,
+                total_earnings: (curr.total_earnings || 0) + parseInt(amt) 
             }).eq("email", email);
-
             location.reload();
         }
 
@@ -286,9 +278,7 @@
             const wrap = document.getElementById("inputWrap");
             const currentVal = (col === 'base_rate') ? document.getElementById("valRate").innerText : 
                                (col === 'location' ? document.getElementById("valLoc").innerText : document.getElementById("valName").innerText);
-            
             wrap.innerHTML = `<input type="text" id="editIn" value="${currentVal}">`;
-            
             document.getElementById("saveBtn").onclick = async () => {
                 const val = document.getElementById("editIn").value;
                 const update = {};
@@ -298,11 +288,17 @@
             };
         }
 
+        function showSuccessOverlay(msg) {
+            const overlay = document.getElementById("successOverlay");
+            document.getElementById("successText").innerText = msg;
+            overlay.style.display = "flex";
+            setTimeout(() => { overlay.style.display = "none"; }, 1500);
+        }
+
         function closeModal() { document.getElementById("editModal").style.display = "none"; }
         function logout() { localStorage.clear(); window.location.href = "login.html"; }
         function callClient() { if(activeClientPhone) window.location.href = `tel:${activeClientPhone}`; }
         function showSafety() { alert("1. Verify M-Pesa Name.\n2. Never use your own cash.\n3. Stay safe."); }
-        
         function shareProfile() { 
             const email = localStorage.getItem("loggedInEmail");
             const url = `https://runmeanerrand.co.ke/view.html?id=${btoa(email).substring(0,8)}`;
@@ -312,14 +308,7 @@
         window.onload = init;
     </script>
 </body>
-    </html>
-
-
-
-
-
-
-
+</html>
 
 
 
