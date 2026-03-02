@@ -281,7 +281,12 @@
     const freq = document.getElementById("recurring_type").value;
     
     let details = "";
-    if(type === 'House Hunting') details = `AREAS: ${document.getElementById('h_area').value}\nBEDS: ${document.getElementById('h_bedrooms').value}\nRENT: ${document.getElementById('h_rent').value}`;
+    let policyMsg = "";
+
+    if(type === 'House Hunting') {
+      details = `AREAS: ${document.getElementById('h_area').value}\nBEDS: ${document.getElementById('h_bedrooms').value}\nRENT: ${document.getElementById('h_rent').value}`;
+      policyMsg = `\n━━━━━━━━━━━━━━━\n✅ _Policy Acknowledged (1k mobilization deduction)._`;
+    }
     else if(type === 'Property Management') details = `MGMT: ${document.getElementById('mgmt_type').value}\nADDRESS: ${document.getElementById('mgmt_loc').value}`;
     else if(type === 'Pick-up & Drop-off') details = `FROM: ${document.getElementById('p_from').value}\nTO: ${document.getElementById('p_to').value}`;
     else if(type === 'Shopping') details = `LIST: ${document.getElementById('s_list').value}`;
@@ -297,9 +302,8 @@
       `*AREA:* ${loc}\n` +
       `*FEE:* KES ${fee}\n\n` +
       `*DETAILS:*\n${details}\n\n` +
-      `*NOTES:* ${notes}\n` +
-      `━━━━━━━━━━━━━━━\n` +
-      `✅ _Policy Acknowledged (1k mobilization deduction)._`
+      `*NOTES:* ${notes}` +
+      policyMsg
     );
     window.open(`https://wa.me/${wa}?text=${msg}`, "_blank");
   });
@@ -310,4 +314,11 @@
 
 
 
-      
+
+
+
+
+
+
+
+  
