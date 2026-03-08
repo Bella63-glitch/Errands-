@@ -215,7 +215,13 @@
       <input type="password" id="password" class="input-field w-full p-4 outline-none" placeholder="Password"> <button type="button" id="togglePass" class="eye-toggle"> 
        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewbox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /> 
        </svg> </button> 
-     </div> <button id="loginBtn" class="btn-main shadow-lg"> <span id="btnText">Sign In</span> </button> 
+     </div> 
+
+     <div class="text-right mt-1">
+         <a href="reset-password.html" class="home-link text-xs font-bold text-gray-500">Forgot Password?</a>
+     </div>
+
+     <button id="loginBtn" class="btn-main shadow-lg"> <span id="btnText">Sign In</span> </button> 
      
      <div class="text-center pt-2">
          <p class="label-text text-sm">Don't have an account? 
@@ -347,14 +353,12 @@
                 }
 
                 // 2. FALLBACK TO DATABASE TABLES (Older Users)
-                // Check Runners Table
                 let { data: user, error: rError } = await supabaseClient
                     .from('runners').select('*').eq('email', email).maybeSingle();
                 
                 let userType = 'runner';
 
                 if (!user) {
-                    // Check Users Table
                     const { data: client } = await supabaseClient
                         .from('users').select('*').eq('email', email).maybeSingle();
                     user = client;
@@ -363,6 +367,17 @@
 
                 // Verify Old Bcrypt Password
                 if (user && user.password && dcodeIO.bcrypt.compareSync(password, user.password)) {
+                    
+                    // --- SILENT MIGRATION ---
+                    // This creates an entry in the Auth Vault so they can use Forgot Password next time
+                    await supabaseClient.auth.signUp({
+                        email: email,
+                        password: password,
+                        options: { 
+                            data: { full_name: user.name || user.full_name, type: userType } 
+                        }
+                    });
+
                     localStorage.setItem('loggedInEmail', email);
                     localStorage.setItem('userType', userType);
                     window.location.href = userType === 'runner' ? 'runners-profile.html' : 'client-profile.html';
@@ -379,4 +394,9 @@
 </script> 
  </body>
 </html>
+      
+
+
+
+
 
