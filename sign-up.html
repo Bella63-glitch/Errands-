@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
   <title>Create Account | Run Me An Errand</title> 
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script> 
   <style>
     :root { --maroon: #7B1E3A; --gold: #FFD700; }
     body { font-family: 'Inter', sans-serif; background-color: #f9f9f9; }
@@ -174,29 +173,18 @@
     const loadingIndicator = document.getElementById("loadingIndicator");
 
     const termsContent = {
-        user: `
-            <p>1. <strong>Direct Hiring:</strong> You are hiring runners directly. "Run Me An Errand" provides a directory and is not responsible for the performance of the runner.</p>
-            <p>2. <strong>Payment:</strong> All errand fees are negotiated and paid directly to the runner. Do not send payment until the service is verified.</p>
-            <p>3. <strong>Safety First:</strong> For new sellers, always use our "Shop Verification" service before making large purchases.</p>
-            <p>4. <strong>Prohibited Conduct:</strong> Users found soliciting illegal services or harassing runners will be permanently banned.</p>
-        `,
-        runner: `
-            <p>1. <strong>Professionalism:</strong> Runners must be punctual and honest. Fraudulent activity leads to immediate account termination.</p>
-            <p>2. <strong>Listing Fee:</strong> A monthly KES 100 fee is required to remain active on the platform. This fee is non-refundable.</p>
-            <p>3. <strong>Verification:</strong> You must provide a valid National ID copy. Your profile will only be visible once our team verifies your documents.</p>
-            <p>4. <strong>Illegal Items:</strong> You are strictly prohibited from transporting illegal substances, weapons, or unauthorized drugs.</p>
-        `
+        user: `<p>1. Direct Hiring: Directory services only.</p><p>2. Payment: Negotiated directly.</p>`,
+        runner: `<p>1. Listing Fee: KES 100/mo.</p><p>2. Verification: ID Required.</p>`
     };
 
     accountTypeSelect.addEventListener("change", () => {
-      const isRunner = accountTypeSelect.value === "runner";
-      runnerFields.classList.toggle("hidden", !isRunner);
+      runnerFields.classList.toggle("hidden", accountTypeSelect.value !== "runner");
     });
 
     function toggleTerms() {
         const modal = document.getElementById('termsModal');
         const type = accountTypeSelect.value;
-        document.getElementById('termsTitle').innerText = `${type} Terms & Conditions`;
+        document.getElementById('termsTitle').innerText = `${type.toUpperCase()} Terms & Conditions`;
         document.getElementById('termsContent').innerHTML = termsContent[type];
         modal.classList.toggle('hidden');
     }
@@ -211,11 +199,10 @@
 
     async function uploadFile(file, bucket) {
       if (!file) return null;
-      const filePath = `${Date.now()}-${file.name}`;
-      const { error: uploadError } = await supabaseClient.storage.from(bucket).upload(filePath, file);
-      if (uploadError) throw uploadError;
-      const { data } = supabaseClient.storage.from(bucket).getPublicUrl(filePath);
-      return data.publicUrl;
+      const filePath = `${Date.now()}-${file.name.replace(/\s/g, '_')}`;
+      const { error } = await supabaseClient.storage.from(bucket).upload(filePath, file);
+      if (error) throw new Error("File Upload Failed. Check storage policies.");
+      return supabaseClient.storage.from(bucket).getPublicUrl(filePath).data.publicUrl;
     }
 
     document.getElementById("signupForm").addEventListener("submit", async (e) => {
@@ -224,40 +211,53 @@
       buttonText.textContent = "Processing...";
       loadingIndicator.classList.remove("hidden");
 
-      const accountType = accountTypeSelect.value;
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
+      const email = document.getElementById("email").value.trim().toLowerCase();
+      const password = document.getElementById("password").value;
       const fullName = document.getElementById("fullName").value.trim();
       const phone = document.getElementById("phone").value.trim();
       const location = document.getElementById("location").value.trim();
+      const accountType = accountTypeSelect.value;
 
       try {
-        const hashedPassword = dcodeIO.bcrypt.hashSync(password, 10);
+        // 1. SUPABASE AUTH SIGNUP
+        let { data: authData, error: authError } = await supabaseClient.auth.signUp({
+          email, password, options: { data: { full_name: fullName, type: accountType } }
+        });
 
+        // 2. CONFLICT RECOVERY: If email exists in Auth but registration was interrupted
+        if (authError && authError.message.includes("already registered")) {
+            const { data: signInData, error: signInError } = await supabaseClient.auth.signInWithPassword({ email, password });
+            if (signInError) throw new Error("Account exists, but password was incorrect.");
+            authData = signInData;
+        } else if (authError) throw authError;
+
+        const userId = authData.user.id;
+
+        // 3. DATABASE UPSERT (Keeps data in sync even if page reloads)
         if (accountType === "user") {
-          const { error } = await supabaseClient.from("users").insert([{ 
-              full_name: fullName, email, phone, location, password: hashedPassword 
-          }]);
-          if (error) throw error;
-          showPopup("User account created! Redirecting...", "success");
-          setTimeout(() => window.location.href = "login.html", 3000);
+          const { error: dbError } = await supabaseClient.from("users").upsert([
+            { id: userId, full_name: fullName, email, phone, location }
+          ]);
+          if (dbError) throw new Error("Database Access Denied (RLS Violation).");
+          showPopup("User account created!", "success");
+          setTimeout(() => window.location.href = "login.html", 2000);
         } 
         else {
           const profilePicture = document.getElementById("profilePicture").files[0];
           const idPicture = document.getElementById("idPicture").files[0];
           const checkedBoxes = document.querySelectorAll('input[name="errandType"]:checked');
-          const selectedCategories = Array.from(checkedBoxes).map(cb => cb.value).join(", ");
+          const categories = Array.from(checkedBoxes).map(cb => cb.value).join(", ");
 
-          if (selectedCategories.length === 0) throw new Error("Select at least one errand.");
+          if (categories.length === 0) throw new Error("Select at least one errand.");
           if (!profilePicture || !idPicture) throw new Error("Upload Profile and ID pictures.");
 
           const profilePicUrl = await uploadFile(profilePicture, "profiles");
           const idPicUrl = await uploadFile(idPicture, "ids");
 
-          const { error } = await supabaseClient.from("runners").insert([{
-              name: fullName, email, phone, password: hashedPassword, location,
+          const { error: dbError } = await supabaseClient.from("runners").upsert([{
+              id: userId, name: fullName, email, phone, location,
               about: document.getElementById("about").value.trim(),
-              category: selectedCategories,
+              category: categories,
               transport_mode: document.getElementById("transportMode").value,
               base_rate: parseInt(document.getElementById("baseRate").value),
               idnumber: document.getElementById("idNumber").value.trim(),
@@ -265,27 +265,26 @@
               subscription_status: "inactive", id_verified: false
           }]);
           
-          if (error) throw error;
-          showPopup("Account Created! Finalize verification below.", "success");
-
+          if (dbError) throw new Error("Database Access Denied (RLS Violation).");
+          
+          showPopup("Account Created!", "success");
+          // Keep your original success message design
           document.getElementById("formContainer").innerHTML = `
             <div class="text-center py-4">
                 <div class="w-20 h-20 bg-maroon text-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
                     <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                 </div>
                 <h3 class="text-2xl font-black text-maroon mb-2">Registration Received!</h3>
-                <p class="text-gray-500 font-bold mb-8 italic text-sm">Your account is currently <span class="text-maroon">PENDING VERIFICATION</span>.</p>
+                <p class="text-gray-500 font-bold mb-8 italic text-sm">Status: <span class="text-maroon">PENDING VERIFICATION</span></p>
                 <div class="bg-gray-50 p-6 rounded-2xl text-left mb-8 border border-gray-100">
-                    <p class="text-xs font-black text-gray-400 uppercase tracking-widest mb-4 text-center">Final Steps to Activate</p>
+                    <p class="text-xs font-black text-gray-400 uppercase tracking-widest mb-4 text-center">Final Steps</p>
                     <div class="space-y-4 text-sm text-gray-700">
-                        <p>1. Pay <b>KES 100</b> monthly fee to <b>0115 815 194</b> (Pochi).</p>
-                        <p>2. Forward M-Pesa message to <b>0797046378</b>.</p>
-                        <p>3. Wait for ID verification (usually within 2 hours).</p>
+                        <p>1. Pay <b>KES 100</b> to <b>0115 815 194</b>.</p>
+                        <p>2. Forward message to <b>0797046378</b>.</p>
                     </div>
                 </div>
-                <a href="login.html" class="block w-full bg-maroon text-white font-black py-4 rounded-xl uppercase tracking-widest text-sm">Finish & Go to Login</a>
-            </div>
-          `;
+                <a href="login.html" class="block w-full bg-maroon text-white font-black py-4 rounded-xl text-center">Finish & Go to Login</a>
+            </div>`;
         }
       } catch (err) {
         showPopup(err.message, "error");
@@ -296,15 +295,5 @@
     });
   </script> 
  </body>
-</html>
-
-
-
-
-
-
-
-
-
-
-
+                 </html>
+                    
