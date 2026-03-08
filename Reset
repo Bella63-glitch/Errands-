@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password | Run Me An Errand</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #121212;
+            --maroon: #7B1E3A;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .input-field {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1.5px solid transparent;
+            color: white;
+            border-radius: 15px;
+            width: 100%;
+            padding: 16px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .btn-main {
+            background: var(--maroon);
+            color: white;
+            padding: 16px;
+            border-radius: 15px;
+            font-weight: 700;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .btn-main:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .hidden { display: none; }
+        
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="glass-card">
+        <div class="text-center mb-8">
+            <h2 id="pageTitle" class="text-2xl font-black text-white">Reset Password</h2>
+            <p id="pageSubtitle" class="text-gray-400 text-sm mt-2">We'll help you get back into your account.</p>
+        </div>
+
+        <div id="requestSection" class="space-y-4">
+            <input type="email" id="email" class="input-field" placeholder="Enter your email">
+            <button id="sendBtn" class="btn-main">Send Reset Link</button>
+        </div>
+
+        <div id="updateSection" class="hidden space-y-4">
+            <input type="password" id="newPassword" class="input-field" placeholder="New Password">
+            <input type="password" id="confirmPassword" class="input-field" placeholder="Confirm New Password">
+            <button id="updateBtn" class="btn-main">Update Password</button>
+        </div>
+
+        <div id="msg" class="mt-6 text-center text-sm font-medium hidden"></div>
+
+        <div class="text-center mt-8">
+            <a href="login.html" class="text-xs font-bold text-gray-500 uppercase tracking-widest hover:text-white transition-colors">Back to Login</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        const requestSection = document.getElementById('requestSection');
+        const updateSection = document.getElementById('updateSection');
+        const msgDiv = document.getElementById('msg');
+        const pageTitle = document.getElementById('pageTitle');
+        const pageSubtitle = document.getElementById('pageSubtitle');
+
+        // Check if user is returning from email link
+        // Supabase appends #type=recovery to the URL
+        window.addEventListener('load', () => {
+            if (window.location.hash.includes('type=recovery') || window.location.href.includes('access_token=')) {
+                requestSection.classList.add('hidden');
+                updateSection.classList.remove('hidden');
+                pageTitle.innerText = "New Password";
+                pageSubtitle.innerText = "Set a secure password you'll remember.";
+            }
+        });
+
+        function showMessage(text, isError = false) {
+            msgDiv.innerText = text;
+            msgDiv.classList.remove('hidden', 'text-green-400', 'text-red-400');
+            msgDiv.classList.add(isError ? 'text-red-400' : 'text-green-400');
+        }
+
+        // Action 1: Request Reset
+        document.getElementById('sendBtn').addEventListener('click', async () => {
+            const email = document.getElementById('email').value.trim();
+            if(!email) return showMessage("Please enter your email", true);
+
+            const btn = document.getElementById('sendBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<div class="spinner mx-auto"></div>';
+
+            const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: window.location.href // Returns user to this page
+            });
+
+            if (error) {
+                showMessage(error.message, true);
+                btn.disabled = false;
+                btn.innerText = "Send Reset Link";
+            } else {
+                showMessage("Check your email for the recovery link!");
+                btn.innerText = "Email Sent!";
+            }
+        });
+
+        // Action 2: Update Password
+        document.getElementById('updateBtn').addEventListener('click', async () => {
+            const pass = document.getElementById('newPassword').value;
+            const confirm = document.getElementById('confirmPassword').value;
+
+            if (pass.length < 6) return showMessage("Password must be at least 6 characters", true);
+            if (pass !== confirm) return showMessage("Passwords do not match", true);
+
+            const btn = document.getElementById('updateBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<div class="spinner mx-auto"></div>';
+
+            const { error } = await supabase.auth.updateUser({ password: pass });
+
+            if (error) {
+                showMessage(error.message, true);
+                btn.disabled = false;
+                btn.innerText = "Update Password";
+            } else {
+                showMessage("Success! Redirecting to login...");
+                setTimeout(() => window.location.href = 'login.html', 2000);
+            }
+        });
+    </script>
+</body>
+</html>
+
