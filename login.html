@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
   <title>Login | Run Me An Errand</title> 
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> 
+  <script src="config.js"></script>
   <style>
         :root {
             --bg-dark: #121212;
@@ -255,19 +256,37 @@
     const eyesContainer = document.getElementById('eyesContainer');
 
     let isShocked = false;
+    let supabaseClient;
 
-    // Interactive Eyes
-    document.addEventListener('mousemove', (e) => {
-        if (isShocked) return;
-        const rect = lampSvg.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX);
-        const distance = Math.min(2, Math.hypot(e.clientX - centerX, e.clientY - centerY) / 50);
-        const moveX = Math.cos(angle) * distance;
-        const moveY = Math.sin(angle) * distance;
-        eyesContainer.style.transform = `translate(${moveX}px, ${moveY}px)`;
-    });
+    // Safety Loop to wait for CONFIG from config.js
+    function setupAuth() {
+        if (typeof CONFIG !== 'undefined') {
+            supabaseClient = window.supabase.createClient(CONFIG.S_URL, CONFIG.S_KEY);
+            attachEventListeners();
+        } else {
+            setTimeout(setupAuth, 100);
+        }
+    }
+
+    function attachEventListeners() {
+        // Interactive Eyes
+        document.addEventListener('mousemove', (e) => {
+            if (isShocked) return;
+            const rect = lampSvg.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX);
+            const distance = Math.min(2, Math.hypot(e.clientX - centerX, e.clientY - centerY) / 50);
+            const moveX = Math.cos(angle) * distance;
+            const moveY = Math.sin(angle) * distance;
+            eyesContainer.style.transform = `translate(${moveX}px, ${moveY}px)`;
+        });
+
+        cord.addEventListener('click', () => toggleLight());
+        passwordInput.addEventListener('focus', () => toggleLight(true));
+        
+        loginBtn.addEventListener('click', handleLogin);
+    }
 
     function setExpression(state) {
         if (state === 'shocked') {
@@ -316,87 +335,76 @@
         }, 3000);
     }
 
-    cord.addEventListener('click', () => toggleLight());
-    passwordInput.addEventListener('focus', () => toggleLight(true));
+    async function handleLogin() {
+        const email = emailInput.value.trim().toLowerCase();
+        const password = passwordInput.value.trim();
 
-    // --- HYBRID LOGIN LOGIC ---
-    (function() {
-        const SUPABASE_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
-        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        if (!email || !password) {
+            showError("Please fill in both fields!");
+            return;
+        }
 
-        loginBtn.addEventListener('click', async () => {
-            const email = emailInput.value.trim().toLowerCase();
-            const password = passwordInput.value.trim();
+        loginBtn.disabled = true;
+        btnText.innerHTML = '<div class="spinner mx-auto"></div>';
 
-            if (!email || !password) {
-                showError("Please fill in both fields!");
+        try {
+            // 1. TRY SUPABASE AUTH
+            const { data: authData, error: authError } = await supabaseClient.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+
+            if (!authError && authData.user) {
+                const type = authData.user.user_metadata.type || 'user';
+                localStorage.setItem('loggedInEmail', email);
+                localStorage.setItem('userType', type);
+                window.location.href = type === 'runner' ? 'runners-profile.html' : 'client-profile.html';
                 return;
             }
 
-            loginBtn.disabled = true;
-            btnText.innerHTML = '<div class="spinner mx-auto"></div>';
+            // 2. FALLBACK TO DATABASE TABLES
+            let { data: user } = await supabaseClient
+                .from('runners').select('*').eq('email', email).maybeSingle();
+            
+            let userType = 'runner';
 
-            try {
-                // 1. TRY SUPABASE AUTH (Newer Users)
-                const { data: authData, error: authError } = await supabaseClient.auth.signInWithPassword({
+            if (!user) {
+                const { data: client } = await supabaseClient
+                    .from('users').select('*').eq('email', email).maybeSingle();
+                user = client;
+                userType = 'user';
+            }
+
+            // Verify Old Bcrypt Password
+            if (user && user.password && dcodeIO.bcrypt.compareSync(password, user.password)) {
+                
+                // SILENT MIGRATION
+                await supabaseClient.auth.signUp({
                     email: email,
-                    password: password
+                    password: password,
+                    options: { 
+                        data: { full_name: user.name || user.full_name, type: userType } 
+                    }
                 });
 
-                if (!authError && authData.user) {
-                    const type = authData.user.user_metadata.type || 'user';
-                    localStorage.setItem('loggedInEmail', email);
-                    localStorage.setItem('userType', type);
-                    window.location.href = type === 'runner' ? 'runners-profile.html' : 'client-profile.html';
-                    return;
-                }
-
-                // 2. FALLBACK TO DATABASE TABLES (Older Users)
-                let { data: user, error: rError } = await supabaseClient
-                    .from('runners').select('*').eq('email', email).maybeSingle();
-                
-                let userType = 'runner';
-
-                if (!user) {
-                    const { data: client } = await supabaseClient
-                        .from('users').select('*').eq('email', email).maybeSingle();
-                    user = client;
-                    userType = 'user';
-                }
-
-                // Verify Old Bcrypt Password
-                if (user && user.password && dcodeIO.bcrypt.compareSync(password, user.password)) {
-                    
-                    // --- SILENT MIGRATION ---
-                    // This creates an entry in the Auth Vault so they can use Forgot Password next time
-                    await supabaseClient.auth.signUp({
-                        email: email,
-                        password: password,
-                        options: { 
-                            data: { full_name: user.name || user.full_name, type: userType } 
-                        }
-                    });
-
-                    localStorage.setItem('loggedInEmail', email);
-                    localStorage.setItem('userType', userType);
-                    window.location.href = userType === 'runner' ? 'runners-profile.html' : 'client-profile.html';
-                } else {
-                    showError("Invalid email or password.");
-                }
-
-            } catch (err) {
-                console.error(err);
-                showError("Login failed. Check your connection.");
+                localStorage.setItem('loggedInEmail', email);
+                localStorage.setItem('userType', userType);
+                window.location.href = userType === 'runner' ? 'runners-profile.html' : 'client-profile.html';
+            } else {
+                showError("Invalid email or password.");
             }
-        });
-    })();
+
+        } catch (err) {
+            console.error(err);
+            showError("Login failed. Check your connection.");
+        }
+    }
+
+    // Initialize the safety loop
+    setupAuth();
 </script> 
  </body>
 </html>
-      
 
 
-
-
-
+            
