@@ -6,6 +6,7 @@
     <title>Premium Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -21,7 +22,6 @@
         .history-item { border-bottom: 1px solid #f1f5f9; padding: 12px 0; }
         .history-item:last-child { border-bottom: none; }
         
-        /* New Tracking Button Style */
         .btn-track {
             background: #0ea5e9;
             color: white;
@@ -143,11 +143,18 @@
     </div>
 
     <script>
-        const S_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
-        const S_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
-        const supabaseClient = window.supabase.createClient(S_URL, S_KEY);
-        
+        let supabaseClient;
         let currentUser = null, currentErrandId = null, selectedRating = 0, isEditing = false;
+
+        // Ensure keys are loaded from config.js before initializing
+        function setupSupabase() {
+            if (typeof CONFIG !== 'undefined') {
+                supabaseClient = window.supabase.createClient(CONFIG.S_URL, CONFIG.S_KEY);
+                init(); 
+            } else {
+                setTimeout(setupSupabase, 100);
+            }
+        }
 
         async function init() {
             const email = localStorage.getItem('loggedInEmail');
@@ -159,7 +166,6 @@
                 updateProfileUI(); 
                 checkErrands(); 
                 fetchHistory();
-                // Check for updates every 8 seconds
                 setInterval(checkErrands, 8000); 
             }
         }
@@ -191,7 +197,7 @@
         }
 
         async function checkErrands() {
-            if(!currentUser) return;
+            if(!currentUser || !supabaseClient) return;
             
             const { data: active } = await supabaseClient.from('errands')
                 .select('*')
@@ -224,10 +230,7 @@
             document.getElementById('trackerActive').classList.remove('hidden');
             document.getElementById('errandTask').innerText = errand.description;
             document.getElementById('errandFee').innerText = `KES ${errand.estimated_fee}`;
-            
-            // Set the tracking button link
             document.getElementById('trackBtnLink').href = `track.html?id=${errand.id}`;
-            
             fetchRunner(errand.runner_email);
         }
 
@@ -282,12 +285,7 @@
             fetchHistory();
         }
 
-        window.onload = init;
+        setupSupabase();
     </script>
 </body>
 </html>
-
-
-
-
-
