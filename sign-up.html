@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
   <title>Create Account | Run Me An Errand</title> 
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> 
+  <script src="config.js"></script>
   <style>
     :root { --maroon: #7B1E3A; --gold: #FFD700; }
     body { font-family: 'Inter', sans-serif; background-color: #f9f9f9; }
@@ -162,10 +163,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
   <script>
-    const SUPABASE_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
+    let supabaseClient;
     const accountTypeSelect = document.getElementById("accountType");
     const runnerFields = document.getElementById("runnerFields");
     const signupButton = document.getElementById("signupButton");
@@ -177,9 +175,23 @@
         runner: `<p>1. Listing Fee: KES 100/mo.</p><p>2. Verification: ID Required.</p>`
     };
 
-    accountTypeSelect.addEventListener("change", () => {
-      runnerFields.classList.toggle("hidden", accountTypeSelect.value !== "runner");
-    });
+    // Safety Loop to ensure config is loaded
+    function setupSignup() {
+        if (typeof CONFIG !== 'undefined' && typeof supabase !== 'undefined') {
+            supabaseClient = supabase.createClient(CONFIG.S_URL, CONFIG.S_KEY);
+            attachFormLogic();
+        } else {
+            setTimeout(setupSignup, 100);
+        }
+    }
+
+    function attachFormLogic() {
+        accountTypeSelect.addEventListener("change", () => {
+          runnerFields.classList.toggle("hidden", accountTypeSelect.value !== "runner");
+        });
+
+        document.getElementById("signupForm").addEventListener("submit", handleSignup);
+    }
 
     function toggleTerms() {
         const modal = document.getElementById('termsModal');
@@ -205,7 +217,7 @@
       return supabaseClient.storage.from(bucket).getPublicUrl(filePath).data.publicUrl;
     }
 
-    document.getElementById("signupForm").addEventListener("submit", async (e) => {
+    async function handleSignup(e) {
       e.preventDefault();
       signupButton.disabled = true;
       buttonText.textContent = "Processing...";
@@ -219,12 +231,10 @@
       const accountType = accountTypeSelect.value;
 
       try {
-        // 1. SUPABASE AUTH SIGNUP
         let { data: authData, error: authError } = await supabaseClient.auth.signUp({
           email, password, options: { data: { full_name: fullName, type: accountType } }
         });
 
-        // 2. CONFLICT RECOVERY: If email exists in Auth but registration was interrupted
         if (authError && authError.message.includes("already registered")) {
             const { data: signInData, error: signInError } = await supabaseClient.auth.signInWithPassword({ email, password });
             if (signInError) throw new Error("Account exists, but password was incorrect.");
@@ -233,7 +243,6 @@
 
         const userId = authData.user.id;
 
-        // 3. DATABASE UPSERT (Keeps data in sync even if page reloads)
         if (accountType === "user") {
           const { error: dbError } = await supabaseClient.from("users").upsert([
             { id: userId, full_name: fullName, email, phone, location }
@@ -268,7 +277,6 @@
           if (dbError) throw new Error("Database Access Denied (RLS Violation).");
           
           showPopup("Account Created!", "success");
-          // Keep your original success message design
           document.getElementById("formContainer").innerHTML = `
             <div class="text-center py-4">
                 <div class="w-20 h-20 bg-maroon text-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
@@ -292,8 +300,11 @@
         buttonText.textContent = "Create Account";
         loadingIndicator.classList.add("hidden");
       }
-    });
+    }
+
+    // Initialize
+    setupSignup();
   </script> 
  </body>
-                 </html>
-                    
+</html>
+
