@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Tracking | Premium Hub</title>
+    <script src="config.js"></script>
+    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -13,16 +15,13 @@
         :root { --maroon: #630d21; --gold: #fcc419; --slate: #1e293b; }
         body { margin: 0; font-family: 'Outfit', sans-serif; background: #000; overflow: hidden; }
         
-        /* Map styling */
         #map { height: 100vh; width: 100%; z-index: 1; }
         
-        /* Loading overlay - Completely transparent now */
         .map-loader {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             z-index: 1000;
         }
 
-        /* Glassmorphism Header */
         .nav-header {
             position: fixed; top: 0; left: 0; right: 0; padding: 20px;
             z-index: 1000; display: flex; align-items: center;
@@ -35,7 +34,6 @@
             text-decoration: none; backdrop-filter: blur(5px);
         }
 
-        /* Floating Distance Badge */
         .distance-badge {
             position: fixed; top: 25px; right: 20px; z-index: 1000;
             background: var(--maroon); color: var(--gold);
@@ -44,7 +42,6 @@
             border: 1px solid var(--gold);
         }
 
-        /* Fit Bounds Button */
         .fit-btn {
             position: fixed; top: 85px; right: 20px; z-index: 1000;
             background: rgba(255, 255, 255, 0.9); color: var(--maroon);
@@ -55,7 +52,6 @@
             border: none; cursor: pointer; font-size: 1.2rem;
         }
 
-        /* Premium Status Card */
         .status-container {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
             width: 92%; max-width: 400px; z-index: 1000;
@@ -81,7 +77,6 @@
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
         }
 
-        /* Enhanced Maroon Ping Marker */
         .custom-marker {
             background: var(--maroon); 
             border: 3px solid white;
@@ -102,7 +97,6 @@
             100% { box-shadow: 0 0 0 0 rgba(99, 13, 33, 0); }
         }
 
-        /* Zoom Control Styling */
         .leaflet-control-zoom { border: none !important; }
         .leaflet-control-zoom a { 
             background-color: rgba(255,255,255,0.9) !important; 
@@ -157,38 +151,46 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        const S_URL = "https://zchofpncqskvnfrzbcww.supabase.co";
-        const S_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjaG9mcG5jcXNrdm5mcnpiY3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDI4NDIsImV4cCI6MjA3NTUxODg0Mn0.U-Zm4slsBcWHSpfhjM8jvBvtt8YCPMAiSopWR9-YXUI";
-        const supabaseClient = supabase.createClient(S_URL, S_KEY);
-        
+        let supabaseClient;
         const urlParams = new URLSearchParams(window.location.search);
         const errandId = urlParams.get('id');
         let clientPos = null;
         let mapInitialized = false;
         let runnerMarker = null;
         let clientMarker = null;
+        let map;
 
-        // Initialize map with maxZoom constraint
-        const map = L.map('map', { 
-            zoomControl: false,
-            maxZoom: 18 // Setting hard limit to prevent "map unavailable"
-        });
-        
-        L.control.zoom({ position: 'bottomright' }).addTo(map);
-        
-        // Satellite Hybrid
-        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-            attribution: 'Tiles &copy; Esri',
-            maxZoom: 18,
-            minZoom: 3
-        }).addTo(map);
+        // Safety Loop to wait for CONFIG
+        function setupTracking() {
+            if (typeof CONFIG !== 'undefined' && typeof supabase !== 'undefined') {
+                supabaseClient = supabase.createClient(CONFIG.S_URL, CONFIG.S_KEY);
+                initializeMap();
+                initTracking();
+            } else {
+                setTimeout(setupTracking, 100);
+            }
+        }
 
-        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
-            maxZoom: 18
-        }).addTo(map);
+        function initializeMap() {
+            map = L.map('map', { 
+                zoomControl: false,
+                maxZoom: 18 
+            });
+            
+            L.control.zoom({ position: 'bottomright' }).addTo(map);
+            
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri',
+                maxZoom: 18,
+                minZoom: 3
+            }).addTo(map);
 
-        // Hide loader when tiles load
-        map.on('tileload', () => { document.getElementById('mapLoader').style.display = 'none'; });
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+                maxZoom: 18
+            }).addTo(map);
+
+            map.on('tileload', () => { document.getElementById('mapLoader').style.display = 'none'; });
+        }
 
         const runnerIcon = L.divIcon({
             className: 'custom-div-icon',
@@ -197,18 +199,17 @@
             iconAnchor: [16, 16]
         });
 
-        // Function to fit both markers in view
         function fitView() {
             if (runnerMarker && clientMarker) {
                 const group = new L.featureGroup([runnerMarker, clientMarker]);
-                map.fitBounds(group.getBounds().pad(0.3)); // .pad adds extra space around markers
+                map.fitBounds(group.getBounds().pad(0.3));
             } else if (runnerMarker) {
                 map.setView(runnerMarker.getLatLng(), 16);
             }
         }
 
         function getDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371; // km
+            const R = 6371; 
             const dLat = (lat2 - lat1) * Math.PI / 180;
             const dLon = (lon2 - lon1) * Math.PI / 180;
             const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
@@ -220,11 +221,9 @@
         async function initTracking() {
             if (!errandId) return;
 
-            // Get client location once
             navigator.geolocation.getCurrentPosition(pos => {
                 clientPos = { lat: pos.coords.latitude, lng: pos.coords.longitude };
                 
-                // Add client marker (blue dot)
                 clientMarker = L.circleMarker([clientPos.lat, clientPos.lng], {
                     color: '#3388ff',
                     fillColor: '#3388ff',
@@ -263,11 +262,7 @@
                     runnerMarker.setLatLng(pos);
                 }
                 
-                // --- REMOVED ALL LINE PATH LOGIC HERE ---
-                
-                // On first load, fit view to show both
                 if (!mapInitialized) {
-                    // Give geolocation a second to load client marker
                     setTimeout(() => {
                         fitView();
                         mapInitialized = true;
@@ -287,7 +282,13 @@
             }
         }
 
-        initTracking();
+        // Trigger safety check
+        setupTracking();
     </script>
 </body>
 </html>
+
+
+
+
+
