@@ -1,279 +1,508 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
- <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>Run Me An Errand | Trusted Errand Runners Across Kenya</title>
-  <meta name="description" content="Get professional errand services countrywide in Kenya. Hire verified runners for deliveries, shopping, and tasks. Log in to post and monitor your errands in real-time.">
-  <link rel="icon" type="image/png" href="/favicon.png">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Run Me an Errand — Coming Soon</title>
 
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "Run Me An Errand",
-      "url": "https://runmeanerrand.co.ke"
-    }
-  </script>
+  <!-- FIX 3: preload + display=swap for font performance / no FOIT -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" as="style">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/forms"></script>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-64SH312S1V"></script>
-  <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-64SH312S1V');
-    </script>
   <style>
-        :root { --maroon: #7B1E3A; --gold: #FFD700; }
-        .bg-maroon { background-color: var(--maroon); }
-        .text-gold { color: var(--gold); }
-        .bg-gold { background-color: var(--gold); }
-        .border-maroon { border-color: var(--maroon); }
-        .bg-maroon-dark { background-color: #66182f; }
-        .bg-maroon-light { background-color: #8a2241; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
-        @keyframes slideInLeft { from { opacity: 0; transform: translateX(-50px); } to { opacity: 1; transform: translateX(0); } }
-        .animate-slide-in-left { animation: slideInLeft 0.7s ease-out forwards; }
-        @keyframes slideInRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
-        .animate-slide-in-right { animation: slideInRight 0.7s ease-out forwards; }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
-        .animate-pulse-subtle { animation: pulse 2s infinite ease-in-out; }
-        @keyframes backgroundPan { 0% { background-position: 0% 0%; } 50% { background-position: 10% 10%; } 100% { background-position: 0% 0%; } }
-        .animate-bg-pan { animation: backgroundPan 30s infinite alternate ease-in-out; }
-        
-        .animated-item { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
-        .animated-item.is-visible { opacity: 1; transform: translateY(0); }
-        
-        .hero-background-image { background-image: url('https://i.postimg.cc/Xv93p8J1/file-00000000c624622fb8df816c050f7dea.png'); background-size: cover; background-position: center; background-repeat: no-repeat; position: relative; z-index: 1; overflow: hidden; min-height: 500px; height: auto; display: flex; align-items: center; justify-content: center; text-align: center; }
-        .hero-background-image::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 0; }
-        
-        .mobile-menu { transition: max-height 0.3s ease-in-out; overflow: hidden; max-height: 0; }
-        .mobile-menu.active { max-height: 600px; }
-        .hamburger span { display: block; width: 25px; height: 3px; background-color: white; transition: all 0.3s ease-in-out; }
-        .hamburger span:nth-child(2) { margin: 5px 0; }
-        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
-        .hamburger.active span:nth-child(2) { opacity: 0; }
-        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
-        
-        .dropdown { position: relative; display: inline-block; }
-        .dropdown-content { display: none; position: absolute; right: 0; background-color: var(--maroon-dark); min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 10; border-radius: 0.5rem; padding: 0.5rem 0; }
-        .dropdown:hover .dropdown-content { display: block; }
-        .dropdown-content a, .dropdown-content button { color: white; padding: 0.75rem 1rem; text-decoration: none; display: block; transition: background-color 0.3s, color 0.3s; text-align: left; width: 100%; }
-        
-        .testimonial-card { background: white; border-radius: 1rem; padding: 2rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); border-top: 4px solid var(--gold); transition: transform 0.3s ease; position: relative; }
-        .testimonial-card:hover { transform: translateY(-5px); }
-        .quote-icon { color: var(--gold); opacity: 0.3; font-size: 3rem; line-height: 1; font-family: serif; position: absolute; top: 1rem; left: 1.5rem; }
-    </style>
- </head>
- <body class="bg-gray-100 text-gray-800 font-sans">
-  <header class="bg-maroon shadow-lg sticky top-0 z-50 transition-shadow duration-300">
-   <div class="max-w-7xl mx-auto flex justify-between items-center py-5 px-6"> 
-    <a href="index.html" class="flex items-center space-x-2 animate-fade-in"> 
-        <img src="https://i.postimg.cc/d1z9KLkL/ei-1752053865516-removebg-preview.png" alt="Errand Logo" class="h-20 md:h-24 w-auto"> 
-        <h1 class="text-xl md:text-3xl font-bold text-white transition-colors duration-300 hover:text-gold" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.4);">Run Me An Errand</h1> 
-    </a>
-    <nav class="hidden md:flex space-x-6 text-lg items-center" id="desktop-nav"></nav>
-    <div class="hidden md:flex space-x-4 items-center" id="desktop-auth-buttons"></div>
-    <div class="md:hidden"> 
-        <button id="mobile-menu-button" class="text-gray-300 hover:text-gold focus:outline-none focus:ring-2 focus:ring-gold animate-fade-in hamburger" aria-label="Toggle mobile menu"> <span></span><span></span><span></span> </button>
-    </div>
-   </div>
-   <nav id="mobile-menu" class="mobile-menu md:hidden bg-gradient-to-r from-maroon-dark to-maroon pb-4 shadow-inner"></nav>
-  </header>
+    :root {
+      --maroon:      #6B0F1A;
+      --maroon-deep: #420A10;
+      --maroon-mid:  #8C1C28;
+      --gold:        #C9A84C;
+      --gold-dim:    #8a6e2f;
+      --white:       #F5F0E8;
+      --white-dim:   rgba(245,240,232,0.45);
+      --line:        rgba(201,168,76,0.2);
+    }
 
-  <section class="hero-background-image animate-bg-pan">
-   <div class="max-w-6xl mx-auto px-6 text-center relative z-10">
-    <h2 class="text-4xl lg:text-5xl font-extrabold text-white mb-6 animate-slide-in-left" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.6);">Your Errand, Our Runners.</h2>
-    <p class="text-lg lg:text-xl text-white mb-8 animate-slide-in-right" style="animation-delay: 0.2s;">Access a network of reliable, verified runners countrywide across Kenya. Get help with groceries, deliveries, and more. Log in to post, track, and monitor your errands seamlessly.</p>
-    <div class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-4"> 
-        <a href="Post-errands.html" class="bg-gold text-maroon px-10 py-4 font-bold rounded-full shadow-lg hover:bg-white transition duration-300 animate-pulse-subtle text-xl">Post an Errand</a> 
-        <a href="runners.html" class="bg-white text-maroon px-10 py-4 font-semibold rounded-full shadow-md hover:bg-gold transition duration-300 text-xl">Browse Runners</a> 
-    </div>
-   </div>
-  </section>
-    <section id="how-it-works" class="bg-white py-16 px-6">
-   <div class="max-w-6xl mx-auto text-center">
-    <h2 class="text-3xl font-bold text-maroon mb-12 animated-item">How It Works</h2>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-     <div class="animated-item">
-      <div class="bg-gold text-maroon rounded-full h-12 w-12 flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
-      <h3 class="text-xl font-semibold text-maroon mb-3">Explore Runners</h3>
-      <p class="text-gray-700">Browse our network of verified runners across the country without needing to sign up first.</p>
-     </div>
-     <div class="animated-item">
-      <div class="bg-gold text-maroon rounded-full h-12 w-12 flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
-      <h3 class="text-xl font-semibold text-maroon mb-3">Post or Connect</h3>
-      <p class="text-gray-700">Found someone? Sign up to post your errand. Login to monitor your errands and communicate with runners.</p>
-     </div>
-     <div class="animated-item">
-      <div class="bg-gold text-maroon rounded-full h-12 w-12 flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
-      <h3 class="text-xl font-semibold text-maroon mb-3">Get It Done</h3>
-      <p class="text-gray-700">Agree on terms and pay the runner securely once the job is finished. Fast and reliable service countrywide.</p>
-     </div>
-    </div>
-   </div>
-  </section>
+    html {
+      height: 100%;
+    }
 
-  <section id="testimonials" class="bg-gray-50 py-20 px-6">
-   <div class="max-w-6xl mx-auto">
-    <div class="text-center mb-16">
-        <h2 class="text-3xl font-bold text-maroon animated-item">Trusted by Kenyans Everywhere</h2>
-        <div class="w-24 h-1 bg-gold mx-auto mt-4"></div>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-     <div class="testimonial-card animated-item">
-      <span class="quote-icon">“</span>
-      <p class="text-gray-700 italic mb-6 relative z-10">"I used the service for my grocery shopping. The runner was very fast and I got my delivery in good shape. Very helpful if you are busy."</p>
-      <div class="flex items-center">
-       <img src="https://i.postimg.cc/15RvRrXS/IMG-20260131-125412.png" alt="Client" class="h-12 w-12 rounded-full mr-4 object-cover">
-       <div><p class="font-bold text-maroon">Faith Mutua</p><p class="text-sm text-gray-500">Nairobi</p></div>
+    /* FIX 1: Replace overflow:hidden — allow vertical scroll on small screens */
+    body {
+      min-height: 100%;
+      background: var(--maroon-deep);
+      color: var(--white);
+      font-family: 'Space Mono', monospace;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    /* ── GRAIN ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: 0.055;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* ── GRID ── */
+    .grid-bg {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--line) 1px, transparent 1px);
+      background-size: 60px 60px;
+      z-index: 0;
+    }
+
+    /* ── GLOWS ── */
+    .glow {
+      position: fixed;
+      width: 800px;
+      height: 800px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(139,28,40,0.55) 0%, transparent 68%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 0;
+      animation: breathe 7s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .glow-gold {
+      position: fixed;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%);
+      top: -100px;
+      right: -100px;
+      z-index: 0;
+      animation: breathe 9s ease-in-out infinite reverse;
+      pointer-events: none;
+    }
+
+    @keyframes breathe {
+      0%,100% { transform: translate(-50%,-50%) scale(1);    opacity: 0.8; }
+      50%      { transform: translate(-50%,-50%) scale(1.1); opacity: 1;   }
+    }
+
+    /* ── LAYOUT ── */
+    .stage {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      padding: 2.5rem 3rem;
+      padding-bottom: 5rem; /* ticker clearance */
+    }
+
+    /* ── HEADER ── */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.2rem, 2vw, 1.6rem);
+      letter-spacing: 0.14em;
+      color: var(--gold);
+    }
+
+    /* FIX 5 (live toggle): status pill becomes reactive */
+    .status-pill {
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      border: 1px solid var(--gold-dim);
+      padding: 0.35rem 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(201,168,76,0.06);
+      transition: background 0.4s, color 0.4s, border-color 0.4s;
+    }
+
+    .status-pill.is-live {
+      color: #4ade80;
+      border-color: #166534;
+      background: rgba(74,222,128,0.08);
+    }
+
+    .status-pill.is-live .dot {
+      background: #4ade80;
+    }
+
+    .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      animation: blink 1.4s step-start infinite;
+      flex-shrink: 0;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* ── CENTER ── */
+    .center {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 3rem 0;
+    }
+
+    /* FIX messaging: singular signal */
+    .eyebrow {
+      font-size: 0.63rem;
+      letter-spacing: 0.38em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 1.4rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.2s forwards;
+    }
+
+    .headline {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4rem, 11vw, 10.5rem);
+      line-height: 0.88;
+      letter-spacing: 0.01em;
+      color: var(--white);
+      opacity: 0;
+      animation: fadeUp 0.9s 0.4s forwards;
+    }
+
+    .headline .ghost {
+      display: block;
+      -webkit-text-stroke: 1.5px rgba(245,240,232,0.28);
+      color: transparent;
+    }
+
+    .headline .accent {
+      color: var(--gold);
+    }
+
+    .sub {
+      margin-top: 1.8rem;
+      font-size: clamp(0.7rem, 1.1vw, 0.85rem);
+      color: var(--white-dim);
+      line-height: 1.8;
+      max-width: 42ch;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.6s forwards;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 2rem;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.8s forwards;
+    }
+
+    .launch-label {
+      font-size: 0.58rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--white-dim);
+      margin-bottom: 0.4rem;
+    }
+
+    .launch-date {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+    }
+
+    /* ── COUNTDOWN ── */
+    .countdown-bar { display: flex; flex-wrap: wrap; }
+
+    .unit {
+      padding: 1rem 1.8rem;
+      border: 1px solid var(--line);
+      border-right: none;
+      position: relative;
+      background: rgba(66,10,16,0.6);
+      backdrop-filter: blur(4px);
+      text-align: center;
+      transition: background 0.25s;
+    }
+    .unit:last-child { border-right: 1px solid var(--line); }
+    .unit:hover { background: rgba(107,15,26,0.75); }
+
+    .unit::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s;
+    }
+    .unit:hover::after { transform: scaleX(1); }
+
+    .unit-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2rem, 4.5vw, 4rem);
+      line-height: 1;
+      color: var(--white);
+      display: block;
+    }
+
+    .unit-label {
+      font-size: 0.52rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      display: block;
+      margin-top: 0.3rem;
+    }
+
+    /* live message replaces countdown */
+    .live-message {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      letter-spacing: 0.12em;
+      color: var(--gold);
+      align-self: center;
+    }
+
+    /* ── VERTICAL RULE ── */
+    .v-rule {
+      position: fixed;
+      top: 0; bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, transparent, var(--line) 30%, var(--line) 70%, transparent);
+      right: 3rem;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ── SCANLINE ── */
+    .progress-line {
+      position: fixed;
+      top: 0; left: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--maroon-mid), var(--gold), transparent);
+      z-index: 100;
+      animation: scanline 3.5s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes scanline {
+      0%   { width: 0%;   opacity: 1; }
+      75%  { width: 100%; opacity: 1; }
+      100% { width: 100%; opacity: 0; }
+    }
+
+    /* ── TICKER ──
+       FIX 4: content written once in JS, duplicated programmatically */
+    .ticker-wrap {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 2.2rem;
+      overflow: hidden;
+      background: var(--gold);
+      z-index: 10;
+      display: flex;
+      align-items: center;
+    }
+
+    .ticker-track {
+      display: flex;
+      white-space: nowrap;
+      /* animation duration set by JS based on content width */
+    }
+
+    .ticker-track span {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.22em;
+      color: var(--maroon-deep);
+      padding: 0 3rem;
+    }
+
+    .ticker-track span::after {
+      content: '◆';
+      margin-left: 3rem;
+      opacity: 0.45;
+    }
+
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ── MOBILE RESPONSIVE ── */
+    @media (max-width: 640px) {
+      .stage {
+        padding: 1.8rem 1.5rem;
+        padding-bottom: 5rem;
+      }
+
+      .v-rule { display: none; }
+
+      footer {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .unit {
+        padding: 0.8rem 1.2rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="progress-line"></div>
+  <div class="grid-bg"></div>
+  <div class="glow"></div>
+  <div class="glow-gold"></div>
+  <div class="v-rule"></div>
+
+  <!-- TICKER — content injected by JS -->
+  <div class="ticker-wrap" role="marquee" aria-label="Site status ticker">
+    <div class="ticker-track" id="ticker-track"></div>
+  </div>
+
+  <div class="stage">
+    <header>
+      <div class="logo">Run Me an Errand</div>
+      <!-- FIX 5: pill label updated by JS on launch -->
+      <div class="status-pill" id="status-pill">
+        <div class="dot" id="status-dot"></div>
+        <span id="status-text">System Upgrade</span>
       </div>
-     </div>
-     <div class="testimonial-card animated-item">
-      <span class="quote-icon">“</span>
-      <p class="text-gray-700 italic mb-6 relative z-10">"Needed someone to deliver some documents across town. The process was simple, no stress at all. The guy was professional."</p>
-      <div class="flex items-center">
-       <img src="https://i.postimg.cc/gk0KbcS5/IMG-20260131-125206.png" alt="Client" class="h-12 w-12 rounded-full mr-4 object-cover">
-       <div><p class="font-bold text-maroon">Kevin Omondi</p><p class="text-sm text-gray-500">Mombasa</p></div>
+    </header>
+
+    <div class="center">
+      <!-- FIX messaging: single signal -->
+      <div class="eyebrow">System Upgrade in Progress</div>
+      <div class="headline">
+        We're<br>
+        <span class="ghost">Levelling</span>
+        <span class="accent">Up.</span>
       </div>
-     </div>
-     <div class="testimonial-card animated-item">
-      <span class="quote-icon">“</span>
-      <p class="text-gray-700 italic mb-6 relative z-10">"The best part is I can browse for a runner before even signing up. Found a reliable person for my house move errands easily."</p>
-      <div class="flex items-center">
-       <img src="https://i.postimg.cc/15RvRrXS/IMG-20260131-125412.png" alt="Runner" class="h-12 w-12 rounded-full mr-4 object-cover">
-       <div><p class="font-bold text-maroon">Sarah J.</p><p class="text-sm text-gray-500">Kisumu</p></div>
+      <p class="sub">
+        Final system checks underway. Relaunching Wednesday — faster, cleaner, and fully upgraded across Kenya.
+      </p>
+    </div>
+
+    <footer>
+      <div>
+        <div class="launch-label">Going live</div>
+        <div class="launch-date">Wednesday, 29 Apr 2026</div>
       </div>
-     </div>
-    </div>
-   </div>
-  </section>
-    <section id="trust-section" class="py-16 bg-white px-6">
-   <div class="max-w-6xl mx-auto text-center">
-    <h2 class="text-3xl font-bold text-maroon mb-12 animated-item">Why Run Me An Errand?</h2>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-     <div class="bg-gray-50 rounded-xl shadow-md p-6 animated-item">
-      <img src="https://img.icons8.com/plasticine/100/null/good-quality--v1.png" alt="Verified" class="mx-auto mb-4 h-16 w-16">
-      <h3 class="text-xl font-semibold text-maroon mb-3">Verified Runners</h3>
-      <p class="text-gray-700">All our runners are vetted for your safety and peace of mind, available nationwide.</p>
-     </div>
-     <div class="bg-gray-50 rounded-xl shadow-md p-6 animated-item">
-      <img src="https://img.icons8.com/plasticine/100/null/customer-support--v1.png" alt="Support" class="mx-auto mb-4 h-16 w-16">
-      <h3 class="text-xl font-semibold text-maroon mb-3">Reliable Support</h3>
-      <p class="text-gray-700">Our team is available to assist you via email whenever you need help.</p>
-     </div>
-     <div class="bg-gray-50 rounded-xl shadow-md p-6 animated-item">
-      <img src="https://img.icons8.com/plasticine/100/null/speed.png" alt="Secure" class="mx-auto mb-4 h-16 w-16">
-      <h3 class="text-xl font-semibold text-maroon mb-3">Direct Payments</h3>
-      <p class="text-gray-700">Pay the runner directly. No hidden fees or middleman holding your cash.</p>
-     </div>
-    </div>
-   </div>
-  </section>
 
-  <section id="become-a-runner" class="py-16 bg-maroon text-white overflow-hidden relative">
-   <div class="absolute bottom-0 left-0 w-1/2 md:w-1/3 opacity-60">
-    <img src="https://img.icons8.com/bubbles/500/ffffff/scooter.png" alt="Scooter" class="transform scale-x-[-1]">
-   </div>
-   <div class="max-w-6xl mx-auto px-6 relative z-10 grid md:grid-cols-2 gap-10 items-center">
-    <div class="animated-item">
-     <h3 class="text-3xl font-bold text-gold mb-6">Become a Runner and Earn</h3>
-     <p class="text-lg mb-8">Join our growing network of errand runners all over Kenya. Enjoy flexible hours and great earning potential in your local area.</p> 
-     <a href="sign-up.html" class="bg-gold text-maroon px-6 py-3 rounded-full font-semibold hover:bg-white transition duration-300">Sign Up as a Runner Today!</a>
-    </div>
-   </div>
-  </section>
+      <!-- FIX 5: aria-live for screen readers -->
+      <div class="countdown-bar" id="countdown" aria-live="polite" aria-label="Countdown to launch">
+        <div class="unit">
+          <span class="unit-num" id="days">00</span>
+          <span class="unit-label">Days</span>
+        </div>
+        <div class="unit">
+          <span class="unit-num" id="hours">00</span>
+          <span class="unit-label">Hrs</span>
+        </div>
+        <div class="unit">
+          <span class="unit-num" id="minutes">00</span>
+          <span class="unit-label">Min</span>
+        </div>
+        <div class="unit">
+          <span class="unit-num" id="seconds">00</span>
+          <span class="unit-label">Sec</span>
+        </div>
+      </div>
+    </footer>
+  </div>
 
-  <footer id="contact" class="bg-gray-800 text-gray-300 py-12">
-   <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
-    <div class="animated-item">
-     <h4 class="text-lg font-bold text-gold mb-4">Run Me An Errand</h4>
-     <p class="text-sm">Your reliable partner for errand services countrywide across Kenya.</p>
-     <p class="text-sm mt-4">© 2025 Run Me An Errand. All rights reserved.</p>
-    </div>
-    <div class="animated-item">
-     <h4 class="text-lg font-bold text-gold mb-4">Quick Links</h4>
-     <ul class="space-y-2 text-sm">
-      <li><a href="index.html" class="hover:text-gold">Home</a></li>
-      <li><a href="about-us.html" class="hover:text-gold">About Us</a></li>
-      <li><a href="runners.html" class="hover:text-gold">Browse Runners</a></li>
-      <li><a href="sign-up.html" class="hover:text-gold">Become a Runner</a></li>
-     </ul>
-    </div>
-    <div class="animated-item">
-     <h4 class="text-lg font-bold text-gold mb-4">Contact Info</h4>
-     <p class="text-sm">Email: ranmeanerrand@gmail.com</p>
-    </div>
-   </div>
-  </footer>
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const desktopNav = document.getElementById('desktop-nav');
-        const desktopAuthButtons = document.getElementById('desktop-auth-buttons');
-        const mobileMenuNav = document.getElementById('mobile-menu');
+  <script>
+    // FIX 2: Lock to EAT (UTC+3) — 09:00 Nairobi = 06:00 UTC
+    const launchDate = new Date("2026-04-29T06:00:00Z").getTime();
 
-        function checkLoginStatusAndUpdateUI() {
-            const userEmail = localStorage.getItem('loggedInEmail');
-            const userRole = localStorage.getItem('userType');
+    const pad = n => String(Math.max(0, n)).padStart(2, '0');
 
-            const navHtml = `
-                <a href="index.html" class="text-gray-300 hover:text-gold transition-colors">Home</a>
-                <a href="about-us.html" class="text-gray-300 hover:text-gold transition-colors">About Us</a>
-                <a href="runners.html" class="text-gray-300 hover:text-gold transition-colors">Runners</a>
-                <a href="Post-errands.html" class="bg-gold text-maroon px-4 py-1.5 rounded-full font-bold hover:bg-white transition-colors">Post Errand</a>
-            `;
+    // FIX 4: Build ticker programmatically — write once, duplicate via JS
+    const tickerItems = [
+      "UPGRADE IN PROGRESS",
+      "KENYA'S ERRAND NETWORK",
+      "BACK WEDNESDAY 29 APR",
+      "SOMETHING BETTER IS COMING",
+      "RUN ME AN ERRAND",
+      "NATIONWIDE SERVICE"
+    ];
 
-            if (userEmail && userRole) {
-                const profilePage = userRole === 'runner' ? 'runners-profile.html' : 'client-profile.html';
-                const displayName = userEmail.split('@')[0];
-                desktopNav.innerHTML = navHtml;
-                desktopAuthButtons.innerHTML = `
-                    <div class="dropdown">
-                        <button class="flex items-center text-white space-x-2 p-2 rounded-full hover:bg-maroon-dark">
-                            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="w-8 h-8 rounded-full border-2 border-white"/>
-                            <span class="text-sm">${displayName}</span>
-                        </button>
-                        <div class="dropdown-content">
-                            <a href="${profilePage}">My Profile</a>
-                            <button id="logout-btn">Log Out</button>
-                        </div>
-                    </div>`;
-                mobileMenuNav.innerHTML = `<div class="flex flex-col space-y-3 p-6"><a href="index.html" class="text-white">Home</a><a href="about-us.html" class="text-white">About Us</a><a href="runners.html" class="text-white">Browse Runners</a><a href="Post-errands.html" class="text-gold font-bold">Post Errand</a><hr class="border-maroon-light"><a href="${profilePage}" class="bg-gold text-maroon p-2 rounded-full text-center">My Profile</a><button id="logout-btn-mobile" class="bg-white text-maroon p-2 rounded-full">Log Out</button></div>`;
-                document.getElementById('logout-btn').addEventListener('click', customLogout);
-                document.getElementById('logout-btn-mobile').addEventListener('click', customLogout);
-            } else {
-                desktopNav.innerHTML = navHtml;
-                desktopAuthButtons.innerHTML = `<a href="login.html" class="bg-gold text-maroon px-6 py-2 rounded-full hover:bg-white transition">Login</a>`;
-                mobileMenuNav.innerHTML = `<div class="flex flex-col space-y-3 p-6"><a href="index.html" class="text-white">Home</a><a href="about-us.html" class="text-white">About Us</a><a href="runners.html" class="text-white">Browse Runners</a><a href="Post-errands.html" class="text-gold font-bold">Post Errand</a><hr class="border-maroon-light"><a href="login.html" class="bg-gold text-maroon p-2 rounded-full text-center">Login</a></div>`;
-            }
-        }
-
-        function customLogout() {
-            localStorage.removeItem('loggedInEmail');
-            localStorage.removeItem('userType');
-            window.location.href = "index.html"; 
-        }
-
-        const btn = document.getElementById('mobile-menu-button');
-        const menu = document.getElementById('mobile-menu');
-        if(btn && menu) {
-            btn.addEventListener('click', () => { menu.classList.toggle('active'); btn.classList.toggle('active'); });
-        }
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('is-visible'); });
-        }, { threshold: 0.1 });
-        document.querySelectorAll('.animated-item').forEach(el => observer.observe(el));
-
-        checkLoginStatusAndUpdateUI();
+    const track = document.getElementById("ticker-track");
+    // Write twice for seamless loop
+    [1, 2].forEach(() => {
+      tickerItems.forEach(item => {
+        const span = document.createElement("span");
+        span.textContent = item;
+        track.appendChild(span);
+      });
     });
+
+    // Animate based on actual content width
+    const totalWidth = track.scrollWidth / 2;
+    const speed = 40; // px per second
+    const duration = totalWidth / speed;
+    track.style.animation = `ticker ${duration}s linear infinite`;
+
+    // Countdown + live switch
+    const goLive = () => {
+      // Swap countdown for live message
+      document.getElementById("countdown").innerHTML =
+        "<div class='live-message'>We Are Live</div>";
+
+      // FIX 5: Switch status pill to Live
+      const pill = document.getElementById("status-pill");
+      pill.classList.add("is-live");
+      document.getElementById("status-text").textContent = "Live";
+      document.getElementById("status-dot").style.animation = "none";
+      document.getElementById("status-dot").style.opacity = "1";
+    };
+
+    const tick = () => {
+      const gap = launchDate - Date.now();
+
+      if (gap <= 0) {
+        goLive();
+        return;
+      }
+
+      const s = 1000, m = s * 60, h = m * 60, d = h * 24;
+      document.getElementById("days").textContent    = pad(Math.floor(gap / d));
+      document.getElementById("hours").textContent   = pad(Math.floor((gap % d) / h));
+      document.getElementById("minutes").textContent = pad(Math.floor((gap % h) / m));
+      document.getElementById("seconds").textContent = pad(Math.floor((gap % m) / s));
+    };
+
+    tick();
+    setInterval(tick, 1000);
   </script>
-
-</body></html>
-
-
+</body>
+                                       </html>
+                                       
