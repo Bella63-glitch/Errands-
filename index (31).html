@@ -1,0 +1,780 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Run Me An Errand | Trusted Errand Runners & Business Fleet Across Kenya</title>
+  <meta name="description" content="Hire verified errand runners across Kenya for groceries, pharmacy, restaurant deliveries, documents and more. Businesses get a dedicated fleet for restaurants, pharmacies and shops.">
+  <link rel="icon" type="image/png" href="/favicon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/forms"></script>
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-64SH312S1V"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date()); gtag('config', 'G-64SH312S1V');
+  </script>
+
+  <style>
+    :root { --maroon:#7B1E3A; --maroon-dark:#5C1129; --maroon-light:#9A2A4D; --gold:#FFD700; --gold-soft:#FFE680; --ink:#0F1222; }
+    html, body { font-family:'Plus Jakarta Sans', system-ui, sans-serif; }
+    body { background:#fafafa; color:#1f2233; }
+    .bg-maroon { background:var(--maroon); }
+    .bg-maroon-dark { background:var(--maroon-dark); }
+    .bg-maroon-light { background:var(--maroon-light); }
+    .text-maroon { color:var(--maroon); }
+    .text-gold { color:var(--gold); }
+    .bg-gold { background:var(--gold); }
+    .border-maroon { border-color:var(--maroon); }
+
+    /* HERO */
+    .hero { position:relative; overflow:hidden;
+      background:
+        radial-gradient(1000px 500px at 85% -10%, rgba(255,215,0,.18), transparent 60%),
+        radial-gradient(800px 400px at -10% 110%, rgba(255,215,0,.10), transparent 60%),
+        linear-gradient(135deg,#5C1129 0%, #7B1E3A 60%, #9A2A4D 100%);
+      color:#fff;
+    }
+    .hero::after {
+      content:""; position:absolute; inset:0; opacity:.15; pointer-events:none;
+      background-image:
+        radial-gradient(rgba(255,255,255,.6) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .hero h2, .hero h2 * { color:#fff !important; }
+    .hero h2 .accent-gold { color: var(--gold) !important; }
+    .hero p { color: rgba(255,255,255,.92) !important; }
+    .hero .stat-pill .num { color: var(--gold) !important; }
+    .hero .stat-pill .lbl { color: rgba(255,255,255,.9) !important; }
+    .hero .chip { color:#FFE680 !important; }
+    .hero-photo {
+      position:absolute; border-radius: 18px; box-shadow: 0 20px 50px -15px rgba(0,0,0,.55);
+      object-fit:cover; border: 3px solid rgba(255,215,0,.5);
+    }
+    @keyframes floatY { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    .float-1 { animation: floatY 6s ease-in-out infinite; }
+    .float-2 { animation: floatY 7s ease-in-out infinite; animation-delay: -2s; }
+    .float-3 { animation: floatY 8s ease-in-out infinite; animation-delay: -4s; }
+
+    /* shared */
+    .gold-underline { display:block; width:72px; height:4px; background:var(--gold); border-radius:2px; margin: 14px auto 0; }
+    .section-title { font-weight: 800; color: var(--maroon); }
+    .chip { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:999px; background: rgba(255,215,0,.18); color:#FFE680; font-size:12px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; }
+
+    /* Horizontal scrolling services */
+    .scroll-row { display: flex; gap: 18px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 8px 4px 24px; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
+    .scroll-row::-webkit-scrollbar { height: 6px; }
+    .scroll-row::-webkit-scrollbar-thumb { background: rgba(123,30,58,.3); border-radius: 999px; }
+    .scroll-row::-webkit-scrollbar-track { background: transparent; }
+
+    .service-card {
+      flex: 0 0 240px; scroll-snap-align: start;
+      background:white; border-radius:20px; overflow:hidden;
+      border:1px solid rgba(15,18,34,.06);
+      box-shadow: 0 1px 2px rgba(15,18,34,.04), 0 12px 30px -16px rgba(15,18,34,.18);
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+    .service-card:hover { transform: translateY(-6px); box-shadow: 0 30px 50px -20px rgba(123,30,58,.35); }
+    .service-card .img { height: 240px; background-size:cover; background-position:center; position:relative; }
+    .service-card .img::after { content:""; position:absolute; inset:0; background: linear-gradient(180deg, transparent 30%, rgba(0,0,0,.7) 100%); }
+    .service-card .icon-pill { position:absolute; top:12px; left:12px; background:var(--gold); color:var(--maroon); font-size:11px; font-weight:800; padding:6px 10px; border-radius:999px; text-transform:uppercase; letter-spacing:.05em; z-index:1; }
+    .scroll-hint { display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--maroon); font-weight:600; opacity:.7; }
+
+    .runner-card {
+      position:relative; border-radius:14px; overflow:hidden;
+      box-shadow: 0 1px 2px rgba(15,18,34,.05), 0 8px 20px -12px rgba(15,18,34,.18);
+      background:#fff;
+    }
+    .runner-card .photo { aspect-ratio: 1/1; background-size:cover; background-position:center top; }
+    .runner-card .info {
+      position:absolute; left:0; right:0; bottom:0; padding: 8px 10px;
+      background: linear-gradient(180deg, transparent, rgba(0,0,0,.85));
+      color:white;
+    }
+    .runner-card .info .name { font-size: 13px; font-weight: 700; line-height: 1.1; }
+    .runner-card .info .meta { font-size: 10px; opacity: .9; margin-top: 2px; }
+    .runner-card .verified { position:absolute; top:6px; right:6px; background:var(--gold); color:var(--maroon); font-size:9px; font-weight:800; padding:2px 6px; border-radius:999px; }
+
+    /* HOW IT WORKS */
+    .how-grid {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+    @media (min-width: 768px) {
+      .how-grid { grid-template-columns: repeat(3, 1fr); gap: 32px; }
+    }
+    .how-connector {
+      position:absolute; top: 56px; left: 14%; right: 14%;
+      height: 2px; z-index: 0;
+      background-image: linear-gradient(90deg, var(--gold) 50%, transparent 50%);
+      background-size: 14px 2px; background-repeat: repeat-x;
+      opacity: .55;
+    }
+    .how-step {
+      position: relative; z-index: 1;
+      background: #fff;
+      border-radius: 22px;
+      padding: 32px 22px 26px;
+      text-align: center;
+      box-shadow: 0 1px 2px rgba(15,18,34,.05), 0 18px 35px -22px rgba(123,30,58,.25);
+      border: 1px solid rgba(123,30,58,.06);
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+    .how-step:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 1px 2px rgba(15,18,34,.05), 0 28px 50px -22px rgba(123,30,58,.4);
+    }
+    .how-step:hover .how-icon { transform: scale(1.08) rotate(-4deg); background: var(--gold); color: var(--maroon); }
+    .how-num {
+      position:absolute; top: -16px; left: 50%; transform: translateX(-50%);
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), #FFB700);
+      color: var(--maroon); font-weight: 800; font-size: 16px;
+      display: inline-flex; align-items: center; justify-content: center;
+      box-shadow: 0 6px 14px -4px rgba(255,183,0,.6);
+      border: 3px solid #fff;
+    }
+    .how-icon {
+      width: 72px; height: 72px; border-radius: 22px;
+      background: linear-gradient(135deg, #FFE9A8, #FFD700);
+      color: var(--maroon);
+      display: inline-flex; align-items: center; justify-content: center;
+      margin: 8px auto 18px;
+      transition: transform .35s cubic-bezier(.34,1.56,.64,1), background .25s, color .25s;
+      box-shadow: 0 10px 24px -10px rgba(255,183,0,.7);
+    }
+    .how-icon svg { width: 34px; height: 34px; }
+    .how-title { font-size: 1.25rem; font-weight: 800; color: var(--maroon); margin-bottom: 8px; }
+    .how-text  { color: #555; font-size: .95rem; line-height: 1.5; }
+
+    .business-card {
+      background:white; border-radius:18px; padding:20px;
+      border:1px solid rgba(15,18,34,.06);
+      transition: transform .25s ease, box-shadow .25s ease;
+      position:relative; overflow:hidden;
+    }
+    .business-card::after {
+      content:""; position:absolute; inset:0;
+      background: linear-gradient(135deg, rgba(255,215,0,.0), rgba(255,215,0,.18));
+      opacity:0; transition: opacity .3s; pointer-events:none;
+    }
+    .business-card:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 24px 50px -20px rgba(255,215,0,.45); }
+    .business-card:hover::after { opacity:1; }
+    .business-card:hover .ico { transform: rotate(-6deg) scale(1.1); }
+    .business-card .ico {
+      width:56px; height:56px; border-radius:16px;
+      display:inline-flex; align-items:center; justify-content:center;
+      transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.4);
+    }
+    .business-card .ico svg { width:28px; height:28px; }
+
+    /* staggered entrance for business cards */
+    @keyframes biz-rise { from { opacity:0; transform: translateY(30px) scale(.95);} to {opacity:1; transform: translateY(0) scale(1);} }
+    .biz-grid .business-card { opacity:0; }
+    .biz-grid.is-visible .business-card { animation: biz-rise .55s cubic-bezier(.4,0,.2,1) forwards; }
+    .biz-grid.is-visible .business-card:nth-child(1){ animation-delay:.05s; }
+    .biz-grid.is-visible .business-card:nth-child(2){ animation-delay:.15s; }
+    .biz-grid.is-visible .business-card:nth-child(3){ animation-delay:.25s; }
+    .biz-grid.is-visible .business-card:nth-child(4){ animation-delay:.35s; }
+    .biz-grid.is-visible .business-card:nth-child(5){ animation-delay:.45s; }
+    .biz-grid.is-visible .business-card:nth-child(6){ animation-delay:.55s; }
+
+    /* Subtle floating glow under business section */
+    @keyframes glow-pulse { 0%,100% { opacity:.25; transform:scale(1);} 50% {opacity:.45; transform:scale(1.1);} }
+    .glow-orb { position:absolute; border-radius:50%; filter: blur(60px); pointer-events:none; }
+    .glow-orb.g1 { width: 320px; height: 320px; background: rgba(255,215,0,.35); top: 10%; right: -80px; animation: glow-pulse 8s ease-in-out infinite; }
+    .glow-orb.g2 { width: 380px; height: 380px; background: rgba(123,30,58,.5); bottom: -100px; left: -100px; animation: glow-pulse 10s ease-in-out infinite; animation-delay: -3s; }
+
+    /* Why Choose Us cards */
+    .why-card {
+      background:#fff; border-radius:18px; padding:28px;
+      border:1px solid rgba(15,18,34,.06);
+      box-shadow: 0 1px 2px rgba(15,18,34,.04), 0 12px 30px -16px rgba(15,18,34,.10);
+      transition: transform .2s, box-shadow .2s;
+      position:relative; overflow:hidden;
+    }
+    .why-card::before {
+      content:""; position:absolute; top:0; left:0; right:0; height:3px;
+      background: linear-gradient(90deg, var(--maroon), var(--gold));
+      opacity:0; transition: opacity .25s;
+    }
+    .why-card:hover { transform: translateY(-4px); box-shadow: 0 24px 50px -20px rgba(123,30,58,.25); }
+    .why-card:hover::before { opacity: 1; }
+    .why-icon {
+      width: 52px; height: 52px; border-radius: 14px; margin-bottom: 16px;
+      display:inline-flex; align-items:center; justify-content:center;
+      background: linear-gradient(135deg, rgba(123,30,58,.08), rgba(255,215,0,.18));
+      color: var(--maroon);
+    }
+
+    /* Testimonials */
+    .t-card {
+      background:#fff; border-radius:18px; padding:26px;
+      border:1px solid rgba(15,18,34,.06);
+      box-shadow: 0 1px 2px rgba(15,18,34,.04), 0 12px 30px -16px rgba(15,18,34,.12);
+      transition: transform .2s;
+      display:flex; flex-direction:column;
+    }
+    .t-card:hover { transform: translateY(-4px); }
+    .t-stars { color: var(--gold); font-size:14px; letter-spacing:2px; margin-bottom:12px; }
+    .t-quote { color:#3a3f55; font-size:15px; line-height:1.6; flex-grow:1; margin-bottom:18px; }
+    .t-person { display:flex; align-items:center; gap:12px; padding-top:16px; border-top:1px solid rgba(15,18,34,.06); }
+    .t-avatar { width:42px; height:42px; border-radius:50%; color:white; font-weight:800; font-size:14px; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; }
+
+    .stat-pill { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 16px; padding: 16px 18px; backdrop-filter: blur(8px); }
+    .stat-pill .num { font-size: 28px; font-weight: 800; color: var(--gold); }
+    .stat-pill .lbl { font-size: 11px; text-transform: uppercase; color: rgba(255,255,255,.85); letter-spacing: .08em; font-weight: 600; }
+
+    /* Animations */
+    @keyframes fadeIn { from { opacity:0; transform:translateY(20px);} to { opacity:1; transform:translateY(0);} }
+    .animate-fade-in { animation: fadeIn .6s ease-out forwards; }
+    @keyframes slideInLeft { from { opacity:0; transform:translateX(-30px);} to { opacity:1; transform:translateX(0);} }
+    .animate-slide-in-left { animation: slideInLeft .8s ease-out forwards; }
+    @keyframes slideInRight { from { opacity:0; transform:translateX(30px);} to { opacity:1; transform:translateX(0);} }
+    .animate-slide-in-right { animation: slideInRight .8s ease-out forwards; }
+    @keyframes pulseSubtle { 0%,100%{transform:scale(1);} 50%{transform:scale(1.04);} }
+    .animate-pulse-subtle { animation: pulseSubtle 2.4s infinite ease-in-out; }
+    .animated-item { opacity:0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+    .animated-item.is-visible { opacity:1; transform: translateY(0); }
+
+    /* Mobile menu */
+    .mobile-menu { transition: max-height .3s ease; overflow:hidden; max-height:0; }
+    .mobile-menu.active { max-height: 600px; }
+    .hamburger span { display:block; width:25px; height:3px; background:white; transition:all .3s; }
+    .hamburger span:nth-child(2){ margin:5px 0; }
+    .hamburger.active span:nth-child(1){ transform: rotate(45deg) translate(5px,5px);}
+    .hamburger.active span:nth-child(2){ opacity:0;}
+    .hamburger.active span:nth-child(3){ transform: rotate(-45deg) translate(5px,-5px);}
+    .dropdown { position:relative; display:inline-block; }
+    .dropdown-content { display:none; position:absolute; right:0; background:var(--maroon-dark); min-width:170px; box-shadow:0 8px 16px rgba(0,0,0,.2); z-index:10; border-radius:.6rem; padding:.5rem 0; }
+    .dropdown:hover .dropdown-content { display:block; }
+    .dropdown-content a, .dropdown-content button { color:white; padding:.7rem 1rem; display:block; text-align:left; width:100%; }
+    .dropdown-content a:hover, .dropdown-content button:hover { background: var(--maroon-light); color: var(--gold); }
+
+    /* Hero photo positioning */
+    @media (min-width:1024px) {
+      .hero-photo.p1 { top: 8%;  right: 30%; width: 180px; height: 220px; }
+      .hero-photo.p2 { top: 25%; right: 8%;  width: 200px; height: 240px; }
+      .hero-photo.p3 { bottom: 8%; right: 22%; width: 170px; height: 200px; }
+    }
+    @media (max-width:1023px) {
+      .hero-photo { display:none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="bg-maroon shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto flex justify-between items-center py-4 px-5 md:px-6">
+      <a href="index.html" class="flex items-center space-x-3 animate-fade-in">
+        <img src="https://i.postimg.cc/d1z9KLkL/ei-1752053865516-removebg-preview.png" alt="Errand Logo" class="h-14 md:h-20 w-auto">
+        <h1 class="text-lg md:text-2xl font-extrabold text-white" style="text-shadow:1px 1px 2px rgba(0,0,0,.4);">Run Me An Errand</h1>
+      </a>
+      <nav class="hidden md:flex space-x-7 text-base items-center" id="desktop-nav"></nav>
+      <div class="hidden md:flex space-x-3 items-center" id="desktop-auth-buttons"></div>
+      <div class="md:hidden">
+        <button id="mobile-menu-button" class="hamburger focus:outline-none" aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <nav id="mobile-menu" class="mobile-menu md:hidden bg-maroon-dark"></nav>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero relative">
+    <div class="max-w-7xl mx-auto px-6 py-16 md:py-24 lg:py-28 grid lg:grid-cols-2 gap-10 items-center relative">
+      <div class="relative z-10">
+        <span class="chip animate-fade-in">★ Trusted across Kenya</span>
+        <h2 class="mt-5 text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight animate-slide-in-left" style="text-shadow:2px 2px 4px rgba(0,0,0,.45);">
+          Your Errand. <span class="accent-gold">Our Runners.</span>
+        </h2>
+        <p class="mt-5 text-lg md:text-xl max-w-xl animate-slide-in-right" style="animation-delay:.15s;">
+          Verified runners countrywide for groceries, pharmacy pickups, restaurant deliveries, documents and more — any errand, done right. Businesses can request a dedicated fleet.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="Post-errands.html" class="bg-gold text-maroon px-7 md:px-9 py-4 font-bold rounded-full shadow-xl hover:bg-white transition animate-pulse-subtle text-base md:text-lg">Post an Errand</a>
+          <a href="runners.html" class="bg-white/10 text-white border border-white/30 px-7 md:px-9 py-4 font-semibold rounded-full hover:bg-white hover:text-maroon transition text-base md:text-lg backdrop-blur">Browse Runners</a>
+          <a href="#for-business" class="hidden sm:inline-flex items-center gap-2 text-white/90 hover:text-gold px-2 py-4 font-semibold transition">For Business →</a>
+        </div>
+
+        <!-- Stat strip -->
+        <div class="mt-10 grid grid-cols-3 gap-3 max-w-lg">
+          <div class="stat-pill"><div class="num">500+</div><div class="lbl">Runners</div></div>
+          <div class="stat-pill"><div class="num">12k+</div><div class="lbl">Errands done</div></div>
+          <div class="stat-pill"><div class="num">25+</div><div class="lbl">Towns</div></div>
+        </div>
+      </div>
+
+      <!-- Floating runner photos -->
+      <div class="relative h-[480px] hidden lg:block">
+        <img class="hero-photo p1 float-1" src="https://images.unsplash.com/photo-1583394838336-acd977736f90?w=600&q=80&auto=format&fit=crop" alt="Runner on motorbike" loading="lazy">
+        <img class="hero-photo p2 float-2" src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=600&q=80&auto=format&fit=crop" alt="Runner with delivery" loading="lazy">
+        <img class="hero-photo p3 float-3" src="https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=600&q=80&auto=format&fit=crop" alt="Friendly runner" loading="lazy">
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES WE COVER -->
+  <section id="services" class="py-16 md:py-20 px-6 bg-white">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-10">
+        <h2 class="section-title text-3xl md:text-4xl animated-item">What We Run For You</h2>
+        <span class="gold-underline"></span>
+        <p class="mt-4 text-gray-600 max-w-2xl mx-auto animated-item">From the supermarket queue to last-mile drops — name it, our runners handle it.</p>
+        <p class="mt-3 scroll-hint animated-item">← swipe to see more →</p>
+      </div>
+
+      <div class="scroll-row animated-item">
+        <div class="service-card">
+          <div class="img" style="background-image:url('https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&q=80&auto=format&fit=crop');"><span class="icon-pill">Grocery</span></div>
+          <div class="p-5"><h3 class="font-bold text-maroon text-lg">Grocery Shopping</h3><p class="text-sm text-gray-600 mt-1">Send a list, get it delivered hot from the supermarket.</p></div>
+        </div>
+        <div class="service-card">
+          <div class="img" style="background-image:url('https://images.unsplash.com/photo-1631549916768-4119b2e5f926?w=800&q=80&auto=format&fit=crop');"><span class="icon-pill">Pharmacy</span></div>
+          <div class="p-5"><h3 class="font-bold text-maroon text-lg">Pharmacy Pickups</h3><p class="text-sm text-gray-600 mt-1">Prescriptions and over-the-counter meds delivered fast.</p></div>
+        </div>
+        <div class="service-card">
+          <div class="img" style="background-image:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80&auto=format&fit=crop');"><span class="icon-pill">Food</span></div>
+          <div class="p-5"><h3 class="font-bold text-maroon text-lg">Restaurant Delivery</h3><p class="text-sm text-gray-600 mt-1">Pick-up and drop-off from your favourite spots.</p></div>
+        </div>
+        <div class="service-card">
+          <div class="img" style="background-image:url('https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&q=80&auto=format&fit=crop');"><span class="icon-pill">Documents</span></div>
+          <div class="p-5"><h3 class="font-bold text-maroon text-lg">Documents & Parcels</h3><p class="text-sm text-gray-600 mt-1">Same-day across town with proof of delivery.</p></div>
+        </div>
+        <div class="service-card">
+          <div class="img" style="background-image:url('https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80&auto=format&fit=crop');"><span class="icon-pill">Bills</span></div>
+          <div class="p-5"><h3 class="font-bold text-maroon text-lg">Pay Bills & Queue</h3><p class="text-sm text-gray-600 mt-1">We stand in the line so you don't have to.</p></div>
+        </div>
+        <div class="service-card">
+          <div class="img" style="background-image:url('https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=800&q=80&auto=format&fit=crop');"><span class="icon-pill">Moving</span></div>
+          <div class="p-5"><h3 class="font-bold text-maroon text-lg">Quick Moves</h3><p class="text-sm text-gray-600 mt-1">Small items, helpers and trolleys when you need them.</p></div>
+        </div>
+        <div class="service-card">
+          <div class="img" style="background-image:url('https://images.unsplash.com/photo-1607344645866-009c320b63e0?w=800&q=80&auto=format&fit=crop');"><span class="icon-pill">Market</span></div>
+          <div class="p-5"><h3 class="font-bold text-maroon text-lg">Market Runs</h3><p class="text-sm text-gray-600 mt-1">Fresh from Marikiti, Wakulima and your local mama mboga.</p></div>
+        </div>
+        <div class="service-card">
+          <div class="img" style="background-image:url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80&auto=format&fit=crop');"><span class="icon-pill">Custom</span></div>
+          <div class="p-5"><h3 class="font-bold text-maroon text-lg">Anything Else</h3><p class="text-sm text-gray-600 mt-1">If it's legal and possible, a runner will sort it out.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how-it-works" class="relative py-16 md:py-24 px-6 overflow-hidden" style="background: linear-gradient(180deg,#FFFBF0 0%, #FFFFFF 100%);">
+    <!-- soft background pattern -->
+    <div class="absolute inset-0 opacity-[0.07] pointer-events-none" style="background-image: radial-gradient(#7B1E3A 1.5px, transparent 1.5px); background-size:26px 26px;"></div>
+
+    <div class="max-w-6xl mx-auto relative z-10">
+      <div class="text-center mb-14">
+        <span class="chip animated-item">Simple. Fast. Trusted.</span>
+        <h2 class="section-title text-3xl md:text-4xl mt-4 animated-item">How It <span class="accent-gold">Works</span></h2>
+        <span class="gold-underline"></span>
+        <p class="mt-4 text-gray-600 max-w-xl mx-auto animated-item">From browsing to "job done" in three easy steps.</p>
+      </div>
+
+      <div class="how-grid">
+        <!-- dotted connector line behind steps (desktop) -->
+        <div class="how-connector hidden md:block"></div>
+
+        <div class="how-step animated-item">
+          <div class="how-num">1</div>
+          <div class="how-icon">
+            <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+          </div>
+          <h3 class="how-title">Explore Runners</h3>
+          <p class="how-text">Browse verified runners across the country — no sign-up needed to look around.</p>
+        </div>
+
+        <div class="how-step animated-item">
+          <div class="how-num">2</div>
+          <div class="how-icon">
+            <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.068.157 2.148.279 3.238.364.466.037.893.281 1.153.671L12 21l2.652-3.978c.26-.39.687-.634 1.153-.67 1.09-.086 2.17-.208 3.238-.365 1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"/></svg>
+          </div>
+          <h3 class="how-title">Post or Connect</h3>
+          <p class="how-text">Found someone? Sign up to post your errand and chat directly with the runner.</p>
+        </div>
+
+        <div class="how-step animated-item">
+          <div class="how-num">3</div>
+          <div class="how-icon">
+            <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="how-title">Get It Done</h3>
+          <p class="how-text">Agree on terms and pay securely once your errand is completed. Easy.</p>
+        </div>
+      </div>
+
+      <div class="text-center mt-12">
+        <a href="Post-errands.html" class="inline-block bg-maroon text-white hover:bg-maroon-dark px-8 py-3.5 rounded-full font-semibold transition shadow-lg">Post Your Errand →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- MEET OUR RUNNERS -->
+  <section id="meet-runners" class="py-16 md:py-20 px-6 bg-gradient-to-b from-gray-50 to-white">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="section-title text-3xl md:text-4xl animated-item">Meet Some Of Our Runners</h2>
+        <span class="gold-underline"></span>
+        <p class="mt-4 text-gray-600 max-w-2xl mx-auto animated-item">Real, verified people in your neighbourhood — ready to help.</p>
+      </div>
+
+      <div id="runners-grid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 max-w-5xl mx-auto">
+        <!-- skeletons while loading -->
+        <div class="runner-card"><div class="photo" style="background:#eee;"></div></div>
+        <div class="runner-card"><div class="photo" style="background:#eee;"></div></div>
+        <div class="runner-card"><div class="photo" style="background:#eee;"></div></div>
+        <div class="runner-card"><div class="photo" style="background:#eee;"></div></div>
+        <div class="runner-card"><div class="photo" style="background:#eee;"></div></div>
+        <div class="runner-card"><div class="photo" style="background:#eee;"></div></div>
+      </div>
+      <p id="runners-empty" class="hidden text-center text-gray-500 mt-6">No runners to show yet — check back soon.</p>
+
+      <div class="text-center mt-10">
+        <a href="runners.html" class="inline-block bg-maroon text-white hover:bg-maroon-dark px-8 py-3 rounded-full font-semibold transition shadow-lg">See all runners →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOR BUSINESS -->
+  <section id="for-business" class="py-16 md:py-24 px-6 relative overflow-hidden" style="background: linear-gradient(135deg,#0F1222 0%, #2A0E1B 60%, #5C1129 100%);">
+    <div class="absolute inset-0 opacity-30 pointer-events-none" style="background-image: radial-gradient(rgba(255,215,0,.4) 1px, transparent 1px); background-size:30px 30px;"></div>
+    <div class="glow-orb g1"></div>
+    <div class="glow-orb g2"></div>
+
+    <div class="max-w-7xl mx-auto relative z-10">
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div class="text-white animated-item">
+          <span class="chip">For Business</span>
+          <h2 class="mt-4 text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight">A dedicated <span class="text-gold">fleet</span> for your business.</h2>
+          <p class="mt-5 text-lg text-white/85 max-w-xl">
+            Restaurants, pharmacies, supermarkets, salons, e-commerce shops and more — we assign you a vetted team of runners who know your brand, your menu and your customers. Reliable last-mile delivery without the headache of hiring.
+          </p>
+
+          <ul class="mt-7 space-y-3 text-white/90">
+            <li class="flex items-start gap-3"><span class="text-gold mt-1">✓</span> Dedicated runners trained on your business</li>
+            <li class="flex items-start gap-3"><span class="text-gold mt-1">✓</span> Branded delivery experience for your customers</li>
+            <li class="flex items-start gap-3"><span class="text-gold mt-1">✓</span> Real-time tracking & delivery reports</li>
+            <li class="flex items-start gap-3"><span class="text-gold mt-1">✓</span> Flexible: peak-hour, daily, or full-time fleet</li>
+            <li class="flex items-start gap-3"><span class="text-gold mt-1">✓</span> Transparent pricing — no surprise commissions</li>
+          </ul>
+
+          <div class="mt-8 flex flex-wrap gap-3">
+            <a href="mailto:ranmeanerrand@gmail.com?subject=Business%20Fleet%20Enquiry" class="bg-gold text-maroon px-7 py-3.5 rounded-full font-bold hover:bg-white transition shadow-xl">Request a Fleet</a>
+            <a href="https://wa.me/254700000000?text=Hi%20Run%20Me%20An%20Errand%2C%20I%27d%20like%20to%20enquire%20about%20a%20business%20fleet." class="bg-white/10 border border-white/30 text-white px-7 py-3.5 rounded-full font-semibold hover:bg-white hover:text-maroon transition backdrop-blur">Chat on WhatsApp</a>
+          </div>
+        </div>
+
+        <!-- Business categories grid -->
+        <div class="biz-grid animated-item grid grid-cols-2 gap-4">
+          <div class="business-card">
+            <div class="ico" style="background:linear-gradient(135deg,#FFE6EC,#FFC9D6); color:#7B1E3A;">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 15.75l-2.489-2.489m0 0a3.375 3.375 0 10-4.773-4.773 3.375 3.375 0 004.774 4.774zM21 12a9 9 0 11-18 0 9 9 0 0118 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M11 6v6m3-3H8"/></svg>
+            </div>
+            <h3 class="mt-3 font-bold text-maroon">Restaurants</h3>
+            <p class="text-sm text-gray-600 mt-1">Hot meals delivered fast — with riders who know your menu.</p>
+          </div>
+          <div class="business-card">
+            <div class="ico" style="background:linear-gradient(135deg,#E6F8EE,#C5EFD7); color:#117A3D;">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
+            </div>
+            <h3 class="mt-3 font-bold text-maroon">Pharmacies</h3>
+            <p class="text-sm text-gray-600 mt-1">Discreet, careful prescription delivery to patients' doors.</p>
+          </div>
+          <div class="business-card">
+            <div class="ico" style="background:linear-gradient(135deg,#FFF6DB,#FFE9A8); color:#8A5A00;">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/></svg>
+            </div>
+            <h3 class="mt-3 font-bold text-maroon">Supermarkets</h3>
+            <p class="text-sm text-gray-600 mt-1">Bulk grocery deliveries handled with care and speed.</p>
+          </div>
+          <div class="business-card">
+            <div class="ico" style="background:linear-gradient(135deg,#E6EFFF,#C7DBFF); color:#1546A8;">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 11.25v8.25a1.5 1.5 0 01-1.5 1.5H5.25a1.5 1.5 0 01-1.5-1.5v-8.25M12 4.875A2.625 2.625 0 109.375 7.5H12m0-2.625V7.5m0-2.625A2.625 2.625 0 1114.625 7.5H12m0 0V21m-8.625-9.75h18c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125h-18c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"/></svg>
+            </div>
+            <h3 class="mt-3 font-bold text-maroon">E-commerce</h3>
+            <p class="text-sm text-gray-600 mt-1">Same-day fulfilment and returns for online shops.</p>
+          </div>
+          <div class="business-card">
+            <div class="ico" style="background:linear-gradient(135deg,#F3E8FF,#DDC4F7); color:#6B21A8;">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.091 3.091zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"/></svg>
+            </div>
+            <h3 class="mt-3 font-bold text-maroon">Salons & Spas</h3>
+            <p class="text-sm text-gray-600 mt-1">Pickups, supplies, and at-home appointment errands.</p>
+          </div>
+          <div class="business-card">
+            <div class="ico" style="background:linear-gradient(135deg,#FEE4D6,#FBCAA8); color:#B4400F;">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/></svg>
+            </div>
+            <h3 class="mt-3 font-bold text-maroon">Offices</h3>
+            <p class="text-sm text-gray-600 mt-1">Couriered documents, lunch runs and supply pickups.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- WHY US -->
+  <section id="trust-section" class="py-16 md:py-20 bg-white px-6">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="section-title text-3xl md:text-4xl animated-item">Why Run Me An Errand?</h2>
+        <span class="gold-underline"></span>
+        <p class="mt-4 text-gray-600 max-w-2xl mx-auto animated-item">Built on trust, speed and real human service.</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="why-card animated-item">
+          <div class="why-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-7 h-7"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"/></svg>
+          </div>
+          <h3 class="text-lg font-bold text-maroon mb-2">Verified Runners</h3>
+          <p class="text-gray-600 text-sm leading-relaxed">Every runner is vetted with ID, photo and reviews — so you always know who's at your door.</p>
+        </div>
+        <div class="why-card animated-item">
+          <div class="why-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-7 h-7"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg>
+          </div>
+          <h3 class="text-lg font-bold text-maroon mb-2">Fast & Reliable</h3>
+          <p class="text-gray-600 text-sm leading-relaxed">Same-day errands across major Kenyan towns, with real-time updates from start to finish.</p>
+        </div>
+        <div class="why-card animated-item">
+          <div class="why-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-7 h-7"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"/></svg>
+          </div>
+          <h3 class="text-lg font-bold text-maroon mb-2">Direct Payments</h3>
+          <p class="text-gray-600 text-sm leading-relaxed">Pay the runner directly. No hidden fees, no middleman holding your cash.</p>
+        </div>
+        <div class="why-card animated-item">
+          <div class="why-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-7 h-7"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
+          </div>
+          <h3 class="text-lg font-bold text-maroon mb-2">Live Tracking</h3>
+          <p class="text-gray-600 text-sm leading-relaxed">See where your errand is in real time and chat with your runner directly.</p>
+        </div>
+        <div class="why-card animated-item">
+          <div class="why-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-7 h-7"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"/></svg>
+          </div>
+          <h3 class="text-lg font-bold text-maroon mb-2">Friendly Support</h3>
+          <p class="text-gray-600 text-sm leading-relaxed">Real people on email and WhatsApp, ready to help when something needs sorting.</p>
+        </div>
+        <div class="why-card animated-item">
+          <div class="why-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-7 h-7"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
+          </div>
+          <h3 class="text-lg font-bold text-maroon mb-2">Safe & Insured</h3>
+          <p class="text-gray-600 text-sm leading-relaxed">Items handled with care. Issues are resolved quickly through our support team.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section id="testimonials" class="bg-gradient-to-b from-gray-50 to-white py-16 md:py-20 px-6">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="section-title text-3xl md:text-4xl animated-item">Trusted by Kenyans Everywhere</h2>
+        <span class="gold-underline"></span>
+        <p class="mt-4 text-gray-600 max-w-2xl mx-auto animated-item">Real stories from clients who got it done with our runners.</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="t-card animated-item">
+          <div class="t-stars">★★★★★</div>
+          <p class="t-quote">I used the service for my grocery shopping. The runner was very fast and I got my delivery in good shape. Very helpful if you are busy.</p>
+          <div class="t-person">
+            <div class="t-avatar" style="background:linear-gradient(135deg,#7B1E3A,#9A2A4D);">FM</div>
+            <div><p class="font-bold text-ink">Faith Mutua</p><p class="text-xs text-gray-500">Grocery delivery · Nairobi</p></div>
+          </div>
+        </div>
+        <div class="t-card animated-item">
+          <div class="t-stars">★★★★★</div>
+          <p class="t-quote">Needed someone to deliver some documents across town. The process was simple, no stress at all. The runner was professional and on time.</p>
+          <div class="t-person">
+            <div class="t-avatar" style="background:linear-gradient(135deg,#1546A8,#3B82F6);">KO</div>
+            <div><p class="font-bold text-ink">Kevin Omondi</p><p class="text-xs text-gray-500">Documents · Mombasa</p></div>
+          </div>
+        </div>
+        <div class="t-card animated-item">
+          <div class="t-stars">★★★★★</div>
+          <p class="t-quote">The best part is I could browse runners before signing up. Found a reliable person for my house move errands within minutes.</p>
+          <div class="t-person">
+            <div class="t-avatar" style="background:linear-gradient(135deg,#117A3D,#10B981);">SJ</div>
+            <div><p class="font-bold text-ink">Sarah J.</p><p class="text-xs text-gray-500">House move · Kisumu</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BECOME A RUNNER -->
+  <section id="become-a-runner" class="py-16 bg-maroon text-white overflow-hidden relative">
+    <div class="absolute bottom-0 left-0 w-1/2 md:w-1/3 opacity-50 pointer-events-none">
+      <img src="https://img.icons8.com/bubbles/500/ffffff/scooter.png" alt="" class="transform scale-x-[-1]">
+    </div>
+    <div class="max-w-6xl mx-auto px-6 relative z-10 grid md:grid-cols-2 gap-10 items-center">
+      <div class="animated-item">
+        <h3 class="text-3xl md:text-4xl font-extrabold text-gold mb-4">Become a Runner. Earn on your terms.</h3>
+        <p class="text-lg mb-6 text-white/90">Join our growing network all over Kenya. Flexible hours, weekly payouts, and steady jobs in your local area.</p>
+        <a href="sign-up.html" class="bg-gold text-maroon px-8 py-3.5 rounded-full font-bold hover:bg-white transition shadow-xl">Sign Up as a Runner →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer id="contact" class="bg-gray-900 text-gray-300 py-12">
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="animated-item">
+        <h4 class="text-lg font-bold text-gold mb-4">Run Me An Errand</h4>
+        <p class="text-sm">Your reliable partner for errand services countrywide across Kenya.</p>
+        <p class="text-sm mt-4">© 2025 Run Me An Errand. All rights reserved.</p>
+      </div>
+      <div class="animated-item">
+        <h4 class="text-lg font-bold text-gold mb-4">Quick Links</h4>
+        <ul class="space-y-2 text-sm">
+          <li><a href="index.html" class="hover:text-gold">Home</a></li>
+          <li><a href="about-us.html" class="hover:text-gold">About Us</a></li>
+          <li><a href="runners.html" class="hover:text-gold">Browse Runners</a></li>
+          <li><a href="sign-up.html" class="hover:text-gold">Become a Runner</a></li>
+          <li><a href="#for-business" class="hover:text-gold">For Business</a></li>
+        </ul>
+      </div>
+      <div class="animated-item">
+        <h4 class="text-lg font-bold text-gold mb-4">Contact</h4>
+        <p class="text-sm">Email: ranmeanerrand@gmail.com</p>
+        <p class="text-sm mt-2">Business enquiries welcome.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const desktopNav = document.getElementById('desktop-nav');
+      const desktopAuthButtons = document.getElementById('desktop-auth-buttons');
+      const mobileMenuNav = document.getElementById('mobile-menu');
+
+      function checkLoginStatusAndUpdateUI() {
+        const userEmail = localStorage.getItem('loggedInEmail');
+        const userRole = localStorage.getItem('userType');
+        const navHtml = `
+          <a href="index.html" class="text-gray-200 hover:text-gold transition-colors">Home</a>
+          <a href="about-us.html" class="text-gray-200 hover:text-gold transition-colors">About Us</a>
+          <a href="runners.html" class="text-gray-200 hover:text-gold transition-colors">Runners</a>
+          <a href="#for-business" class="text-gray-200 hover:text-gold transition-colors">For Business</a>
+          <a href="Post-errands.html" class="bg-gold text-maroon px-4 py-1.5 rounded-full font-bold hover:bg-white transition-colors">Post Errand</a>
+        `;
+        if (userEmail && userRole) {
+          const profilePage = userRole === 'runner' ? 'runners-profile.html' : 'client-profile.html';
+          const displayName = userEmail.split('@')[0];
+          desktopNav.innerHTML = navHtml;
+          desktopAuthButtons.innerHTML = `
+            <div class="dropdown">
+              <button class="flex items-center text-white space-x-2 p-2 rounded-full hover:bg-maroon-dark">
+                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="w-8 h-8 rounded-full border-2 border-white"/>
+                <span class="text-sm">${displayName}</span>
+              </button>
+              <div class="dropdown-content">
+                <a href="${profilePage}">My Profile</a>
+                <button id="logout-btn">Log Out</button>
+              </div>
+            </div>`;
+          mobileMenuNav.innerHTML = `<div class="flex flex-col space-y-3 p-6"><a href="index.html" class="text-white">Home</a><a href="about-us.html" class="text-white">About Us</a><a href="runners.html" class="text-white">Browse Runners</a><a href="#for-business" class="text-white">For Business</a><a href="Post-errands.html" class="text-gold font-bold">Post Errand</a><hr class="border-maroon-light"><a href="${profilePage}" class="bg-gold text-maroon p-2 rounded-full text-center">My Profile</a><button id="logout-btn-mobile" class="bg-white text-maroon p-2 rounded-full">Log Out</button></div>`;
+          document.getElementById('logout-btn').addEventListener('click', customLogout);
+          document.getElementById('logout-btn-mobile').addEventListener('click', customLogout);
+        } else {
+          desktopNav.innerHTML = navHtml;
+          desktopAuthButtons.innerHTML = `<a href="login.html" class="bg-gold text-maroon px-6 py-2 rounded-full hover:bg-white transition font-semibold">Login</a>`;
+          mobileMenuNav.innerHTML = `<div class="flex flex-col space-y-3 p-6"><a href="index.html" class="text-white">Home</a><a href="about-us.html" class="text-white">About Us</a><a href="runners.html" class="text-white">Browse Runners</a><a href="#for-business" class="text-white">For Business</a><a href="Post-errands.html" class="text-gold font-bold">Post Errand</a><hr class="border-maroon-light"><a href="login.html" class="bg-gold text-maroon p-2 rounded-full text-center">Login</a></div>`;
+        }
+      }
+      function customLogout() {
+        localStorage.removeItem('loggedInEmail');
+        localStorage.removeItem('userType');
+        window.location.href = "index.html";
+      }
+      const btn = document.getElementById('mobile-menu-button');
+      const menu = document.getElementById('mobile-menu');
+      if (btn && menu) {
+        btn.addEventListener('click', () => { menu.classList.toggle('active'); btn.classList.toggle('active'); });
+      }
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('is-visible'); });
+      }, { threshold: 0.1 });
+      document.querySelectorAll('.animated-item').forEach(el => observer.observe(el));
+      checkLoginStatusAndUpdateUI();
+      loadFeaturedRunners();
+    });
+
+    // ---- Fetch real runners from Supabase ----
+    async function loadFeaturedRunners() {
+      const grid = document.getElementById('runners-grid');
+      const emptyMsg = document.getElementById('runners-empty');
+      if (!grid) return;
+      if (typeof CONFIG === 'undefined' || !CONFIG.S_URL || !CONFIG.S_KEY || !window.supabase) {
+        console.warn('Supabase config missing — keeping placeholder runners.');
+        return;
+      }
+      try {
+        const supa = window.supabase.createClient(CONFIG.S_URL, CONFIG.S_KEY);
+        // Prefer active subscribers with a profile picture; fall back to all.
+        let { data, error } = await supa
+          .from('runners')
+          .select('name,location,profilepicture,avg_rating,rating,subscription_status,category')
+          .eq('subscription_status', 'active')
+          .not('profilepicture', 'is', null)
+          .limit(10);
+        if ((!data || !data.length) && !error) {
+          ({ data, error } = await supa
+            .from('runners')
+            .select('name,location,profilepicture,avg_rating,rating,category')
+            .limit(10));
+        }
+        if (error) throw error;
+        const rows = (data || []).filter(r => r.name);
+        if (!rows.length) {
+          grid.innerHTML = '';
+          emptyMsg.classList.remove('hidden');
+          return;
+        }
+        grid.innerHTML = rows.map(r => {
+          const safeName = (r.name || 'Runner').replace(/"/g, '&quot;');
+          const photo = r.profilepicture
+            ? r.profilepicture.replace(/"/g, '&quot;')
+            : `https://api.dicebear.com/8.x/initials/svg?seed=${encodeURIComponent(r.name)}&backgroundColor=7B1E3A,5C1129,9A2A4D&textColor=FFD700`;
+          const rating = Number(r.avg_rating || r.rating);
+          const ratingStr = isFinite(rating) && rating > 0 ? rating.toFixed(1) : 'New';
+          const loc = r.location || r.category || 'Kenya';
+          return `
+            <a href="runners.html" class="runner-card block">
+              <div class="photo" style="background-image:url('${photo}');"></div>
+              <span class="verified">★</span>
+              <div class="info">
+                <div class="name truncate">${safeName}</div>
+                <div class="meta truncate">${(loc+'').replace(/</g,'&lt;')} · ★ ${ratingStr}</div>
+              </div>
+            </a>`;
+        }).join('');
+      } catch (err) {
+        console.warn('Could not load runners:', err.message || err);
+        grid.innerHTML = '';
+        emptyMsg.textContent = 'Could not load runners right now. Please try again later.';
+        emptyMsg.classList.remove('hidden');
+      }
+    }
+  </script>
+<script src="https://replit-cdn.com/replit-pill/replit-pill.global.js" data-repl-id="e2d02998-4e7b-463b-bb4e-951fa8d5fb36"></script></body>
+</html>
