@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /client-profile.html
+Disallow: /runners-profile.html
+Disallow: /post-errands.html
+Disallow: /login.html
+Disallow: /reset-password.html
+Disallow: /track.html
+
+Sitemap: https://runmeanerrand.co.ke/sitemap.xml
